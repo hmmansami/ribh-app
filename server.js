@@ -1169,8 +1169,8 @@ app.get('/api/store/usage', (req, res) => {
 // HEALTH CHECK & ROOT ENDPOINTS
 // ==========================================
 
-// Root health check (important for hosting platforms)
-app.get('/', (req, res) => {
+// API info endpoint (JSON)
+app.get('/api/info', (req, res) => {
     res.status(200).json({
         success: true,
         app: 'رِبح (Ribh)',
@@ -1180,7 +1180,8 @@ app.get('/', (req, res) => {
         endpoints: {
             webhook: '/webhooks/salla',
             webhookAlt: '/api/webhooks/salla',
-            dashboard: '/index.html',
+            dashboard: '/',
+            settings: '/settings.html',
             stats: '/api/stats'
         },
         timestamp: new Date().toISOString()
@@ -1191,6 +1192,9 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
+
+// Root serves the dashboard (index.html is served by express.static)
+// No need for explicit / route - express.static handles it
 
 // ==========================================
 // KEEP-ALIVE: Prevent Render from sleeping
