@@ -16,23 +16,41 @@ const config = {
     SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '',
     SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || '',
 
-    // Twilio (WhatsApp + SMS)
+    // ========== EMAIL OPTIONS ==========
+    // Option 1: Resend (FREE - 3000/month)
+    RESEND_API_KEY: process.env.RESEND_API_KEY || '',
+    // Option 2: AWS SES (CHEAP - $0.10/1000 for scale)
+    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY || '',
+    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY || '',
+    AWS_REGION: process.env.AWS_REGION || 'eu-west-1',
+    EMAIL_FROM: process.env.EMAIL_FROM || 'ribh@ribh.click',
+    EMAIL_PROVIDER: process.env.EMAIL_PROVIDER || 'resend', // 'resend' or 'aws'
+
+    // ========== SMS OPTIONS ==========
+    // Option 1: Amazon SNS (CHEAPEST - $0.02/msg)
+    // Uses same AWS credentials as email
+    // Option 2: Twilio ($0.04/msg - fallback)
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || '',
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || '',
+    TWILIO_SMS_NUMBER: process.env.TWILIO_SMS_NUMBER || '',
+    SMS_PROVIDER: process.env.SMS_PROVIDER || 'aws', // 'aws' or 'twilio'
+
+    // ========== TELEGRAM (FREE!) ==========
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || '',
+
+    // ========== WHATSAPP ==========
+    // Option 1: Twilio WhatsApp Business (needs approval)
     TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER || '+14155238886',
-    TWILIO_SMS_NUMBER: process.env.TWILIO_SMS_NUMBER || '', // For SMS
+    // Option 2: Unofficial (store owner's number - coming soon)
 
-    // Email (FREE - using Resend or SMTP)
-    RESEND_API_KEY: process.env.RESEND_API_KEY || '',
-    EMAIL_FROM: process.env.EMAIL_FROM || 'ribh@ribh.click',
-
-    // AI (OpenAI or Google Gemini - Gemini is FREE)
+    // ========== AI (Gemini is FREE!) ==========
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
 
-    // Messaging channels (which ones to use)
-    ENABLE_EMAIL: process.env.ENABLE_EMAIL !== 'false', // FREE - enabled by default
-    ENABLE_SMS: process.env.ENABLE_SMS === 'true',      // Paid - disabled by default
+    // ========== CHANNEL TOGGLES ==========
+    ENABLE_EMAIL: process.env.ENABLE_EMAIL !== 'false',      // FREE - enabled by default
+    ENABLE_TELEGRAM: process.env.ENABLE_TELEGRAM === 'true', // FREE - disabled until bot set up
+    ENABLE_SMS: process.env.ENABLE_SMS === 'true',           // Paid - $0.02/msg
     ENABLE_WHATSAPP: process.env.ENABLE_WHATSAPP === 'true', // Needs Business API
 
     // App settings
@@ -654,12 +672,112 @@ async function sendEmailReminder(cart, reminderNumber) {
 }
 
 // ==========================================
-// SMS INTEGRATION (Twilio - ~$0.04/msg)
+// TELEGRAM INTEGRATION (FREE!)
 // ==========================================
 
+async function sendTelegramReminder(cart, reminderNumber) {
+    if (!config.ENABLE_TELEGRAM || !config.TELEGRAM_BOT_TOKEN) {
+        console.log('⚠️ Telegram disabled or not configured');
+        return false;
+    }
+
+    // Note: Customer needs to have started a chat with the bot first
+    // We'd need to store their Telegram chat ID
+    // For now, this is a placeholder - needs customer opt-in
+
+    const discount = config.REMINDER_DELAYS[reminderNumber - 1]?.discount || 0;
+    const discountCode = discount > 0 ? `RIBH${discount}` : '';
+
+    let message;
+    if (reminderNumber === 1) {
+        message = `🛒 مرحباً ${cart.customer.name}!\n\nسلتك في انتظارك:\n💰 المجموع: ${cart.total} ${cart.currency || 'SAR'}\n\nأكمل طلبك الآن!`;
+    } else if (discount > 0) {
+        message = `🎁 ${cart.customer.name}، خصم خاص لك!\n\n✨ خصم ${discount}%\n🏷️ كود: ${discountCode}\n\nلا تفوّت الفرصة!`;
+    } else {
+        message = `⏰ تذكير: سلتك المتروكة في انتظارك يا ${cart.customer.name}!`;
+    }
+
+    // If we have customer's Telegram chat ID
+    if (cart.customer.telegramChatId) {
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: cart.customer.telegramChatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            });
+
+            const result = await response.json();
+            if (result.ok) {
+                console.log(`✅ Telegram sent to ${cart.customer.telegramChatId}`);
+                return true;
+            } else {
+                console.log(`⚠️ Telegram failed:`, result);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Telegram error:', error);
+            return false;
+        }
+    }
+
+    console.log('📱 Telegram: Customer has no chat ID (need opt-in first)');
+    return false;
+}
+
+// ==========================================
+// AMAZON SNS SMS (CHEAPEST - $0.02/msg)
+// ==========================================
+
+async function sendSMSviaAWS(phoneNumber, message) {
+    if (!config.AWS_ACCESS_KEY || !config.AWS_SECRET_KEY) {
+        console.log('⚠️ AWS not configured, falling back to Twilio');
+        return null; // Return null to trigger fallback
+    }
+
+    // AWS SNS requires signing requests - simplified version using AWS SDK style
+    // In production, use @aws-sdk/client-sns
+
+    const region = config.AWS_REGION;
+    const endpoint = `https://sns.${region}.amazonaws.com/`;
+
+    // Format phone number
+    let formattedPhone = phoneNumber.replace(/\s+/g, '').replace(/^00/, '+');
+    if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+    }
+
+    // AWS SNS requires proper signature - for simplicity, we'll use a REST approach
+    // Note: In production, install @aws-sdk/client-sns for proper implementation
+
+    const params = new URLSearchParams({
+        Action: 'Publish',
+        PhoneNumber: formattedPhone,
+        Message: message,
+        Version: '2010-03-31'
+    });
+
+    try {
+        // For now, log that AWS would be used
+        // Full implementation requires AWS SDK
+        console.log(`📱 AWS SNS would send to ${formattedPhone}: ${message.substring(0, 50)}...`);
+        console.log('💡 To enable AWS SNS, install: npm install @aws-sdk/client-sns');
+
+        // Return null to trigger Twilio fallback until AWS SDK is installed
+        return null;
+    } catch (error) {
+        console.error('❌ AWS SNS error:', error);
+        return null;
+    }
+}
+
+// Updated SMS function with AWS priority
 async function sendSMSReminder(cart, reminderNumber) {
-    if (!config.ENABLE_SMS || !config.TWILIO_SMS_NUMBER || !cart.customer.phone) {
-        console.log('⚠️ SMS disabled or not configured');
+    if (!config.ENABLE_SMS || !cart.customer.phone) {
+        console.log('⚠️ SMS disabled or no phone number');
         return false;
     }
 
@@ -673,7 +791,7 @@ async function sendSMSReminder(cart, reminderNumber) {
     if (reminderNumber === 1) {
         message = `مرحباً ${cart.customer.name}! 👋 سلتك (${cart.total} ${cart.currency || 'SAR'}) في انتظارك. أكمل طلبك الآن!`;
     } else if (discount > 0) {
-        message = `${cart.customer.name}، خصم ${discount}% على سلتك! 🎁 كود: ${discountCode} - لا تفوّت الفرصة!`;
+        message = `${cart.customer.name}، خصم ${discount}% على سلتك! 🎁 كود: ${discountCode} - لا تفوّت!`;
     } else {
         message = `تذكير: سلتك المتروكة في انتظارك يا ${cart.customer.name}! 🛒`;
     }
@@ -684,35 +802,48 @@ async function sendSMSReminder(cart, reminderNumber) {
         formattedPhone = '+' + formattedPhone;
     }
 
-    try {
-        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${config.TWILIO_ACCOUNT_SID}/Messages.json`;
-
-        const formData = new URLSearchParams();
-        formData.append('From', config.TWILIO_SMS_NUMBER);
-        formData.append('To', formattedPhone);
-        formData.append('Body', message);
-
-        const response = await fetch(twilioUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Basic ' + Buffer.from(`${config.TWILIO_ACCOUNT_SID}:${config.TWILIO_AUTH_TOKEN}`).toString('base64'),
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.error_code) {
-            throw new Error(result.error_message || `Twilio error: ${result.error_code}`);
-        }
-
-        console.log(`✅ SMS sent! SID: ${result.sid}`);
-        return true;
-    } catch (error) {
-        console.error('❌ SMS error:', error);
-        return false;
+    // Try AWS SNS first (cheaper)
+    if (config.SMS_PROVIDER === 'aws') {
+        const awsResult = await sendSMSviaAWS(formattedPhone, message);
+        if (awsResult !== null) return awsResult;
+        // If null, fall through to Twilio
     }
+
+    // Fallback to Twilio
+    if (config.TWILIO_ACCOUNT_SID && config.TWILIO_AUTH_TOKEN && config.TWILIO_SMS_NUMBER) {
+        try {
+            const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${config.TWILIO_ACCOUNT_SID}/Messages.json`;
+
+            const formData = new URLSearchParams();
+            formData.append('From', config.TWILIO_SMS_NUMBER);
+            formData.append('To', formattedPhone);
+            formData.append('Body', message);
+
+            const response = await fetch(twilioUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(`${config.TWILIO_ACCOUNT_SID}:${config.TWILIO_AUTH_TOKEN}`).toString('base64'),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.error_code) {
+                throw new Error(result.error_message || `Twilio error: ${result.error_code}`);
+            }
+
+            console.log(`✅ SMS sent via Twilio! SID: ${result.sid}`);
+            return true;
+        } catch (error) {
+            console.error('❌ Twilio SMS error:', error);
+            return false;
+        }
+    }
+
+    console.log('⚠️ No SMS provider configured');
+    return false;
 }
 
 // ==========================================
@@ -722,6 +853,7 @@ async function sendSMSReminder(cart, reminderNumber) {
 async function sendAllReminders(cart, reminderNumber) {
     const results = {
         email: false,
+        telegram: false,
         sms: false,
         whatsapp: false
     };
@@ -731,12 +863,17 @@ async function sendAllReminders(cart, reminderNumber) {
         results.email = await sendEmailReminder(cart, reminderNumber);
     }
 
-    // 2. SMS (Paid) - if enabled
+    // 2. Telegram (FREE) - if customer opted in
+    if (config.ENABLE_TELEGRAM && cart.customer.telegramChatId) {
+        results.telegram = await sendTelegramReminder(cart, reminderNumber);
+    }
+
+    // 3. SMS (Paid - $0.02/msg via AWS, $0.04 via Twilio) - if enabled
     if (config.ENABLE_SMS && cart.customer.phone) {
         results.sms = await sendSMSReminder(cart, reminderNumber);
     }
 
-    // 3. WhatsApp (Paid + needs Business API) - if enabled
+    // 4. WhatsApp (Paid + needs Business API) - if enabled
     if (config.ENABLE_WHATSAPP && cart.customer.phone) {
         results.whatsapp = await sendWhatsAppReminder(cart, reminderNumber);
     }
