@@ -16,14 +16,24 @@ const config = {
     SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '',
     SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || '',
 
-    // Twilio WhatsApp
+    // Twilio (WhatsApp + SMS)
     TWILIO_ACCOUNT_SID: process.env.TWILIO_ACCOUNT_SID || '',
     TWILIO_AUTH_TOKEN: process.env.TWILIO_AUTH_TOKEN || '',
     TWILIO_WHATSAPP_NUMBER: process.env.TWILIO_WHATSAPP_NUMBER || '+14155238886',
+    TWILIO_SMS_NUMBER: process.env.TWILIO_SMS_NUMBER || '', // For SMS
 
-    // AI (OpenAI or Google Gemini)
+    // Email (FREE - using Resend or SMTP)
+    RESEND_API_KEY: process.env.RESEND_API_KEY || '',
+    EMAIL_FROM: process.env.EMAIL_FROM || 'ribh@ribh.click',
+
+    // AI (OpenAI or Google Gemini - Gemini is FREE)
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
     GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
+
+    // Messaging channels (which ones to use)
+    ENABLE_EMAIL: process.env.ENABLE_EMAIL !== 'false', // FREE - enabled by default
+    ENABLE_SMS: process.env.ENABLE_SMS === 'true',      // Paid - disabled by default
+    ENABLE_WHATSAPP: process.env.ENABLE_WHATSAPP === 'true', // Needs Business API
 
     // App settings
     REMINDER_DELAYS: [
@@ -346,7 +356,8 @@ function scheduleReminder(cart) {
 
             // Only send if not already recovered
             if (currentCart && currentCart.status !== 'recovered') {
-                await sendWhatsAppReminder(cart, index + 1);
+                // Send via ALL enabled channels (Email FREE, SMS paid, WhatsApp paid)
+                await sendAllReminders(cart, index + 1);
             }
         }, delay);
     });
@@ -534,6 +545,204 @@ async function sendViaTwilio(phoneNumber, message) {
 
     console.log(`✅ WhatsApp sent! SID: ${result.sid}`);
     return true;
+}
+
+// ==========================================
+// EMAIL INTEGRATION (FREE - using Resend)
+// ==========================================
+
+async function sendEmailReminder(cart, reminderNumber) {
+    if (!config.ENABLE_EMAIL || !cart.customer.email) {
+        console.log('⚠️ Email disabled or no email address');
+        return false;
+    }
+
+    console.log(`📧 Preparing Email reminder #${reminderNumber} for ${cart.customer.email}...`);
+
+    const discount = config.REMINDER_DELAYS[reminderNumber - 1]?.discount || 0;
+    const discountCode = discount > 0 ? `RIBH${discount}` : '';
+
+    // Create product list HTML
+    const productListHtml = cart.items
+        .map(item => `<li>${item.name || item.product_name} (${item.quantity || 1}×)</li>`)
+        .join('');
+
+    const subject = reminderNumber === 1
+        ? `${cart.customer.name}، سلتك في انتظارك! 🛒`
+        : `خصم ${discount}% على سلتك المتروكة! 🎁`;
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; }
+            .logo { text-align: center; font-size: 32px; color: #10B981; margin-bottom: 20px; }
+            h1 { color: #333; font-size: 24px; }
+            .products { background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0; }
+            .discount { background: #10B981; color: white; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; margin: 20px 0; }
+            .btn { display: inline-block; background: #10B981; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; }
+            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="logo">رِبح 💚</div>
+            <h1>مرحباً ${cart.customer.name}!</h1>
+            <p>لاحظنا أنك تركت بعض المنتجات الرائعة في سلتك:</p>
+            
+            <div class="products">
+                <ul>${productListHtml}</ul>
+                <strong>المجموع: ${cart.total} ${cart.currency || 'SAR'}</strong>
+            </div>
+            
+            ${discount > 0 ? `
+            <div class="discount">
+                🎁 خصم خاص لك: ${discount}%<br>
+                كود الخصم: <strong>${discountCode}</strong>
+            </div>
+            ` : ''}
+            
+            <p style="text-align: center;">
+                <a href="#" class="btn">أكمل طلبك الآن</a>
+            </p>
+            
+            <div class="footer">
+                <p>هذه الرسالة من رِبح - خدمة استرجاع السلات المتروكة</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    // Send via Resend API (FREE: 3000/month)
+    if (config.RESEND_API_KEY) {
+        try {
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: config.EMAIL_FROM,
+                    to: cart.customer.email,
+                    subject: subject,
+                    html: htmlContent
+                })
+            });
+
+            const result = await response.json();
+
+            if (result.id) {
+                console.log(`✅ Email sent! ID: ${result.id}`);
+                return true;
+            } else {
+                console.log(`⚠️ Email failed:`, result);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Email error:', error);
+            return false;
+        }
+    } else {
+        console.log('📧 Email logged (Resend not configured):', subject);
+        return false;
+    }
+}
+
+// ==========================================
+// SMS INTEGRATION (Twilio - ~$0.04/msg)
+// ==========================================
+
+async function sendSMSReminder(cart, reminderNumber) {
+    if (!config.ENABLE_SMS || !config.TWILIO_SMS_NUMBER || !cart.customer.phone) {
+        console.log('⚠️ SMS disabled or not configured');
+        return false;
+    }
+
+    console.log(`📱 Preparing SMS reminder #${reminderNumber} for ${cart.customer.phone}...`);
+
+    const discount = config.REMINDER_DELAYS[reminderNumber - 1]?.discount || 0;
+    const discountCode = discount > 0 ? `RIBH${discount}` : '';
+
+    // Short SMS message (160 char limit)
+    let message;
+    if (reminderNumber === 1) {
+        message = `مرحباً ${cart.customer.name}! 👋 سلتك (${cart.total} ${cart.currency || 'SAR'}) في انتظارك. أكمل طلبك الآن!`;
+    } else if (discount > 0) {
+        message = `${cart.customer.name}، خصم ${discount}% على سلتك! 🎁 كود: ${discountCode} - لا تفوّت الفرصة!`;
+    } else {
+        message = `تذكير: سلتك المتروكة في انتظارك يا ${cart.customer.name}! 🛒`;
+    }
+
+    // Format phone number
+    let formattedPhone = cart.customer.phone.replace(/\s+/g, '').replace(/^00/, '+');
+    if (!formattedPhone.startsWith('+')) {
+        formattedPhone = '+' + formattedPhone;
+    }
+
+    try {
+        const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${config.TWILIO_ACCOUNT_SID}/Messages.json`;
+
+        const formData = new URLSearchParams();
+        formData.append('From', config.TWILIO_SMS_NUMBER);
+        formData.append('To', formattedPhone);
+        formData.append('Body', message);
+
+        const response = await fetch(twilioUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Basic ' + Buffer.from(`${config.TWILIO_ACCOUNT_SID}:${config.TWILIO_AUTH_TOKEN}`).toString('base64'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.error_code) {
+            throw new Error(result.error_message || `Twilio error: ${result.error_code}`);
+        }
+
+        console.log(`✅ SMS sent! SID: ${result.sid}`);
+        return true;
+    } catch (error) {
+        console.error('❌ SMS error:', error);
+        return false;
+    }
+}
+
+// ==========================================
+// UNIFIED REMINDER SENDER (uses all enabled channels)
+// ==========================================
+
+async function sendAllReminders(cart, reminderNumber) {
+    const results = {
+        email: false,
+        sms: false,
+        whatsapp: false
+    };
+
+    // 1. Email (FREE) - always try first
+    if (config.ENABLE_EMAIL && cart.customer.email) {
+        results.email = await sendEmailReminder(cart, reminderNumber);
+    }
+
+    // 2. SMS (Paid) - if enabled
+    if (config.ENABLE_SMS && cart.customer.phone) {
+        results.sms = await sendSMSReminder(cart, reminderNumber);
+    }
+
+    // 3. WhatsApp (Paid + needs Business API) - if enabled
+    if (config.ENABLE_WHATSAPP && cart.customer.phone) {
+        results.whatsapp = await sendWhatsAppReminder(cart, reminderNumber);
+    }
+
+    console.log('📊 Reminder results:', results);
+    return results;
 }
 
 // ==========================================
