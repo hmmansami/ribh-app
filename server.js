@@ -635,7 +635,35 @@ async function sendEmailReminder(cart, reminderNumber) {
     </html>
     `;
 
-    // Send via Resend API (FREE: 3000/month)
+    // Check store email limit (500/month free)
+    const storeId = cart.merchant || 'default';
+    const usageOk = checkAndUpdateEmailUsage(storeId);
+
+    if (!usageOk) {
+        console.log(`⚠️ Store ${storeId} exceeded free email limit (500/month)`);
+        console.log('💡 Upgrade to paid plan for unlimited emails');
+        return false;
+    }
+
+    // Priority: AWS SES (cheapest) > Resend (free tier) > Log only
+
+    // Option 1: AWS SES ($0.10/1000 emails)
+    if (config.AWS_ACCESS_KEY && config.AWS_SECRET_KEY) {
+        try {
+            // AWS SES via REST API (simplified)
+            // For production, use @aws-sdk/client-ses
+            const response = await sendEmailViaAWS(cart.customer.email, subject, htmlContent);
+            if (response) {
+                console.log(`✅ Email sent via AWS SES to ${cart.customer.email}`);
+                return true;
+            }
+        } catch (error) {
+            console.error('❌ AWS SES error:', error);
+            // Fall through to try Resend
+        }
+    }
+
+    // Option 2: Resend (as backup)
     if (config.RESEND_API_KEY) {
         try {
             const response = await fetch('https://api.resend.com/emails', {
@@ -655,20 +683,105 @@ async function sendEmailReminder(cart, reminderNumber) {
             const result = await response.json();
 
             if (result.id) {
-                console.log(`✅ Email sent! ID: ${result.id}`);
+                console.log(`✅ Email sent via Resend! ID: ${result.id}`);
                 return true;
             } else {
                 console.log(`⚠️ Email failed:`, result);
                 return false;
             }
         } catch (error) {
-            console.error('❌ Email error:', error);
+            console.error('❌ Resend error:', error);
             return false;
         }
-    } else {
-        console.log('📧 Email logged (Resend not configured):', subject);
-        return false;
     }
+
+    console.log('📧 Email logged (no provider configured):', subject);
+    return false;
+}
+
+// ==========================================
+// EMAIL USAGE TRACKING & LIMITS
+// ==========================================
+
+const USAGE_FILE = path.join(__dirname, 'data', 'email_usage.json');
+
+// Initialize usage file
+if (!fs.existsSync(USAGE_FILE)) {
+    fs.writeFileSync(USAGE_FILE, JSON.stringify({}));
+}
+
+function getEmailUsage() {
+    try {
+        return JSON.parse(fs.readFileSync(USAGE_FILE, 'utf8'));
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveEmailUsage(usage) {
+    fs.writeFileSync(USAGE_FILE, JSON.stringify(usage, null, 2));
+}
+
+function checkAndUpdateEmailUsage(storeId) {
+    const usage = getEmailUsage();
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${now.getMonth() + 1}`;
+
+    // Initialize store usage if not exists
+    if (!usage[storeId]) {
+        usage[storeId] = {};
+    }
+
+    // Initialize month if not exists
+    if (!usage[storeId][monthKey]) {
+        usage[storeId][monthKey] = 0;
+    }
+
+    // Check limit (500/month for free)
+    const FREE_LIMIT = 500;
+    const store = getStoreConfig(storeId);
+    const isPaid = store.isPaid || false; // Future: check if paid subscription
+
+    if (!isPaid && usage[storeId][monthKey] >= FREE_LIMIT) {
+        return false; // Limit exceeded
+    }
+
+    // Increment usage
+    usage[storeId][monthKey]++;
+    saveEmailUsage(usage);
+
+    console.log(`📊 Email usage for ${storeId}: ${usage[storeId][monthKey]}/${isPaid ? '∞' : FREE_LIMIT}`);
+    return true;
+}
+
+// AWS SES Email Sending (super cheap: $0.10/1000)
+async function sendEmailViaAWS(to, subject, htmlContent) {
+    // For full implementation, install: npm install @aws-sdk/client-ses
+    // This is a placeholder that logs the intent
+
+    console.log(`📧 AWS SES: Would send email to ${to}`);
+    console.log(`   Subject: ${subject.substring(0, 50)}...`);
+    console.log('💡 To enable AWS SES, install: npm install @aws-sdk/client-ses');
+    console.log('   Then add AWS_ACCESS_KEY and AWS_SECRET_KEY to environment');
+
+    // For now, return false to fall through to Resend
+    // Once AWS SDK is installed, this will actually send
+    return false;
+}
+
+// Get store usage stats
+function getStoreUsageStats(storeId) {
+    const usage = getEmailUsage();
+    const now = new Date();
+    const monthKey = `${now.getFullYear()}-${now.getMonth() + 1}`;
+
+    return {
+        storeId,
+        month: monthKey,
+        emailsSent: usage[storeId]?.[monthKey] || 0,
+        limit: 500,
+        remaining: Math.max(0, 500 - (usage[storeId]?.[monthKey] || 0))
+    };
 }
 
 // ==========================================
@@ -1027,6 +1140,7 @@ function getStoreConfig(storeId = 'default') {
         RESEND_API_KEY: storeSettings.resendApiKey || config.RESEND_API_KEY,
         EMAIL_FROM: storeSettings.emailFrom || config.EMAIL_FROM,
         ENABLE_EMAIL: storeSettings.enableEmail !== false,
+        isPaid: storeSettings.isPaid || false,
 
         // Telegram  
         TELEGRAM_BOT_TOKEN: storeSettings.telegramBotToken || config.TELEGRAM_BOT_TOKEN,
@@ -1043,6 +1157,13 @@ function getStoreConfig(storeId = 'default') {
         ENABLE_WHATSAPP: config.ENABLE_WHATSAPP
     };
 }
+
+// Get store email usage
+app.get('/api/store/usage', (req, res) => {
+    const storeId = req.query.storeId || 'default';
+    const stats = getStoreUsageStats(storeId);
+    res.json(stats);
+});
 
 // ==========================================
 // HEALTH CHECK & ROOT ENDPOINTS
