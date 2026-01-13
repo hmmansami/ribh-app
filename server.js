@@ -951,6 +951,100 @@ app.get('/api/logs', (req, res) => {
 });
 
 // ==========================================
+// STORE SETTINGS API (Per-Store Config)
+// ==========================================
+
+const SETTINGS_FILE = path.join(__dirname, 'data', 'store_settings.json');
+
+// Initialize settings file
+if (!fs.existsSync(SETTINGS_FILE)) {
+    fs.writeFileSync(SETTINGS_FILE, JSON.stringify({}));
+}
+
+function readSettings() {
+    try {
+        return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
+    } catch (e) {
+        return {};
+    }
+}
+
+function writeSettings(data) {
+    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(data, null, 2));
+}
+
+// Get store settings (returns masked sensitive data)
+app.get('/api/store/settings', (req, res) => {
+    const settings = readSettings();
+    const storeId = req.query.storeId || 'default';
+    const storeSettings = settings[storeId] || {};
+
+    // Return masked version (don't expose full API keys)
+    res.json({
+        resendApiKey: storeSettings.resendApiKey ? '••••' + storeSettings.resendApiKey.slice(-4) : null,
+        emailFrom: storeSettings.emailFrom || null,
+        telegramBotToken: storeSettings.telegramBotToken ? '••••' + storeSettings.telegramBotToken.slice(-4) : null,
+        twilioAccountSid: storeSettings.twilioAccountSid ? '••••' + storeSettings.twilioAccountSid.slice(-4) : null,
+        enableEmail: storeSettings.enableEmail !== false,
+        enableTelegram: !!storeSettings.telegramBotToken,
+        enableSms: !!storeSettings.enableSms
+    });
+});
+
+// Save store settings
+app.post('/api/store/settings', (req, res) => {
+    const settings = readSettings();
+    const storeId = req.body.storeId || 'default';
+
+    // Get existing settings or create new
+    const storeSettings = settings[storeId] || {};
+
+    // Update only provided fields
+    if (req.body.resendApiKey) storeSettings.resendApiKey = req.body.resendApiKey;
+    if (req.body.emailFrom) storeSettings.emailFrom = req.body.emailFrom;
+    if (req.body.telegramBotToken) storeSettings.telegramBotToken = req.body.telegramBotToken;
+    if (req.body.twilioAccountSid) storeSettings.twilioAccountSid = req.body.twilioAccountSid;
+    if (req.body.twilioAuthToken) storeSettings.twilioAuthToken = req.body.twilioAuthToken;
+    if (req.body.twilioSmsNumber) storeSettings.twilioSmsNumber = req.body.twilioSmsNumber;
+    if (req.body.enableSms !== undefined) storeSettings.enableSms = req.body.enableSms;
+    if (req.body.enableEmail !== undefined) storeSettings.enableEmail = req.body.enableEmail;
+
+    settings[storeId] = storeSettings;
+    writeSettings(settings);
+
+    console.log(`✅ Settings saved for store: ${storeId}`);
+    res.json({ success: true, message: 'Settings saved!' });
+});
+
+// Helper: Get store-specific config (for sending messages)
+function getStoreConfig(storeId = 'default') {
+    const settings = readSettings();
+    const storeSettings = settings[storeId] || {};
+
+    // Merge store-specific settings with global defaults
+    return {
+        // Email
+        RESEND_API_KEY: storeSettings.resendApiKey || config.RESEND_API_KEY,
+        EMAIL_FROM: storeSettings.emailFrom || config.EMAIL_FROM,
+        ENABLE_EMAIL: storeSettings.enableEmail !== false,
+
+        // Telegram  
+        TELEGRAM_BOT_TOKEN: storeSettings.telegramBotToken || config.TELEGRAM_BOT_TOKEN,
+        ENABLE_TELEGRAM: !!(storeSettings.telegramBotToken || config.TELEGRAM_BOT_TOKEN),
+
+        // SMS
+        TWILIO_ACCOUNT_SID: storeSettings.twilioAccountSid || config.TWILIO_ACCOUNT_SID,
+        TWILIO_AUTH_TOKEN: storeSettings.twilioAuthToken || config.TWILIO_AUTH_TOKEN,
+        TWILIO_SMS_NUMBER: storeSettings.twilioSmsNumber || config.TWILIO_SMS_NUMBER,
+        ENABLE_SMS: storeSettings.enableSms || config.ENABLE_SMS,
+
+        // WhatsApp (global only for now)
+        TWILIO_WHATSAPP_NUMBER: config.TWILIO_WHATSAPP_NUMBER,
+        ENABLE_WHATSAPP: config.ENABLE_WHATSAPP
+    };
+}
+
+// ==========================================
 // HEALTH CHECK & ROOT ENDPOINTS
 // ==========================================
 
