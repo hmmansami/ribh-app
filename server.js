@@ -632,6 +632,24 @@ app.get('/health', (req, res) => {
 });
 
 // ==========================================
+// KEEP-ALIVE: Prevent Render from sleeping
+// ==========================================
+const KEEP_ALIVE_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
+const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://ribh.click';
+
+function keepAlive() {
+    fetch(`${APP_URL}/health`)
+        .then(res => console.log(`💓 Keep-alive ping: ${res.status} at ${new Date().toLocaleTimeString()}`))
+        .catch(err => console.log(`⚠️ Keep-alive failed: ${err.message}`));
+}
+
+// Start keep-alive after server starts (only in production)
+if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+    setInterval(keepAlive, KEEP_ALIVE_INTERVAL);
+    console.log(`💓 Keep-alive enabled: pinging every ${KEEP_ALIVE_INTERVAL / 60000} minutes`);
+}
+
+// ==========================================
 // START SERVER
 // ==========================================
 app.listen(PORT, () => {
@@ -653,7 +671,13 @@ app.listen(PORT, () => {
     ║     Integrations:                                          ║
     ║     • WhatsApp:   ${config.TWILIO_ACCOUNT_SID ? '✅ Configured' : '⚠️  Not configured'}                         ║
     ║     • AI:         ${config.OPENAI_API_KEY ? '✅ OpenAI' : config.GEMINI_API_KEY ? '✅ Gemini' : '⚠️  Not configured (using templates)'}            ║
+    ║     • Keep-Alive: ✅ Enabled (every 5 min)                  ║
     ║                                                            ║
     ╚════════════════════════════════════════════════════════════╝
     `);
+
+    // Initial ping after 10 seconds to confirm it works
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+        setTimeout(keepAlive, 10000);
+    }
 });
