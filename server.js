@@ -305,6 +305,10 @@ function handleAbandonedCart(data, merchant) {
         items: data.items || data.products || [],
         total: data.total || data.grand_total || 0,
         currency: data.currency || 'SAR',
+        // Checkout URL from Salla or construct it
+        checkoutUrl: data.checkout_url || data.recovery_url || data.cart_url || '',
+        storeUrl: data.store?.url || data.merchant_url || '',
+        storeName: data.store?.name || merchant,
         createdAt: new Date().toISOString(),
         status: 'pending', // pending, sent, recovered, expired
         reminders: []
@@ -358,27 +362,78 @@ function handleAppInstalled(data, merchant) {
 
 // Schedule reminder (simplified - in production use proper job queue like Bull/Redis)
 function scheduleReminder(cart) {
-    // For demo: send first reminder after 10 seconds
-    // In production: use config.REMINDER_DELAYS with proper scheduling
+    /*
+     * SMART REMINDER STRATEGY:
+     * 
+     * IMMEDIATELY → SMS/WhatsApp (catches them while warm!)
+     * 1 hour     → Email #1 (friendly reminder, no discount)
+     * 6 hours    → Email #2 (5% discount)
+     * 24 hours   → Email #3 (10% discount - last chance!)
+     */
 
-    const delays = [
-        10000,      // 1st reminder: 10 seconds (demo) - should be 1 hour
-        30000,      // 2nd reminder: 30 seconds (demo) - should be 6 hours
-        60000       // 3rd reminder: 60 seconds (demo) - should be 24 hours
+    // IMMEDIATE: Send SMS/WhatsApp right away (highest conversion!)
+    console.log('📱 Sending IMMEDIATE SMS/WhatsApp...');
+    sendImmediateReminder(cart);
+
+    // DELAYED: Email reminders with increasing discounts
+    const emailDelays = [
+        { delay: 1 * 60 * 60 * 1000, discount: 0 },   // 1 hour - no discount
+        { delay: 6 * 60 * 60 * 1000, discount: 5 },   // 6 hours - 5% off
+        { delay: 24 * 60 * 60 * 1000, discount: 10 }  // 24 hours - 10% off
     ];
 
-    delays.forEach((delay, index) => {
+    // For DEMO: Use shorter delays (10s, 30s, 60s)
+    const demoMode = true; // Set to false in production!
+    const demoDelays = [
+        { delay: 10000, discount: 0 },   // 10 seconds
+        { delay: 30000, discount: 5 },   // 30 seconds
+        { delay: 60000, discount: 10 }   // 60 seconds
+    ];
+
+    const delays = demoMode ? demoDelays : emailDelays;
+
+    delays.forEach((reminder, index) => {
         setTimeout(async () => {
             const carts = readDB(DB_FILE);
             const currentCart = carts.find(c => c.id === cart.id);
 
             // Only send if not already recovered
             if (currentCart && currentCart.status !== 'recovered') {
-                // Send via ALL enabled channels (Email FREE, SMS paid, WhatsApp paid)
-                await sendAllReminders(cart, index + 1);
+                console.log(`📧 Sending Email reminder #${index + 1}...`);
+                await sendEmailReminder(cart, index + 1);
+            } else {
+                console.log(`⏭️ Skipped reminder #${index + 1} - cart already recovered!`);
             }
-        }, delay);
+        }, reminder.delay);
     });
+}
+
+// IMMEDIATE SMS/WhatsApp when cart is abandoned (catches them while warm!)
+async function sendImmediateReminder(cart) {
+    const message = `مرحباً ${cart.customer.name}! 👋\n\n` +
+        `سلتك في انتظارك 🛒\n` +
+        `${cart.items.length} منتجات بقيمة ${cart.total} ${cart.currency || 'SAR'}\n\n` +
+        `أكمل طلبك الآن: ${cart.checkoutUrl || cart.storeUrl || ''}`;
+
+    const results = { sms: false, whatsapp: false, telegram: false };
+
+    // Try SMS first (highest reach)
+    if (config.ENABLE_SMS && cart.customer.phone) {
+        results.sms = await sendSMSReminder(cart, 0); // 0 = immediate, no discount
+    }
+
+    // Try WhatsApp if enabled
+    if (config.ENABLE_WHATSAPP && cart.customer.phone) {
+        results.whatsapp = await sendWhatsAppReminder(cart, 0);
+    }
+
+    // Try Telegram if customer has chat ID
+    if (config.ENABLE_TELEGRAM && cart.customer.telegramChatId) {
+        results.telegram = await sendTelegramReminder(cart, 0);
+    }
+
+    console.log('📊 Immediate reminder results:', results);
+    return results;
 }
 
 // ==========================================
@@ -624,8 +679,10 @@ async function sendEmailReminder(cart, reminderNumber) {
             ` : ''}
             
             <p style="text-align: center;">
-                <a href="#" class="btn">أكمل طلبك الآن</a>
+                <a href="${cart.checkoutUrl || cart.storeUrl || '#'}" class="btn" style="color: white;">أكمل طلبك الآن 🛒</a>
             </p>
+            
+            ${discountCode ? `<p style="text-align: center; color: #666; font-size: 14px;">استخدم الكود <strong>${discountCode}</strong> عند الدفع</p>` : ''}
             
             <div class="footer">
                 <p>هذه الرسالة من رِبح - خدمة استرجاع السلات المتروكة</p>
