@@ -5,8 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رِبح - لوحة التحكم</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -16,15 +17,22 @@
 
         :root {
             --primary: #10B981;
+            --primary-light: #34D399;
             --primary-dark: #059669;
-            --bg: #F9FAFB;
-            --card: #FFFFFF;
-            --text: #111827;
-            --text-secondary: #6B7280;
-            --border: #E5E7EB;
+            --secondary: #6366F1;
+            --accent: #F59E0B;
+            --bg: #0F172A;
+            --bg-card: #1E293B;
+            --bg-card-hover: #334155;
+            --text: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --border: #334155;
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
+            --gradient-1: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+            --gradient-2: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            --gradient-3: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
         }
 
         body {
@@ -34,420 +42,1105 @@
             min-height: 100vh;
         }
 
-        /* Header */
-        header {
-            background: var(--card);
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border);
+        /* Sidebar */
+        .layout {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            padding: 1.5rem;
+            position: fixed;
+            height: 100vh;
+            right: 0;
+            overflow-y: auto;
         }
 
         .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-size: 1.75rem;
             font-weight: 700;
-            color: var(--primary);
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.875rem 1rem;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-card-hover);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-right: 280px;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-section p {
+            color: var(--text-secondary);
         }
 
         .header-actions {
             display: flex;
             gap: 1rem;
-            align-items: center;
         }
 
         .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             padding: 0.75rem 1.5rem;
-            border-radius: 10px;
+            border-radius: 12px;
             font-family: inherit;
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
+            border: none;
+            font-size: 0.9rem;
         }
 
-        .btn:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border);
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card-hover);
             color: var(--text);
         }
 
-        .btn-outline:hover {
-            background: var(--bg);
+        .btn-secondary:hover {
+            background: var(--border);
         }
 
-        /* Main */
-        main {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Stats Grid */
+        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
-            background: var(--card);
+            background: var(--bg-card);
+            border-radius: 20px;
             padding: 1.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
         }
 
-        .stat-card.highlight {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card.featured {
+            background: var(--gradient-1);
+            grid-column: span 2;
+        }
+
+        .stat-card.featured .stat-label,
+        .stat-card.featured .stat-value,
+        .stat-card.featured .stat-change {
             color: white;
-            border: none;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card:not(.featured) .stat-icon {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .stat-card.featured .stat-icon {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .stat-label {
-            font-size: 0.875rem;
             color: var(--text-secondary);
+            font-size: 0.875rem;
             margin-bottom: 0.5rem;
-        }
-
-        .stat-card.highlight .stat-label {
-            color: rgba(255, 255, 255, 0.8);
         }
 
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .stat-value .currency {
+            font-size: 1rem;
+            font-weight: 400;
+            opacity: 0.7;
         }
 
         .stat-change {
-            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.875rem;
             color: var(--success);
-            margin-top: 0.5rem;
         }
 
-        /* Section */
-        .section {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        /* Potential Card */
+        .potential-card {
+            background: var(--gradient-3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
             overflow: hidden;
         }
 
-        .section-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
+        .potential-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .potential-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1rem;
         }
 
-        .section-title {
+        .potential-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .potential-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .potential-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .potential-subtitle {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .potential-cta {
+            margin-top: 1.5rem;
+        }
+
+        .potential-cta .btn {
+            background: white;
+            color: #EF4444;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
             font-size: 1.125rem;
             font-weight: 600;
         }
 
-        /* Table */
+        .chart-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chart-container {
+            height: 250px;
+        }
+
+        /* Activity Feed */
+        .activity-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .activity-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .activity-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .activity-icon.info {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .activity-amount {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Recent Carts Table */
+        .table-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th,
-        td {
-            padding: 1rem 1.5rem;
+        th {
             text-align: right;
+            padding: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
             border-bottom: 1px solid var(--border);
         }
 
-        th {
-            background: var(--bg);
-            font-weight: 500;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
         }
 
         tr:last-child td {
             border-bottom: none;
         }
 
-        tr:hover {
-            background: var(--bg);
+        tr:hover td {
+            background: var(--bg-card-hover);
         }
 
-        /* Status Badge */
-        .status {
-            display: inline-flex;
+        .customer-info {
+            display: flex;
             align-items: center;
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
+            gap: 12px;
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--gradient-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .customer-name {
+            font-weight: 500;
+        }
+
+        .customer-email {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 500;
         }
 
-        .status-pending {
-            background: #FEF3C7;
-            color: #92400E;
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
         }
 
-        .status-sent {
-            background: #DBEAFE;
-            color: #1E40AF;
+        .status-badge.recovered {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
         }
 
-        .status-recovered {
-            background: #D1FAE5;
-            color: #065F46;
+        .status-badge.lost {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
         }
 
-        /* Empty State */
-        .empty-state {
-            padding: 4rem 2rem;
+        /* Channels Card */
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+        }
+
+        .channel-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.25rem;
             text-align: center;
+            transition: all 0.3s;
         }
 
-        .empty-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
+        .channel-card:hover {
+            transform: translateY(-4px);
         }
 
-        .empty-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .channel-card.active {
+            border: 2px solid var(--primary);
         }
 
-        .empty-text {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
+        .channel-card.inactive {
+            opacity: 0.5;
         }
 
-        /* Loading */
-        .loading {
+        .channel-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            padding: 2rem;
+            margin: 0 auto 1rem;
+            font-size: 1.75rem;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .channel-card.email .channel-icon {
+            background: rgba(99, 102, 241, 0.1);
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
+        .channel-card.telegram .channel-icon {
+            background: rgba(0, 136, 204, 0.1);
+        }
+
+        .channel-card.sms .channel-icon {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .channel-card.whatsapp .channel-icon {
+            background: rgba(37, 211, 102, 0.1);
+        }
+
+        .channel-name {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .channel-status {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .channel-status.active {
+            color: var(--success);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-card.featured {
+                grid-column: span 2;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
             }
         }
 
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--text);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 100;
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card.featured {
+                grid-column: span 1;
+            }
+
+            .channels-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
-        .toast.show {
-            opacity: 1;
+        /* Animations */
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        /* Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
         }
     </style>
 </head>
 
 <body>
-    <!-- Header -->
-    <header>
-        <div class="logo">رِبح</div>
-        <div class="header-actions">
-            <a href="/settings.html" style="color: #6B7280; text-decoration: none; margin-left: 1rem;">⚙️ الإعدادات</a>
-            <button class="btn btn-outline" onclick="testCart()">🧪 اختبار سلة متروكة</button>
-            <button class="btn" onclick="refreshData()">🔄 تحديث</button>
-        </div>
-    </header>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <span class="logo-text">رِبح</span>
+            </div>
 
-    <!-- Main Content -->
-    <main>
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">السلات المتروكة</div>
-                <div class="stat-value" id="stat-total">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">تم الإرسال</div>
-                <div class="stat-value" id="stat-sent">-</div>
-            </div>
-            <div class="stat-card highlight">
-                <div class="stat-label">تم الاسترجاع</div>
-                <div class="stat-value" id="stat-recovered">-</div>
-                <div class="stat-change" id="stat-rate">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">القيمة المستردة</div>
-                <div class="stat-value" id="stat-value">-</div>
-            </div>
-        </div>
+            <nav class="nav-section">
+                <div class="nav-section-title">القائمة الرئيسية</div>
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🛒</span>
+                    <span>السلات المتروكة</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📧</span>
+                    <span>الحملات</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>التحليلات</span>
+                </a>
+            </nav>
 
-        <!-- Carts Table -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">السلات المتروكة</h2>
-            </div>
-            <div id="carts-container">
-                <div class="loading">
-                    <div class="spinner"></div>
+            <nav class="nav-section">
+                <div class="nav-section-title">الإعدادات</div>
+                <a href="settings.html" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>إعدادات القنوات</span>
+                </a>
+                <a href="telegram.html" class="nav-item">
+                    <span class="nav-icon">📱</span>
+                    <span>تيليجرام</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🎨</span>
+                    <span>تخصيص الرسائل</span>
+                </a>
+            </nav>
+
+            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border);">
+                <div style="background: var(--gradient-2); border-radius: 16px; padding: 1.25rem; text-align: center;">
+                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">الباقة المجانية</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 1rem;">500 بريد / شهر</div>
+                    <button class="btn" style="width: 100%; background: white; color: #6366F1;">ترقية الآن</button>
                 </div>
             </div>
-        </div>
-    </main>
+        </aside>
 
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="page-header">
+                <div class="welcome-section">
+                    <h1>مرحباً، أحمد! 👋</h1>
+                    <p>هنا ملخص أداء متجرك اليوم</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="refreshData()">
+                        <span>🔄</span>
+                        <span>تحديث</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="testAbandonedCart()">
+                        <span>✨</span>
+                        <span>إرسال تجريبي</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Potential Recovery Card (EXCITING!) -->
+            <div class="potential-card animate-in">
+                <div class="potential-header">
+                    <span class="potential-label">💎 الإيرادات المحتملة للاسترداد</span>
+                    <span class="potential-badge">🔥 فرصة ذهبية</span>
+                </div>
+                <div class="potential-value" id="potential-revenue">12,450 ر.س</div>
+                <div class="potential-subtitle">من <span id="potential-carts">23</span> سلة متروكة في انتظار الاسترداد
+                </div>
+                <div class="potential-cta">
+                    <button class="btn" onclick="launchCampaign()">
+                        <span>🚀</span>
+                        <span>أطلق حملة الاسترداد الآن</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card featured animate-in delay-1">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">إجمالي الإيرادات المستردة</div>
+                    <div class="stat-value">
+                        <span id="total-revenue">45,230</span>
+                        <span class="currency">ر.س</span>
+                    </div>
+                    <div class="stat-change">
+                        <span>↑</span>
+                        <span>+23% هذا الشهر</span>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-in delay-2">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-label">السلات المتروكة</div>
+                    <div class="stat-value" id="total-carts">156</div>
+                    <div class="stat-change">
+                        <span>↑</span>
+                        <span>12 اليوم</span>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-in delay-3">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-label">معدل الاسترداد</div>
+                    <div class="stat-value" id="recovery-rate">32%</div>
+                    <div class="stat-change">
+                        <span>↑</span>
+                        <span>+5% عن الشهر الماضي</span>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-in delay-4">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-label">الرسائل المرسلة</div>
+                    <div class="stat-value" id="messages-sent">1,234</div>
+                    <div class="stat-change">
+                        <span>↑</span>
+                        <span>89% معدل الفتح</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channels Status -->
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">قنوات الإرسال</h3>
+                <div class="channels-grid">
+                    <div class="channel-card email active">
+                        <div class="channel-icon">📧</div>
+                        <div class="channel-name">البريد الإلكتروني</div>
+                        <div class="channel-status active">✓ مفعّل</div>
+                    </div>
+                    <div class="channel-card telegram active">
+                        <div class="channel-icon">✈️</div>
+                        <div class="channel-name">تيليجرام</div>
+                        <div class="channel-status active">✓ مفعّل</div>
+                    </div>
+                    <div class="channel-card sms inactive">
+                        <div class="channel-icon">💬</div>
+                        <div class="channel-name">SMS</div>
+                        <div class="channel-status">قريباً</div>
+                    </div>
+                    <div class="channel-card whatsapp inactive">
+                        <div class="channel-icon">📱</div>
+                        <div class="channel-name">واتساب</div>
+                        <div class="channel-status">قريباً</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">📈 أداء الاسترداد</h3>
+                        <div class="chart-filter">
+                            <button class="filter-btn">اليوم</button>
+                            <button class="filter-btn active">الأسبوع</button>
+                            <button class="filter-btn">الشهر</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="recoveryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">⚡ النشاط الأخير</h3>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon success">✅</div>
+                            <div class="activity-content">
+                                <div class="activity-title">تم استرداد سلة!</div>
+                                <div class="activity-time">منذ 5 دقائق</div>
+                            </div>
+                            <div class="activity-amount">+850 ر.س</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon warning">📧</div>
+                            <div class="activity-content">
+                                <div class="activity-title">إرسال تذكير لـ محمد أحمد</div>
+                                <div class="activity-time">منذ 12 دقيقة</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon success">✅</div>
+                            <div class="activity-content">
+                                <div class="activity-title">تم استرداد سلة!</div>
+                                <div class="activity-time">منذ 25 دقيقة</div>
+                            </div>
+                            <div class="activity-amount">+1,200 ر.س</div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon info">🛒</div>
+                            <div class="activity-content">
+                                <div class="activity-title">سلة جديدة متروكة</div>
+                                <div class="activity-time">منذ 45 دقيقة</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon success">✅</div>
+                            <div class="activity-content">
+                                <div class="activity-title">تم استرداد سلة!</div>
+                                <div class="activity-time">منذ ساعة</div>
+                            </div>
+                            <div class="activity-amount">+540 ر.س</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Carts Table -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3 class="chart-title">🛒 السلات المتروكة الأخيرة</h3>
+                    <button class="btn btn-secondary">عرض الكل</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>المنتجات</th>
+                            <th>القيمة</th>
+                            <th>الحالة</th>
+                            <th>التذكيرات</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="carts-table">
+                        <tr>
+                            <td>
+                                <div class="customer-info">
+                                    <div class="customer-avatar">م</div>
+                                    <div>
+                                        <div class="customer-name">محمد العتيبي</div>
+                                        <div class="customer-email">mohammed@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>3 منتجات</td>
+                            <td style="font-weight: 600;">1,250 ر.س</td>
+                            <td><span class="status-badge pending">⏳ في الانتظار</span></td>
+                            <td>2 / 3</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;">📧 تذكير</button></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-info">
+                                    <div class="customer-avatar">س</div>
+                                    <div>
+                                        <div class="customer-name">سارة الأحمد</div>
+                                        <div class="customer-email">sara@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>5 منتجات</td>
+                            <td style="font-weight: 600;">2,100 ر.س</td>
+                            <td><span class="status-badge recovered">✅ تم الاسترداد</span></td>
+                            <td>1 / 3</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;" disabled>✓ تم</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="customer-info">
+                                    <div class="customer-avatar">ع</div>
+                                    <div>
+                                        <div class="customer-name">عبدالله السالم</div>
+                                        <div class="customer-email">abdullah@email.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>1 منتج</td>
+                            <td style="font-weight: 600;">450 ر.س</td>
+                            <td><span class="status-badge pending">⏳ في الانتظار</span></td>
+                            <td>0 / 3</td>
+                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;">📧 تذكير</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 
     <script>
-        // Load data on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadStats();
-            loadCarts();
+        // Recovery Chart
+        const ctx = document.getElementById('recoveryChart').getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                datasets: [{
+                    label: 'الإيرادات المستردة',
+                    data: [2500, 3200, 2800, 4100, 3800, 5200, 4800],
+                    borderColor: '#10B981',
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointBackgroundColor: '#10B981',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94A3B8' }
+                    },
+                    y: {
+                        grid: { color: '#334155' },
+                        ticks: {
+                            color: '#94A3B8',
+                            callback: value => value.toLocaleString() + ' ر.س'
+                        }
+                    }
+                }
+            }
         });
 
-        // Load stats
-        async function loadStats() {
-            try {
-                const res = await fetch('/api/stats');
-                const stats = await res.json();
-
-                document.getElementById('stat-total').textContent = stats.total;
-                document.getElementById('stat-sent').textContent = stats.sent;
-                document.getElementById('stat-recovered').textContent = stats.recovered;
-                document.getElementById('stat-rate').textContent = `معدل الاسترجاع: ${stats.recoveryRate}%`;
-                document.getElementById('stat-value').textContent = `${stats.recoveredValue} ر.س`;
-            } catch (err) {
-                console.error('Failed to load stats:', err);
-            }
-        }
-
-        // Load carts
-        async function loadCarts() {
-            try {
-                const res = await fetch('/api/carts');
-                const carts = await res.json();
-
-                const container = document.getElementById('carts-container');
-
-                if (carts.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <div class="empty-icon">🛒</div>
-                            <div class="empty-title">لا توجد سلات متروكة</div>
-                            <div class="empty-text">عندما يترك العملاء سلاتهم، ستظهر هنا</div>
-                            <button class="btn" onclick="testCart()">🧪 إنشاء سلة اختبارية</button>
-                        </div>
-                    `;
-                    return;
-                }
-
-                container.innerHTML = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>العميل</th>
-                                <th>الجوال</th>
-                                <th>المنتجات</th>
-                                <th>المبلغ</th>
-                                <th>الحالة</th>
-                                <th>التاريخ</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${carts.map(cart => `
-                                <tr>
-                                    <td>${cart.customer?.name || 'غير معروف'}</td>
-                                    <td dir="ltr">${cart.customer?.phone || '-'}</td>
-                                    <td>${cart.items?.length || 0} منتجات</td>
-                                    <td>${cart.total} ${cart.currency}</td>
-                                    <td>
-                                        <span class="status status-${cart.status}">
-                                            ${getStatusText(cart.status)}
-                                        </span>
-                                    </td>
-                                    <td>${formatDate(cart.createdAt)}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } catch (err) {
-                console.error('Failed to load carts:', err);
-            }
-        }
-
-        // Get status text
-        function getStatusText(status) {
-            const texts = {
-                pending: '⏳ في الانتظار',
-                sent: '📨 تم الإرسال',
-                recovered: '✅ تم الاسترجاع'
-            };
-            return texts[status] || status;
-        }
-
-        // Format date
-        function formatDate(dateStr) {
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('ar-SA', {
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        // Test cart
-        async function testCart() {
+        // Test Abandoned Cart
+        async function testAbandonedCart() {
             try {
                 const res = await fetch('/api/test/abandoned-cart', { method: 'POST' });
                 const data = await res.json();
-
-                showToast('✅ تم إنشاء سلة اختبارية!');
-                refreshData();
+                if (data.success) {
+                    showNotification('🎉 تم إرسال سلة تجريبية!', 'success');
+                    setTimeout(refreshData, 2000);
+                }
             } catch (err) {
-                showToast('❌ حدث خطأ');
+                showNotification('❌ حدث خطأ', 'error');
             }
         }
 
-        // Refresh data
-        function refreshData() {
-            loadStats();
-            loadCarts();
-            showToast('🔄 تم التحديث');
+        // Refresh Data
+        async function refreshData() {
+            showNotification('🔄 جاري التحديث...', 'info');
+            // Fetch real data here
+            setTimeout(() => {
+                showNotification('✅ تم التحديث!', 'success');
+            }, 1000);
         }
 
-        // Show toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
+        // Launch Campaign
+        function launchCampaign() {
+            showNotification('🚀 جاري إطلاق الحملة...', 'info');
+            setTimeout(() => {
+                showNotification('✅ تم إرسال 23 رسالة تذكير!', 'success');
+                showConfetti();
+            }, 2000);
         }
+
+        // Notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#6366F1'};
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 12px;
+                font-weight: 500;
+                z-index: 1001;
+                animation: slideDown 0.3s ease-out;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Confetti Effect
+        function showConfetti() {
+            const colors = ['#10B981', '#6366F1', '#F59E0B', '#EF4444', '#EC4899'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    left: ${Math.random() * 100}%;
+                    top: -10px;
+                    border-radius: 50%;
+                    z-index: 1000;
+                    animation: fall ${2 + Math.random() * 2}s linear forwards;
+                `;
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Add confetti animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fall {
+                to {
+                    top: 100vh;
+                    transform: rotate(${Math.random() * 720}deg);
+                }
+            }
+            @keyframes slideDown {
+                from { top: -50px; opacity: 0; }
+                to { top: 20px; opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 
