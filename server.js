@@ -117,7 +117,6 @@ function logWebhook(event, data) {
     if (logs.length > 100) logs.shift();
     writeDB(LOG_FILE, logs);
 }
-
 // ==========================================
 // SALLA OAUTH - App Installation
 // ==========================================
@@ -140,28 +139,20 @@ app.get('/oauth/callback', async (req, res) => {
         writeDB(STORES_FILE, stores);
     }
 
-    res.send(`
-        <html dir="rtl">
-        <head>
-            <meta charset="UTF-8">
-            <title>رِبح - تم التثبيت</title>
-            <style>
-                body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0fdf4; }
-                .card { background: white; padding: 3rem; border-radius: 20px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-                h1 { color: #10B981; margin-bottom: 1rem; }
-                p { color: #666; }
-                .icon { font-size: 4rem; margin-bottom: 1rem; }
-            </style>
-        </head>
-        <body>
-            <div class="card">
-                <div class="icon">✅</div>
-                <h1>تم تثبيت رِبح بنجاح!</h1>
-                <p>سيبدأ التطبيق باستقبال السلات المتروكة تلقائياً</p>
-            </div>
-        </body>
-        </html>
-    `);
+    // Redirect to dashboard with store ID
+    res.redirect(`/?store=${encodeURIComponent(merchant)}&welcome=true`);
+});
+
+// Store dashboard entry point (from Salla "Open App" button)
+app.get('/app', (req, res) => {
+    const { merchant, store } = req.query;
+    const storeId = merchant || store;
+
+    if (storeId) {
+        res.redirect(`/?store=${encodeURIComponent(storeId)}`);
+    } else {
+        res.redirect('/');
+    }
 });
 
 // ==========================================

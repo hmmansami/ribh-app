@@ -1141,6 +1141,58 @@
             }
         `;
         document.head.appendChild(style);
+
+        // Get store ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('store');
+        const isWelcome = urlParams.get('welcome');
+
+        // Store the store ID for API calls
+        window.currentStoreId = storeId || 'demo';
+
+        // Update welcome message with store name
+        if (storeId) {
+            document.querySelector('.welcome-section h1').textContent = `مرحباً بمتجرك! 👋`;
+        }
+
+        // Show welcome message for new installs
+        if (isWelcome) {
+            setTimeout(() => {
+                showNotification('🎉 تم تثبيت رِبح بنجاح! مرحباً بك', 'success');
+                showConfetti();
+            }, 500);
+        }
+
+        // Load real data on page load
+        async function loadDashboardData() {
+            try {
+                const storeParam = storeId ? `?storeId=${storeId}` : '';
+                
+                // Get carts
+                const cartsRes = await fetch(`/api/carts${storeParam}`);
+                const carts = await cartsRes.json();
+                
+                // Get stats
+                const statsRes = await fetch(`/api/stats${storeParam}`);
+                const stats = await statsRes.json();
+                
+                // Update stats
+                document.getElementById('total-carts').textContent = stats.total || 0;
+                document.getElementById('recovery-rate').textContent = `${stats.recoveryRate || 0}%`;
+                
+                // Update potential revenue
+                const pending = carts.filter(c => c.status === 'pending');
+                const potentialRevenue = pending.reduce((sum, c) => sum + (c.total || 0), 0);
+                document.getElementById('potential-revenue').textContent = `${potentialRevenue.toLocaleString()} ر.س`;
+                document.getElementById('potential-carts').textContent = pending.length;
+                
+            } catch (err) {
+                console.log('Error loading data:', err);
+            }
+        }
+        
+        // Load data on page load
+        loadDashboardData();
     </script>
 </body>
 
