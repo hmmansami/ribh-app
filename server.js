@@ -482,6 +482,153 @@ ${discount > 0 ? `- اذكر كود الخصم ${discountCode}` : ''}
     return getTemplateMessage(cart, reminderNumber, discountCode);
 }
 
+// ==========================================
+// SMART AI OFFERS (Personalized based on cart)
+// ==========================================
+
+function analyzeCart(cart) {
+    const total = cart.total || 0;
+    const itemCount = cart.items?.length || 0;
+
+    // Determine customer segment
+    let segment = 'standard';
+    let suggestedDiscount = 5;
+    let suggestedOffer = '';
+    let urgencyLevel = 'low';
+
+    // High-value cart (> 500 SAR) → Bigger discount worth it
+    if (total >= 500) {
+        segment = 'high_value';
+        suggestedDiscount = 15;
+        urgencyLevel = 'high';
+        suggestedOffer = `خصم ${suggestedDiscount}% على طلبك!`;
+    }
+    // Medium cart (200-500 SAR)
+    else if (total >= 200) {
+        segment = 'medium_value';
+        suggestedDiscount = 10;
+        urgencyLevel = 'medium';
+        suggestedOffer = `خصم ${suggestedDiscount}% لإتمام طلبك!`;
+    }
+    // Low cart (< 200 SAR) → Might be price-sensitive
+    else if (total >= 50) {
+        segment = 'price_sensitive';
+        suggestedDiscount = 5;
+        suggestedOffer = 'شحن مجاني على طلبك!';
+    }
+    // Very low cart → Might just be browsing
+    else {
+        segment = 'browser';
+        suggestedDiscount = 0;
+        suggestedOffer = 'نحن هنا لمساعدتك!';
+    }
+
+    return {
+        segment,
+        total,
+        itemCount,
+        suggestedDiscount,
+        suggestedOffer,
+        urgencyLevel,
+        // Payment plan for medium/high value
+        paymentPlan: total >= 200 ? {
+            enabled: true,
+            monthlyAmount: Math.ceil(total / 4),
+            message: `قسّط على ٤ دفعات: ${Math.ceil(total / 4)} ${cart.currency}/شهر`
+        } : null
+    };
+}
+
+async function generateSmartOffer(cart, reminderNumber) {
+    const analysis = analyzeCart(cart);
+
+    console.log('🧠 Cart Analysis:', analysis);
+
+    // Build AI prompt based on analysis
+    const prompt = `أنت خبير في التسويق واسترجاع السلات المتروكة. اكتب رسالة مخصصة.
+
+تحليل العميل:
+- الاسم: ${cart.customer.name}
+- قيمة السلة: ${analysis.total} ${cart.currency}
+- عدد المنتجات: ${analysis.itemCount}
+- نوع العميل: ${analysis.segment === 'high_value' ? 'عميل مميز - قيمة عالية' :
+            analysis.segment === 'price_sensitive' ? 'عميل حساس للسعر' :
+                analysis.segment === 'medium_value' ? 'عميل متوسط' : 'متصفح'}
+
+الاستراتيجية المقترحة:
+${analysis.segment === 'high_value' ?
+            '- ركز على القيمة والجودة\n- اعرض خصم مميز\n- اذكر حصرية العرض' :
+            analysis.segment === 'price_sensitive' ?
+                '- ركز على التوفير\n- اعرض الشحن المجاني\n- اذكر خيار التقسيط إن وجد' :
+                '- رسالة ودية\n- ذكّره بالمنتجات\n- لا تضغط كثيراً'}
+
+${analysis.paymentPlan ? `خيار التقسيط: ${analysis.paymentPlan.message}` : ''}
+
+العرض المقترح: ${analysis.suggestedOffer}
+الخصم المقترح: ${analysis.suggestedDiscount}%
+كود الخصم: RIBH${analysis.suggestedDiscount}
+
+هذه الرسالة رقم ${reminderNumber} من 3.
+${reminderNumber === 3 ? 'هذه آخر رسالة - استخدم عنصر العجلة والندرة!' : ''}
+
+اكتب رسالة واتساب قصيرة (أقل من 200 حرف) بالعربية. اكتب الرسالة مباشرة:`;
+
+    // Try AI generation
+    let message = null;
+    if (config.GEMINI_API_KEY) {
+        message = await generateWithGemini(prompt);
+    } else if (config.OPENAI_API_KEY) {
+        message = await generateWithOpenAI(prompt);
+    }
+
+    // Fallback to smart template
+    if (!message) {
+        message = getSmartTemplate(cart, analysis, reminderNumber);
+    }
+
+    return {
+        message,
+        analysis,
+        discountCode: `RIBH${analysis.suggestedDiscount}`,
+        discount: analysis.suggestedDiscount
+    };
+}
+
+function getSmartTemplate(cart, analysis, reminderNumber) {
+    const name = cart.customer.name;
+    const total = analysis.total;
+    const currency = cart.currency || 'SAR';
+
+    // High-value templates
+    if (analysis.segment === 'high_value') {
+        const templates = [
+            `${name}، منتجاتك المميزة في الانتظار! 🌟\n\nقيمة سلتك: ${total} ${currency}\nخصم حصري لك: ${analysis.suggestedDiscount}%\n\nكود: RIBH${analysis.suggestedDiscount}`,
+            `عميلنا المميز ${name}! 👑\n\nلا تفوّت عرضك الخاص\n${analysis.suggestedDiscount}% خصم على طلبك\n\n${analysis.paymentPlan ? analysis.paymentPlan.message : ''}`,
+            `${name}، آخر فرصة! 🔥\n\nخصم ${analysis.suggestedDiscount}% ينتهي خلال ساعات\n\nكود: RIBH${analysis.suggestedDiscount}\n\nأكمل طلبك الآن!`
+        ];
+        return templates[reminderNumber - 1] || templates[0];
+    }
+
+    // Price-sensitive templates
+    if (analysis.segment === 'price_sensitive') {
+        const templates = [
+            `مرحباً ${name}! 👋\n\nسلتك في انتظارك\n🚚 شحن مجاني على طلبك!\n\nأكمل طلبك الآن`,
+            `${name}، عرض خاص! 🎁\n\nخصم ${analysis.suggestedDiscount}% + شحن مجاني\n\nكود: RIBH${analysis.suggestedDiscount}`,
+            `${name}، فرصتك الأخيرة! ⏰\n\n${analysis.suggestedOffer}\n\nالعرض ينتهي اليوم!`
+        ];
+        return templates[reminderNumber - 1] || templates[0];
+    }
+
+    // Standard templates
+    const templates = [
+        `مرحباً ${name}! 👋\n\nلاحظنا أنك تركت بعض المنتجات في سلتك.\n\nنحن هنا لمساعدتك! 🛒`,
+        `${name}، منتجاتك لا تزال في الانتظار! 🛍️\n\nخصم ${analysis.suggestedDiscount}% لك\nكود: RIBH${analysis.suggestedDiscount}`,
+        `آخر فرصة يا ${name}! 🔥\n\nخصم ${analysis.suggestedDiscount}%\nكود: RIBH${analysis.suggestedDiscount}\n\nلا تفوّت الفرصة!`
+    ];
+
+    return templates[reminderNumber - 1] || templates[0];
+}
+
 async function generateWithOpenAI(prompt) {
     try {
         const response = await fetch('https://api.openai.com/v1/chat/completions', {
