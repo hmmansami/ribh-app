@@ -64,11 +64,36 @@ const config = {
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Salla Session Middleware - Detect store from Salla request
+app.use((req, res, next) => {
+    // Salla sends store info in various ways:
+    // 1. Query params: ?merchant=xxx or ?store=xxx
+    // 2. Headers: x-salla-merchant or x-merchant-id
+    // 3. Body (for webhooks): merchant field
+
+    const storeFromQuery = req.query.merchant || req.query.store;
+    const storeFromHeader = req.headers['x-salla-merchant'] || req.headers['x-merchant-id'];
+    const storeFromBody = req.body?.merchant;
+
+    req.storeId = storeFromQuery || storeFromHeader || storeFromBody || null;
+    next();
+});
+
+// Serve dashboard with store context
+app.get('/', (req, res, next) => {
+    // If coming from Salla with merchant info, redirect to dashboard with store param
+    if (req.storeId && !req.query.store) {
+        return res.redirect(`/?store=${encodeURIComponent(req.storeId)}`);
+    }
+    next();
+});
+
 app.use(express.static('public'));
 
 // Request logging middleware
 app.use((req, res, next) => {
-    console.log(`📥 ${req.method} ${req.path}`, req.method === 'POST' ? req.body : '');
+    console.log(`📥 ${req.method} ${req.path}`, req.method === 'POST' ? JSON.stringify(req.body).substring(0, 200) : '');
     next();
 });
 
