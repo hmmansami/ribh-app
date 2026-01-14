@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FFFFFF;
+            --bg-secondary: #F5F5F7;
+            --text: #1D1D1F;
+            --text-secondary: #86868B;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --border: #D2D2D7;
+            --error: #EF4444;
+            --success: #10B981;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-text {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .logo-emoji {
+            font-size: 36px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            color: var(--text-secondary);
+            text-align: center;
+            font-size: 15px;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        input[type="email"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            font-family: inherit;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg);
+            color: var(--text);
+            transition: all 0.2s ease;
+            direction: ltr;
+            text-align: left;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider span {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .token-section {
+            margin-top: 0;
+        }
+
+        .token-section label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .message {
+            padding: 14px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message.error {
+            background: #FEF2F2;
+            color: var(--error);
+            border: 1px solid #FECACA;
+            display: flex;
+        }
+
+        .message.success {
+            background: #ECFDF5;
+            color: var(--success);
+            border: 1px solid #A7F3D0;
+            display: flex;
+        }
+
+        .message.info {
+            background: #F0F9FF;
+            color: #0369A1;
+            border: 1px solid #BAE6FD;
+            display: flex;
+        }
+
+        .link-result {
+            background: var(--bg-secondary);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 16px;
+            display: none;
+        }
+
+        .link-result a {
+            color: var(--primary);
+            word-break: break-all;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .link-result a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading .spinner {
+            display: block;
+        }
+
+        .loading .btn-text {
+            display: none;
+        }
+
+        /* Demo store hint */
+        .demo-hint {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border: 1px solid #F59E0B;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            color: #92400E;
+        }
+
+        .demo-hint strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 32px 24px;
+            }
+
+            .logo-text {
+                font-size: 36px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-text">
+                رِبح <span class="logo-emoji">💚</span>
+            </div>
+            <p class="subtitle">استرجاع السلات المتروكة</p>
+        </div>
+
+        <h1>تسجيل الدخول</h1>
+        <p class="description">أدخل بريدك الإلكتروني للحصول على رابط الدخول</p>
+
+        <!-- Error/Success Messages -->
+        <div id="error-message" class="message error" style="display: none;">
+            <span>⚠️</span>
+            <span id="error-text">رمز الدخول غير صحيح</span>
+        </div>
+
+        <div id="success-message" class="message success" style="display: none;">
+            <span>✓</span>
+            <span id="success-text"></span>
+        </div>
+
+        <!-- Email Login Form -->
+        <form id="email-form">
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني للمتجر</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    placeholder="owner@store.com"
+                    required
+                    autocomplete="email"
+                >
+            </div>
+            <button type="submit" class="btn btn-primary" id="email-btn">
+                <span class="spinner"></span>
+                <span class="btn-text">إرسال رابط الدخول 🔐</span>
+            </button>
+        </form>
+
+        <div id="link-result" class="link-result">
+            <p style="margin-bottom: 8px; color: var(--text-secondary); font-size: 13px;">رابط الدخول الخاص بك:</p>
+            <a id="magic-link" href="#" target="_blank"></a>
+        </div>
+
+        <div class="divider">
+            <span>أو أدخل رمز الدخول مباشرة</span>
+        </div>
+
+        <!-- Token Login Form -->
+        <form id="token-form" class="token-section">
+            <div class="form-group">
+                <label for="token">رمز الدخول (Token)</label>
+                <input 
+                    type="text" 
+                    id="token" 
+                    name="token" 
+                    placeholder="أدخل رمز الدخول الخاص بك"
+                    autocomplete="off"
+                >
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-text">دخول ←</span>
+            </button>
+        </form>
+
+        <div class="footer">
+            <p>
+                لا تملك حساباً؟<br>
+                <a href="https://apps.salla.sa/ar/app/1234" target="_blank">ثبّت التطبيق من متجر سلة →</a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Check for error in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('error') === 'invalid') {
+            document.getElementById('error-message').style.display = 'flex';
+            document.getElementById('error-text').textContent = 'رمز الدخول غير صحيح أو منتهي الصلاحية';
+        }
+
+        // Email form submission
+        document.getElementById('email-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const btn = document.getElementById('email-btn');
+            const errorMsg = document.getElementById('error-message');
+            const successMsg = document.getElementById('success-message');
+            const linkResult = document.getElementById('link-result');
+            
+            // Reset messages
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+            linkResult.style.display = 'none';
+            
+            // Show loading
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/api/auth/send-link', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    successMsg.style.display = 'flex';
+                    document.getElementById('success-text').textContent = data.message;
+                    
+                    // If link is returned directly (dev mode), show it
+                    if (data.link) {
+                        linkResult.style.display = 'block';
+                        const linkEl = document.getElementById('magic-link');
+                        linkEl.href = data.link;
+                        linkEl.textContent = data.link;
+                    }
+                } else {
+                    errorMsg.style.display = 'flex';
+                    document.getElementById('error-text').textContent = data.error || 'حدث خطأ، حاول مرة أخرى';
+                }
+            } catch (error) {
+                errorMsg.style.display = 'flex';
+                document.getElementById('error-text').textContent = 'حدث خطأ في الاتصال';
+            }
+            
+            // Hide loading
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        });
+
+        // Token form submission
+        document.getElementById('token-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const token = document.getElementById('token').value.trim();
+            
+            if (token) {
+                window.location.href = '/?token=' + encodeURIComponent(token);
+            }
+        });
+    </script>
+</body>
+</html>

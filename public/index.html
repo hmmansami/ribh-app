@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رِبح - لوحة التحكم</title>
+    <meta name="description" content="رِبح - نظام استرداد السلات المتروكة الذكي لمتاجر سلة">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * {
             margin: 0;
@@ -16,63 +16,59 @@
         }
 
         :root {
+            --bg: #FFFFFF;
+            --bg-secondary: #F5F5F7;
+            --text: #1D1D1F;
+            --text-secondary: #86868B;
             --primary: #10B981;
             --primary-light: #34D399;
             --primary-dark: #059669;
-            --secondary: #6366F1;
-            --accent: #F59E0B;
-            --bg: #0F172A;
-            --bg-card: #1E293B;
-            --bg-card-hover: #334155;
-            --text: #F8FAFC;
-            --text-secondary: #94A3B8;
-            --border: #334155;
+            --border: #D2D2D7;
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
-            --gradient-1: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
-            --gradient-2: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
-            --gradient-3: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
 
         body {
-            font-family: 'IBM Plex Sans Arabic', -apple-system, sans-serif;
-            background: var(--bg);
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-secondary);
             color: var(--text);
             min-height: 100vh;
+            line-height: 1.6;
         }
 
-        /* Sidebar */
-        .layout {
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        /* Header */
+        .header {
             display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: var(--bg-card);
-            border-left: 1px solid var(--border);
-            padding: 1.5rem;
-            position: fixed;
-            height: 100vh;
-            right: 0;
-            overflow-y: auto;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.5rem 2rem;
+            background: var(--bg);
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
         }
 
         .logo-icon {
             width: 48px;
             height: 48px;
-            background: var(--gradient-1);
-            border-radius: 12px;
+            background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -82,144 +78,58 @@
         .logo-text {
             font-size: 1.75rem;
             font-weight: 700;
-            background: var(--gradient-1);
+            background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .nav-section {
-            margin-bottom: 2rem;
-        }
-
-        .nav-section-title {
+        .store-name {
             color: var(--text-secondary);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.75rem;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0.875rem 1rem;
-            border-radius: 12px;
-            color: var(--text-secondary);
-            text-decoration: none;
-            transition: all 0.2s;
-            margin-bottom: 0.25rem;
-        }
-
-        .nav-item:hover {
-            background: var(--bg-card-hover);
-            color: var(--text);
-        }
-
-        .nav-item.active {
-            background: var(--gradient-1);
-            color: white;
-        }
-
-        .nav-icon {
-            font-size: 1.25rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-right: 280px;
-            padding: 2rem;
-        }
-
-        /* Header */
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .welcome-section h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .welcome-section p {
-            color: var(--text-secondary);
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-family: inherit;
+            font-size: 0.95rem;
             font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .header-link {
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
             font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            transition: all 0.2s ease;
         }
 
-        .btn-primary {
-            background: var(--gradient-1);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--bg-card-hover);
+        .header-link:hover {
+            background: var(--border);
             color: var(--text);
         }
 
-        .btn-secondary:hover {
-            background: var(--border);
-        }
-
-        /* Stats Cards */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
             margin-bottom: 2rem;
         }
 
         .stat-card {
-            background: var(--bg-card);
+            background: var(--bg);
             border-radius: 20px;
-            padding: 1.5rem;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s;
+            padding: 1.75rem;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
         }
 
         .stat-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .stat-card.featured {
-            background: var(--gradient-1);
-            grid-column: span 2;
-        }
-
-        .stat-card.featured .stat-label,
-        .stat-card.featured .stat-value,
-        .stat-card.featured .stat-change {
-            color: white;
+            box-shadow: var(--card-hover-shadow);
         }
 
         .stat-icon {
@@ -233,901 +143,490 @@
             margin-bottom: 1rem;
         }
 
-        .stat-card:not(.featured) .stat-icon {
-            background: rgba(16, 185, 129, 0.1);
+        .stat-icon.revenue {
+            background: rgba(16, 185, 129, 0.12);
         }
 
-        .stat-card.featured .stat-icon {
-            background: rgba(255, 255, 255, 0.2);
+        .stat-icon.carts {
+            background: rgba(99, 102, 241, 0.12);
+        }
+
+        .stat-icon.rate {
+            background: rgba(245, 158, 11, 0.12);
         }
 
         .stat-label {
             color: var(--text-secondary);
             font-size: 0.875rem;
+            font-weight: 500;
             margin-bottom: 0.5rem;
         }
 
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            color: var(--text);
             display: flex;
             align-items: baseline;
-            gap: 8px;
+            gap: 6px;
         }
 
         .stat-value .currency {
             font-size: 1rem;
-            font-weight: 400;
-            opacity: 0.7;
-        }
-
-        .stat-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 0.875rem;
-            color: var(--success);
-        }
-
-        .stat-change.negative {
-            color: var(--danger);
-        }
-
-        /* Potential Card */
-        .potential-card {
-            background: var(--gradient-3);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .potential-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-        }
-
-        .potential-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .potential-label {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
-        .potential-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.875rem;
             font-weight: 500;
+            color: var(--text-secondary);
         }
 
-        .potential-value {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .potential-subtitle {
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .potential-cta {
-            margin-top: 1.5rem;
-        }
-
-        .potential-cta .btn {
-            background: white;
-            color: #EF4444;
-        }
-
-        /* Charts Section */
-        .charts-section {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 1.5rem;
+        /* Carts Section */
+        .carts-section {
+            background: var(--bg);
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: var(--card-shadow);
             margin-bottom: 2rem;
         }
 
-        .chart-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 1.5rem;
-        }
-
-        .chart-header {
+        .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1.5rem;
         }
 
-        .chart-title {
-            font-size: 1.125rem;
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Cart List */
+        .cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .cart-item:hover {
+            background: #EBEBED;
+        }
+
+        .cart-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cart-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .cart-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-name {
+            font-weight: 600;
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .cart-phone {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .cart-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text);
+            margin-left: 1rem;
+        }
+
+        .cart-status {
+            margin-left: 1rem;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.9rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
             font-weight: 600;
         }
 
-        .chart-filter {
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.12);
+            color: #D97706;
+        }
+
+        .status-badge.recovered {
+            background: rgba(16, 185, 129, 0.12);
+            color: #059669;
+        }
+
+        .cart-actions {
             display: flex;
             gap: 0.5rem;
         }
 
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.875rem;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .chart-container {
-            height: 250px;
-        }
-
-        /* Activity Feed */
-        .activity-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 1.5rem;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 1rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-        }
-
-        .activity-icon.success {
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .activity-icon.warning {
-            background: rgba(245, 158, 11, 0.1);
-        }
-
-        .activity-icon.info {
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-time {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        .activity-amount {
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        /* Recent Carts Table */
-        .table-card {
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: right;
-            padding: 1rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background: var(--bg-card-hover);
-        }
-
-        .customer-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .customer-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient-2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        .customer-name {
-            font-weight: 500;
-        }
-
-        .customer-email {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-        }
-
-        .status-badge {
-            padding: 0.5rem 1rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-badge.pending {
-            background: rgba(245, 158, 11, 0.1);
-            color: #F59E0B;
-        }
-
-        .status-badge.recovered {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10B981;
-        }
-
-        .status-badge.lost {
-            background: rgba(239, 68, 68, 0.1);
-            color: #EF4444;
-        }
-
-        /* Channels Card */
-        .channels-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-        }
-
-        .channel-card {
-            background: var(--bg-card);
-            border-radius: 16px;
-            padding: 1.25rem;
-            text-align: center;
-            transition: all 0.3s;
-        }
-
-        .channel-card:hover {
-            transform: translateY(-4px);
-        }
-
-        .channel-card.active {
-            border: 2px solid var(--primary);
-        }
-
-        .channel-card.inactive {
-            opacity: 0.5;
-        }
-
-        .channel-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            font-size: 1.75rem;
-        }
-
-        .channel-card.email .channel-icon {
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        .channel-card.telegram .channel-icon {
-            background: rgba(0, 136, 204, 0.1);
-        }
-
-        .channel-card.sms .channel-icon {
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .channel-card.whatsapp .channel-icon {
-            background: rgba(37, 211, 102, 0.1);
-        }
-
-        .channel-name {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .channel-status {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
-
-        .channel-status.active {
-            color: var(--success);
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 0.75rem !important;
-            font-size: 1rem;
-        }
-
-        .btn-whatsapp {
-            background: #25D366 !important;
-            color: white;
+        /* Buttons */
+        .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 6px;
+            padding: 0.65rem 1rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
         }
 
-        .btn-whatsapp:hover {
-            background: #128C7E !important;
+        .btn-email {
+            background: #6366F1;
+            color: white;
+        }
+
+        .btn-email:hover {
+            background: #4F46E5;
             transform: translateY(-2px);
         }
 
-        /* Responsive */
-        @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stat-card.featured {
-                grid-column: span 2;
-            }
-
-            .charts-section {
-                grid-template-columns: 1fr;
-            }
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                display: none;
-            }
-
-            .main-content {
-                margin-right: 0;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stat-card.featured {
-                grid-column: span 1;
-            }
-
-            .channels-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .btn-whatsapp:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
         }
 
-        /* Animations */
-        @keyframes pulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
+        .btn-done {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: default;
         }
 
-        .pulse {
-            animation: pulse 2s infinite;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        .animate-in {
-            animation: slideUp 0.5s ease-out forwards;
+        .empty-state-text {
+            font-size: 1.1rem;
         }
 
-        .delay-1 {
-            animation-delay: 0.1s;
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
         }
 
-        .delay-2 {
-            animation-delay: 0.2s;
+        /* Footer Links */
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
         }
 
-        .delay-3 {
-            animation-delay: 0.3s;
+        .footer-link {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--text);
+            background: var(--bg);
+            box-shadow: var(--card-shadow);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .delay-4 {
-            animation-delay: 0.4s;
+        .footer-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-hover-shadow);
         }
 
-        /* Confetti */
-        .confetti-container {
+        /* Notification */
+        .notification {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1000;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 500;
+            z-index: 1001;
+            animation: slideDown 0.3s ease-out;
+            color: white;
+        }
+
+        .notification.success {
+            background: #10B981;
+        }
+
+        .notification.error {
+            background: #EF4444;
+        }
+
+        .notification.info {
+            background: #6366F1;
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .cart-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .footer-links {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
             <div class="logo">
                 <div class="logo-icon">💰</div>
-                <span class="logo-text">رِبح</span>
-            </div>
-
-            <nav class="nav-section">
-                <div class="nav-section-title">القائمة الرئيسية</div>
-                <a href="#" class="nav-item active">
-                    <span class="nav-icon">📊</span>
-                    <span>لوحة التحكم</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">🛒</span>
-                    <span>السلات المتروكة</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">📧</span>
-                    <span>الحملات</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">📈</span>
-                    <span>التحليلات</span>
-                </a>
-            </nav>
-
-            <nav class="nav-section">
-                <div class="nav-section-title">الإعدادات</div>
-                <a href="settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>إعدادات القنوات</span>
-                </a>
-                <a href="telegram.html" class="nav-item">
-                    <span class="nav-icon">📱</span>
-                    <span>تيليجرام</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">🎨</span>
-                    <span>تخصيص الرسائل</span>
-                </a>
-            </nav>
-
-            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border);">
-                <div style="background: var(--gradient-2); border-radius: 16px; padding: 1.25rem; text-align: center;">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚀</div>
-                    <div style="font-weight: 600; margin-bottom: 0.5rem;">الباقة المجانية</div>
-                    <div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 1rem;">500 بريد / شهر</div>
-                    <button class="btn" style="width: 100%; background: white; color: #6366F1;">ترقية الآن</button>
+                <div>
+                    <span class="logo-text">رِبح</span>
+                    <div class="store-name" id="store-name">متجرك</div>
                 </div>
             </div>
-        </aside>
+            <div class="header-links">
+                <a href="settings.html" class="header-link">⚙️ إعدادات</a>
+                <a href="telegram.html" class="header-link">📱 تيليجرام</a>
+            </div>
+        </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <div class="page-header">
-                <div class="welcome-section">
-                    <h1>مرحباً، أحمد! 👋</h1>
-                    <p>هنا ملخص أداء متجرك اليوم</p>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="refreshData()">
-                        <span>🔄</span>
-                        <span>تحديث</span>
-                    </button>
-                    <button class="btn btn-primary" onclick="testAbandonedCart()">
-                        <span>✨</span>
-                        <span>إرسال تجريبي</span>
-                    </button>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon revenue">💰</div>
+                <div class="stat-label">الإيرادات المستردة</div>
+                <div class="stat-value">
+                    <span id="total-revenue">0</span>
+                    <span class="currency">ر.س</span>
                 </div>
             </div>
 
-            <!-- Potential Recovery Card (EXCITING!) -->
-            <div class="potential-card animate-in">
-                <div class="potential-header">
-                    <span class="potential-label">💎 الإيرادات المحتملة للاسترداد</span>
-                    <span class="potential-badge">🔥 فرصة ذهبية</span>
-                </div>
-                <div class="potential-value" id="potential-revenue">12,450 ر.س</div>
-                <div class="potential-subtitle">من <span id="potential-carts">23</span> سلة متروكة في انتظار الاسترداد
-                </div>
-                <div class="potential-cta">
-                    <button class="btn" onclick="launchCampaign()">
-                        <span>🚀</span>
-                        <span>أطلق حملة الاسترداد الآن</span>
-                    </button>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon carts">🛒</div>
+                <div class="stat-label">السلات المتروكة</div>
+                <div class="stat-value" id="total-carts">0</div>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-                <div class="stat-card featured animate-in delay-1">
-                    <div class="stat-icon">💰</div>
-                    <div class="stat-label">إجمالي الإيرادات المستردة</div>
-                    <div class="stat-value">
-                        <span id="total-revenue">45,230</span>
-                        <span class="currency">ر.س</span>
-                    </div>
-                    <div class="stat-change">
-                        <span>↑</span>
-                        <span>+23% هذا الشهر</span>
-                    </div>
-                </div>
+            <div class="stat-card">
+                <div class="stat-icon rate">📈</div>
+                <div class="stat-label">معدل الاسترداد</div>
+                <div class="stat-value"><span id="recovery-rate">0</span>%</div>
+            </div>
+        </div>
 
-                <div class="stat-card animate-in delay-2">
-                    <div class="stat-icon">🛒</div>
-                    <div class="stat-label">السلات المتروكة</div>
-                    <div class="stat-value" id="total-carts">156</div>
-                    <div class="stat-change">
-                        <span>↑</span>
-                        <span>12 اليوم</span>
-                    </div>
-                </div>
-
-                <div class="stat-card animate-in delay-3">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-label">معدل الاسترداد</div>
-                    <div class="stat-value" id="recovery-rate">32%</div>
-                    <div class="stat-change">
-                        <span>↑</span>
-                        <span>+5% عن الشهر الماضي</span>
-                    </div>
-                </div>
-
-                <div class="stat-card animate-in delay-4">
-                    <div class="stat-icon">📧</div>
-                    <div class="stat-label">الرسائل المرسلة</div>
-                    <div class="stat-value" id="messages-sent">1,234</div>
-                    <div class="stat-change">
-                        <span>↑</span>
-                        <span>89% معدل الفتح</span>
-                    </div>
-                </div>
+        <!-- Carts Section -->
+        <div class="carts-section">
+            <div class="section-header">
+                <h2 class="section-title">🛒 السلات المتروكة</h2>
             </div>
 
-            <!-- Channels Status -->
-            <div style="margin-bottom: 2rem;">
-                <h3 style="margin-bottom: 1rem; font-size: 1.125rem;">قنوات الإرسال</h3>
-                <div class="channels-grid">
-                    <div class="channel-card email active">
-                        <div class="channel-icon">📧</div>
-                        <div class="channel-name">البريد الإلكتروني</div>
-                        <div class="channel-status active">✓ مفعّل</div>
-                    </div>
-                    <div class="channel-card telegram active">
-                        <div class="channel-icon">✈️</div>
-                        <div class="channel-name">تيليجرام</div>
-                        <div class="channel-status active">✓ مفعّل</div>
-                    </div>
-                    <div class="channel-card sms inactive">
-                        <div class="channel-icon">💬</div>
-                        <div class="channel-name">SMS</div>
-                        <div class="channel-status">قريباً</div>
-                    </div>
-                    <div class="channel-card whatsapp inactive">
-                        <div class="channel-icon">📱</div>
-                        <div class="channel-name">واتساب</div>
-                        <div class="channel-status">قريباً</div>
-                    </div>
-                </div>
+            <div class="cart-list" id="cart-list">
+                <div class="loading">⏳ جاري تحميل البيانات...</div>
             </div>
+        </div>
 
-            <!-- Charts Section -->
-            <div class="charts-section">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">📈 أداء الاسترداد</h3>
-                        <div class="chart-filter">
-                            <button class="filter-btn">اليوم</button>
-                            <button class="filter-btn active">الأسبوع</button>
-                            <button class="filter-btn">الشهر</button>
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="recoveryChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="activity-card">
-                    <div class="chart-header">
-                        <h3 class="chart-title">⚡ النشاط الأخير</h3>
-                    </div>
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-icon success">✅</div>
-                            <div class="activity-content">
-                                <div class="activity-title">تم استرداد سلة!</div>
-                                <div class="activity-time">منذ 5 دقائق</div>
-                            </div>
-                            <div class="activity-amount">+850 ر.س</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon warning">📧</div>
-                            <div class="activity-content">
-                                <div class="activity-title">إرسال تذكير لـ محمد أحمد</div>
-                                <div class="activity-time">منذ 12 دقيقة</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon success">✅</div>
-                            <div class="activity-content">
-                                <div class="activity-title">تم استرداد سلة!</div>
-                                <div class="activity-time">منذ 25 دقيقة</div>
-                            </div>
-                            <div class="activity-amount">+1,200 ر.س</div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon info">🛒</div>
-                            <div class="activity-content">
-                                <div class="activity-title">سلة جديدة متروكة</div>
-                                <div class="activity-time">منذ 45 دقيقة</div>
-                            </div>
-                        </div>
-                        <div class="activity-item">
-                            <div class="activity-icon success">✅</div>
-                            <div class="activity-content">
-                                <div class="activity-title">تم استرداد سلة!</div>
-                                <div class="activity-time">منذ ساعة</div>
-                            </div>
-                            <div class="activity-amount">+540 ر.س</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Carts Table -->
-            <div class="table-card">
-                <div class="table-header">
-                    <h3 class="chart-title">🛒 السلات المتروكة الأخيرة</h3>
-                    <button class="btn btn-secondary">عرض الكل</button>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>العميل</th>
-                            <th>المنتجات</th>
-                            <th>القيمة</th>
-                            <th>الحالة</th>
-                            <th>التذكيرات</th>
-                            <th>إجراء</th>
-                        </tr>
-                    </thead>
-                    <tbody id="carts-table">
-                        <tr>
-                            <td>
-                                <div class="customer-info">
-                                    <div class="customer-avatar">م</div>
-                                    <div>
-                                        <div class="customer-name">محمد العتيبي</div>
-                                        <div class="customer-email">+966501234567</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>3 منتجات</td>
-                            <td style="font-weight: 600;">1,250 ر.س</td>
-                            <td><span class="status-badge pending">⏳ في الانتظار</span></td>
-                            <td>2 / 3</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-secondary btn-sm"
-                                        onclick="sendEmail('mohammed@email.com', 'محمد', 1250)">📧</button>
-                                    <a class="btn btn-whatsapp btn-sm" href="#"
-                                        onclick="sendWhatsApp('966501234567', 'محمد', 1250, 'https://store.com/cart/123'); return false;">💬</a>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="customer-info">
-                                    <div class="customer-avatar">س</div>
-                                    <div>
-                                        <div class="customer-name">سارة الأحمد</div>
-                                        <div class="customer-email">+966509876543</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>5 منتجات</td>
-                            <td style="font-weight: 600;">2,100 ر.س</td>
-                            <td><span class="status-badge recovered">✅ تم الاسترداد</span></td>
-                            <td>1 / 3</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-secondary btn-sm" disabled>✓ تم</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="customer-info">
-                                    <div class="customer-avatar">ع</div>
-                                    <div>
-                                        <div class="customer-name">عبدالله السالم</div>
-                                        <div class="customer-email">+966505555555</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>1 منتج</td>
-                            <td style="font-weight: 600;">450 ر.س</td>
-                            <td><span class="status-badge pending">⏳ في الانتظار</span></td>
-                            <td>0 / 3</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn btn-secondary btn-sm"
-                                        onclick="sendEmail('abdullah@email.com', 'عبدالله', 450)">📧</button>
-                                    <a class="btn btn-whatsapp btn-sm" href="#"
-                                        onclick="sendWhatsApp('966505555555', 'عبدالله', 450, 'https://store.com/cart/456'); return false;">💬</a>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
+        <!-- Footer Links -->
+        <div class="footer-links">
+            <a href="settings.html" class="footer-link">⚙️ إعدادات القنوات</a>
+            <a href="telegram.html" class="footer-link">📱 ربط تيليجرام</a>
+        </div>
     </div>
 
     <script>
-        // Recovery Chart
-        const ctx = document.getElementById('recoveryChart').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
-        gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
-        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        // Get store ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const storeId = urlParams.get('store');
+        const isWelcome = urlParams.get('welcome');
 
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
-                datasets: [{
-                    label: 'الإيرادات المستردة',
-                    data: [2500, 3200, 2800, 4100, 3800, 5200, 4800],
-                    borderColor: '#10B981',
-                    backgroundColor: gradient,
-                    fill: true,
-                    tension: 0.4,
-                    borderWidth: 3,
-                    pointBackgroundColor: '#10B981',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { color: '#94A3B8' }
-                    },
-                    y: {
-                        grid: { color: '#334155' },
-                        ticks: {
-                            color: '#94A3B8',
-                            callback: value => value.toLocaleString() + ' ر.س'
-                        }
-                    }
-                }
-            }
-        });
+        // Store the store ID for API calls
+        window.currentStoreId = storeId || 'demo';
 
-        // Test Abandoned Cart
-        async function testAbandonedCart() {
+        // Update store name display
+        if (storeId) {
+            document.getElementById('store-name').textContent = storeId;
+        }
+
+        // Show welcome notification for new installs
+        if (isWelcome) {
+            setTimeout(() => {
+                showNotification('🎉 تم تثبيت رِبح بنجاح! مرحباً بك', 'success');
+            }, 500);
+        }
+
+        // Load dashboard data
+        async function loadDashboardData() {
             try {
-                const res = await fetch('/api/test/abandoned-cart', { method: 'POST' });
-                const data = await res.json();
-                if (data.success) {
-                    showNotification('🎉 تم إرسال سلة تجريبية!', 'success');
-                    setTimeout(refreshData, 2000);
-                }
+                const storeParam = storeId ? `?storeId=${storeId}` : '';
+
+                // Fetch carts
+                const cartsRes = await fetch(`/api/carts${storeParam}`);
+                const carts = await cartsRes.json();
+
+                // Fetch stats
+                const statsRes = await fetch(`/api/stats${storeParam}`);
+                const stats = await statsRes.json();
+
+                // Update stats display
+                document.getElementById('total-carts').textContent = stats.total || carts.length || 0;
+                document.getElementById('recovery-rate').textContent = stats.recoveryRate || 0;
+
+                // Calculate recovered revenue
+                const recovered = carts.filter(c => c.status === 'recovered');
+                const recoveredRevenue = recovered.reduce((sum, c) => sum + (c.total || 0), 0);
+                document.getElementById('total-revenue').textContent = recoveredRevenue.toLocaleString();
+
+                // Render cart list
+                renderCartList(carts);
+
             } catch (err) {
-                showNotification('❌ حدث خطأ', 'error');
+                console.log('Error loading data:', err);
+                // Show empty state if error
+                document.getElementById('cart-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <div class="empty-state-text">لا توجد سلات متروكة حالياً</div>
+                    </div>
+                `;
             }
         }
 
-        // Refresh Data
-        async function refreshData() {
-            showNotification('🔄 جاري التحديث...', 'info');
-            // Fetch real data here
-            setTimeout(() => {
-                showNotification('✅ تم التحديث!', 'success');
-            }, 1000);
+        // Render cart list
+        function renderCartList(carts) {
+            const cartListEl = document.getElementById('cart-list');
+
+            if (!carts || carts.length === 0) {
+                cartListEl.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🛒</div>
+                        <div class="empty-state-text">لا توجد سلات متروكة حالياً</div>
+                    </div>
+                `;
+                return;
+            }
+
+            cartListEl.innerHTML = carts.map(cart => {
+                const name = cart.customerName || cart.customer?.name || 'عميل';
+                const phone = cart.customerPhone || cart.customer?.phone || '';
+                const email = cart.customerEmail || cart.customer?.email || '';
+                const total = cart.total || 0;
+                const status = cart.status || 'pending';
+                const checkoutUrl = cart.checkoutUrl || cart.checkout_url || '#';
+                const firstLetter = name.charAt(0);
+
+                const isRecovered = status === 'recovered';
+
+                return `
+                    <div class="cart-item">
+                        <div class="cart-info">
+                            <div class="cart-avatar">${firstLetter}</div>
+                            <div class="cart-details">
+                                <div class="cart-name">${name}</div>
+                                <div class="cart-phone">${phone}</div>
+                            </div>
+                        </div>
+                        <div class="cart-value">${total.toLocaleString()} ر.س</div>
+                        <div class="cart-status">
+                            <span class="status-badge ${isRecovered ? 'recovered' : 'pending'}">
+                                ${isRecovered ? '✅ تم الاسترداد' : '⏳ في الانتظار'}
+                            </span>
+                        </div>
+                        <div class="cart-actions">
+                            ${isRecovered ? `
+                                <button class="btn btn-done">✓ تم</button>
+                            ` : `
+                                <button class="btn btn-email" onclick="sendEmail('${email}', '${name}', ${total})">📧</button>
+                                <button class="btn btn-whatsapp" onclick="sendWhatsApp('${phone}', '${name}', ${total}, '${checkoutUrl}')">💬</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Launch Campaign
-        function launchCampaign() {
-            showNotification('🚀 جاري إطلاق الحملة...', 'info');
-            setTimeout(() => {
-                showNotification('✅ تم إرسال 23 رسالة تذكير!', 'success');
-                showConfetti();
-            }, 2000);
-        }
-
-        // WhatsApp Click-to-Send
+        // Send WhatsApp message
         function sendWhatsApp(phone, name, cartValue, checkoutUrl) {
-            // Generate personalized message
             const message = `مرحباً ${name}! 👋
 
 لاحظنا أنك تركت سلة التسوق الخاصة بك. لا تدع الفرصة تفوتك! 🛒
@@ -1141,15 +640,10 @@ ${checkoutUrl}
 
 نحن هنا لمساعدتك 💚`;
 
-            // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
-
-            // Generate WhatsApp URL
             const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
 
-            // Open WhatsApp
             window.open(whatsappUrl, '_blank');
-
             showNotification('💬 تم فتح واتساب - أرسل الرسالة!', 'success');
         }
 
@@ -1180,112 +674,21 @@ ${checkoutUrl}
             }
         }
 
-        // Notification
+        // Show notification
         function showNotification(message, type) {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+
             const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#6366F1'};
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 12px;
-                font-weight: 500;
-                z-index: 1001;
-                animation: slideDown 0.3s ease-out;
-            `;
+            notification.className = `notification ${type}`;
             notification.textContent = message;
             document.body.appendChild(notification);
+
             setTimeout(() => notification.remove(), 3000);
         }
 
-        // Confetti Effect
-        function showConfetti() {
-            const colors = ['#10B981', '#6366F1', '#F59E0B', '#EF4444', '#EC4899'];
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.cssText = `
-                    position: fixed;
-                    width: 10px;
-                    height: 10px;
-                    background: ${colors[Math.floor(Math.random() * colors.length)]};
-                    left: ${Math.random() * 100}%;
-                    top: -10px;
-                    border-radius: 50%;
-                    z-index: 1000;
-                    animation: fall ${2 + Math.random() * 2}s linear forwards;
-                `;
-                document.body.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 4000);
-            }
-        }
-
-        // Add confetti animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fall {
-                to {
-                    top: 100vh;
-                    transform: rotate(${Math.random() * 720}deg);
-                }
-            }
-            @keyframes slideDown {
-                from { top: -50px; opacity: 0; }
-                to { top: 20px; opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Get store ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const storeId = urlParams.get('store');
-        const isWelcome = urlParams.get('welcome');
-
-        // Store the store ID for API calls
-        window.currentStoreId = storeId || 'demo';
-
-        // Update welcome message with store name
-        if (storeId) {
-            document.querySelector('.welcome-section h1').textContent = `مرحباً بمتجرك! 👋`;
-        }
-
-        // Show welcome message for new installs
-        if (isWelcome) {
-            setTimeout(() => {
-                showNotification('🎉 تم تثبيت رِبح بنجاح! مرحباً بك', 'success');
-                showConfetti();
-            }, 500);
-        }
-
-        // Load real data on page load
-        async function loadDashboardData() {
-            try {
-                const storeParam = storeId ? `?storeId=${storeId}` : '';
-
-                // Get carts
-                const cartsRes = await fetch(`/api/carts${storeParam}`);
-                const carts = await cartsRes.json();
-
-                // Get stats
-                const statsRes = await fetch(`/api/stats${storeParam}`);
-                const stats = await statsRes.json();
-
-                // Update stats
-                document.getElementById('total-carts').textContent = stats.total || 0;
-                document.getElementById('recovery-rate').textContent = `${stats.recoveryRate || 0}%`;
-
-                // Update potential revenue
-                const pending = carts.filter(c => c.status === 'pending');
-                const potentialRevenue = pending.reduce((sum, c) => sum + (c.total || 0), 0);
-                document.getElementById('potential-revenue').textContent = `${potentialRevenue.toLocaleString()} ر.س`;
-                document.getElementById('potential-carts').textContent = pending.length;
-
-            } catch (err) {
-                console.log('Error loading data:', err);
-            }
-        }
+        // Auto-refresh every 30 seconds
+        setInterval(loadDashboardData, 30000);
 
         // Load data on page load
         loadDashboardData();

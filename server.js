@@ -142,6 +142,161 @@ function logWebhook(event, data) {
     if (logs.length > 100) logs.shift();
     writeDB(LOG_FILE, logs);
 }
+
+// ==========================================
+// STORE AUTHENTICATION SYSTEM
+// ==========================================
+
+// Generate unique token for store authentication
+function generateToken() {
+    return crypto.randomBytes(16).toString('hex');
+}
+
+// Cookie parser middleware (simple implementation)
+function parseCookies(req) {
+    const cookies = {};
+    const cookieHeader = req.headers.cookie;
+    if (cookieHeader) {
+        cookieHeader.split(';').forEach(cookie => {
+            const parts = cookie.split('=');
+            const key = parts[0].trim();
+            const value = parts.slice(1).join('=').trim();
+            cookies[key] = value;
+        });
+    }
+    return cookies;
+}
+
+// Verify store token middleware
+function verifyStoreToken(req, res, next) {
+    const cookies = parseCookies(req);
+    const token = req.query.token || cookies.storeToken;
+
+    if (!token) {
+        return res.redirect('/login.html');
+    }
+
+    const stores = readDB(STORES_FILE);
+    const store = stores.find(s => s.token === token);
+
+    if (!store) {
+        return res.redirect('/login.html?error=invalid');
+    }
+
+    // Set cookie if coming from query param
+    if (req.query.token && !cookies.storeToken) {
+        res.setHeader('Set-Cookie', `storeToken=${token}; Path=/; HttpOnly; Max-Age=604800`);
+    }
+
+    req.store = store;
+    next();
+}
+
+// Auth API endpoint - verify token
+app.get('/api/auth/verify', (req, res) => {
+    const cookies = parseCookies(req);
+    const token = req.query.token || cookies.storeToken;
+
+    if (!token) {
+        return res.json({ success: false, error: 'No token provided' });
+    }
+
+    const stores = readDB(STORES_FILE);
+    const store = stores.find(s => s.token === token);
+
+    if (!store) {
+        return res.json({ success: false, error: 'Invalid token' });
+    }
+
+    res.json({
+        success: true,
+        store: {
+            merchant: store.merchant,
+            email: store.email,
+            installedAt: store.installedAt
+        }
+    });
+});
+
+// Auth API endpoint - send magic link via email
+app.post('/api/auth/send-link', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, error: 'Email is required' });
+    }
+
+    const stores = readDB(STORES_FILE);
+    const store = stores.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
+
+    if (!store) {
+        return res.status(404).json({ success: false, error: 'Store not found with this email' });
+    }
+
+    // Generate new token if doesn't have one
+    if (!store.token) {
+        store.token = generateToken();
+        writeDB(STORES_FILE, stores);
+    }
+
+    const loginUrl = `https://ribh.click/?token=${store.token}`;
+
+    // Send email with magic link if Resend is configured
+    if (config.RESEND_API_KEY) {
+        try {
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: config.EMAIL_FROM,
+                    to: email,
+                    subject: 'رابط الدخول إلى رِبح 🔐',
+                    html: `
+                    <!DOCTYPE html>
+                    <html dir="rtl" lang="ar">
+                    <head><meta charset="UTF-8"></head>
+                    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+                        <div style="max-width: 400px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; text-align: center;">
+                            <div style="font-size: 32px; color: #10B981; margin-bottom: 20px;">رِبح 💚</div>
+                            <h2 style="color: #1D1D1F;">رابط الدخول الخاص بك</h2>
+                            <p style="color: #86868B;">اضغط على الزر أدناه للدخول إلى لوحة التحكم</p>
+                            <a href="${loginUrl}" style="display: inline-block; background: #10B981; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; margin: 20px 0;">الدخول إلى رِبح</a>
+                            <p style="color: #86868B; font-size: 12px;">هذا الرابط صالح للاستخدام الدائم. لا تشاركه مع أي شخص.</p>
+                        </div>
+                    </body>
+                    </html>
+                    `
+                })
+            });
+
+            const result = await response.json();
+            if (result.id) {
+                console.log(`✅ Magic link sent to ${email}`);
+                return res.json({ success: true, message: 'تم إرسال رابط الدخول إلى بريدك الإلكتروني' });
+            }
+        } catch (error) {
+            console.error('❌ Error sending magic link:', error);
+        }
+    }
+
+    // Fallback: return the link directly (for development/testing)
+    res.json({
+        success: true,
+        message: 'رابط الدخول الخاص بك',
+        link: loginUrl
+    });
+});
+
+// Logout endpoint
+app.get('/api/auth/logout', (req, res) => {
+    res.setHeader('Set-Cookie', 'storeToken=; Path=/; HttpOnly; Max-Age=0');
+    res.redirect('/login.html');
+});
+
+
 // ==========================================
 // SALLA OAUTH - App Installation
 // ==========================================
@@ -152,20 +307,32 @@ app.get('/oauth/callback', async (req, res) => {
 
     // Store merchant info
     const stores = readDB(STORES_FILE);
-    const existingStore = stores.find(s => s.merchant === merchant);
+    let existingStore = stores.find(s => s.merchant === merchant);
+    let token;
 
     if (!existingStore) {
+        // Generate unique token for this store
+        token = generateToken();
         stores.push({
             merchant,
             code,
+            token,
             installedAt: new Date().toISOString(),
             active: true
         });
         writeDB(STORES_FILE, stores);
+        console.log(`✅ New store registered with token: ${token.substring(0, 8)}...`);
+    } else {
+        // Use existing token or generate new one
+        if (!existingStore.token) {
+            existingStore.token = generateToken();
+            writeDB(STORES_FILE, stores);
+        }
+        token = existingStore.token;
     }
 
-    // Redirect to dashboard with store ID
-    res.redirect(`/?store=${encodeURIComponent(merchant)}&welcome=true`);
+    // Redirect to dashboard with token (auto-login)
+    res.redirect(`/?token=${token}&welcome=true`);
 });
 
 // Store dashboard entry point (from Salla "Open App" button)
@@ -514,13 +681,20 @@ function handleAppInstalled(data, merchant) {
     const existingStore = stores.find(s => s.merchant === merchant);
 
     if (!existingStore) {
+        // Generate token and extract email from Salla data
+        const token = generateToken();
+        const email = data?.owner?.email || data?.email || data?.store?.email || '';
+
         stores.push({
             merchant,
+            token,
+            email,
             installedAt: new Date().toISOString(),
             active: true,
             data
         });
         writeDB(STORES_FILE, stores);
+        console.log(`✅ Store ${merchant} installed with token: ${token.substring(0, 8)}...`);
     }
 }
 
