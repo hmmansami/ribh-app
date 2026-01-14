@@ -604,6 +604,30 @@
             color: var(--success);
         }
 
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 1rem;
+        }
+
+        .btn-whatsapp {
+            background: #25D366 !important;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-whatsapp:hover {
+            background: #128C7E !important;
+            transform: translateY(-2px);
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .stats-grid {
@@ -955,7 +979,7 @@
                                     <div class="customer-avatar">م</div>
                                     <div>
                                         <div class="customer-name">محمد العتيبي</div>
-                                        <div class="customer-email">mohammed@email.com</div>
+                                        <div class="customer-email">+966501234567</div>
                                     </div>
                                 </div>
                             </td>
@@ -963,7 +987,14 @@
                             <td style="font-weight: 600;">1,250 ر.س</td>
                             <td><span class="status-badge pending">⏳ في الانتظار</span></td>
                             <td>2 / 3</td>
-                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;">📧 تذكير</button></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-secondary btn-sm"
+                                        onclick="sendEmail('mohammed@email.com', 'محمد', 1250)">📧</button>
+                                    <a class="btn btn-whatsapp btn-sm" href="#"
+                                        onclick="sendWhatsApp('966501234567', 'محمد', 1250, 'https://store.com/cart/123'); return false;">💬</a>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -971,7 +1002,7 @@
                                     <div class="customer-avatar">س</div>
                                     <div>
                                         <div class="customer-name">سارة الأحمد</div>
-                                        <div class="customer-email">sara@email.com</div>
+                                        <div class="customer-email">+966509876543</div>
                                     </div>
                                 </div>
                             </td>
@@ -979,7 +1010,10 @@
                             <td style="font-weight: 600;">2,100 ر.س</td>
                             <td><span class="status-badge recovered">✅ تم الاسترداد</span></td>
                             <td>1 / 3</td>
-                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;" disabled>✓ تم</button>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-secondary btn-sm" disabled>✓ تم</button>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -988,7 +1022,7 @@
                                     <div class="customer-avatar">ع</div>
                                     <div>
                                         <div class="customer-name">عبدالله السالم</div>
-                                        <div class="customer-email">abdullah@email.com</div>
+                                        <div class="customer-email">+966505555555</div>
                                     </div>
                                 </div>
                             </td>
@@ -996,7 +1030,14 @@
                             <td style="font-weight: 600;">450 ر.س</td>
                             <td><span class="status-badge pending">⏳ في الانتظار</span></td>
                             <td>0 / 3</td>
-                            <td><button class="btn btn-secondary" style="padding: 0.5rem 1rem;">📧 تذكير</button></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-secondary btn-sm"
+                                        onclick="sendEmail('abdullah@email.com', 'عبدالله', 450)">📧</button>
+                                    <a class="btn btn-whatsapp btn-sm" href="#"
+                                        onclick="sendWhatsApp('966505555555', 'عبدالله', 450, 'https://store.com/cart/456'); return false;">💬</a>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -1084,6 +1125,61 @@
             }, 2000);
         }
 
+        // WhatsApp Click-to-Send
+        function sendWhatsApp(phone, name, cartValue, checkoutUrl) {
+            // Generate personalized message
+            const message = `مرحباً ${name}! 👋
+
+لاحظنا أنك تركت سلة التسوق الخاصة بك. لا تدع الفرصة تفوتك! 🛒
+
+قيمة سلتك: ${cartValue} ر.س
+
+✨ خصم خاص لك: استخدم كود RIBH10 للحصول على 10% خصم!
+
+أكمل طلبك الآن:
+${checkoutUrl}
+
+نحن هنا لمساعدتك 💚`;
+
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+
+            // Generate WhatsApp URL
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodedMessage}`;
+
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+
+            showNotification('💬 تم فتح واتساب - أرسل الرسالة!', 'success');
+        }
+
+        // Send Email
+        async function sendEmail(email, name, cartValue) {
+            showNotification('📧 جاري إرسال البريد...', 'info');
+
+            try {
+                const res = await fetch('/api/send-reminder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        name,
+                        cartValue,
+                        template: 'reminder'
+                    })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    showNotification('✅ تم إرسال البريد!', 'success');
+                } else {
+                    showNotification('❌ فشل الإرسال', 'error');
+                }
+            } catch (err) {
+                showNotification('❌ حدث خطأ', 'error');
+            }
+        }
+
         // Notification
         function showNotification(message, type) {
             const notification = document.createElement('div');
@@ -1167,30 +1263,30 @@
         async function loadDashboardData() {
             try {
                 const storeParam = storeId ? `?storeId=${storeId}` : '';
-                
+
                 // Get carts
                 const cartsRes = await fetch(`/api/carts${storeParam}`);
                 const carts = await cartsRes.json();
-                
+
                 // Get stats
                 const statsRes = await fetch(`/api/stats${storeParam}`);
                 const stats = await statsRes.json();
-                
+
                 // Update stats
                 document.getElementById('total-carts').textContent = stats.total || 0;
                 document.getElementById('recovery-rate').textContent = `${stats.recoveryRate || 0}%`;
-                
+
                 // Update potential revenue
                 const pending = carts.filter(c => c.status === 'pending');
                 const potentialRevenue = pending.reduce((sum, c) => sum + (c.total || 0), 0);
                 document.getElementById('potential-revenue').textContent = `${potentialRevenue.toLocaleString()} ر.س`;
                 document.getElementById('potential-carts').textContent = pending.length;
-                
+
             } catch (err) {
                 console.log('Error loading data:', err);
             }
         }
-        
+
         // Load data on page load
         loadDashboardData();
     </script>
