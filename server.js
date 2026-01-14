@@ -276,6 +276,123 @@ app.post('/webhooks/salla', handleSallaWebhook);
 app.post('/api/webhooks/salla', handleSallaWebhook);
 app.post('/webhook', handleSallaWebhook); // Alternative path
 
+// ==== TELEGRAM BOT WEBHOOK ====
+// Customers can subscribe by messaging: /start their_phone_number
+app.post('/webhooks/telegram', async (req, res) => {
+    const update = req.body;
+    console.log('📱 Telegram update:', JSON.stringify(update).substring(0, 200));
+
+    if (update.message) {
+        const chatId = update.message.chat.id;
+        const text = update.message.text || '';
+        const userName = update.message.from?.first_name || 'عميل';
+
+        // Handle /start command
+        if (text.startsWith('/start')) {
+            const phoneNumber = text.replace('/start', '').trim();
+
+            if (phoneNumber && phoneNumber.length >= 9) {
+                // Save customer's Telegram chat ID linked to phone
+                await saveTelegramSubscriber(phoneNumber, chatId, userName);
+
+                await sendTelegramMessage(chatId,
+                    `✅ تم تسجيلك بنجاح يا ${userName}!\n\n` +
+                    `📱 رقمك: ${phoneNumber}\n\n` +
+                    `ستصلك إشعارات عن سلتك المتروكة والعروض الخاصة 🎁`
+                );
+            } else {
+                await sendTelegramMessage(chatId,
+                    `مرحباً ${userName}! 👋\n\n` +
+                    `للاشتراك في إشعارات رِبح، أرسل رقم جوالك:\n\n` +
+                    `مثال:\n` +
+                    `/start 0501234567`
+                );
+            }
+        }
+        // Handle just phone number
+        else if (/^[\d\s+]+$/.test(text) && text.replace(/\D/g, '').length >= 9) {
+            const phoneNumber = text.replace(/\s/g, '');
+            await saveTelegramSubscriber(phoneNumber, chatId, userName);
+
+            await sendTelegramMessage(chatId,
+                `✅ تم ربط رقمك بنجاح!\n\n` +
+                `📱 ${phoneNumber}\n\n` +
+                `ستصلك إشعارات السلات المتروكة والعروض 🎁`
+            );
+        }
+        // Handle other messages
+        else {
+            await sendTelegramMessage(chatId,
+                `مرحباً ${userName}! 👋\n\n` +
+                `أنا بوت رِبح للإشعارات.\n\n` +
+                `أرسل /start ثم رقم جوالك للاشتراك.\n` +
+                `مثال: /start 0501234567`
+            );
+        }
+    }
+
+    res.status(200).json({ ok: true });
+});
+
+// Helper to send Telegram messages
+async function sendTelegramMessage(chatId, text) {
+    if (!config.TELEGRAM_BOT_TOKEN) return false;
+
+    try {
+        await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: chatId,
+                text: text,
+                parse_mode: 'HTML'
+            })
+        });
+        return true;
+    } catch (error) {
+        console.error('❌ Telegram send error:', error);
+        return false;
+    }
+}
+
+// Save Telegram subscriber (phone → chatId mapping)
+const TELEGRAM_SUBSCRIBERS_FILE = path.join(__dirname, 'data', 'telegram_subscribers.json');
+
+async function saveTelegramSubscriber(phone, chatId, name) {
+    let subscribers = {};
+    try {
+        subscribers = JSON.parse(fs.readFileSync(TELEGRAM_SUBSCRIBERS_FILE, 'utf8'));
+    } catch (e) {
+        subscribers = {};
+    }
+
+    // Normalize phone number
+    phone = phone.replace(/\D/g, '');
+    if (phone.startsWith('0')) phone = '966' + phone.substring(1);
+    if (!phone.startsWith('966')) phone = '966' + phone;
+
+    subscribers[phone] = { chatId, name, subscribedAt: new Date().toISOString() };
+
+    fs.writeFileSync(TELEGRAM_SUBSCRIBERS_FILE, JSON.stringify(subscribers, null, 2));
+    console.log(`📱 Telegram subscriber added: ${phone} → ${chatId}`);
+}
+
+// Get Telegram chat ID for a phone number
+function getTelegramChatId(phone) {
+    try {
+        const subscribers = JSON.parse(fs.readFileSync(TELEGRAM_SUBSCRIBERS_FILE, 'utf8'));
+
+        // Normalize phone number
+        phone = phone.replace(/\D/g, '');
+        if (phone.startsWith('0')) phone = '966' + phone.substring(1);
+        if (!phone.startsWith('966')) phone = '966' + phone;
+
+        return subscribers[phone]?.chatId || null;
+    } catch (e) {
+        return null;
+    }
+}
+
 // Handle app uninstalled
 function handleAppUninstalled(merchant) {
     console.log('👋 App uninstalled by:', merchant);
@@ -998,30 +1115,31 @@ async function sendTelegramReminder(cart, reminderNumber) {
         return false;
     }
 
-    // Note: Customer needs to have started a chat with the bot first
-    // We'd need to store their Telegram chat ID
-    // For now, this is a placeholder - needs customer opt-in
-
     const discount = config.REMINDER_DELAYS[reminderNumber - 1]?.discount || 0;
     const discountCode = discount > 0 ? `RIBH${discount}` : '';
 
     let message;
-    if (reminderNumber === 1) {
-        message = `🛒 مرحباً ${cart.customer.name}!\n\nسلتك في انتظارك:\n💰 المجموع: ${cart.total} ${cart.currency || 'SAR'}\n\nأكمل طلبك الآن!`;
+    if (reminderNumber === 0 || reminderNumber === 1) {
+        message = `🛒 مرحباً ${cart.customer.name}!\n\nسلتك في انتظارك:\n💰 المجموع: ${cart.total} ${cart.currency || 'SAR'}\n\n🔗 أكمل طلبك: ${cart.checkoutUrl || cart.storeUrl || ''}`;
     } else if (discount > 0) {
-        message = `🎁 ${cart.customer.name}، خصم خاص لك!\n\n✨ خصم ${discount}%\n🏷️ كود: ${discountCode}\n\nلا تفوّت الفرصة!`;
+        message = `🎁 ${cart.customer.name}، خصم خاص لك!\n\n✨ خصم ${discount}%\n🏷️ كود: ${discountCode}\n\n🔗 أكمل طلبك: ${cart.checkoutUrl || cart.storeUrl || ''}`;
     } else {
         message = `⏰ تذكير: سلتك المتروكة في انتظارك يا ${cart.customer.name}!`;
     }
 
-    // If we have customer's Telegram chat ID
-    if (cart.customer.telegramChatId) {
+    // Try to get chatId from cart OR lookup by phone
+    let chatId = cart.customer.telegramChatId;
+    if (!chatId && cart.customer.phone) {
+        chatId = getTelegramChatId(cart.customer.phone);
+    }
+
+    if (chatId) {
         try {
             const response = await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    chat_id: cart.customer.telegramChatId,
+                    chat_id: chatId,
                     text: message,
                     parse_mode: 'HTML'
                 })
@@ -1029,7 +1147,7 @@ async function sendTelegramReminder(cart, reminderNumber) {
 
             const result = await response.json();
             if (result.ok) {
-                console.log(`✅ Telegram sent to ${cart.customer.telegramChatId}`);
+                console.log(`✅ Telegram sent to ${chatId}`);
                 return true;
             } else {
                 console.log(`⚠️ Telegram failed:`, result);
@@ -1041,7 +1159,7 @@ async function sendTelegramReminder(cart, reminderNumber) {
         }
     }
 
-    console.log('📱 Telegram: Customer has no chat ID (need opt-in first)');
+    console.log('📱 Telegram: Customer has no chat ID - they need to subscribe first');
     return false;
 }
 
