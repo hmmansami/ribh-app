@@ -277,7 +277,8 @@ app.post('/api/webhooks/salla', handleSallaWebhook);
 app.post('/webhook', handleSallaWebhook); // Alternative path
 
 // ==== TELEGRAM BOT WEBHOOK ====
-// Customers can subscribe by messaging: /start their_phone_number
+// ONE-CLICK SIGNUP: Customer clicks link with phone embedded -> opens Telegram -> done!
+// Link format: https://t.me/RibhCartBot?start=966501234567
 app.post('/webhooks/telegram', async (req, res) => {
     const update = req.body;
     console.log('📱 Telegram update:', JSON.stringify(update).substring(0, 200));
@@ -287,29 +288,48 @@ app.post('/webhooks/telegram', async (req, res) => {
         const text = update.message.text || '';
         const userName = update.message.from?.first_name || 'عميل';
 
-        // Handle /start command
+        // Handle /start command with phone in deep link
+        // /start 966501234567 (from deep link t.me/RibhCartBot?start=966501234567)
         if (text.startsWith('/start')) {
-            const phoneNumber = text.replace('/start', '').trim();
+            const param = text.replace('/start', '').trim();
 
-            if (phoneNumber && phoneNumber.length >= 9) {
-                // Save customer's Telegram chat ID linked to phone
-                await saveTelegramSubscriber(phoneNumber, chatId, userName);
+            // Check if this is a phone number (from deep link)
+            if (param && /^[\d+]+$/.test(param) && param.length >= 9) {
+                // ONE-CLICK SUCCESS! Save and confirm
+                await saveTelegramSubscriber(param, chatId, userName);
 
                 await sendTelegramMessage(chatId,
-                    `✅ تم تسجيلك بنجاح يا ${userName}!\n\n` +
-                    `📱 رقمك: ${phoneNumber}\n\n` +
-                    `ستصلك إشعارات عن سلتك المتروكة والعروض الخاصة 🎁`
+                    `🎉 مرحباً ${userName}!\n\n` +
+                    `✅ تم تفعيل الإشعارات بنجاح!\n\n` +
+                    `ستصلك تنبيهات عن:\n` +
+                    `🛒 السلات المتروكة\n` +
+                    `🎁 العروض الخاصة\n` +
+                    `💰 التخفيضات الحصرية\n\n` +
+                    `شكراً لاستخدامك رِبح! 💚`
                 );
-            } else {
+            }
+            // Just /start without phone - ask for phone keyboard style
+            else {
                 await sendTelegramMessage(chatId,
                     `مرحباً ${userName}! 👋\n\n` +
-                    `للاشتراك في إشعارات رِبح، أرسل رقم جوالك:\n\n` +
-                    `مثال:\n` +
-                    `/start 0501234567`
+                    `🔔 فعّل إشعارات رِبح\n\n` +
+                    `أرسل رقم جوالك لربطه بحسابك:\n\n` +
+                    `مثال: 0501234567`
                 );
             }
         }
-        // Handle just phone number
+        // Handle contact sharing (phone from Telegram contact)
+        else if (update.message.contact) {
+            const phoneNumber = update.message.contact.phone_number;
+            await saveTelegramSubscriber(phoneNumber, chatId, userName);
+
+            await sendTelegramMessage(chatId,
+                `🎉 ممتاز ${userName}!\n\n` +
+                `✅ تم ربط رقمك بنجاح!\n\n` +
+                `ستصلك جميع الإشعارات هنا 🔔`
+            );
+        }
+        // Handle just phone number typed
         else if (/^[\d\s+]+$/.test(text) && text.replace(/\D/g, '').length >= 9) {
             const phoneNumber = text.replace(/\s/g, '');
             await saveTelegramSubscriber(phoneNumber, chatId, userName);
@@ -325,14 +345,25 @@ app.post('/webhooks/telegram', async (req, res) => {
             await sendTelegramMessage(chatId,
                 `مرحباً ${userName}! 👋\n\n` +
                 `أنا بوت رِبح للإشعارات.\n\n` +
-                `أرسل /start ثم رقم جوالك للاشتراك.\n` +
-                `مثال: /start 0501234567`
+                `أرسل رقم جوالك للاشتراك:\n` +
+                `مثال: 0501234567`
             );
         }
     }
 
     res.status(200).json({ ok: true });
 });
+
+// Generate one-click Telegram signup link for a phone number
+function getTelegramSignupLink(phoneNumber) {
+    // Normalize phone
+    let phone = phoneNumber.replace(/\D/g, '');
+    if (phone.startsWith('0')) phone = '966' + phone.substring(1);
+    if (!phone.startsWith('966')) phone = '966' + phone;
+
+    // Return deep link - customer just clicks and opens Telegram!
+    return `https://t.me/RibhCartBot?start=${phone}`;
+}
 
 // Helper to send Telegram messages
 async function sendTelegramMessage(chatId, text) {
@@ -1485,6 +1516,61 @@ app.get('/api/store/usage', (req, res) => {
     const storeId = req.query.storeId || 'default';
     const stats = getStoreUsageStats(storeId);
     res.json(stats);
+});
+
+// ==========================================
+// TELEGRAM SUBSCRIPTION ENDPOINTS
+// ==========================================
+
+// Handle Telegram Login Widget callback
+app.post('/api/telegram/auth', async (req, res) => {
+    const user = req.body;
+    console.log('📱 Telegram auth callback:', user);
+
+    if (user && user.id) {
+        // Save the Telegram user
+        const chatId = user.id;
+        const name = user.first_name || 'عميل';
+        const phone = user.phone_number || '';
+
+        if (phone) {
+            await saveTelegramSubscriber(phone, chatId, name);
+        } else {
+            // Store by Telegram user ID if no phone
+            let subscribers = {};
+            try {
+                subscribers = JSON.parse(fs.readFileSync(TELEGRAM_SUBSCRIBERS_FILE, 'utf8'));
+            } catch (e) {
+                subscribers = {};
+            }
+            subscribers[`tg_${chatId}`] = { chatId, name, subscribedAt: new Date().toISOString() };
+            fs.writeFileSync(TELEGRAM_SUBSCRIBERS_FILE, JSON.stringify(subscribers, null, 2));
+        }
+
+        res.json({ success: true, message: 'تم التسجيل بنجاح!' });
+    } else {
+        res.status(400).json({ success: false, error: 'Invalid data' });
+    }
+});
+
+// Subscribe by phone number
+app.post('/api/telegram/subscribe', async (req, res) => {
+    const { phone } = req.body;
+
+    if (!phone) {
+        return res.status(400).json({ success: false, error: 'Phone required' });
+    }
+
+    console.log('📱 Telegram phone subscription:', phone);
+
+    // Generate the subscription link
+    const link = getTelegramSignupLink(phone);
+
+    res.json({
+        success: true,
+        message: 'افتح الرابط للاشتراك',
+        link
+    });
 });
 
 // ==========================================

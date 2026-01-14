@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - تفعيل إشعارات تيليجرام</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10B981;
+            --telegram: #0088cc;
+            --bg: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --card: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .telegram-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--telegram);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        .features {
+            text-align: right;
+            margin-bottom: 2rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .feature:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+        }
+
+        .telegram-login-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: var(--telegram);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .telegram-login-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.4);
+        }
+
+        .telegram-login-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .alt-method {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        .phone-input-group {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .phone-input-group.show {
+            display: block;
+        }
+
+        .phone-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: inherit;
+            font-size: 1.1rem;
+            text-align: center;
+            direction: ltr;
+            margin-bottom: 1rem;
+        }
+
+        .phone-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-phone-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .success-message {
+            display: none;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .toggle-method {
+            background: none;
+            border: none;
+            color: var(--telegram);
+            cursor: pointer;
+            font-family: inherit;
+            text-decoration: underline;
+        }
+
+        /* Telegram Widget Container */
+        #telegram-login-widget {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">رِبح 💚</div>
+        <p class="subtitle">استرداد السلات المتروكة</p>
+
+        <div class="telegram-icon">
+            <svg viewBox="0 0 24 24" fill="white" width="40" height="40">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.64-2.87 7.97-3.43 3.79-1.58 4.58-1.86 5.09-1.87.11 0 .37.03.54.17.14.12.18.28.2.46-.01.06.01.24 0 .38z" />
+            </svg>
+        </div>
+
+        <h2>فعّل إشعارات تيليجرام 🔔</h2>
+
+        <p class="description">
+            احصل على تنبيهات فورية عن سلاتك المتروكة والعروض الخاصة
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <span class="feature-icon">🛒</span>
+                <span>تذكير بالسلات المتروكة</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">🎁</span>
+                <span>عروض وخصومات حصرية</span>
+            </div>
+            <div class="feature">
+                <span class="feature-icon">⚡</span>
+                <span>إشعارات فورية مجانية</span>
+            </div>
+        </div>
+
+        <!-- Telegram Login Widget (Official) -->
+        <div id="telegram-login-widget"></div>
+
+        <!-- Alternative: Direct open Telegram -->
+        <button class="telegram-login-btn" onclick="openTelegram()">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.66-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.49 1.02-.74 3.98-1.73 6.64-2.87 7.97-3.43 3.79-1.58 4.58-1.86 5.09-1.87.11 0 .37.03.54.17.14.12.18.28.2.46-.01.06.01.24 0 .38z" />
+            </svg>
+            فتح تيليجرام والاشتراك
+        </button>
+
+        <p class="alt-method">
+            أو <button class="toggle-method" onclick="togglePhoneInput()">أدخل رقم جوالك</button>
+        </p>
+
+        <div class="phone-input-group" id="phone-input-group">
+            <input type="tel" class="phone-input" id="phone" placeholder="05XXXXXXXX" maxlength="10">
+            <button class="submit-phone-btn" onclick="submitPhone()">تفعيل الإشعارات</button>
+        </div>
+
+        <div class="success-message" id="success-message">
+            <p>🎉 تم التسجيل بنجاح!</p>
+            <p>ستصلك الإشعارات على تيليجرام</p>
+        </div>
+    </div>
+
+    <script>
+        // Get phone from URL if passed
+        const urlParams = new URLSearchParams(window.location.search);
+        const phoneFromUrl = urlParams.get('phone');
+
+        if (phoneFromUrl) {
+            document.getElementById('phone').value = phoneFromUrl;
+        }
+
+        function openTelegram() {
+            const phone = document.getElementById('phone').value || phoneFromUrl || '';
+            let normalizedPhone = phone.replace(/\D/g, '');
+            if (normalizedPhone.startsWith('0')) {
+                normalizedPhone = '966' + normalizedPhone.substring(1);
+            }
+
+            // Open Telegram with deep link
+            const telegramUrl = `https://t.me/RibhCartBot?start=${normalizedPhone}`;
+            window.open(telegramUrl, '_blank');
+        }
+
+        function togglePhoneInput() {
+            const group = document.getElementById('phone-input-group');
+            group.classList.toggle('show');
+        }
+
+        function submitPhone() {
+            const phone = document.getElementById('phone').value;
+            if (phone.length < 9) {
+                alert('الرجاء إدخال رقم جوال صحيح');
+                return;
+            }
+
+            // Open Telegram with the phone
+            let normalizedPhone = phone.replace(/\D/g, '');
+            if (normalizedPhone.startsWith('0')) {
+                normalizedPhone = '966' + normalizedPhone.substring(1);
+            }
+
+            // Save to our backend
+            fetch('/api/telegram/subscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phone: normalizedPhone })
+            });
+
+            // Open Telegram
+            window.open(`https://t.me/RibhCartBot?start=${normalizedPhone}`, '_blank');
+
+            // Show success
+            document.getElementById('success-message').classList.add('show');
+        }
+
+        // Load Telegram Login Widget (Official)
+        // Note: This requires domain to be set in BotFather
+        function loadTelegramWidget() {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://telegram.org/js/telegram-widget.js?22';
+            script.setAttribute('data-telegram-login', 'RibhCartBot');
+            script.setAttribute('data-size', 'large');
+            script.setAttribute('data-radius', '20');
+            script.setAttribute('data-request-access', 'write');
+            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            document.getElementById('telegram-login-widget').appendChild(script);
+        }
+
+        // Handle Telegram Login callback
+        function onTelegramAuth(user) {
+            console.log('Telegram user:', user);
+
+            // Send to our backend
+            fetch('/api/telegram/auth', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(user)
+            }).then(() => {
+                document.getElementById('success-message').classList.add('show');
+            });
+        }
+
+        // Try to load the official widget
+        // loadTelegramWidget(); // Uncomment after setting domain in BotFather
+    </script>
+</body>
+
+</html>
