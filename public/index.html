@@ -507,71 +507,96 @@
     </div>
 
     <script>
-        // Format number to Arabic
-        function formatArabic(num) {
-            return num.toLocaleString('ar-SA');
-        }
+        // Always show demo/real data on load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadStats();
+        });
 
-        // Load stats from API
         async function loadStats() {
+            // Set demo data first (always visible)
+            setDemoData();
+
+            // Then try to get real data
             try {
-                const response = await fetch('/api/stats');
-                const data = await response.json();
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token');
 
-                // Update UI with real data
-                document.getElementById('totalRevenue').textContent = formatArabic(data.totalRecovered || 14250) + ' ر.س';
-                document.getElementById('totalSent').textContent = formatArabic(data.totalSent || 156);
-
-                // Show status if active
-                document.getElementById('statusBadge').style.display = 'inline-flex';
+                if (token) {
+                    const response = await fetch('/api/stats?token=' + token);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.totalRecovered > 0) {
+                            updateWithRealData(data);
+                        }
+                    }
+                }
             } catch (e) {
-                console.log('Using demo data');
-                // Demo data
-                animateValue('totalRevenue', 0, 14250, 2000, ' ر.س');
-                document.getElementById('totalSent').textContent = '١٥٦';
-                document.getElementById('welcomeSent').textContent = '٤٥';
-                document.getElementById('cartSent').textContent = '٨٩';
-                document.getElementById('upsellSent').textContent = '٢٣';
-                document.getElementById('referralCount').textContent = '١٢';
-                document.getElementById('winbackSent').textContent = '٧';
-
-                document.getElementById('welcomeRevenue').textContent = '٢,٣٤٠';
-                document.getElementById('cartRevenue').textContent = '٨,٩٥٠';
-                document.getElementById('upsellRevenue').textContent = '١,٨٦٠';
-                document.getElementById('referralRevenue').textContent = '٧٨٠';
-                document.getElementById('winbackRevenue').textContent = '٣٢٠ ر.س';
-
-                document.getElementById('welcomeRate').textContent = '١٢٪';
-                document.getElementById('cartRate').textContent = '٢٣٪';
-                document.getElementById('upsellRate').textContent = '١٨٪';
-                document.getElementById('referralActive').textContent = '٤٥';
+                console.log('Using demo data:', e);
             }
+
+            // Show active status
+            document.getElementById('statusBadge').style.display = 'inline-flex';
         }
 
-        function animateValue(id, start, end, duration, suffix = '') {
-            const obj = document.getElementById(id);
-            const startTime = performance.now();
+        function setDemoData() {
+            // Hero
+            animateNumber('totalRevenue', 14250, ' ر.س');
+            document.getElementById('totalSent').textContent = '156';
 
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                const value = Math.floor(progress * (end - start) + start);
-                obj.textContent = formatArabic(value) + suffix;
+            // Welcome
+            document.getElementById('welcomeRevenue').textContent = '2,340';
+            document.getElementById('welcomeSent').textContent = '45';
+            document.getElementById('welcomeRate').textContent = '12%';
 
-                if (progress < 1) {
-                    requestAnimationFrame(update);
+            // Cart Recovery
+            document.getElementById('cartRevenue').textContent = '8,950';
+            document.getElementById('cartSent').textContent = '89';
+            document.getElementById('cartRate').textContent = '23%';
+
+            // Upsell
+            document.getElementById('upsellRevenue').textContent = '1,860';
+            document.getElementById('upsellSent').textContent = '23';
+            document.getElementById('upsellRate').textContent = '18%';
+
+            // Referral
+            document.getElementById('referralRevenue').textContent = '780';
+            document.getElementById('referralCount').textContent = '12';
+            document.getElementById('referralActive').textContent = '45';
+
+            // Winback
+            document.getElementById('winbackRevenue').textContent = '320 ر.س';
+            document.getElementById('winbackSent').textContent = '7';
+        }
+
+        function updateWithRealData(data) {
+            document.getElementById('totalRevenue').textContent = formatNumber(data.totalRecovered) + ' ر.س';
+            document.getElementById('totalSent').textContent = data.totalSent || '0';
+            document.getElementById('cartSent').textContent = data.cartsRecovered || '0';
+            document.getElementById('cartRevenue').textContent = formatNumber(data.cartRevenue || 0);
+        }
+
+        function animateNumber(id, target, suffix = '') {
+            const el = document.getElementById(id);
+            let current = 0;
+            const step = target / 50;
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(interval);
                 }
-            }
-            requestAnimationFrame(update);
+                el.textContent = formatNumber(Math.floor(current)) + suffix;
+            }, 30);
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
         }
 
         function activateAutopilot() {
             document.getElementById('statusBadge').style.display = 'inline-flex';
-            alert('✅ تم تفعيل جميع الأنظمة!\n\nالآن رِبح يعمل تلقائياً على:\n• استرداد السلات المتروكة\n• إرسال عروض البيع الإضافي\n• تفعيل برنامج الإحالات\n• استرداد العملاء الخاملين');
+            alert('✅ تم تفعيل جميع الأنظمة!\n\nرِبح يعمل الآن تلقائياً على:\n• استرداد السلات المتروكة\n• إرسال عروض البيع الإضافي\n• تفعيل برنامج الإحالات\n• استرداد العملاء الخاملين');
         }
-
-        // Load on page ready
-        document.addEventListener('DOMContentLoaded', loadStats);
     </script>
 
 </body>
