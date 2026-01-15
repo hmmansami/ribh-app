@@ -1914,6 +1914,82 @@ app.post('/api/referrals/track', (req, res) => {
     }
 });
 
+// ==========================================
+// EXIT POPUP API
+// ==========================================
+const POPUP_LEADS_FILE = path.join(__dirname, 'data', 'popup_leads.json');
+if (!fs.existsSync(POPUP_LEADS_FILE)) {
+    fs.writeFileSync(POPUP_LEADS_FILE, JSON.stringify([]));
+}
+
+// Capture email from popup
+app.post('/api/popup/capture', (req, res) => {
+    const { storeId, email, discount, source } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email required' });
+    }
+
+    const leads = readDB(POPUP_LEADS_FILE);
+    const lead = {
+        id: Date.now().toString(),
+        storeId: storeId,
+        email: email,
+        discount: discount,
+        source: source || 'exit_popup',
+        createdAt: new Date().toISOString(),
+        converted: false
+    };
+
+    leads.push(lead);
+
+    // Keep last 5000 leads
+    if (leads.length > 5000) {
+        leads.splice(0, leads.length - 5000);
+    }
+
+    try {
+        fs.writeFileSync(POPUP_LEADS_FILE, JSON.stringify(leads, null, 2));
+    } catch (e) { }
+
+    console.log(`📥 [Popup] Captured lead: ${email} from ${storeId}`);
+
+    // Send discount code email
+    if (lifecycleEngine) {
+        const stores = readDB(STORES_FILE);
+        const store = stores.find(s => String(s.merchant) === String(storeId)) || {};
+
+        lifecycleEngine.handleNewCustomer(store, { email: email });
+    }
+
+    res.json({ success: true, message: 'Lead captured' });
+});
+
+// Track popup shown
+app.post('/api/popup/shown', (req, res) => {
+    const { storeId } = req.body;
+    console.log(`👁️ [Popup] Shown on ${storeId}`);
+    res.json({ success: true });
+});
+
+// Get popup stats
+app.get('/api/popup/stats', (req, res) => {
+    const leads = readDB(POPUP_LEADS_FILE);
+    const storeId = req.query.storeId;
+
+    const storeLeads = storeId
+        ? leads.filter(l => l.storeId === storeId)
+        : leads;
+
+    res.json({
+        total: storeLeads.length,
+        converted: storeLeads.filter(l => l.converted).length,
+        last7Days: storeLeads.filter(l =>
+            new Date(l.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        ).length
+    });
+});
+
 // Test webhook (for development)
 app.post('/api/test/abandoned-cart', (req, res) => {
     const testData = {

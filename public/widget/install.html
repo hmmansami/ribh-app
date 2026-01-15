@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | تثبيت النافذة المنبثقة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .step-content {
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        .code-block {
+            background: #1D1D1F;
+            color: #10B981;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 16px 0;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .preview-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .preview-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .preview-btn:hover {
+            background: #059669;
+        }
+
+        .note {
+            background: #FEF3C7;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            color: #92400E;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎯 تثبيت النافذة المنبثقة</h1>
+        <p class="subtitle">اجمع بريد الزوار قبل مغادرة متجرك واعرض عليهم خصم خاص</p>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">انسخ الكود</div>
+            </div>
+            <div class="step-content">
+                <p>انسخ هذا الكود - سيضيف نافذة منبثقة تظهر عندما يحاول الزائر مغادرة متجرك:</p>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode()">نسخ 📋</button>
+                    <code
+                        id="widgetCode">&lt;script src="https://ribh.click/widget/exit-popup.js" data-store="YOUR_STORE_ID"&gt;&lt;/script&gt;</code>
+                </div>
+                <p>استبدل <strong>YOUR_STORE_ID</strong> برقم متجرك في سلة.</p>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">الصق في متجرك</div>
+            </div>
+            <div class="step-content">
+                <p>في لوحة تحكم سلة:</p>
+                <ol style="padding-right: 20px; margin-top: 12px;">
+                    <li>اذهب إلى <strong>التصميم</strong> ← <strong>تحرير القالب</strong></li>
+                    <li>في قسم <strong>الإعدادات المتقدمة</strong> أو <strong>الأكواد الإضافية</strong></li>
+                    <li>الصق الكود في قسم <strong>كود الجسم</strong> (Body Code)</li>
+                    <li>اضغط <strong>حفظ</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">جاهز!</div>
+            </div>
+            <div class="step-content">
+                <p>الآن عندما يحاول الزائر مغادرة متجرك، ستظهر له نافذة تعرض خصم 10% مقابل بريده الإلكتروني.</p>
+                <p style="margin-top: 12px;">النتيجة:</p>
+                <ul style="padding-right: 20px; margin-top: 8px;">
+                    <li>✅ الزائر يحصل على كود خصم</li>
+                    <li>✅ أنت تجمع بريده في رِبح</li>
+                    <li>✅ يبدأ تسلسل استرداد السلة تلقائياً</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="note">
+            💡 <strong>نصيحة:</strong> النافذة تظهر مرة واحدة فقط لكل زائر (لا تزعجهم بالتكرار)
+        </div>
+
+        <div class="preview-box">
+            <div class="preview-title">🎬 شاهد كيف تعمل</div>
+            <p style="color: var(--muted); margin-bottom: 20px;">اضغط الزر لمشاهدة النافذة المنبثقة</p>
+            <button class="preview-btn" onclick="showPreview()">معاينة النافذة 👁️</button>
+        </div>
+    </div>
+
+    <script>
+        function copyCode() {
+            const code = document.getElementById('widgetCode').textContent;
+            navigator.clipboard.writeText(code);
+            document.querySelector('.copy-btn').textContent = 'تم النسخ ✅';
+            setTimeout(() => {
+                document.querySelector('.copy-btn').textContent = 'نسخ 📋';
+            }, 2000);
+        }
+
+        function showPreview() {
+            // Load and execute the widget
+            const script = document.createElement('script');
+            script.src = '/widget/exit-popup.js';
+            script.setAttribute('data-store', 'demo');
+            document.body.appendChild(script);
+
+            // Force show after short delay
+            setTimeout(() => {
+                if (!document.getElementById('ribh-exit-overlay')) {
+                    // Manually trigger for demo
+                    document.dispatchEvent(new MouseEvent('mouseout', { clientY: 0, relatedTarget: null }));
+                }
+            }, 500);
+        }
+    </script>
+</body>
+
+</html>
