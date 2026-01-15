@@ -414,70 +414,72 @@ app.get('/oauth/callback', async (req, res) => {
     }
 });
 
-// Store dashboard entry point (from Salla settings link with {{store.id}})
-// Salla variables supported: {{store.id}}, {{merchant.id}}, {{store_id}}, etc.
+// ==========================================
+// SEAMLESS APP ACCESS - One Click, No Friction!
+// ==========================================
+// Link from Salla: https://ribh.click/app
+// Flow: Click → Auto OAuth (if needed) → Dashboard
 app.get('/app', (req, res) => {
     // Accept multiple query parameter formats from Salla
     const storeId = req.query.merchant || req.query.store || req.query.store_id ||
         req.query.merchant_id || req.query.id;
 
+    const cookies = parseCookies(req);
+
     console.log('📱 App entry point accessed:', {
-        storeId,
-        allParams: req.query,
-        cookies: req.headers.cookie ? 'present' : 'none'
+        storeId: storeId || 'none',
+        hasCookie: cookies.ribhToken ? 'yes' : 'no'
     });
 
-    if (storeId) {
-        // Lookup store by merchant ID (try both string and number formats)
+    // OPTION 1: Store ID provided in URL
+    if (storeId && storeId !== 'YOUR_STORE_ID' && !storeId.includes('{{')) {
         const stores = readDB(STORES_FILE);
         const foundStore = stores.find(s =>
             s.merchant === storeId ||
             s.merchant === String(storeId) ||
-            s.merchant === Number(storeId) ||
             String(s.merchant) === String(storeId)
         );
 
-        console.log(`🔍 Looking for store ${storeId}, found ${stores.length} stores total`);
-
         if (foundStore && foundStore.ribhToken) {
-            console.log(`✅ Found store: ${foundStore.merchantName || storeId} (${foundStore.merchant})`);
+            console.log(`✅ Found store: ${foundStore.merchantName || storeId}`);
 
-            // Set cookie for persistent login
+            // Set cookie for future visits
             res.cookie('ribhToken', foundStore.ribhToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax'
-            });
-
-            // Also set storeId cookie for easier access
-            res.cookie('storeId', storeId, {
-                maxAge: 30 * 24 * 60 * 60 * 1000,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: true,
                 sameSite: 'lax'
             });
 
             return res.redirect(`/?token=${foundStore.ribhToken}`);
-        } else {
-            console.log(`⚠️ Store ${storeId} not registered yet`);
-            // Log available stores for debugging
-            if (stores.length > 0) {
-                console.log('📋 Registered stores:', stores.map(s => ({ id: s.merchant, name: s.merchantName })));
-            }
-            // Store not registered - redirect to OAuth to register them
-            return res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${config.SALLA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://ribh.click/oauth/callback')}&response_type=code&scope=offline_access`);
         }
-    } else {
-        // No store ID - check for cookie
-        const cookies = parseCookies(req);
-        if (cookies.ribhToken) {
-            console.log('🍪 Found ribhToken cookie, redirecting to dashboard');
+        // Store not found - fall through to OAuth
+    }
+
+    // OPTION 2: Already has cookie from previous login
+    if (cookies.ribhToken) {
+        // Verify the token is still valid
+        const stores = readDB(STORES_FILE);
+        const validStore = stores.find(s => s.ribhToken === cookies.ribhToken);
+
+        if (validStore) {
+            console.log(`🍪 Valid cookie found for: ${validStore.merchantName}`);
             return res.redirect(`/?token=${cookies.ribhToken}`);
         }
-        console.log('❌ No store ID or cookie, redirecting to login');
-        res.redirect('/login.html');
+        // Invalid cookie - fall through to OAuth
     }
+
+    // OPTION 3: No authentication found - AUTO TRIGGER OAUTH!
+    // Since merchant is already logged into Salla, this is seamless
+    console.log('🔐 No auth found, triggering Salla OAuth...');
+
+    const oauthUrl = `https://accounts.salla.sa/oauth2/auth?` +
+        `client_id=${config.SALLA_CLIENT_ID}` +
+        `&redirect_uri=${encodeURIComponent('https://ribh.click/oauth/callback')}` +
+        `&response_type=code` +
+        `&scope=offline_access`;
+
+    return res.redirect(oauthUrl);
 });
 
 // ==========================================
