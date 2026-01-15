@@ -415,6 +415,7 @@
                 top: -50px;
                 opacity: 0;
             }
+
             to {
                 top: 20px;
                 opacity: 1;
@@ -692,6 +693,221 @@ ${checkoutUrl}
 
         // Load data on page load
         loadDashboardData();
+
+        // ==========================================
+        // MANDATORY SAVE POPUP
+        // ==========================================
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isWelcome = urlParams.get('welcome') === 'true';
+            const token = urlParams.get('token');
+            const hasSaved = localStorage.getItem('ribh_saved_' + token);
+            
+            if (isWelcome && token && !hasSaved) {
+                showSavePopup(token);
+            }
+        })();
+
+        function showSavePopup(token) {
+            const dashboardUrl = `${window.location.origin}/?token=${token}`;
+            
+            const overlay = document.createElement('div');
+            overlay.id = 'save-overlay';
+            overlay.innerHTML = `
+                <style>
+                    #save-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.9);
+                        z-index: 10000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 1rem;
+                    }
+                    .save-popup {
+                        background: white;
+                        border-radius: 24px;
+                        padding: 2.5rem;
+                        max-width: 450px;
+                        width: 100%;
+                        text-align: center;
+                        animation: popIn 0.3s ease-out;
+                    }
+                    @keyframes popIn {
+                        from { transform: scale(0.9); opacity: 0; }
+                        to { transform: scale(1); opacity: 1; }
+                    }
+                    .save-popup h2 {
+                        font-size: 1.75rem;
+                        color: #1D1D1F;
+                        margin-bottom: 0.75rem;
+                    }
+                    .save-popup .subtitle {
+                        color: #86868B;
+                        margin-bottom: 1.5rem;
+                        line-height: 1.6;
+                    }
+                    .save-popup .icon {
+                        font-size: 4rem;
+                        margin-bottom: 1rem;
+                    }
+                    .url-box {
+                        background: #F5F5F7;
+                        border: 2px solid #D2D2D7;
+                        border-radius: 12px;
+                        padding: 0.75rem 1rem;
+                        margin: 1rem 0;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        direction: ltr;
+                    }
+                    .url-box input {
+                        flex: 1;
+                        background: none;
+                        border: none;
+                        font-size: 0.85rem;
+                        color: #1D1D1F;
+                        outline: none;
+                        font-family: monospace;
+                    }
+                    .url-box button {
+                        background: #10B981;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 0.5rem 1rem;
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: all 0.2s;
+                    }
+                    .url-box button:hover {
+                        background: #059669;
+                    }
+                    .url-box button.copied {
+                        background: #6366F1;
+                    }
+                    .checkbox-row {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.75rem;
+                        margin: 1.5rem 0;
+                        padding: 1rem;
+                        background: #FEF3C7;
+                        border-radius: 12px;
+                    }
+                    .checkbox-row input[type="checkbox"] {
+                        width: 22px;
+                        height: 22px;
+                        accent-color: #10B981;
+                    }
+                    .checkbox-row label {
+                        color: #92400E;
+                        font-weight: 500;
+                    }
+                    .continue-btn {
+                        width: 100%;
+                        padding: 1rem;
+                        background: #E5E5E5;
+                        color: #999;
+                        border: none;
+                        border-radius: 12px;
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        cursor: not-allowed;
+                        transition: all 0.2s;
+                    }
+                    .continue-btn.enabled {
+                        background: linear-gradient(135deg, #10B981 0%, #06B6D4 100%);
+                        color: white;
+                        cursor: pointer;
+                    }
+                    .continue-btn.enabled:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+                    }
+                    .tips {
+                        margin-top: 1.5rem;
+                        font-size: 0.8rem;
+                        color: #86868B;
+                    }
+                </style>
+                <div class="save-popup">
+                    <div class="icon">🔖</div>
+                    <h2>احفظ الرابط الخاص بك!</h2>
+                    <p class="subtitle">
+                        هذا الرابط هو المدخل الوحيد للوحة تحكمك.
+                        <br><strong>احفظه الآن</strong> حتى تتمكن من العودة لاحقاً!
+                    </p>
+                    
+                    <div class="url-box">
+                        <input type="text" id="dashboard-url" value="${dashboardUrl}" readonly>
+                        <button onclick="copyUrl()">نسخ</button>
+                    </div>
+                    
+                    <div class="checkbox-row">
+                        <input type="checkbox" id="saved-checkbox" onchange="toggleContinue()">
+                        <label for="saved-checkbox">لقد حفظت الرابط ✓</label>
+                    </div>
+                    
+                    <button class="continue-btn" id="continue-btn" onclick="closeSavePopup('${token}')">
+                        استمرار
+                    </button>
+                    
+                    <div class="tips">
+                        💡 نصيحة: أضف الرابط إلى المفضلة أو احفظه في الملاحظات
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+        }
+
+        function copyUrl() {
+            const input = document.getElementById('dashboard-url');
+            input.select();
+            document.execCommand('copy');
+            
+            const btn = input.nextElementSibling;
+            btn.textContent = 'تم! ✓';
+            btn.classList.add('copied');
+            
+            showNotification('✅ تم نسخ الرابط!', 'success');
+        }
+
+        function toggleContinue() {
+            const checkbox = document.getElementById('saved-checkbox');
+            const btn = document.getElementById('continue-btn');
+            
+            if (checkbox.checked) {
+                btn.classList.add('enabled');
+                btn.disabled = false;
+            } else {
+                btn.classList.remove('enabled');
+                btn.disabled = true;
+            }
+        }
+
+        function closeSavePopup(token) {
+            const checkbox = document.getElementById('saved-checkbox');
+            if (!checkbox.checked) {
+                showNotification('⚠️ يرجى تأكيد حفظ الرابط', 'warning');
+                return;
+            }
+            
+            localStorage.setItem('ribh_saved_' + token, 'true');
+            document.getElementById('save-overlay').remove();
+            
+            // Clean URL
+            window.history.replaceState({}, document.title, `/?token=${token}`);
+            
+            showNotification('🎉 مرحباً بك في رِبح!', 'success');
+        }
     </script>
 </body>
 
