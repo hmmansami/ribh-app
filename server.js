@@ -14,6 +14,16 @@ try {
     lifecycleEngine = null;
 }
 
+// Referral System
+let referralSystem;
+try {
+    referralSystem = require('./lib/referralSystem');
+    console.log('✅ Referral System loaded');
+} catch (e) {
+    console.log('⚠️ Referral System not available:', e.message);
+    referralSystem = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -1851,6 +1861,57 @@ app.get('/api/stats', (req, res) => {
 app.get('/api/stores', (req, res) => {
     const stores = readDB(STORES_FILE);
     res.json(stores);
+});
+
+// ==========================================
+// REFERRAL SYSTEM ENDPOINTS
+// ==========================================
+
+// Get referral stats for a store
+app.get('/api/referrals', (req, res) => {
+    const cookies = parseCookies(req);
+    const token = req.query.token || cookies.ribhToken;
+
+    if (!token) {
+        return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const stores = readDB(STORES_FILE);
+    const store = stores.find(s => s.ribhToken === token);
+
+    if (!store || !referralSystem) {
+        return res.json({ referrals: [], total: 0 });
+    }
+
+    const referrals = referralSystem.getStoreReferrals(store.merchant);
+    const totalEarnings = referrals.reduce((sum, r) => sum + r.totalEarnings, 0);
+    const totalReferred = referrals.reduce((sum, r) => sum + r.referredCustomers.length, 0);
+
+    res.json({
+        referrals: referrals,
+        stats: {
+            totalReferrers: referrals.length,
+            totalReferred: totalReferred,
+            totalEarnings: totalEarnings
+        }
+    });
+});
+
+// Track referral use (when someone uses a referral code)
+app.post('/api/referrals/track', (req, res) => {
+    const { storeId, code, customerEmail, orderValue } = req.body;
+
+    if (!referralSystem) {
+        return res.status(500).json({ error: 'Referral system not available' });
+    }
+
+    const result = referralSystem.trackReferralUse(storeId, code, customerEmail, orderValue);
+
+    if (result) {
+        res.json({ success: true, result });
+    } else {
+        res.status(404).json({ error: 'Referral code not found' });
+    }
 });
 
 // Test webhook (for development)
