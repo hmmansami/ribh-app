@@ -2173,6 +2173,31 @@ if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
 }
 
 // ==========================================
+// SEQUENCE PROCESSOR (Multi-step emails)
+// ==========================================
+let sequenceEngine;
+let emailSender;
+try {
+    sequenceEngine = require('./lib/sequenceEngine');
+    emailSender = require('./lib/emailSender');
+    console.log('✅ Sequence Engine loaded');
+} catch (e) {
+    console.log('⚠️ Sequence Engine not available:', e.message);
+}
+
+// Process pending sequence steps every minute
+if (sequenceEngine && emailSender) {
+    setInterval(async () => {
+        try {
+            await sequenceEngine.processPendingSteps(emailSender);
+        } catch (e) {
+            console.log('⚠️ Sequence processing error:', e.message);
+        }
+    }, 60 * 1000); // Every 1 minute
+    console.log('⏰ Sequence processor running every minute');
+}
+
+// ==========================================
 // DAILY WIN-BACK CHECK (Continuity Marketing)
 // ==========================================
 const WINBACK_CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
