@@ -396,9 +396,9 @@
     <div class="layout">
         <nav class="sidebar">
             <div class="logo">رِبح.</div>
-            <a href="#" class="nav-item active">📊 لوحة التحكم</a>
-            <a href="#" class="nav-item">📧 الرسائل المرسلة</a>
-            <a href="#" class="nav-item">🔗 الإحالات</a>
+            <a href="index.html" class="nav-item active">📊 لوحة التحكم</a>
+            <a href="messages.html" class="nav-item">📧 الرسائل المرسلة</a>
+            <a href="referrals.html" class="nav-item">🔗 الإحالات</a>
             <a href="settings.html" class="nav-item">⚙️ الإعدادات</a>
         </nav>
 
@@ -570,76 +570,76 @@
     </div>
 
     <script>
-    let currentPeriod = 30;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        loadData();
-        setupPeriodTabs();
-    });
+        let currentPeriod = 30;
 
-    function setupPeriodTabs() {
-        document.querySelectorAll('.period-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                currentPeriod = parseInt(this.dataset.days);
-                loadData();
-            });
+        document.addEventListener('DOMContentLoaded', function () {
+            loadData();
+            setupPeriodTabs();
         });
-    }
 
-    async function loadData() {
-        // Demo data - would be replaced with real API call
-        const demoData = {
-            30: { total: 14250, sent: 156, cart: {rev: 8950, sent: 89, rate: 23}, upsell: {rev: 3200, sent: 45, rate: 18}, referral: {rev: 1200, count: 12, active: 45}, winback: {rev: 900, sent: 7, rate: 14} },
-            7: { total: 4200, sent: 48, cart: {rev: 2800, sent: 28, rate: 21}, upsell: {rev: 900, sent: 12, rate: 15}, referral: {rev: 350, count: 4, active: 45}, winback: {rev: 150, sent: 2, rate: 10} },
-            1: { total: 850, sent: 8, cart: {rev: 550, sent: 5, rate: 20}, upsell: {rev: 200, sent: 2, rate: 16}, referral: {rev: 100, count: 1, active: 45}, winback: {rev: 0, sent: 0, rate: 0} }
-        };
-
-        const data = demoData[currentPeriod];
-        
-        // Animate total
-        animateNumber('totalRevenue', data.total, ' ر.س');
-        document.getElementById('totalSent').textContent = data.sent;
-
-        // Update cards
-        document.getElementById('cartRevenue').textContent = formatNum(data.cart.rev);
-        document.getElementById('cartSent').textContent = data.cart.sent;
-        document.getElementById('cartRate').textContent = data.cart.rate + '%';
-
-        document.getElementById('upsellRevenue').textContent = formatNum(data.upsell.rev);
-        document.getElementById('upsellSent').textContent = data.upsell.sent;
-        document.getElementById('upsellRate').textContent = data.upsell.rate + '%';
-
-        document.getElementById('referralRevenue').textContent = formatNum(data.referral.rev);
-        document.getElementById('referralCount').textContent = data.referral.count;
-        document.getElementById('referralActive').textContent = data.referral.active;
-
-        document.getElementById('winbackRevenue').textContent = formatNum(data.winback.rev);
-        document.getElementById('winbackSent').textContent = data.winback.sent;
-        document.getElementById('winbackRate').textContent = data.winback.rate + '%';
-
-        // Load activity
-        loadActivity();
-    }
-
-    function loadActivity() {
-        const activities = [
-            { type: 'cart', icon: '🛒', title: 'استرداد سلة', desc: 'a***@gmail.com - خصم 10%', time: 'منذ 5 دقائق', amount: '+450 ر.س' },
-            { type: 'upsell', icon: '💎', title: 'بيع إضافي', desc: 'm***@hotmail.com - عرض VIP', time: 'منذ 23 دقيقة', amount: '+280 ر.س' },
-            { type: 'referral', icon: '🔗', title: 'إحالة جديدة', desc: 'عميل جديد من رابط إحالة', time: 'منذ ساعة', amount: '+120 ر.س' },
-            { type: 'cart', icon: '🛒', title: 'استرداد سلة', desc: 's***@yahoo.com - رسالة تذكير', time: 'منذ 2 ساعة', amount: '+650 ر.س' },
-            { type: 'winback', icon: '🔄', title: 'إعادة تفعيل', desc: 'عميل عاد بعد 45 يوم', time: 'منذ 3 ساعات', amount: '+320 ر.س' },
-        ];
-
-        const list = document.getElementById('activityList');
-        
-        if (activities.length === 0) {
-            list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>لا توجد نشاطات حتى الآن</div></div>';
-            return;
+        function setupPeriodTabs() {
+            document.querySelectorAll('.period-tab').forEach(tab => {
+                tab.addEventListener('click', function () {
+                    document.querySelectorAll('.period-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentPeriod = parseInt(this.dataset.days);
+                    loadData();
+                });
+            });
         }
 
-        list.innerHTML = activities.map(a => `
+        async function loadData() {
+            // Demo data - would be replaced with real API call
+            const demoData = {
+                30: { total: 14250, sent: 156, cart: { rev: 8950, sent: 89, rate: 23 }, upsell: { rev: 3200, sent: 45, rate: 18 }, referral: { rev: 1200, count: 12, active: 45 }, winback: { rev: 900, sent: 7, rate: 14 } },
+                7: { total: 4200, sent: 48, cart: { rev: 2800, sent: 28, rate: 21 }, upsell: { rev: 900, sent: 12, rate: 15 }, referral: { rev: 350, count: 4, active: 45 }, winback: { rev: 150, sent: 2, rate: 10 } },
+                1: { total: 850, sent: 8, cart: { rev: 550, sent: 5, rate: 20 }, upsell: { rev: 200, sent: 2, rate: 16 }, referral: { rev: 100, count: 1, active: 45 }, winback: { rev: 0, sent: 0, rate: 0 } }
+            };
+
+            const data = demoData[currentPeriod];
+
+            // Animate total
+            animateNumber('totalRevenue', data.total, ' ر.س');
+            document.getElementById('totalSent').textContent = data.sent;
+
+            // Update cards
+            document.getElementById('cartRevenue').textContent = formatNum(data.cart.rev);
+            document.getElementById('cartSent').textContent = data.cart.sent;
+            document.getElementById('cartRate').textContent = data.cart.rate + '%';
+
+            document.getElementById('upsellRevenue').textContent = formatNum(data.upsell.rev);
+            document.getElementById('upsellSent').textContent = data.upsell.sent;
+            document.getElementById('upsellRate').textContent = data.upsell.rate + '%';
+
+            document.getElementById('referralRevenue').textContent = formatNum(data.referral.rev);
+            document.getElementById('referralCount').textContent = data.referral.count;
+            document.getElementById('referralActive').textContent = data.referral.active;
+
+            document.getElementById('winbackRevenue').textContent = formatNum(data.winback.rev);
+            document.getElementById('winbackSent').textContent = data.winback.sent;
+            document.getElementById('winbackRate').textContent = data.winback.rate + '%';
+
+            // Load activity
+            loadActivity();
+        }
+
+        function loadActivity() {
+            const activities = [
+                { type: 'cart', icon: '🛒', title: 'استرداد سلة', desc: 'a***@gmail.com - خصم 10%', time: 'منذ 5 دقائق', amount: '+450 ر.س' },
+                { type: 'upsell', icon: '💎', title: 'بيع إضافي', desc: 'm***@hotmail.com - عرض VIP', time: 'منذ 23 دقيقة', amount: '+280 ر.س' },
+                { type: 'referral', icon: '🔗', title: 'إحالة جديدة', desc: 'عميل جديد من رابط إحالة', time: 'منذ ساعة', amount: '+120 ر.س' },
+                { type: 'cart', icon: '🛒', title: 'استرداد سلة', desc: 's***@yahoo.com - رسالة تذكير', time: 'منذ 2 ساعة', amount: '+650 ر.س' },
+                { type: 'winback', icon: '🔄', title: 'إعادة تفعيل', desc: 'عميل عاد بعد 45 يوم', time: 'منذ 3 ساعات', amount: '+320 ر.س' },
+            ];
+
+            const list = document.getElementById('activityList');
+
+            if (activities.length === 0) {
+                list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>لا توجد نشاطات حتى الآن</div></div>';
+                return;
+            }
+
+            list.innerHTML = activities.map(a => `
             <div class="activity-item">
                 <div class="activity-icon ${getColorClass(a.type)}">${a.icon}</div>
                 <div class="activity-content">
@@ -652,40 +652,40 @@
                 </div>
             </div>
         `).join('');
-    }
+        }
 
-    function getColorClass(type) {
-        const colors = { cart: 'bg-purple', upsell: 'bg-blue', referral: 'bg-pink', winback: 'bg-orange' };
-        return colors[type] || 'bg-green';
-    }
+        function getColorClass(type) {
+            const colors = { cart: 'bg-purple', upsell: 'bg-blue', referral: 'bg-pink', winback: 'bg-orange' };
+            return colors[type] || 'bg-green';
+        }
 
-    function toggleSystem(system, enabled) {
-        console.log(`${system} is now ${enabled ? 'ON' : 'OFF'}`);
-        // Save to API
-        fetch('/api/store/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ [system + '_enabled']: enabled })
-        }).catch(e => console.log('Settings save failed'));
-    }
+        function toggleSystem(system, enabled) {
+            console.log(`${system} is now ${enabled ? 'ON' : 'OFF'}`);
+            // Save to API
+            fetch('/api/store/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [system + '_enabled']: enabled })
+            }).catch(e => console.log('Settings save failed'));
+        }
 
-    function animateNumber(id, target, suffix = '') {
-        const el = document.getElementById(id);
-        let current = 0;
-        const step = Math.max(target / 40, 1);
-        const interval = setInterval(() => {
-            current += step;
-            if (current >= target) {
-                current = target;
-                clearInterval(interval);
-            }
-            el.textContent = formatNum(Math.floor(current)) + suffix;
-        }, 25);
-    }
+        function animateNumber(id, target, suffix = '') {
+            const el = document.getElementById(id);
+            let current = 0;
+            const step = Math.max(target / 40, 1);
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(interval);
+                }
+                el.textContent = formatNum(Math.floor(current)) + suffix;
+            }, 25);
+        }
 
-    function formatNum(n) {
-        return n.toLocaleString('en-US');
-    }
+        function formatNum(n) {
+            return n.toLocaleString('en-US');
+        }
     </script>
 
 </body>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | الإحالات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+            --pink: #EC4899;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            right: 0;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .main {
+            flex: 1;
+            margin-right: 240px;
+            padding: 24px 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .back-link {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--pink);
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, var(--pink), #DB2777);
+            color: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .info-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .info-desc {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .table-card {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px 20px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #F9FAFB;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        td {
+            font-size: 13px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .code {
+            font-family: monospace;
+            background: #F3F4F6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .earnings {
+            color: var(--primary);
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="logo">رِبح.</div>
+            <a href="index.html" class="nav-item">📊 لوحة التحكم</a>
+            <a href="messages.html" class="nav-item">📧 الرسائل المرسلة</a>
+            <a href="referrals.html" class="nav-item active">🔗 الإحالات</a>
+            <a href="settings.html" class="nav-item">⚙️ الإعدادات</a>
+        </nav>
+
+        <main class="main">
+            <div class="header">
+                <h1>🔗 برنامج الإحالات</h1>
+                <a href="index.html" class="back-link">← العودة للوحة</a>
+            </div>
+
+            <div class="info-card">
+                <div class="info-title">كيف يعمل البرنامج؟</div>
+                <div class="info-desc">
+                    كل عميل يشتري يحصل على رابط إحالة خاص. عندما يستخدم صديقه الرابط:
+                    <br>• الصديق يحصل على <strong>خصم 10%</strong>
+                    <br>• العميل يحصل على <strong>15% من قيمة الطلب</strong>
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="value">45</div>
+                    <div class="label">رابط نشط</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">12</div>
+                    <div class="label">إحالة ناجحة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">1,200</div>
+                    <div class="label">ر.س أرباح</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value">26%</div>
+                    <div class="label">معدل التحويل</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">المُحيلين النشطين</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>العميل</th>
+                            <th>كود الإحالة</th>
+                            <th>الإحالات</th>
+                            <th>الأرباح</th>
+                            <th>آخر إحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>a***@gmail.com</td>
+                            <td><span class="code">RIBH3A2F1B</span></td>
+                            <td>5</td>
+                            <td class="earnings">+450 ر.س</td>
+                            <td>منذ يوم</td>
+                        </tr>
+                        <tr>
+                            <td>m***@hotmail.com</td>
+                            <td><span class="code">RIBHC4D2E8</span></td>
+                            <td>3</td>
+                            <td class="earnings">+280 ر.س</td>
+                            <td>منذ 3 أيام</td>
+                        </tr>
+                        <tr>
+                            <td>s***@yahoo.com</td>
+                            <td><span class="code">RIBHF1B9A3</span></td>
+                            <td>2</td>
+                            <td class="earnings">+190 ر.س</td>
+                            <td>منذ أسبوع</td>
+                        </tr>
+                        <tr>
+                            <td>k***@gmail.com</td>
+                            <td><span class="code">RIBHE8C7D2</span></td>
+                            <td>2</td>
+                            <td class="earnings">+180 ر.س</td>
+                            <td>منذ أسبوع</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
