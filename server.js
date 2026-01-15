@@ -4,6 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
+// Lifecycle Engine - AI-powered revenue optimization
+let lifecycleEngine;
+try {
+    lifecycleEngine = require('./lib/lifecycleEngine');
+    console.log('✅ Lifecycle Engine loaded');
+} catch (e) {
+    console.log('⚠️ Lifecycle Engine not available:', e.message);
+    lifecycleEngine = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -545,6 +555,11 @@ function handleSallaWebhook(req, res) {
 
             default:
                 console.log(`📌 Unhandled event: ${event.event}`);
+        }
+
+        // Process through Lifecycle Engine for AI-powered offers
+        if (lifecycleEngine) {
+            lifecycleEngine.processEvent(event.event, event.merchant, event.data);
         }
     } catch (error) {
         console.error('❌ Error processing webhook:', error);
