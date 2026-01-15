@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | معاينة الرسائل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            right: 0;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .main {
+            flex: 1;
+            margin-right: 240px;
+            padding: 24px 32px;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 24px;
+        }
+
+        .templates-list {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .template-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .template-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .template-item:hover {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .template-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-right: 3px solid var(--primary);
+        }
+
+        .template-icon {
+            font-size: 20px;
+        }
+
+        .template-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .template-desc {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .preview-container {
+            background: var(--card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .email-preview {
+            padding: 24px;
+            background: #f5f5f5;
+            min-height: 500px;
+        }
+
+        .email-frame {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .email-logo {
+            text-align: center;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+
+        .email-subject {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .email-body {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .email-offer {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .email-offer-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .email-urgency {
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            margin: 16px 0;
+        }
+
+        .email-btn {
+            display: block;
+            background: #1D1D1F;
+            color: white;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .email-footer {
+            text-align: center;
+            color: #999;
+            font-size: 11px;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="logo">رِبح.</div>
+            <a href="index.html" class="nav-item">📊 لوحة التحكم</a>
+            <a href="messages.html" class="nav-item">📧 الرسائل المرسلة</a>
+            <a href="preview.html" class="nav-item active">👁️ معاينة الرسائل</a>
+            <a href="referrals.html" class="nav-item">🔗 الإحالات</a>
+            <a href="settings.html" class="nav-item">⚙️ الإعدادات</a>
+        </nav>
+
+        <main class="main">
+            <div class="header">
+                <h1>👁️ معاينة الرسائل</h1>
+                <p>شاهد كيف تظهر الرسائل لعملائك قبل إرسالها</p>
+            </div>
+
+            <div class="preview-grid">
+                <div class="templates-list">
+                    <div class="template-header">قوالب الرسائل</div>
+                    <div class="template-item active" onclick="showTemplate('cart1')">
+                        <span class="template-icon">🛒</span>
+                        <div>
+                            <div class="template-name">استرداد سلة #1</div>
+                            <div class="template-desc">تذكير بدون خصم</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="showTemplate('cart2')">
+                        <span class="template-icon">🛒</span>
+                        <div>
+                            <div class="template-name">استرداد سلة #2</div>
+                            <div class="template-desc">خصم 10%</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="showTemplate('cart3')">
+                        <span class="template-icon">🛒</span>
+                        <div>
+                            <div class="template-name">استرداد سلة #3</div>
+                            <div class="template-desc">خصم 15% + شحن مجاني</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="showTemplate('upsell')">
+                        <span class="template-icon">💎</span>
+                        <div>
+                            <div class="template-name">بيع إضافي</div>
+                            <div class="template-desc">بعد الشراء</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="showTemplate('referral')">
+                        <span class="template-icon">🔗</span>
+                        <div>
+                            <div class="template-name">دعوة إحالة</div>
+                            <div class="template-desc">شارك واربح</div>
+                        </div>
+                    </div>
+                    <div class="template-item" onclick="showTemplate('winback')">
+                        <span class="template-icon">🔄</span>
+                        <div>
+                            <div class="template-name">إعادة تفعيل</div>
+                            <div class="template-desc">بعد 30 يوم</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-container">
+                    <div class="preview-header">
+                        <span class="preview-title">معاينة البريد الإلكتروني</span>
+                        <div class="preview-actions">
+                            <button class="btn btn-secondary" onclick="sendTest()">📧 إرسال تجريبي</button>
+                            <button class="btn btn-primary" onclick="editTemplate()">✏️ تعديل</button>
+                        </div>
+                    </div>
+                    <div class="email-preview">
+                        <div class="email-frame" id="emailFrame">
+                            <div class="email-logo">متجرك 💚</div>
+                            <div class="email-subject" id="emailSubject">🛒 نسيت شيئاً في سلتك!</div>
+                            <div class="email-body" id="emailBody">مرحباً! لاحظنا أنك تركت بعض المنتجات في سلتك. هل
+                                تحتاج مساعدة في إكمال طلبك؟</div>
+                            <div class="email-offer" id="emailOffer" style="display: none;">
+                                <div class="email-offer-value" id="offerValue">خصم 10%</div>
+                            </div>
+                            <div class="email-urgency" id="emailUrgency" style="display: none;">
+                                ⏰ <span id="urgencyText">صالح لمدة ساعتين</span>
+                            </div>
+                            <a href="#" class="email-btn">أكمل طلبك الآن 🛒</a>
+                            <div class="email-footer">© رِبح - جميع الحقوق محفوظة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const templates = {
+            cart1: {
+                subject: '🛒 نسيت شيئاً في سلتك!',
+                body: 'مرحباً! لاحظنا أنك تركت بعض المنتجات في سلتك. هل تحتاج مساعدة في إكمال طلبك؟',
+                offer: null,
+                urgency: null
+            },
+            cart2: {
+                subject: '⏰ سلتك لا تزال في انتظارك - خصم 10%!',
+                body: 'لأنك مميز، جهزنا لك خصم 10% على سلتك.',
+                offer: 'خصم 10%',
+                urgency: 'صالح لمدة ساعتين'
+            },
+            cart3: {
+                subject: '🚨 فرصة أخيرة! خصم 15% + شحن مجاني',
+                body: 'هذه آخر فرصة لإتمام طلبك! خصم 15% + شحن مجاني.',
+                offer: 'خصم 15% + شحن مجاني',
+                urgency: 'ينتهي خلال ساعات'
+            },
+            upsell: {
+                subject: '💎 أكمل تجربتك!',
+                body: 'شكراً لطلبك! احصل على خصم 20% على طلبك القادم.',
+                offer: 'خصم 20%',
+                urgency: 'صالح لمدة 7 أيام'
+            },
+            referral: {
+                subject: '🎁 اربح مع أصدقائك!',
+                body: 'شارك رابطك الخاص مع أصدقائك - يحصلون على خصم 10% وتحصل أنت على 15% من كل طلب!',
+                offer: 'اربح 15% من كل إحالة',
+                urgency: null
+            },
+            winback: {
+                subject: '😊 اشتقنا لك!',
+                body: 'مر وقت منذ آخر زيارة لنا. جهزنا لك عرض خاص!',
+                offer: 'خصم 25% + شحن مجاني',
+                urgency: 'صالح لمدة 7 أيام'
+            }
+        };
+
+        function showTemplate(id) {
+            document.querySelectorAll('.template-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            const t = templates[id];
+            document.getElementById('emailSubject').textContent = t.subject;
+            document.getElementById('emailBody').textContent = t.body;
+
+            const offerEl = document.getElementById('emailOffer');
+            if (t.offer) {
+                offerEl.style.display = 'block';
+                document.getElementById('offerValue').textContent = t.offer;
+            } else {
+                offerEl.style.display = 'none';
+            }
+
+            const urgencyEl = document.getElementById('emailUrgency');
+            if (t.urgency) {
+                urgencyEl.style.display = 'block';
+                document.getElementById('urgencyText').textContent = t.urgency;
+            } else {
+                urgencyEl.style.display = 'none';
+            }
+        }
+
+        function sendTest() {
+            const email = prompt('أدخل بريدك الإلكتروني لإرسال رسالة تجريبية:');
+            if (email) {
+                alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+            }
+        }
+
+        function editTemplate() {
+            alert('🔧 خاصية التعديل قادمة قريباً!');
+        }
+    </script>
+</body>
+
+</html>

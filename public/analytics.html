@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | التحليلات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --muted: #64748B;
+            --border: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Kufi Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 24px 16px;
+            position: fixed;
+            height: 100vh;
+            right: 0;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            color: var(--muted);
+            text-decoration: none;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .main {
+            flex: 1;
+            margin-right: 240px;
+            padding: 24px 32px;
+        }
+
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .stat-change {
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .stat-change.up {
+            color: var(--primary);
+        }
+
+        .stat-change.down {
+            color: #EF4444;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .chart-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            height: 150px;
+            padding-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), #6EE7B7);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .channel-list {}
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .channel-item:last-child {
+            border-bottom: none;
+        }
+
+        .channel-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .channel-icon {
+            font-size: 18px;
+        }
+
+        .channel-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .channel-revenue {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .rates-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .rate-card {
+            text-align: center;
+            padding: 16px;
+            background: #F9FAFB;
+            border-radius: 10px;
+        }
+
+        .rate-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .rate-label {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="logo">رِبح.</div>
+            <a href="index.html" class="nav-item">📊 لوحة التحكم</a>
+            <a href="analytics.html" class="nav-item active">📈 التحليلات</a>
+            <a href="messages.html" class="nav-item">📧 الرسائل</a>
+            <a href="preview.html" class="nav-item">👁️ المعاينة</a>
+            <a href="referrals.html" class="nav-item">🔗 الإحالات</a>
+            <a href="settings.html" class="nav-item">⚙️ الإعدادات</a>
+        </nav>
+
+        <main class="main">
+            <div class="header">
+                <h1>📈 التحليلات</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📧</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">رسائل مرسلة</div>
+                    <div class="stat-change up">↑ 12% من الأسبوع الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-value">68%</div>
+                    <div class="stat-label">معدل الفتح</div>
+                    <div class="stat-change up">↑ 5% من الأسبوع الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🖱️</div>
+                    <div class="stat-value">24%</div>
+                    <div class="stat-label">معدل النقر</div>
+                    <div class="stat-change up">↑ 3% من الأسبوع الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">14,250</div>
+                    <div class="stat-label">ر.س إيرادات</div>
+                    <div class="stat-change up">↑ 23% من الأسبوع الماضي</div>
+                </div>
+            </div>
+
+            <div class="chart-grid">
+                <div class="chart-card">
+                    <div class="chart-title">الإيرادات اليومية (آخر 7 أيام)</div>
+                    <div class="chart-bars">
+                        <div class="bar" style="height: 40%;"><span class="bar-value">1,200</span><span
+                                class="bar-label">سبت</span></div>
+                        <div class="bar" style="height: 65%;"><span class="bar-value">2,100</span><span
+                                class="bar-label">أحد</span></div>
+                        <div class="bar" style="height: 45%;"><span class="bar-value">1,450</span><span
+                                class="bar-label">إثن</span></div>
+                        <div class="bar" style="height: 80%;"><span class="bar-value">2,800</span><span
+                                class="bar-label">ثلا</span></div>
+                        <div class="bar" style="height: 55%;"><span class="bar-value">1,850</span><span
+                                class="bar-label">أرب</span></div>
+                        <div class="bar" style="height: 90%;"><span class="bar-value">3,100</span><span
+                                class="bar-label">خمي</span></div>
+                        <div class="bar" style="height: 50%;"><span class="bar-value">1,750</span><span
+                                class="bar-label">جمع</span></div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">الإيرادات حسب القناة</div>
+                    <div class="channel-list">
+                        <div class="channel-item">
+                            <div class="channel-info">
+                                <span class="channel-icon">🛒</span>
+                                <span class="channel-name">استرداد السلات</span>
+                            </div>
+                            <span class="channel-revenue">8,950 ر.س</span>
+                        </div>
+                        <div class="channel-item">
+                            <div class="channel-info">
+                                <span class="channel-icon">💎</span>
+                                <span class="channel-name">البيع الإضافي</span>
+                            </div>
+                            <span class="channel-revenue">3,200 ر.س</span>
+                        </div>
+                        <div class="channel-item">
+                            <div class="channel-info">
+                                <span class="channel-icon">🔗</span>
+                                <span class="channel-name">الإحالات</span>
+                            </div>
+                            <span class="channel-revenue">1,200 ر.س</span>
+                        </div>
+                        <div class="channel-item">
+                            <div class="channel-info">
+                                <span class="channel-icon">🔄</span>
+                                <span class="channel-name">إعادة التفعيل</span>
+                            </div>
+                            <span class="channel-revenue">900 ر.س</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-title">أداء A/B Testing</div>
+                <div class="rates-grid">
+                    <div class="rate-card">
+                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">عنوان الرسالة</div>
+                        <div style="display: flex; justify-content: space-around;">
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600;">A</div>
+                                <div class="rate-value">23%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600; color: var(--primary);">B ⭐</div>
+                                <div class="rate-value">31%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rate-card">
+                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">نسبة الخصم</div>
+                        <div style="display: flex; justify-content: space-around;">
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600;">10%</div>
+                                <div class="rate-value">18%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600; color: var(--primary);">15% ⭐</div>
+                                <div class="rate-value">27%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="rate-card">
+                        <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">مدة العرض</div>
+                        <div style="display: flex; justify-content: space-around;">
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600; color: var(--primary);">ساعتين ⭐</div>
+                                <div class="rate-value">29%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: 600;">24 ساعة</div>
+                                <div class="rate-value">19%</div>
+                                <div class="rate-label">تحويل</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>
