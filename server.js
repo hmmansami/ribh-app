@@ -1945,6 +1945,27 @@ app.get('/api/logs', (req, res) => {
     res.json(logs.reverse()); // Latest first
 });
 
+// Trigger win-back check manually (for testing)
+app.post('/api/winback/run', async (req, res) => {
+    console.log('🔄 Manual win-back trigger...');
+
+    if (!lifecycleEngine || !lifecycleEngine.checkInactiveCustomers) {
+        return res.status(500).json({ error: 'Lifecycle engine not available' });
+    }
+
+    try {
+        const result = await lifecycleEngine.checkInactiveCustomers();
+        res.json({
+            success: true,
+            message: 'Win-back check complete',
+            checked: result.checked,
+            emailsSent: result.sent
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // ==========================================
 // STORE SETTINGS API (Per-Store Config)
 // ==========================================
@@ -2149,6 +2170,28 @@ function keepAlive() {
 if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
     setInterval(keepAlive, KEEP_ALIVE_INTERVAL);
     console.log(`💓 Keep-alive enabled: pinging every ${KEEP_ALIVE_INTERVAL / 60000} minutes`);
+}
+
+// ==========================================
+// DAILY WIN-BACK CHECK (Continuity Marketing)
+// ==========================================
+const WINBACK_CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
+
+async function runDailyWinback() {
+    console.log('🔄 Running daily win-back check...');
+    if (lifecycleEngine && lifecycleEngine.checkInactiveCustomers) {
+        const result = await lifecycleEngine.checkInactiveCustomers();
+        console.log(`✅ Win-back complete: ${result.sent} emails sent`);
+    }
+}
+
+// Run win-back check once per day (start after 1 hour to avoid startup load)
+if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+    setTimeout(() => {
+        runDailyWinback(); // Run once on startup (delayed)
+        setInterval(runDailyWinback, WINBACK_CHECK_INTERVAL); // Then daily
+    }, 60 * 60 * 1000); // 1 hour after start
+    console.log('📅 Daily win-back scheduler enabled');
 }
 
 // ==========================================
