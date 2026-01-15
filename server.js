@@ -301,38 +301,94 @@ app.get('/api/auth/logout', (req, res) => {
 // SALLA OAUTH - App Installation
 // ==========================================
 app.get('/oauth/callback', async (req, res) => {
-    const { code, merchant } = req.query;
+    const { code } = req.query;
 
-    console.log('🔐 OAuth Callback received:', { code, merchant });
+    console.log('🔐 OAuth Callback received:', { code: code?.substring(0, 20) + '...' });
 
-    // Store merchant info
-    const stores = readDB(STORES_FILE);
-    let existingStore = stores.find(s => s.merchant === merchant);
-    let token;
-
-    if (!existingStore) {
-        // Generate unique token for this store
-        token = generateToken();
-        stores.push({
-            merchant,
-            code,
-            token,
-            installedAt: new Date().toISOString(),
-            active: true
-        });
-        writeDB(STORES_FILE, stores);
-        console.log(`✅ New store registered with token: ${token.substring(0, 8)}...`);
-    } else {
-        // Use existing token or generate new one
-        if (!existingStore.token) {
-            existingStore.token = generateToken();
-            writeDB(STORES_FILE, stores);
-        }
-        token = existingStore.token;
+    if (!code) {
+        console.error('❌ No authorization code received');
+        return res.status(400).send('Missing authorization code');
     }
 
-    // Redirect to dashboard with token (auto-login)
-    res.redirect(`/?token=${token}&welcome=true`);
+    try {
+        // Step 1: Exchange authorization code for access token
+        const tokenResponse = await fetch('https://accounts.salla.sa/oauth2/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                client_id: config.SALLA_CLIENT_ID,
+                client_secret: config.SALLA_CLIENT_SECRET,
+                redirect_uri: 'https://ribh.click/oauth/callback'
+            })
+        });
+
+        const tokenData = await tokenResponse.json();
+        console.log('🔑 Token response:', tokenData.access_token ? 'Got access token!' : tokenData);
+
+        if (!tokenData.access_token) {
+            console.error('❌ Failed to get access token:', tokenData);
+            return res.status(400).send('Failed to authenticate with Salla');
+        }
+
+        // Step 2: Get merchant info using access token
+        const userResponse = await fetch('https://accounts.salla.sa/oauth2/user/info', {
+            headers: {
+                'Authorization': `Bearer ${tokenData.access_token}`
+            }
+        });
+
+        const userData = await userResponse.json();
+        console.log('👤 User info:', userData);
+
+        const merchantId = userData.data?.merchant?.id || userData.merchant?.id || 'unknown';
+        const merchantName = userData.data?.merchant?.name || userData.merchant?.name || 'متجر';
+        const merchantEmail = userData.data?.email || userData.email || '';
+
+        console.log(`🏪 Merchant: ${merchantName} (${merchantId})`);
+
+        // Step 3: Save store with access token
+        const stores = readDB(STORES_FILE);
+        let existingStore = stores.find(s => s.merchant === merchantId);
+        let ribhToken;
+
+        if (!existingStore) {
+            ribhToken = generateToken();
+            stores.push({
+                merchant: merchantId,
+                merchantName: merchantName,
+                email: merchantEmail,
+                accessToken: tokenData.access_token,
+                refreshToken: tokenData.refresh_token,
+                ribhToken: ribhToken,
+                installedAt: new Date().toISOString(),
+                active: true
+            });
+            writeDB(STORES_FILE, stores);
+            console.log(`✅ New store registered: ${merchantName} with token: ${ribhToken.substring(0, 8)}...`);
+        } else {
+            // Update existing store with new tokens
+            existingStore.accessToken = tokenData.access_token;
+            existingStore.refreshToken = tokenData.refresh_token;
+            existingStore.merchantName = merchantName;
+            if (!existingStore.ribhToken) {
+                existingStore.ribhToken = generateToken();
+            }
+            ribhToken = existingStore.ribhToken;
+            writeDB(STORES_FILE, stores);
+            console.log(`🔄 Store updated: ${merchantName}`);
+        }
+
+        // Step 4: Redirect to dashboard with Ribh token (auto-login)
+        res.redirect(`/?token=${ribhToken}&welcome=true`);
+
+    } catch (error) {
+        console.error('❌ OAuth error:', error);
+        res.status(500).send('OAuth authentication failed');
+    }
 });
 
 // Store dashboard entry point (from Salla "Open App" button)
@@ -341,9 +397,15 @@ app.get('/app', (req, res) => {
     const storeId = merchant || store;
 
     if (storeId) {
+        // Lookup store by merchant ID and redirect with token
+        const stores = readDB(STORES_FILE);
+        const foundStore = stores.find(s => s.merchant === storeId);
+        if (foundStore && foundStore.ribhToken) {
+            return res.redirect(`/?token=${foundStore.ribhToken}`);
+        }
         res.redirect(`/?store=${encodeURIComponent(storeId)}`);
     } else {
-        res.redirect('/');
+        res.redirect('/login.html');
     }
 });
 
