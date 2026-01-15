@@ -414,20 +414,49 @@ app.get('/oauth/callback', async (req, res) => {
     }
 });
 
-// Store dashboard entry point (from Salla "Open App" button)
+// Store dashboard entry point (from Salla settings link with {{store.id}})
 app.get('/app', (req, res) => {
     const { merchant, store } = req.query;
     const storeId = merchant || store;
 
+    console.log('📱 App entry point accessed:', { storeId });
+
     if (storeId) {
-        // Lookup store by merchant ID and redirect with token
+        // Lookup store by merchant ID
         const stores = readDB(STORES_FILE);
-        const foundStore = stores.find(s => s.merchant === storeId);
+        const foundStore = stores.find(s => s.merchant === storeId || s.merchant === String(storeId));
+
         if (foundStore && foundStore.ribhToken) {
+            console.log(`✅ Found store: ${foundStore.merchantName || storeId}`);
+
+            // Set cookie for persistent login
+            res.cookie('ribhToken', foundStore.ribhToken, {
+                maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+                httpOnly: true,
+                secure: true,
+                sameSite: 'lax'
+            });
+
+            // Also set storeId cookie for easier access
+            res.cookie('storeId', storeId, {
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                httpOnly: true,
+                secure: true,
+                sameSite: 'lax'
+            });
+
             return res.redirect(`/?token=${foundStore.ribhToken}`);
+        } else {
+            console.log(`⚠️ Store ${storeId} not registered, triggering OAuth...`);
+            // Store not registered - redirect to OAuth to register them
+            return res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${config.SALLA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://ribh.click/oauth/callback')}&response_type=code&scope=offline_access`);
         }
-        res.redirect(`/?store=${encodeURIComponent(storeId)}`);
     } else {
+        // No store ID - check for cookie
+        const cookies = parseCookies(req);
+        if (cookies.ribhToken) {
+            return res.redirect(`/?token=${cookies.ribhToken}`);
+        }
         res.redirect('/login.html');
     }
 });
