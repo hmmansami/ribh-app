@@ -65,6 +65,21 @@ const config = {
 app.use(cors());
 app.use(express.json());
 
+// Simple cookie parser helper (inline for early use)
+function parseCookies(req) {
+    const cookies = {};
+    const cookieHeader = req.headers.cookie;
+    if (cookieHeader) {
+        cookieHeader.split(';').forEach(cookie => {
+            const parts = cookie.split('=');
+            const key = parts[0].trim();
+            const value = parts.slice(1).join('=').trim();
+            cookies[key] = value;
+        });
+    }
+    return cookies;
+}
+
 // Salla Session Middleware - Detect store from Salla request
 app.use((req, res, next) => {
     // Salla sends store info in various ways:
@@ -80,14 +95,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve dashboard with store context
-app.get('/', (req, res, next) => {
-    // If coming from Salla with merchant info, redirect to dashboard with store param
-    if (req.storeId && !req.query.store) {
-        return res.redirect(`/?store=${encodeURIComponent(req.storeId)}`);
-    }
-    next();
-});
+// Cookie auth will be checked later via API - for now just pass through
+// The actual auth check happens in verifyStoreToken middleware
 
 app.use(express.static('public'));
 
@@ -170,22 +179,27 @@ function parseCookies(req) {
 // Verify store token middleware
 function verifyStoreToken(req, res, next) {
     const cookies = parseCookies(req);
-    const token = req.query.token || cookies.storeToken;
+    const token = req.query.token || cookies.ribhToken;
 
     if (!token) {
         return res.redirect('/login.html');
     }
 
     const stores = readDB(STORES_FILE);
-    const store = stores.find(s => s.token === token);
+    const store = stores.find(s => s.ribhToken === token);
 
     if (!store) {
         return res.redirect('/login.html?error=invalid');
     }
 
-    // Set cookie if coming from query param
-    if (req.query.token && !cookies.storeToken) {
-        res.setHeader('Set-Cookie', `storeToken=${token}; Path=/; HttpOnly; Max-Age=604800`);
+    // Set cookie if coming from query param (for persistent login)
+    if (req.query.token && !cookies.ribhToken) {
+        res.cookie('ribhToken', token, {
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
     }
 
     req.store = store;
@@ -195,14 +209,14 @@ function verifyStoreToken(req, res, next) {
 // Auth API endpoint - verify token
 app.get('/api/auth/verify', (req, res) => {
     const cookies = parseCookies(req);
-    const token = req.query.token || cookies.storeToken;
+    const token = req.query.token || cookies.ribhToken;
 
     if (!token) {
         return res.json({ success: false, error: 'No token provided' });
     }
 
     const stores = readDB(STORES_FILE);
-    const store = stores.find(s => s.token === token);
+    const store = stores.find(s => s.ribhToken === token);
 
     if (!store) {
         return res.json({ success: false, error: 'Invalid token' });
@@ -212,6 +226,7 @@ app.get('/api/auth/verify', (req, res) => {
         success: true,
         store: {
             merchant: store.merchant,
+            merchantName: store.merchantName,
             email: store.email,
             installedAt: store.installedAt
         }
@@ -382,7 +397,15 @@ app.get('/oauth/callback', async (req, res) => {
             console.log(`🔄 Store updated: ${merchantName}`);
         }
 
-        // Step 4: Redirect to dashboard with Ribh token (auto-login)
+        // Step 4: Set cookie for persistent login
+        res.cookie('ribhToken', ribhToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+
+        // Step 5: Redirect to dashboard with Ribh token (auto-login)
         res.redirect(`/?token=${ribhToken}&welcome=true`);
 
     } catch (error) {
