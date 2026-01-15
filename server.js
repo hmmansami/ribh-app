@@ -415,25 +415,38 @@ app.get('/oauth/callback', async (req, res) => {
 });
 
 // Store dashboard entry point (from Salla settings link with {{store.id}})
+// Salla variables supported: {{store.id}}, {{merchant.id}}, {{store_id}}, etc.
 app.get('/app', (req, res) => {
-    const { merchant, store } = req.query;
-    const storeId = merchant || store;
+    // Accept multiple query parameter formats from Salla
+    const storeId = req.query.merchant || req.query.store || req.query.store_id ||
+        req.query.merchant_id || req.query.id;
 
-    console.log('📱 App entry point accessed:', { storeId });
+    console.log('📱 App entry point accessed:', {
+        storeId,
+        allParams: req.query,
+        cookies: req.headers.cookie ? 'present' : 'none'
+    });
 
     if (storeId) {
-        // Lookup store by merchant ID
+        // Lookup store by merchant ID (try both string and number formats)
         const stores = readDB(STORES_FILE);
-        const foundStore = stores.find(s => s.merchant === storeId || s.merchant === String(storeId));
+        const foundStore = stores.find(s =>
+            s.merchant === storeId ||
+            s.merchant === String(storeId) ||
+            s.merchant === Number(storeId) ||
+            String(s.merchant) === String(storeId)
+        );
+
+        console.log(`🔍 Looking for store ${storeId}, found ${stores.length} stores total`);
 
         if (foundStore && foundStore.ribhToken) {
-            console.log(`✅ Found store: ${foundStore.merchantName || storeId}`);
+            console.log(`✅ Found store: ${foundStore.merchantName || storeId} (${foundStore.merchant})`);
 
             // Set cookie for persistent login
             res.cookie('ribhToken', foundStore.ribhToken, {
                 maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
                 httpOnly: true,
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax'
             });
 
@@ -441,13 +454,17 @@ app.get('/app', (req, res) => {
             res.cookie('storeId', storeId, {
                 maxAge: 30 * 24 * 60 * 60 * 1000,
                 httpOnly: true,
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'lax'
             });
 
             return res.redirect(`/?token=${foundStore.ribhToken}`);
         } else {
-            console.log(`⚠️ Store ${storeId} not registered, triggering OAuth...`);
+            console.log(`⚠️ Store ${storeId} not registered yet`);
+            // Log available stores for debugging
+            if (stores.length > 0) {
+                console.log('📋 Registered stores:', stores.map(s => ({ id: s.merchant, name: s.merchantName })));
+            }
             // Store not registered - redirect to OAuth to register them
             return res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${config.SALLA_CLIENT_ID}&redirect_uri=${encodeURIComponent('https://ribh.click/oauth/callback')}&response_type=code&scope=offline_access`);
         }
@@ -455,8 +472,10 @@ app.get('/app', (req, res) => {
         // No store ID - check for cookie
         const cookies = parseCookies(req);
         if (cookies.ribhToken) {
+            console.log('🍪 Found ribhToken cookie, redirecting to dashboard');
             return res.redirect(`/?token=${cookies.ribhToken}`);
         }
+        console.log('❌ No store ID or cookie, redirecting to login');
         res.redirect('/login.html');
     }
 });
@@ -537,6 +556,134 @@ function handleSallaWebhook(req, res) {
         timestamp: new Date().toISOString()
     });
 }
+
+// ==== SALLA SETUP GUIDE - How to add "Open App" button ====
+app.get('/salla-setup', (req, res) => {
+    res.send(`
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعداد تطبيق رِبح في سلة</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        h1 { color: #10B981; margin-bottom: 20px; font-size: 28px; }
+        h2 { color: #1D1D1F; margin: 30px 0 15px; font-size: 20px; }
+        p { color: #6B7280; line-height: 1.8; margin-bottom: 15px; }
+        .step { 
+            background: #F0FDF4; 
+            border-right: 4px solid #10B981;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+        }
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #10B981;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        code {
+            background: #1D1D1F;
+            color: #10B981;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: block;
+            font-family: 'Monaco', 'Consolas', monospace;
+            direction: ltr;
+            text-align: left;
+            margin: 15px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+        .highlight {
+            background: #FEF3C7;
+            border: 2px solid #F59E0B;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #DCFCE7;
+            border: 2px solid #22C55E;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        a { color: #10B981; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 إعداد زر "فتح التطبيق" في سلة</h1>
+        
+        <div class="highlight">
+            <strong>❗ المشكلة:</strong> بعد تثبيت التطبيق، لا يوجد زر واضح لفتح لوحة التحكم
+        </div>
+        
+        <h2>الحل: تحديث إعدادات التطبيق في بوابة الشركاء</h2>
+        
+        <div class="step">
+            <span class="step-number">1</span>
+            ادخل على <a href="https://partner.salla.sa" target="_blank">بوابة شركاء سلة</a>
+        </div>
+        
+        <div class="step">
+            <span class="step-number">2</span>
+            اذهب إلى "تطبيقاتي" → ثم اختر تطبيق "ربح"
+        </div>
+        
+        <div class="step">
+            <span class="step-number">3</span>
+            ابحث عن قسم "إعدادات ربط التطبيق" أو "App Settings Builder"
+        </div>
+        
+        <div class="step">
+            <span class="step-number">4</span>
+            <strong>غيّر حقل الرابط (URL)</strong> من:<br>
+            <code>https://ribh.click</code>
+            <strong>إلى:</strong>
+            <code>https://ribh.click/app?merchant={{store.id}}</code>
+        </div>
+        
+        <div class="success">
+            <strong>✅ النتيجة:</strong> الآن عندما يضغط التاجر على الرابط من لوحة سلة، 
+            سيتم تعويض <code style="display:inline; padding: 4px 8px;">{{store.id}}</code> 
+            برقم المتجر تلقائياً وسيدخل مباشرة للوحة التحكم!
+        </div>
+        
+        <h2>🔗 روابط مفيدة</h2>
+        <p>
+            • <a href="https://partner.salla.sa" target="_blank">بوابة شركاء سلة</a><br>
+            • <a href="https://ribh.click/login.html">صفحة تسجيل الدخول (للتجار)</a><br>
+            • <a href="https://ribh.click/">لوحة التحكم الرئيسية</a>
+        </p>
+    </div>
+</body>
+</html>
+    `);
+});
 
 // ==== GET HANDLERS FOR URL VALIDATION (FIX FOR "رابط غير صحيح") ====
 // Salla validates webhook URLs by sending a request - these handlers respond with 200 OK
