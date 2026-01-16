@@ -449,6 +449,15 @@
                     <span class="toggle-slider"></span>
                 </label>
             </div>
+
+            <div class="feature-card" style="border: 2px dashed var(--primary);">
+                <div class="feature-icon" style="background: #ECFDF5;">🧪</div>
+                <div class="feature-info">
+                    <div class="feature-name">اختبار A/B تلقائي</div>
+                    <div class="feature-desc">يختبر عناوين وخصومات مختلفة ويختار الأفضل</div>
+                    <div class="feature-stat" style="color: var(--muted);">✅ مفعّل تلقائياً</div>
+                </div>
+            </div>
         </div>
 
         <!-- Activity -->
@@ -510,15 +519,15 @@
             try {
                 const res = await fetch('/api/stats?period=30');
                 const data = await res.json();
-                
+
                 if (data.overview && data.overview.totalRevenue > 0) {
-                    document.getElementById('totalRevenue').textContent = 
+                    document.getElementById('totalRevenue').textContent =
                         data.overview.totalRevenue.toLocaleString() + ' ر.س';
-                    document.getElementById('cartsSent').textContent = 
+                    document.getElementById('cartsSent').textContent =
                         data.raw?.sent || 0;
-                    document.getElementById('cartsRecovered').textContent = 
+                    document.getElementById('cartsRecovered').textContent =
                         data.raw?.recovered || 0;
-                    document.getElementById('recoveryRate').textContent = 
+                    document.getElementById('recoveryRate').textContent =
                         data.overview.recoveryRate + '%';
                 }
                 // If no real data, keep demo values
@@ -533,7 +542,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ [feature + '_enabled']: enabled })
-            }).catch(e => {});
+            }).catch(e => { });
         }
 
         loadStats();

@@ -2153,6 +2153,35 @@ app.get('/api/templates', (req, res) => {
     res.json(templates);
 });
 
+// A/B Testing Results API
+app.get('/api/ab/results', (req, res) => {
+    try {
+        const abTesting = require('./lib/abTesting');
+        const cartResults = abTesting.getTestResults('cart_recovery');
+        const upsellResults = abTesting.getTestResults('upsell');
+
+        res.json({
+            success: true,
+            cart_recovery: {
+                results: cartResults,
+                winner: {
+                    subject: abTesting.getWinner('cart_recovery', 'subject'),
+                    discount: abTesting.getWinner('cart_recovery', 'discount')
+                }
+            },
+            upsell: {
+                results: upsellResults,
+                winner: {
+                    subject: abTesting.getWinner('upsell', 'subject'),
+                    discount: abTesting.getWinner('upsell', 'discount')
+                }
+            }
+        });
+    } catch (error) {
+        res.json({ success: false, error: error.message });
+    }
+});
+
 // Test webhook (for development)
 app.post('/api/test/abandoned-cart', (req, res) => {
     const testData = {
