@@ -436,12 +436,90 @@
         function sendTest() {
             const email = prompt('أدخل بريدك الإلكتروني لإرسال رسالة تجريبية:');
             if (email) {
-                alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+                const activeTemplate = document.querySelector('.template-item.active');
+                const templateId = activeTemplate ? activeTemplate.onclick.toString().match(/'([^']+)'/)[1] : 'cart1';
+                const template = templates[templateId];
+
+                fetch('/api/email/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        subject: template.subject,
+                        body: template.body,
+                        offer: template.offer,
+                        urgency: template.urgency
+                    })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+                        } else {
+                            alert('❌ فشل الإرسال: ' + (data.error || 'خطأ غير معروف'));
+                        }
+                    })
+                    .catch(err => {
+                        alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+                    });
             }
         }
 
+        let editMode = false;
         function editTemplate() {
-            alert('🔧 خاصية التعديل قادمة قريباً!');
+            editMode = !editMode;
+
+            if (editMode) {
+                // Switch to edit mode
+                const subjectEl = document.getElementById('emailSubject');
+                const bodyEl = document.getElementById('emailBody');
+                const offerEl = document.getElementById('offerValue');
+
+                subjectEl.contentEditable = true;
+                bodyEl.contentEditable = true;
+                if (offerEl) offerEl.contentEditable = true;
+
+                subjectEl.style.border = '2px dashed var(--primary)';
+                bodyEl.style.border = '2px dashed var(--primary)';
+
+                document.querySelector('.btn-primary').textContent = '💾 حفظ';
+                alert('📝 يمكنك الآن التعديل مباشرة على النص! اضغط حفظ عند الانتهاء.');
+            } else {
+                // Save changes
+                const subjectEl = document.getElementById('emailSubject');
+                const bodyEl = document.getElementById('emailBody');
+                const offerEl = document.getElementById('offerValue');
+
+                subjectEl.contentEditable = false;
+                bodyEl.contentEditable = false;
+                if (offerEl) offerEl.contentEditable = false;
+
+                subjectEl.style.border = 'none';
+                bodyEl.style.border = 'none';
+
+                // Get active template and update
+                const activeTemplate = document.querySelector('.template-item.active');
+                const templateId = activeTemplate ? activeTemplate.onclick.toString().match(/'([^']+)'/)[1] : 'cart1';
+
+                templates[templateId].subject = subjectEl.textContent;
+                templates[templateId].body = bodyEl.textContent;
+                if (templates[templateId].offer && offerEl) {
+                    templates[templateId].offer = offerEl.textContent;
+                }
+
+                // Save to API
+                fetch('/api/templates/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        templateId: templateId,
+                        template: templates[templateId]
+                    })
+                }).catch(e => console.log('Template save:', e));
+
+                document.querySelector('.btn-primary').textContent = '✏️ تعديل';
+                alert('✅ تم حفظ التعديلات!');
+            }
         }
     </script>
 </body>

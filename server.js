@@ -2083,6 +2083,71 @@ app.get('/api/popup/stats', (req, res) => {
     });
 });
 
+// ==========================================
+// EMAIL TEST & TEMPLATE ENDPOINTS
+// ==========================================
+
+// Send test email
+app.post('/api/email/test', async (req, res) => {
+    const { email, subject, body, offer, urgency } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email required' });
+    }
+
+    try {
+        const emailSender = require('./lib/emailSender');
+        await emailSender.sendOfferEmail(email, {
+            headline: subject,
+            body: body,
+            offer: offer,
+            urgency: urgency
+        }, {
+            storeName: 'رِبح - رسالة تجريبية',
+            checkoutUrl: 'https://ribh.click'
+        });
+
+        console.log(`📧 Test email sent to ${email}`);
+        res.json({ success: true, message: 'Test email sent' });
+    } catch (error) {
+        console.log(`❌ Test email failed:`, error.message);
+        res.json({ success: false, error: error.message });
+    }
+});
+
+// Save custom template
+const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
+if (!fs.existsSync(TEMPLATES_FILE)) {
+    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify({}));
+}
+
+app.post('/api/templates/save', (req, res) => {
+    const { templateId, template } = req.body;
+
+    if (!templateId || !template) {
+        return res.status(400).json({ error: 'Missing templateId or template' });
+    }
+
+    const templates = readDB(TEMPLATES_FILE);
+    templates[templateId] = {
+        ...template,
+        updatedAt: new Date().toISOString()
+    };
+
+    try {
+        fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(templates, null, 2));
+        console.log(`💾 Template ${templateId} saved`);
+        res.json({ success: true, message: 'Template saved' });
+    } catch (error) {
+        res.json({ success: false, error: error.message });
+    }
+});
+
+app.get('/api/templates', (req, res) => {
+    const templates = readDB(TEMPLATES_FILE);
+    res.json(templates);
+});
+
 // Test webhook (for development)
 app.post('/api/test/abandoned-cart', (req, res) => {
     const testData = {
