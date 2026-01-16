@@ -2254,20 +2254,28 @@ app.post('/api/store/settings', (req, res) => {
     // Get existing settings or create new
     const storeSettings = settings[storeId] || {};
 
-    // Update only provided fields
+    // Update only provided fields - API Keys
     if (req.body.resendApiKey) storeSettings.resendApiKey = req.body.resendApiKey;
     if (req.body.emailFrom) storeSettings.emailFrom = req.body.emailFrom;
     if (req.body.telegramBotToken) storeSettings.telegramBotToken = req.body.telegramBotToken;
     if (req.body.twilioAccountSid) storeSettings.twilioAccountSid = req.body.twilioAccountSid;
     if (req.body.twilioAuthToken) storeSettings.twilioAuthToken = req.body.twilioAuthToken;
     if (req.body.twilioSmsNumber) storeSettings.twilioSmsNumber = req.body.twilioSmsNumber;
+
+    // Channel Toggles
     if (req.body.enableSms !== undefined) storeSettings.enableSms = req.body.enableSms;
     if (req.body.enableEmail !== undefined) storeSettings.enableEmail = req.body.enableEmail;
+
+    // Feature Toggles (from dashboard)
+    if (req.body.cart_enabled !== undefined) storeSettings.cartEnabled = req.body.cart_enabled;
+    if (req.body.upsell_enabled !== undefined) storeSettings.upsellEnabled = req.body.upsell_enabled;
+    if (req.body.referral_enabled !== undefined) storeSettings.referralEnabled = req.body.referral_enabled;
+    if (req.body.winback_enabled !== undefined) storeSettings.winbackEnabled = req.body.winback_enabled;
 
     settings[storeId] = storeSettings;
     writeSettings(settings);
 
-    console.log(`✅ Settings saved for store: ${storeId}`);
+    console.log(`✅ Settings saved for store: ${storeId}`, req.body);
     res.json({ success: true, message: 'Settings saved!' });
 });
 
