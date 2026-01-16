@@ -5,139 +5,111 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رِبح | الرسائل المرسلة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
-        :root {
-            --primary: #10B981;
-            --bg: #F8FAFC;
-            --card: #FFFFFF;
-            --text: #1E293B;
-            --muted: #64748B;
-            --border: #E2E8F0;
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #F5F5F7;
+            --card: #FFFFFF;
+            --text: #1D1D1F;
+            --muted: #86868B;
+            --primary: #10B981;
+            --border: #E5E5E5;
         }
 
         body {
-            font-family: 'Noto Kufi Arabic', sans-serif;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             background: var(--bg);
             color: var(--text);
-        }
-
-        .layout {
-            display: flex;
             min-height: 100vh;
         }
 
-        .sidebar {
-            width: 240px;
+        .header {
             background: var(--card);
-            border-left: 1px solid var(--border);
-            padding: 24px 16px;
-            position: fixed;
-            height: 100vh;
-            right: 0;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
             font-size: 28px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 40px;
-            padding: 0 8px;
         }
 
-        .nav-item {
+        .nav-links {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 10px;
+            gap: 32px;
+        }
+
+        .nav-links a {
             color: var(--muted);
             text-decoration: none;
-            margin-bottom: 4px;
             font-size: 14px;
+            font-weight: 500;
         }
 
-        .nav-item:hover,
-        .nav-item.active {
-            background: rgba(16, 185, 129, 0.1);
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--primary);
         }
 
         .main {
-            flex: 1;
-            margin-right: 240px;
-            padding: 24px 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .header h1 {
-            font-size: 22px;
+        .page-title {
+            font-size: 28px;
             font-weight: 700;
-        }
-
-        .back-link {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .back-link:hover {
-            color: var(--primary);
+            margin-bottom: 32px;
         }
 
         .stats-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 16px;
-            margin-bottom: 24px;
+            margin-bottom: 32px;
         }
 
         .stat-card {
-            flex: 1;
             background: var(--card);
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
         }
 
-        .stat-card .value {
-            font-size: 28px;
+        .stat-value {
+            font-size: 32px;
             font-weight: 700;
             color: var(--primary);
         }
 
-        .stat-card .label {
-            font-size: 12px;
+        .stat-label {
+            font-size: 13px;
             color: var(--muted);
             margin-top: 4px;
         }
 
         .table-card {
             background: var(--card);
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
         }
 
         .table-header {
-            padding: 16px 20px;
+            padding: 20px 24px;
             border-bottom: 1px solid var(--border);
             font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         table {
@@ -147,20 +119,20 @@
 
         th,
         td {
-            padding: 14px 20px;
+            padding: 16px 24px;
             text-align: right;
             border-bottom: 1px solid var(--border);
         }
 
         th {
-            background: #F9FAFB;
+            background: #FAFAFA;
             font-size: 12px;
             color: var(--muted);
             font-weight: 600;
         }
 
         td {
-            font-size: 13px;
+            font-size: 14px;
         }
 
         tr:last-child td {
@@ -168,147 +140,142 @@
         }
 
         .badge {
-            padding: 4px 10px;
+            padding: 6px 12px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 600;
         }
 
         .badge-sent {
-            background: rgba(16, 185, 129, 0.1);
-            color: #10B981;
+            background: #D1FAE5;
+            color: #065F46;
         }
 
         .badge-pending {
-            background: rgba(249, 115, 22, 0.1);
-            color: #F97316;
-        }
-
-        .badge-failed {
-            background: rgba(239, 68, 68, 0.1);
-            color: #EF4444;
+            background: #FEF3C7;
+            color: #92400E;
         }
 
         .type-icon {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .type-icon span {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            background: rgba(139, 92, 246, 0.1);
+            font-size: 16px;
+            background: #F3F4F6;
+        }
+
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="layout">
-        <nav class="sidebar">
-            <div class="logo">رِبح.</div>
-            <a href="index.html" class="nav-item">📊 لوحة التحكم</a>
-            <a href="messages.html" class="nav-item active">📧 الرسائل المرسلة</a>
-            <a href="referrals.html" class="nav-item">🔗 الإحالات</a>
-            <a href="settings.html" class="nav-item">⚙️ الإعدادات</a>
+    <header class="header">
+        <div class="logo">رِبح.</div>
+        <nav class="nav-links">
+            <a href="index.html">لوحة التحكم</a>
+            <a href="messages.html" class="active">الرسائل</a>
+            <a href="preview.html">المعاينة</a>
+            <a href="settings.html">الإعدادات</a>
         </nav>
+    </header>
 
-        <main class="main">
-            <div class="header">
-                <h1>📧 الرسائل المرسلة</h1>
-                <a href="index.html" class="back-link">← العودة للوحة</a>
-            </div>
+    <main class="main">
+        <h1 class="page-title">📧 الرسائل المرسلة</h1>
 
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="value">156</div>
-                    <div class="label">إجمالي المرسلة</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">89</div>
-                    <div class="label">استرداد سلات</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">45</div>
-                    <div class="label">بيع إضافي</div>
-                </div>
-                <div class="stat-card">
-                    <div class="value">22</div>
-                    <div class="label">ترحيب</div>
-                </div>
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">156</div>
+                <div class="stat-label">إجمالي المرسلة</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-value">89</div>
+                <div class="stat-label">استرداد سلات</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">45</div>
+                <div class="stat-label">بيع إضافي</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">22</div>
+                <div class="stat-label">ترحيب</div>
+            </div>
+        </div>
 
-            <div class="table-card">
-                <div class="table-header">
-                    <span>آخر الرسائل</span>
-                    <span style="font-size: 12px; color: var(--muted);">آخر 30 يوم</span>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>النوع</th>
-                            <th>المستلم</th>
-                            <th>الرسالة</th>
-                            <th>الحالة</th>
-                            <th>التاريخ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                            </td>
-                            <td>a***@gmail.com</td>
-                            <td>سلتك تنتظرك! خصم 10%</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 5 دقائق</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>💎</span> بيع إضافي</div>
-                            </td>
-                            <td>m***@hotmail.com</td>
-                            <td>أكمل تجربتك! عرض VIP</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 23 دقيقة</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🎁</span> ترحيب</div>
-                            </td>
-                            <td>s***@yahoo.com</td>
-                            <td>أهلاً بك! هدية ترحيبية</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ ساعة</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🔄</span> إعادة تفعيل</div>
-                            </td>
-                            <td>k***@gmail.com</td>
-                            <td>اشتقنا لك! خصم 25%</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 3 ساعات</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                            </td>
-                            <td>n***@outlook.com</td>
-                            <td>سلتك تنتظرك! خصم 15%</td>
-                            <td><span class="badge badge-pending">قيد الإرسال</span></td>
-                            <td>منذ 5 ساعات</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </main>
-    </div>
+        <div class="table-card">
+            <div class="table-header">آخر الرسائل</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>النوع</th>
+                        <th>المستلم</th>
+                        <th>الرسالة</th>
+                        <th>الحالة</th>
+                        <th>التاريخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="type-icon"><span>🛒</span> استرداد سلة</div>
+                        </td>
+                        <td>a***@gmail.com</td>
+                        <td>سلتك تنتظرك! خصم 10%</td>
+                        <td><span class="badge badge-sent">تم الإرسال</span></td>
+                        <td>منذ 5 دقائق</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="type-icon"><span>💎</span> بيع إضافي</div>
+                        </td>
+                        <td>m***@hotmail.com</td>
+                        <td>أكمل تجربتك! عرض VIP</td>
+                        <td><span class="badge badge-sent">تم الإرسال</span></td>
+                        <td>منذ 23 دقيقة</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="type-icon"><span>🎁</span> ترحيب</div>
+                        </td>
+                        <td>s***@yahoo.com</td>
+                        <td>أهلاً بك! هدية ترحيبية</td>
+                        <td><span class="badge badge-sent">تم الإرسال</span></td>
+                        <td>منذ ساعة</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="type-icon"><span>🔄</span> إعادة تفعيل</div>
+                        </td>
+                        <td>k***@gmail.com</td>
+                        <td>اشتقنا لك! خصم 25%</td>
+                        <td><span class="badge badge-sent">تم الإرسال</span></td>
+                        <td>منذ 3 ساعات</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="type-icon"><span>🛒</span> استرداد سلة</div>
+                        </td>
+                        <td>n***@outlook.com</td>
+                        <td>سلتك تنتظرك! خصم 15%</td>
+                        <td><span class="badge badge-pending">قيد الإرسال</span></td>
+                        <td>منذ 5 ساعات</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </body>
 
 </html>

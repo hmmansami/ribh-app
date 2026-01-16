@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح - إعدادات المتجر</title>
-    <meta name="description" content="إعدادات متجرك على رِبح - إدارة قنوات التواصل والباقات">
+    <title>رِبح | الإعدادات</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
@@ -16,456 +15,317 @@
         }
 
         :root {
-            --bg: #FFFFFF;
-            --bg-secondary: #F5F5F7;
+            --bg: #F5F5F7;
+            --card: #FFFFFF;
             --text: #1D1D1F;
-            --text-secondary: #86868B;
+            --muted: #86868B;
             --primary: #10B981;
-            --primary-hover: #059669;
-            --border: #D2D2D7;
-            --success-bg: #ECFDF5;
-            --success-text: #065F46;
-            --warning-bg: #FEF3C7;
-            --warning-text: #92400E;
-            --info-bg: #EFF6FF;
-            --info-text: #3B82F6;
+            --border: #E5E5E5;
         }
 
         body {
-            font-family: 'IBM Plex Sans Arabic', -apple-system, sans-serif;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
-            line-height: 1.6;
         }
 
-        /* Header */
-        header {
-            background: var(--bg);
-            padding: 1rem 2rem;
+        .header {
+            background: var(--card);
+            padding: 20px 40px;
             border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
-            max-width: 800px;
-            margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .back-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
             color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.2s;
         }
 
-        .back-link:hover {
-            opacity: 0.7;
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .main {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         .page-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        /* Main Content */
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .page-header {
-            margin-bottom: 2rem;
-        }
-
-        .page-header h1 {
-            font-size: 2rem;
+            font-size: 28px;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        .page-header p {
-            color: var(--text-secondary);
-            font-size: 1rem;
+        .page-subtitle {
+            color: var(--muted);
+            margin-bottom: 32px;
         }
 
-        /* Cards */
         .card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
         }
 
         .card-title {
-            font-size: 1rem;
+            font-size: 16px;
             font-weight: 600;
-            color: var(--text);
-        }
-
-        .badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-free {
-            background: var(--success-bg);
-            color: var(--success-text);
-        }
-
-        .badge-paid {
-            background: var(--warning-bg);
-            color: var(--warning-text);
-        }
-
-        /* Usage Bar */
-        .usage-bar-container {
-            margin: 1rem 0;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .usage-bar {
-            background: var(--bg-secondary);
+            background: #E5E5E5;
             border-radius: 8px;
             height: 8px;
             overflow: hidden;
+            margin: 16px 0;
         }
 
         .usage-fill {
             background: var(--primary);
             height: 100%;
             border-radius: 8px;
-            transition: width 0.5s ease;
+            transition: width 0.5s;
         }
 
         .usage-text {
             display: flex;
             justify-content: space-between;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-        }
-
-        .usage-note {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Channel List */
-        .channel-list {
-            margin-top: 0.5rem;
+            font-size: 14px;
+            color: var(--muted);
         }
 
         .channel-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
+            padding: 16px 0;
             border-bottom: 1px solid var(--border);
         }
 
         .channel-item:last-child {
             border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .channel-item:first-child {
-            padding-top: 0;
         }
 
         .channel-info {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 12px;
         }
 
         .channel-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-secondary);
-            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            background: #F3F4F6;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 20px;
         }
 
         .channel-name {
             font-weight: 500;
-            color: var(--text);
-            margin-bottom: 0.125rem;
         }
 
-        .channel-cost {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+        .channel-desc {
+            font-size: 13px;
+            color: var(--muted);
         }
 
-        .status-badge {
-            padding: 0.375rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .status-active {
-            background: var(--success-bg);
-            color: var(--success-text);
+        .badge-active {
+            background: #D1FAE5;
+            color: #065F46;
         }
 
-        .status-inactive {
-            background: var(--bg-secondary);
-            color: var(--text-secondary);
+        .badge-coming {
+            background: #DBEAFE;
+            color: #1E40AF;
         }
 
-        .status-coming {
-            background: var(--info-bg);
-            color: var(--info-text);
-        }
-
-        /* Upgrade Card */
         .upgrade-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 16px;
+            padding: 32px;
+            color: white;
             text-align: center;
         }
 
         .upgrade-card h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text);
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
         .upgrade-card p {
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
         }
 
-        .btn-primary {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
+        .upgrade-btn {
+            background: white;
+            color: #059669;
             border: none;
-            padding: 0.875rem 2rem;
+            padding: 14px 32px;
             border-radius: 10px;
-            font-family: inherit;
-            font-size: 1rem;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
         }
 
         .features-list {
-            margin-top: 1.5rem;
+            margin-top: 20px;
             text-align: right;
-            list-style: none;
         }
 
         .features-list li {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin: 0.5rem 0;
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        .features-list li::before {
-            content: "✓";
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            main {
-                padding: 1rem;
-            }
-
-            header {
-                padding: 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 1.5rem;
-            }
-
-            .card {
-                padding: 1rem;
-            }
-
-            .upgrade-card {
-                padding: 1.5rem;
-            }
+            gap: 8px;
+            margin: 8px 0;
+            font-size: 14px;
+            opacity: 0.9;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <div class="header-content">
-            <a href="/" class="back-link">
-                <span>←</span>
-                رجوع للوحة التحكم
-            </a>
-            <span class="page-title">الإعدادات</span>
-        </div>
+    <header class="header">
+        <div class="logo">رِبح.</div>
+        <nav class="nav-links">
+            <a href="index.html">لوحة التحكم</a>
+            <a href="messages.html">الرسائل</a>
+            <a href="preview.html">المعاينة</a>
+            <a href="settings.html" class="active">الإعدادات</a>
+        </nav>
     </header>
 
-    <main>
-        <div class="page-header">
-            <h1>إعدادات المتجر</h1>
-            <p>راقب استخدامك وأدِر قنوات التواصل</p>
-        </div>
+    <main class="main">
+        <h1 class="page-title">⚙️ الإعدادات</h1>
+        <p class="page-subtitle">إدارة الباقة وقنوات التواصل</p>
 
-        <!-- Usage Card -->
+        <!-- Usage -->
         <div class="card">
-            <div class="card-header">
-                <div class="card-title">📧 استخدام البريد الإلكتروني</div>
-                <span class="badge badge-free">الباقة المجانية</span>
+            <div class="card-title">📧 استخدام البريد الإلكتروني</div>
+            <div class="usage-bar">
+                <div class="usage-fill" id="usageBar" style="width: 31%"></div>
             </div>
-
-            <div class="usage-bar-container">
-                <div class="usage-bar">
-                    <div class="usage-fill" id="usage-bar" style="width: 0%"></div>
-                </div>
-                <div class="usage-text">
-                    <span id="usage-sent">0 رسالة مُرسلة</span>
-                    <span id="usage-remaining">500 رسالة متبقية</span>
-                </div>
+            <div class="usage-text">
+                <span id="usageSent">156 رسالة مُرسلة</span>
+                <span id="usageRemaining">344 رسالة متبقية</span>
             </div>
-
-            <div class="usage-note">
-                <span>💡</span>
-                <span>يتم إرسال البريد تلقائياً - لا تحتاج لأي إعداد!</span>
-            </div>
+            <p style="margin-top: 16px; font-size: 13px; color: var(--muted);">💡 يتم إرسال البريد تلقائياً - لا تحتاج
+                لأي إعداد!</p>
         </div>
 
-        <!-- Channels Status -->
+        <!-- Channels -->
         <div class="card">
-            <div class="card-header">
-                <div class="card-title">📊 قنوات التواصل</div>
+            <div class="card-title">📊 قنوات التواصل</div>
+
+            <div class="channel-item">
+                <div class="channel-info">
+                    <div class="channel-icon">📧</div>
+                    <div>
+                        <div class="channel-name">البريد الإلكتروني</div>
+                        <div class="channel-desc">مجاني - 500 رسالة/شهر</div>
+                    </div>
+                </div>
+                <span class="badge badge-active">✓ مفعّل</span>
             </div>
 
-            <div class="channel-list">
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-icon">📧</div>
-                        <div>
-                            <div class="channel-name">البريد الإلكتروني</div>
-                            <div class="channel-cost">مجاني - 500 رسالة/شهر</div>
-                        </div>
+            <div class="channel-item">
+                <div class="channel-info">
+                    <div class="channel-icon">💬</div>
+                    <div>
+                        <div class="channel-name">تيليجرام</div>
+                        <div class="channel-desc">إشعارات فورية مجانية</div>
                     </div>
-                    <span class="status-badge status-active">✓ مفعّل</span>
                 </div>
+                <span class="badge badge-active">✓ مفعّل</span>
+            </div>
 
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-icon">💬</div>
-                        <div>
-                            <div class="channel-name">تيليجرام</div>
-                            <div class="channel-cost">مجاني بالكامل</div>
-                        </div>
+            <div class="channel-item">
+                <div class="channel-info">
+                    <div class="channel-icon">📱</div>
+                    <div>
+                        <div class="channel-name">الرسائل النصية SMS</div>
+                        <div class="channel-desc">0.08 ر.س/رسالة</div>
                     </div>
-                    <span class="status-badge status-active">✓ مفعّل</span>
                 </div>
+                <span class="badge badge-coming">الباقة المدفوعة</span>
+            </div>
 
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-icon">📱</div>
-                        <div>
-                            <div class="channel-name">الرسائل النصية SMS</div>
-                            <div class="channel-cost">0.08 ر.س/رسالة</div>
-                        </div>
+            <div class="channel-item">
+                <div class="channel-info">
+                    <div class="channel-icon">💚</div>
+                    <div>
+                        <div class="channel-name">واتساب</div>
+                        <div class="channel-desc">98% معدل فتح</div>
                     </div>
-                    <span class="status-badge status-coming">الباقة المدفوعة</span>
                 </div>
-
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-icon">💚</div>
-                        <div>
-                            <div class="channel-name">واتساب</div>
-                            <div class="channel-cost">قريباً</div>
-                        </div>
-                    </div>
-                    <span class="status-badge status-coming">قريباً</span>
-                </div>
+                <span class="badge badge-coming">قريباً</span>
             </div>
         </div>
 
-        <!-- Upgrade Card -->
+        <!-- Upgrade -->
         <div class="upgrade-card">
             <h3>🚀 ترقية إلى الباقة المدفوعة</h3>
-            <p>احصل على رسائل بريد غير محدودة + SMS + واتساب</p>
-
-            <button class="btn-primary" onclick="showUpgradeInfo()">
-                ابدأ الآن - 49 ر.س/شهر
-            </button>
-
+            <p>رسائل غير محدودة + SMS + واتساب</p>
+            <button class="upgrade-btn" onclick="showUpgrade()">49 ر.س/شهر</button>
             <ul class="features-list">
-                <li>بريد إلكتروني غير محدود</li>
-                <li>رسائل SMS</li>
-                <li>واتساب (قريباً)</li>
-                <li>تقارير متقدمة</li>
-                <li>دعم أولوية</li>
+                <li>✓ بريد إلكتروني غير محدود</li>
+                <li>✓ رسائل SMS</li>
+                <li>✓ واتساب (قريباً)</li>
+                <li>✓ تقارير متقدمة</li>
             </ul>
         </div>
     </main>
 
     <script>
-        // Load usage on page load
-        document.addEventListener('DOMContentLoaded', loadUsage);
-
         async function loadUsage() {
             try {
                 const res = await fetch('/api/store/usage');
-                const usage = await res.json();
-
-                const percentage = Math.min(100, (usage.emailsSent / usage.limit) * 100);
-
-                document.getElementById('usage-bar').style.width = percentage + '%';
-                document.getElementById('usage-sent').textContent = usage.emailsSent + ' رسالة مُرسلة';
-                document.getElementById('usage-remaining').textContent = usage.remaining + ' رسالة متبقية';
-
-            } catch (err) {
-                console.log('Could not load usage:', err);
-            }
+                const data = await res.json();
+                const pct = Math.min(100, (data.emailsSent / data.limit) * 100);
+                document.getElementById('usageBar').style.width = pct + '%';
+                document.getElementById('usageSent').textContent = data.emailsSent + ' رسالة مُرسلة';
+                document.getElementById('usageRemaining').textContent = data.remaining + ' رسالة متبقية';
+            } catch (e) {}
         }
-
-        function showUpgradeInfo() {
-            alert('للترقية، تواصل معنا على:\nWhatsApp: +966XXXXXXXXX\n\nأو أرسل بريد إلى: support@ribh.click');
+        
+        function showUpgrade() {
+            alert('للترقية تواصل معنا:\n\nWhatsApp: +966XXXXXXXXX\nEmail: support@ribh.click');
         }
+        
+        loadUsage();
     </script>
 </body>
 
