@@ -5,342 +5,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رِبح | لوحة التحكم</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
-        :root {
-            --primary: #6C5DD3;
-            --primary-light: #CFC8FF;
-            --bg: #F7F7F7;
-            --card: #FFFFFF;
-            --text-dark: #11142D;
-            --text-light: #808191;
-            --border: #E4E4E4;
-            --success: #10B981;
-            --danger: #FF754C;
-            --orange: #FFCE73;
-            --sidebar-width: 250px;
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            outline: none;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #F5F5F7;
+            --card: #FFFFFF;
+            --text: #1D1D1F;
+            --muted: #86868B;
+            --primary: #10B981;
+            --border: #E5E5E5;
         }
 
         body {
-            font-family: 'Noto Kufi Arabic', 'Inter', sans-serif;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             background: var(--bg);
-            color: var(--text-dark);
+            color: var(--text);
             min-height: 100vh;
         }
 
-        /* Layout */
-        .layout {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: var(--sidebar-width);
+        /* Simple Header */
+        .header {
             background: var(--card);
-            border-left: 1px solid var(--border);
-            padding: 32px 24px;
-            position: fixed;
-            height: 100vh;
-            right: 0;
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
             display: flex;
-            flex-direction: column;
-            z-index: 100;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 50px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            color: var(--primary);
         }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
-            color: white;
-            border-radius: 12px;
+        .nav-links {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
+            gap: 32px;
         }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 14px 16px;
-            border-radius: 12px;
-            color: var(--text-light);
+        .nav-links a {
+            color: var(--muted);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
-            transition: all 0.2s;
         }
 
-        .nav-item:hover,
-        .nav-item.active {
-            background: var(--primary);
-            color: white;
-        }
-
-        .nav-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 24px 0;
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--primary);
         }
 
         /* Main Content */
         .main {
-            flex: 1;
-            margin-right: var(--sidebar-width);
-            padding: 40px;
-            max-width: 1400px;
-        }
-
-        /* Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
         }
 
         .page-title {
-            font-size: 24px;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            margin-bottom: 40px;
+        }
+
+        /* Big Revenue Card */
+        .hero-card {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 20px;
+            padding: 40px;
+            color: white;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .hero-label {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .hero-value {
+            font-size: 56px;
             font-weight: 700;
         }
 
-        .search-bar {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 20px;
-            width: 300px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .hero-sub {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 8px;
         }
 
-        .search-bar input {
-            border: none;
-            width: 100%;
-            font-family: inherit;
-        }
-
-        /* Metrics Grid */
-        .metrics-grid {
+        /* Stats Row */
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 24px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
             margin-bottom: 32px;
         }
 
-        .metric-card {
+        .stat-card {
             background: var(--card);
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 24px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s;
+            text-align: center;
         }
 
-        .metric-card:hover {
-            transform: translateY(-2px);
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
         }
 
-        .metric-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Features Section */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
             margin-bottom: 20px;
         }
 
-        .metric-icon {
-            width: 48px;
-            height: 48px;
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .feature-card {
+            background: var(--card);
             border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
         }
 
-        .metric-label {
+        .feature-icon.green {
+            background: #D1FAE5;
+        }
+
+        .feature-icon.blue {
+            background: #DBEAFE;
+        }
+
+        .feature-icon.purple {
+            background: #EDE9FE;
+        }
+
+        .feature-icon.orange {
+            background: #FED7AA;
+        }
+
+        .feature-info {
+            flex: 1;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .feature-stat {
+            font-weight: 600;
             font-size: 14px;
-            color: var(--text-light);
-            font-weight: 600;
-            margin-bottom: 8px;
+            color: var(--primary);
         }
 
-        .metric-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .metric-trend {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .trend-up {
-            color: var(--success);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .trend-down {
-            color: var(--danger);
-            background: rgba(255, 117, 76, 0.1);
-        }
-
-        /* Dashboard Grid */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-        }
-
-        /* Systems/Charts Section */
-        .systems-section {
-            background: var(--card);
-            border-radius: 20px;
-            padding: 24px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .period-selector {
-            background: var(--bg);
-            padding: 4px;
-            border-radius: 8px;
-            display: flex;
-            gap: 4px;
-        }
-
-        .period-btn {
-            border: none;
-            background: transparent;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .period-btn.active {
-            background: white;
-            color: var(--text-dark);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        /* CSS Bar Chart */
-        .bar-chart {
-            display: flex;
-            align-items: flex-end;
-            justify-content: space-between;
-            height: 200px;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .bar-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            width: 15%;
-        }
-
-        .bar {
-            width: 100%;
-            background: var(--primary-light);
-            border-radius: 8px 8px 0 0;
-            transition: height 0.5s ease;
+        /* Toggle Switch */
+        .toggle {
             position: relative;
+            width: 44px;
+            height: 24px;
         }
 
-        .bar.active {
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #D1D5DB;
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            content: "";
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked+.toggle-slider {
             background: var(--primary);
         }
 
-        .bar-label {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .bar-value {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-dark);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .bar-group:hover .bar-value {
-            opacity: 1;
+        .toggle input:checked+.toggle-slider:before {
+            transform: translateX(20px);
         }
 
         /* Activity List */
         .activity-card {
             background: var(--card);
-            border-radius: 20px;
-            padding: 24px;
+            border-radius: 16px;
+            overflow: hidden;
         }
 
-        .activity-list {
-            margin-top: 16px;
-            max-height: 400px;
-            overflow-y: auto;
+        .activity-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
         }
 
         .activity-item {
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 16px 0;
+            padding: 16px 24px;
             border-bottom: 1px solid var(--border);
         }
 
@@ -348,378 +272,271 @@
             border-bottom: none;
         }
 
-        .item-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
+            background: #F3F4F6;
         }
 
-        .item-details {
+        .activity-info {
             flex: 1;
         }
 
-        .item-title {
+        .activity-title {
             font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 4px;
+            font-weight: 500;
         }
 
-        .item-sub {
+        .activity-time {
             font-size: 12px;
-            color: var(--text-light);
+            color: var(--muted);
         }
 
-        .item-value {
-            font-weight: 700;
-            color: var(--success);
+        .activity-amount {
+            font-weight: 600;
+            color: var(--primary);
         }
 
-        /* Toggle Switch */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 24px;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--muted);
         }
 
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
 
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--border);
-            transition: .4s;
-            border-radius: 24px;
+        /* Quick Links */
+        .quick-links {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
         }
 
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        .quick-link {
+            flex: 1;
+            background: var(--card);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
-        input:checked+.slider {
-            background-color: var(--primary);
+        .quick-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        input:checked+.slider:before {
-            transform: translateX(16px);
-        }
-
-        .bg-purple {
-            background: #EBE9F7;
-            color: #6C5DD3;
-        }
-
-        .bg-green {
-            background: #E1F8F0;
-            color: #10B981;
-        }
-
-        .bg-orange {
-            background: #FFF4E5;
-            color: #FFCE73;
-        }
-
-        .bg-pink {
-            background: #FDE8F1;
-            color: #EC4899;
-        }
-
-        @media (max-width: 1200px) {
-            .metrics-grid {
-                grid-template-columns: repeat(2, 1fr);
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: 1fr;
             }
 
-            .dashboard-grid {
+            .features-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .quick-links {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 
 <body>
+    <header class="header">
+        <div class="logo">رِبح.</div>
+        <nav class="nav-links">
+            <a href="index.html" class="active">لوحة التحكم</a>
+            <a href="messages.html">الرسائل</a>
+            <a href="preview.html">المعاينة</a>
+            <a href="settings.html">الإعدادات</a>
+        </nav>
+    </header>
 
-    <div class="layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="logo">
-                <div class="logo-icon">↗</div>
-                رِبح.
+    <main class="main">
+        <h1 class="page-title">مرحباً 👋</h1>
+        <p class="page-subtitle">هذه لوحة التحكم الخاصة بمتجرك</p>
+
+        <!-- Big Revenue -->
+        <div class="hero-card">
+            <div class="hero-label">إجمالي الأرباح المستردة</div>
+            <div class="hero-value" id="totalRevenue">14,250 ر.س</div>
+            <div class="hero-sub">من 156 رسالة تم إرسالها</div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="cartsSent">89</div>
+                <div class="stat-label">سلة تم تذكيرها</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="cartsRecovered">21</div>
+                <div class="stat-label">سلة تم استردادها</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="recoveryRate">23%</div>
+                <div class="stat-label">معدل الاسترداد</div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <h2 class="section-title">⚡ الأنظمة النشطة</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon green">🛒</div>
+                <div class="feature-info">
+                    <div class="feature-name">استرداد السلات المتروكة</div>
+                    <div class="feature-desc">3 رسائل متتابعة مع خصومات تصاعدية</div>
+                    <div class="feature-stat">8,950 ر.س مستردة</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" checked onchange="toggleFeature('cart', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
 
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active">
-                    <span>📊</span> لوحة التحكم
-                </a>
-                <a href="messages.html" class="nav-item">
-                    <span>📨</span> الرسائل
-                </a>
-                <a href="salla-setup" class="nav-item">
-                    <span>🛍️</span> متجري (سلة)
-                </a>
-                <a href="#" class="nav-item">
-                    <span>👥</span> العملاء
-                </a>
-                <div class="nav-divider"></div>
-                <a href="settings.html" class="nav-item">
-                    <span>⚙️</span> الإعدادات
-                </a>
-                <a href="/api/auth/logout" class="nav-item" style="color: var(--danger);">
-                    <span>🚪</span> تسجيل خروج
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main">
-            <!-- Header -->
-            <header class="header">
-                <div class="page-title">لوحة التحكم</div>
-                <div class="search-bar">
-                    <span>🔍</span>
-                    <input type="text" placeholder="بحث...">
+            <div class="feature-card">
+                <div class="feature-icon blue">💎</div>
+                <div class="feature-info">
+                    <div class="feature-name">البيع الإضافي</div>
+                    <div class="feature-desc">عرض بعد كل عملية شراء</div>
+                    <div class="feature-stat">3,200 ر.س إضافية</div>
                 </div>
-            </header>
-
-            <!-- Metrics Row -->
-            <div class="metrics-grid">
-                <!-- Revenue -->
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon bg-green">💰</div>
-                        <div class="metric-trend trend-up">
-                            ↑ 12%
-                        </div>
-                    </div>
-                    <div class="metric-value" id="totalRevenue">0 ر.س</div>
-                    <div class="metric-label">إجمالي الأرباح المستردة</div>
-                </div>
-
-                <!-- Messages -->
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon bg-purple">📨</div>
-                        <div class="metric-trend trend-up">
-                            98%
-                        </div>
-                    </div>
-                    <div class="metric-value" id="totalSent">0</div>
-                    <div class="metric-label">رسالة مرسلة</div>
-                </div>
-
-                <!-- Recovery Rate -->
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon bg-orange">⚡</div>
-                        <div class="metric-trend trend-up">
-                            +4%
-                        </div>
-                    </div>
-                    <div class="metric-value" id="totalRate">15.4%</div>
-                    <div class="metric-label">معدل الاسترداد</div>
-                </div>
-
-                <!-- Active Carts -->
-                <div class="metric-card">
-                    <div class="metric-header">
-                        <div class="metric-icon bg-pink">🛒</div>
-                        <div class="metric-label">نشط</div>
-                    </div>
-                    <div class="metric-value" id="activeCarts">42</div>
-                    <div class="metric-label">سلة معلقة حالياً</div>
-                </div>
+                <label class="toggle">
+                    <input type="checkbox" checked onchange="toggleFeature('upsell', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
             </div>
 
-            <!-- Content Grid -->
-            <div class="dashboard-grid">
-                <!-- Systems Performance (Chart) -->
-                <div class="systems-section">
-                    <div class="section-header">
-                        <div class="section-title">أداء الأنظمة</div>
-                        <div class="period-selector">
-                            <button class="period-btn" onclick="setPeriod(7)">7 أيام</button>
-                            <button class="period-btn active" onclick="setPeriod(30)">30 يوم</button>
-                        </div>
-                    </div>
-
-                    <!-- CSS Bar Chart -->
-                    <div class="bar-chart" id="systemsChart">
-                        <!-- Bars will be generated by JS -->
-                    </div>
-
-                    <!-- System Toggles Layout -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-                        <div class="activity-item">
-                            <div class="item-icon bg-purple">🛒</div>
-                            <div class="item-details">
-                                <div class="item-title">استرداد السلات</div>
-                                <div class="item-sub">تذكير تلقائي</div>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" checked onchange="toggleSystem('cart', this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div class="activity-item">
-                            <div class="item-icon bg-blue">💎</div>
-                            <div class="item-details">
-                                <div class="item-title">البيع الإضافي</div>
-                                <div class="item-sub">زيادة قيمة الطلب</div>
-                            </div>
-                            <label class="switch">
-                                <input type="checkbox" checked onchange="toggleSystem('upsell', this.checked)">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                    </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">🔗</div>
+                <div class="feature-info">
+                    <div class="feature-name">برنامج الإحالات</div>
+                    <div class="feature-desc">العميل يحصل على 15% من كل إحالة</div>
+                    <div class="feature-stat">1,200 ر.س من الإحالات</div>
                 </div>
+                <label class="toggle">
+                    <input type="checkbox" checked onchange="toggleFeature('referral', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
 
-                <!-- Recent Activity -->
-                <div class="activity-card">
-                    <div class="section-header">
-                        <div class="section-title">آخر النشاطات</div>
+            <div class="feature-card">
+                <div class="feature-icon orange">🔄</div>
+                <div class="feature-info">
+                    <div class="feature-name">إعادة تفعيل العملاء</div>
+                    <div class="feature-desc">عرض خاص للعملاء الخاملين 30 يوم</div>
+                    <div class="feature-stat">900 ر.س من العودة</div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" checked onchange="toggleFeature('winback', this.checked)">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Activity -->
+        <h2 class="section-title">📋 آخر النشاطات</h2>
+        <div class="activity-card">
+            <div id="activityList">
+                <div class="activity-item">
+                    <div class="activity-icon">🛒</div>
+                    <div class="activity-info">
+                        <div class="activity-title">تم استرداد سلة - a***@gmail.com</div>
+                        <div class="activity-time">منذ 5 دقائق</div>
                     </div>
-                    <div class="activity-list" id="activityList">
-                        <!-- Items -->
+                    <div class="activity-amount">+450 ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">💎</div>
+                    <div class="activity-info">
+                        <div class="activity-title">بيع إضافي ناجح - m***@hotmail.com</div>
+                        <div class="activity-time">منذ 15 دقيقة</div>
                     </div>
+                    <div class="activity-amount">+280 ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">🔗</div>
+                    <div class="activity-info">
+                        <div class="activity-title">إحالة جديدة من s***@yahoo.com</div>
+                        <div class="activity-time">منذ ساعة</div>
+                    </div>
+                    <div class="activity-amount">+120 ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon">📧</div>
+                    <div class="activity-info">
+                        <div class="activity-title">تم إرسال تذكير سلة - k***@gmail.com</div>
+                        <div class="activity-time">منذ ساعتين</div>
+                    </div>
+                    <div class="activity-amount">بانتظار</div>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="quick-links">
+            <a href="preview.html" class="quick-link">
+                👁️ معاينة الرسائل
+            </a>
+            <a href="messages.html" class="quick-link">
+                📧 سجل الرسائل
+            </a>
+            <a href="settings.html" class="quick-link">
+                ⚙️ الإعدادات
+            </a>
+        </div>
+    </main>
 
     <script>
-        let currentPeriod = 30;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-        });
-
-        function setPeriod(days) {
-            currentPeriod = days;
-            document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            loadData();
-        }
-
-        function loadData() {
-            // Fetch real data from API
-            fetch(`/api/stats?period=${currentPeriod}`)
-                .then(res => res.json())
-                .then(stats => {
-                    const data = {
-                        revenue: stats.overview?.totalRevenue || 0,
-                        sent: stats.overview?.totalSent || 0,
-                        rate: stats.overview?.recoveryRate || 0,
-                        active: stats.overview?.activeCarts || 0,
-                        systems: [
-                            { name: 'السلات', value: Math.min(stats.channels?.cart_recovery?.revenue / 100, 100) || 60, color: 'var(--primary)', label: (stats.channels?.cart_recovery?.revenue || 0).toLocaleString() + ' ر.س' },
-                            { name: 'الإضافي', value: Math.min(stats.channels?.upsell?.revenue / 50, 100) || 35, color: '#FFCE73', label: (stats.channels?.upsell?.revenue || 0).toLocaleString() + ' ر.س' },
-                            { name: 'الإحالات', value: Math.min(stats.channels?.referral?.revenue / 30, 100) || 25, color: '#10B981', label: (stats.channels?.referral?.revenue || 0).toLocaleString() + ' ر.س' },
-                            { name: 'التفعيل', value: Math.min(stats.channels?.winback?.revenue / 20, 100) || 15, color: '#FF754C', label: (stats.channels?.winback?.revenue || 0).toLocaleString() + ' ر.س' }
-                        ]
-                    };
-
-                    // Update Metrics
-                    animateValue('totalRevenue', 0, data.revenue, ' ر.س');
-                    animateValue('totalSent', 0, data.sent, '');
-                    document.getElementById('totalRate').innerText = data.rate + '%';
-                    document.getElementById('activeCarts').innerText = data.active;
-
-                    // Render Chart
-                    renderChart(data.systems);
-
-                    // Render Activity
-                    renderActivity();
-                })
-                .catch(err => {
-                    console.log('Stats fetch failed, using demo data');
-                    // Fallback demo data
-                    animateValue('totalRevenue', 0, 14250, ' ر.س');
-                    animateValue('totalSent', 0, 156, '');
-                    renderChart([
-                        { name: 'السلات', value: 85, color: 'var(--primary)', label: '8,950 ر.س' },
-                        { name: 'الإضافي', value: 45, color: '#FFCE73', label: '3,200 ر.س' },
-                        { name: 'الإحالات', value: 30, color: '#10B981', label: '1,200 ر.س' },
-                        { name: 'التفعيل', value: 20, color: '#FF754C', label: '900 ر.س' }
-                    ]);
-                    renderActivity();
-                });
-        }
-
-        function renderChart(systems) {
-            const chart = document.getElementById('systemsChart');
-            chart.innerHTML = systems.map(s => `
-                <div class="bar-group">
-                    <div class="bar" style="height: ${s.value}%; background: ${s.color}">
-                        <div class="bar-value">${s.label}</div>
-                    </div>
-                    <div class="bar-label">${s.name}</div>
-                </div>
-            `).join('');
-        }
-
-        function renderActivity() {
-            const activities = [
-                { title: 'استرداد سلة ناجح', time: 'منذ 5 دقائق', val: '+450 ر.س', icon: '🛒', color: 'bg-green' },
-                { title: 'بيع إضافي (Upsell)', time: 'منذ 15 دقيقة', val: '+120 ر.س', icon: '💎', color: 'bg-purple' },
-                { title: 'اشتراك جديد', time: 'منذ ساعة', val: 'تجريبي', icon: '👤', color: 'bg-orange' },
-                { title: 'رسالة تذكير', time: 'منذ ساعتين', val: 'تم الإرسال', icon: '📨', color: 'bg-pink' }
-            ];
-
-            const list = document.getElementById('activityList');
-            list.innerHTML = activities.map(a => `
-                <div class="activity-item">
-                    <div class="item-icon ${a.color}">${a.icon}</div>
-                    <div class="item-details">
-                        <div class="item-title">${a.title}</div>
-                        <div class="item-sub">${a.time}</div>
-                    </div>
-                    <div class="item-value" style="color: ${a.val.includes('+') ? 'var(--success)' : 'var(--text-light)'}">
-                        ${a.val}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function animateValue(id, start, end, suffix) {
-            const obj = document.getElementById(id);
-            let startTimestamp = null;
-            const duration = 1000;
-
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString() + suffix;
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
+        // Load real data if available
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/stats?period=30');
+                const data = await res.json();
+                
+                if (data.overview && data.overview.totalRevenue > 0) {
+                    document.getElementById('totalRevenue').textContent = 
+                        data.overview.totalRevenue.toLocaleString() + ' ر.س';
+                    document.getElementById('cartsSent').textContent = 
+                        data.raw?.sent || 0;
+                    document.getElementById('cartsRecovered').textContent = 
+                        data.raw?.recovered || 0;
+                    document.getElementById('recoveryRate').textContent = 
+                        data.overview.recoveryRate + '%';
                 }
-            };
-            window.requestAnimationFrame(step);
+                // If no real data, keep demo values
+            } catch (e) {
+                console.log('Using demo data');
+            }
         }
 
-        function toggleSystem(sys, state) {
-            console.log(sys, state);
-            // Optional: call API to save state
+        function toggleFeature(feature, enabled) {
+            console.log(`${feature}: ${enabled ? 'ON' : 'OFF'}`);
+            fetch('/api/store/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [feature + '_enabled']: enabled })
+            }).catch(e => {});
         }
+
+        loadStats();
     </script>
 </body>
 
