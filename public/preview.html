@@ -344,6 +344,7 @@
         };
 
         function showTemplate(id, el) {
+            if (isEditing) return; // Don't switch while editing
             document.querySelectorAll('.template-item').forEach(e => e.classList.remove('active'));
             el.classList.add('active');
             const t = templates[id];
@@ -355,13 +356,88 @@
             if (t.urgency) document.getElementById('urgencyText').textContent = t.urgency;
         }
 
-        function sendTest() {
-            const email = prompt('أدخل بريدك الإلكتروني:');
-            if (email) alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+        async function sendTest() {
+            const email = prompt('أدخل بريدك الإلكتروني لإرسال رسالة تجريبية:');
+            if (email) {
+                const activeItem = document.querySelector('.template-item.active');
+                const templateId = activeItem.getAttribute('onclick').match(/'([^']+)'/)[1];
+                const t = templates[templateId];
+
+                try {
+                    const res = await fetch('/api/email/test', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: email,
+                            subject: document.getElementById('emailSubject').innerText,
+                            body: document.getElementById('emailBody').innerText,
+                            offer: t.offer ? document.getElementById('offerValue').innerText : null,
+                            urgency: t.urgency ? document.getElementById('urgencyText').innerText : null
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        alert('✅ تم إرسال رسالة تجريبية إلى ' + email);
+                    } else {
+                        alert('❌ فشل الإرسال: ' + data.error);
+                    }
+                } catch (err) {
+                    alert('❌ حدث خطأ أثناء الاتصال بالخادم');
+                }
+            }
         }
 
-        function editTemplate() {
-            alert('📝 خاصية التعديل - قريباً!');
+        let isEditing = false;
+        async function editTemplate() {
+            const btn = document.querySelector('.btn-primary');
+            const subject = document.getElementById('emailSubject');
+            const body = document.getElementById('emailBody');
+            const offer = document.getElementById('offerValue');
+            const urgency = document.getElementById('urgencyText');
+
+            if (!isEditing) {
+                // Start Editing
+                isEditing = true;
+                btn.textContent = '💾 حفظ';
+                [subject, body, offer, urgency].forEach(el => {
+                    if (el) el.contentEditable = true;
+                });
+                subject.style.border = '1px dashed var(--primary)';
+                body.style.border = '1px dashed var(--primary)';
+            } else {
+                // Save Changes
+                isEditing = false;
+                btn.textContent = '✏️ تعديل';
+                [subject, body, offer, urgency].forEach(el => {
+                    if (el) el.contentEditable = false;
+                });
+                subject.style.border = 'none';
+                body.style.border = 'none';
+
+                const activeItem = document.querySelector('.template-item.active');
+                const templateId = activeItem.getAttribute('onclick').match(/'([^']+)'/)[1];
+
+                // Update local templates object
+                templates[templateId].subject = subject.innerText;
+                templates[templateId].body = body.innerText;
+                if (templates[templateId].offer) templates[templateId].offer = offer.innerText;
+                if (templates[templateId].urgency) templates[templateId].urgency = urgency.innerText;
+
+                // Save to server
+                try {
+                    await fetch('/api/templates/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            templateId: templateId,
+                            template: templates[templateId]
+                        })
+                    });
+                    alert('✅ تم حفظ التعديلات بنجاح');
+                } catch (err) {
+                    console.warn('Could not save to server, saved locally.');
+                }
+            }
         }
     </script>
 </body>

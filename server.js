@@ -2097,6 +2097,8 @@ app.post('/api/email/test', async (req, res) => {
 
     try {
         const emailSender = require('./lib/emailSender');
+        const analytics = require('./lib/analytics');
+
         await emailSender.sendOfferEmail(email, {
             headline: subject,
             body: body,
@@ -2106,6 +2108,9 @@ app.post('/api/email/test', async (req, res) => {
             storeName: 'رِبح - رسالة تجريبية',
             checkoutUrl: 'https://ribh.click'
         });
+
+        // Log to analytics so it shows up in dashboard stats
+        analytics.track.emailSent('test-store', 'email', 'test_email', email);
 
         console.log(`📧 Test email sent to ${email}`);
         res.json({ success: true, message: 'Test email sent' });
