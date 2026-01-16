@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - استرد السلات المتروكة بالذكاء الاصطناعي | Salla App</title>
+    <meta name="description" content="استرد السلات المتروكة تلقائياً وزد أرباحك بنسبة 15-30%. تطبيق ذكي لمتاجر سلة.">
+    <meta name="keywords" content="استرداد السلات, سلات متروكة, سلة, زيادة المبيعات, ذكاء اصطناعي, تسويق آلي">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FFFFFF;
+            --text: #1D1D1F;
+            --muted: #86868B;
+            --primary: #10B981;
+            --accent: #059669;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(180deg, #ECFDF5 0%, #FFFFFF 100%);
+        }
+
+        .hero-logo {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            max-width: 700px;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--muted);
+            max-width: 600px;
+            line-height: 1.7;
+            margin-bottom: 40px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-secondary {
+            background: #F3F4F6;
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: #E5E7EB;
+        }
+
+        .hero-note {
+            margin-top: 24px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .hero-note span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            padding: 60px 20px;
+            background: #F9FAFB;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 16px;
+            color: var(--muted);
+            margin-top: 8px;
+        }
+
+        /* Features */
+        .features {
+            padding: 80px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 48px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .feature-card {
+            background: #F9FAFB;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+        }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-desc {
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* How it works */
+        .how-it-works {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-align: center;
+        }
+
+        .how-it-works h2 {
+            font-size: 36px;
+            margin-bottom: 48px;
+        }
+
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: white;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0 auto 16px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            opacity: 0.9;
+            font-size: 15px;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .pricing h2 {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .pricing-subtitle {
+            color: var(--muted);
+            margin-bottom: 48px;
+            font-size: 18px;
+        }
+
+        .pricing-cards {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .pricing-card {
+            background: #F9FAFB;
+            border-radius: 24px;
+            padding: 40px;
+            width: 320px;
+        }
+
+        .pricing-card.featured {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 16px 0;
+        }
+
+        .pricing-price span {
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .pricing-features {
+            text-align: right;
+            margin: 24px 0;
+        }
+
+        .pricing-features li {
+            padding: 8px 0;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pricing-btn {
+            display: block;
+            padding: 16px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 24px;
+        }
+
+        .pricing-card .pricing-btn {
+            background: white;
+            color: var(--primary);
+        }
+
+        .pricing-card.featured .pricing-btn {
+            background: white;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 40px 20px;
+            text-align: center;
+            background: #F9FAFB;
+            color: var(--muted);
+        }
+
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            .pricing-cards {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero">
+        <div class="hero-logo">رِبح.</div>
+        <h1>استرد <span>السلات المتروكة</span> تلقائياً بالذكاء الاصطناعي</h1>
+        <p class="hero-subtitle">
+            لكل 10 عملاء يتركون سلاتهم، رِبح يسترد 2-3 منهم - بدون أي تدخل منك.
+            رسائل مخصصة، خصومات ذكية، نتائج حقيقية.
+        </p>
+        <div class="hero-cta">
+            <a href="https://apps.salla.sa" class="btn btn-primary">🚀 جربه مجاناً على سلة</a>
+            <a href="#how" class="btn btn-secondary">كيف يعمل؟</a>
+        </div>
+        <p class="hero-note">✓ مجاني <span>500 رسالة/شهر</span> • ✓ لا يحتاج بطاقة ائتمان</p>
+    </section>
+
+    <section class="stats">
+        <div class="stat">
+            <div class="stat-value">23%</div>
+            <div class="stat-label">متوسط معدل الاسترداد</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">+15,000</div>
+            <div class="stat-label">ريال مسترد شهرياً</div>
+        </div>
+        <div class="stat">
+            <div class="stat-value">3 دقائق</div>
+            <div class="stat-label">وقت التفعيل</div>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>لماذا رِبح؟</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">ذكاء اصطناعي</div>
+                <div class="feature-desc">كل رسالة مخصصة للعميل ومنتجاته - ليست نسخ ولصق</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">تلقائي 100%</div>
+                <div class="feature-desc">فعّل مرة واحدة وانسَ - رِبح يعمل 24/7</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🧪</div>
+                <div class="feature-title">اختبار A/B</div>
+                <div class="feature-desc">يجرب عناوين وخصومات مختلفة ويختار الأفضل</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <div class="feature-title">تيليجرام مجاني</div>
+                <div class="feature-desc">إشعارات فورية عن كل سلة متروكة ومستردة</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💎</div>
+                <div class="feature-title">بيع إضافي</div>
+                <div class="feature-desc">عروض ذكية بعد كل شراء لزيادة قيمة الطلب</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <div class="feature-title">إحالات</div>
+                <div class="feature-desc">برنامج إحالات تلقائي - عملاؤك يجلبون عملاء</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works" id="how">
+        <h2>كيف يعمل؟</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-title">فعّل التطبيق</div>
+                <div class="step-desc">ثبّت رِبح من متجر تطبيقات سلة</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-title">استرخِ</div>
+                <div class="step-desc">رِبح يراقب السلات المتروكة تلقائياً</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-title">اجمع الأرباح</div>
+                <div class="step-desc">شاهد المبيعات تزيد في لوحة التحكم</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing" id="pricing">
+        <h2>أسعار بسيطة</h2>
+        <p class="pricing-subtitle">ابدأ مجاناً، ترقّى عندما تحتاج</p>
+        <div class="pricing-cards">
+            <div class="pricing-card">
+                <div class="pricing-name">مجاني</div>
+                <div class="pricing-price">0 <span>ر.س/شهر</span></div>
+                <ul class="pricing-features">
+                    <li>✅ 500 رسالة بريد إلكتروني</li>
+                    <li>✅ تيليجرام غير محدود</li>
+                    <li>✅ استرداد السلات</li>
+                    <li>✅ ذكاء اصطناعي</li>
+                    <li>✅ اختبار A/B</li>
+                </ul>
+                <a href="https://apps.salla.sa" class="pricing-btn">ابدأ مجاناً</a>
+            </div>
+            <div class="pricing-card featured">
+                <div class="pricing-name">احترافي</div>
+                <div class="pricing-price">49 <span>ر.س/شهر</span></div>
+                <ul class="pricing-features">
+                    <li>✅ كل مميزات المجاني</li>
+                    <li>✅ رسائل بريد غير محدودة</li>
+                    <li>✅ رسائل SMS</li>
+                    <li>✅ واتساب</li>
+                    <li>✅ دعم أولوية</li>
+                </ul>
+                <a href="https://apps.salla.sa" class="pricing-btn">ابدأ الآن</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-logo">رِبح.</div>
+        <p>استرد أموالك المفقودة</p>
+        <p style="margin-top: 16px;">تطبيق لمتاجر سلة | ribh.click</p>
+    </footer>
+</body>
+
+</html>
