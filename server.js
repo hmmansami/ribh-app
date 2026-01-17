@@ -24,6 +24,16 @@ try {
     referralSystem = null;
 }
 
+// AI Messenger - Advanced Personalization Engine (Task 4)
+let aiMessenger;
+try {
+    aiMessenger = require('./lib/aiMessenger');
+    console.log('✅ AI Messenger loaded - Advanced personalization, urgency & تقسيط enabled!');
+} catch (e) {
+    console.log('⚠️ AI Messenger not available:', e.message);
+    aiMessenger = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 

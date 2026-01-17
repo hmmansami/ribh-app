@@ -1,0 +1,30 @@
+AVAILABLE
+
+Task 4: AI Message Preview & Edit - READY FOR PICKUP
+
+=== INSTRUCTIONS FOR NEW AGENT ===
+
+1. Open a NEW Antigravity window
+2. Navigate to: /Users/user/Downloads/app/ribh-app
+3. Tell the agent:
+
+---
+You are working on the RIBH project. Your task is Task 4: AI Message Preview.
+
+Read these files first:
+- .agent/COORDINATOR.md (project overview)
+- .agent/tasks/TASK_4_AI_PREVIEW.md (your task details)
+
+Your job:
+1. Add POST /api/ai/generate-message endpoint to server.js
+2. The endpoint should use Gemini AI to generate personalized Arabic cart recovery messages
+3. Return the message + optional offer based on cart value
+
+The generateWithGemini() function already exists in server.js around line 697.
+
+When done:
+1. Update this status file to DONE
+2. Update COORDINATOR.md to mark Task 4 as ✅
+
+DO NOT EDIT: public/index.html (another agent is working on it)
+---

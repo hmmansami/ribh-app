@@ -27,7 +27,7 @@
 ### TASK 1: Dashboard Redesign (Apple-style)
 - **File**: `public/index.html`
 - **Task File**: `.agent/tasks/TASK_1_DASHBOARD.md`
-- **Status**: ⏳ Available
+- **Status**: 🔄 In Progress (Agent 1)
 - **Priority**: HIGH
 
 ### TASK 2: Settings & Telegram Pages Theme
@@ -43,9 +43,9 @@
 - **Priority**: HIGH
 
 ### TASK 4: AI Message Preview & Edit
-- **Files**: `server.js`, `public/index.html` (modal section)
+- **Files**: `server.js` (API only - no modal needed yet)
 - **Task File**: `.agent/tasks/TASK_4_AI_PREVIEW.md`
-- **Status**: ⏳ Available
+- **Status**: 🔄 Ready for Pickup (Agent 4)
 - **Priority**: MEDIUM
 
 ---
