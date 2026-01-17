@@ -1,3 +1,9 @@
+const admin = require('firebase-admin');
+// Initialize if not already initialized
+if (admin.apps.length === 0) {
+    admin.initializeApp();
+}
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -136,104 +142,95 @@ app.use((req, res, next) => {
     next();
 });
 
-// ==========================================
-// FIREBASE FIRESTORE DATABASE
-// ==========================================
-const admin = require('firebase-admin');
+// Simple file-based database
+// Firestore Database
+const db = admin.firestore();
+const DB_COLLECTION = 'carts';
+const STORES_COLLECTION = 'stores';
+const LOGS_COLLECTION = 'logs';
 
-let db = null;
-let useFirestore = false;
-
-// Initialize Firebase if credentials are available
-try {
-    const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-    if (credentialsJson) {
-        const serviceAccount = JSON.parse(credentialsJson);
-        admin.initializeApp({
-            credential: admin.credential.cert(serviceAccount)
-        });
-        db = admin.firestore();
-        useFirestore = true;
-        console.log('✅ Firebase Firestore connected - Data will persist!');
-    } else {
-        console.log('⚠️ No Firebase credentials - Using local JSON files (data may be lost on restart)');
-    }
-} catch (e) {
-    console.log('⚠️ Firebase init failed:', e.message, '- Using local JSON files');
-}
-
-// File paths (fallback)
-const DB_FILE = path.join(__dirname, 'data', 'carts.json');
-const STORES_FILE = path.join(__dirname, 'data', 'stores.json');
-const LOG_FILE = path.join(__dirname, 'data', 'webhook_logs.json');
-
-// Ensure data directory exists (for fallback)
-if (!fs.existsSync(path.join(__dirname, 'data'))) {
-    fs.mkdirSync(path.join(__dirname, 'data'));
-}
-if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, JSON.stringify([]));
-if (!fs.existsSync(STORES_FILE)) fs.writeFileSync(STORES_FILE, JSON.stringify([]));
-if (!fs.existsSync(LOG_FILE)) fs.writeFileSync(LOG_FILE, JSON.stringify([]));
-
-// Collection name mapping
-function getCollectionName(file) {
-    if (file.includes('carts')) return 'carts';
-    if (file.includes('stores')) return 'stores';
-    if (file.includes('logs') || file.includes('webhook')) return 'logs';
-    if (file.includes('leads')) return 'leads';
-    if (file.includes('templates')) return 'templates';
-    return 'misc';
-}
-
-// Helper functions - Now with Firestore support!
-function readDB(file) {
-    if (useFirestore) {
-        // Return promise - callers need to await
-        const col = getCollectionName(file);
-        return db.collection(col).get().then(snapshot => {
-            if (snapshot.empty) return [];
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        }).catch(e => {
-            console.error('Firestore read error:', e);
-            return [];
-        });
-    }
-    // Fallback to JSON
+// Helper functions (Converted to Async for Firestore)
+async function readDB(collectionName) {
     try {
-        return JSON.parse(fs.readFileSync(file, 'utf8'));
+        // Map file paths to collection names if legacy comparison is used
+        // Map file paths to collection names if legacy comparison is used
+        let col = collectionName;
+        // String conversion to handle legacy file path objects if any
+        const name = String(collectionName);
+        if (name.includes('carts')) col = DB_COLLECTION;
+        if (name.includes('stores')) col = STORES_COLLECTION;
+        if (name.includes('logs')) col = LOGS_COLLECTION;
+        if (name.includes('leads')) col = 'leads';
+        if (name.includes('templates')) col = 'templates';
+
+        const snapshot = await db.collection(col).get();
+        if (snapshot.empty) return [];
+
+        // Convert logs and lists back to array
+        return snapshot.docs.map(doc => doc.data());
     } catch (e) {
+        console.error(`Error reading ${collectionName}:`, e);
         return [];
     }
 }
 
-function writeDB(file, data) {
-    if (useFirestore) {
-        const col = getCollectionName(file);
-        const batch = db.batch();
-        data.forEach(item => {
-            const id = item.id || item.token || item.ribhToken || item.email || item.merchant || Date.now().toString();
-            const docRef = db.collection(col).doc(String(id).replace(/\//g, '_'));
-            batch.set(docRef, item, { merge: true });
-        });
-        return batch.commit().catch(e => console.error('Firestore write error:', e));
+async function writeDB(collectionName, data) {
+    // Map file paths to collection names
+    // Map file paths to collection names
+    let col = collectionName;
+    const name = String(collectionName);
+    if (name.includes('carts')) col = DB_COLLECTION;
+    if (name.includes('stores')) col = STORES_COLLECTION;
+    if (name.includes('logs')) col = LOGS_COLLECTION;
+    if (name.includes('leads')) col = 'leads';
+    if (name.includes('templates')) col = 'templates';
+
+    // Warning: This implementation overwrites the entire collection strategy 
+    // to match the legacy "save whole array" behavior. 
+    // In a real app, we should save individual docs. 
+    // For migration speed, we will use a single 'data' doc or batch write.
+
+    // Better approach for "Array replacement":
+    // For carts/stores, we usually append. But the code passes the WHOLE array.
+    // To keep it simple and working: We will rewrite documents based on IDs if possible, 
+    // or (easier for migration) delete all and rewrite? No, that's expensive.
+
+    // Compromise: We will assume 'data' is an array of objects.
+    // We will batch write them using a unique key (e.g. id, email, token).
+
+    const batch = db.batch();
+    const collectionRef = db.collection(col);
+
+    // 1. Ideally we don't delete everything. But legacy code assumes "Output = Input".
+    // For now, let's just save the array items. 
+    // To prevent infinite growth/duplication if we don't delete, we need a strategy.
+    // Strategy: Use a deterministic ID.
+
+    data.forEach(item => {
+        let id = item.id || item.token || item.ribhToken || item.email || crypto.randomUUID();
+        // Sanitize ID
+        id = String(id).replace(/\//g, '_');
+        const docRef = collectionRef.doc(id);
+        batch.set(docRef, item, { merge: true });
+    });
+
+    try {
+        await batch.commit();
+    } catch (e) {
+        console.error(`Error writing to ${col}:`, e);
     }
-    // Fallback to JSON
-    fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-function logWebhook(event, data) {
-    const logEntry = {
-        timestamp: new Date().toISOString(),
-        event,
-        data
-    };
-    if (useFirestore) {
-        return db.collection('logs').add(logEntry).catch(e => console.error('Log error:', e));
+async function logWebhook(event, data) {
+    try {
+        await db.collection(LOGS_COLLECTION).add({
+            timestamp: new Date().toISOString(),
+            event,
+            data
+        });
+    } catch (e) {
+        console.error('Error logging webhook:', e);
     }
-    const logs = readDB(LOG_FILE);
-    logs.push(logEntry);
-    if (logs.length > 100) logs.shift();
-    writeDB(LOG_FILE, logs);
 }
 
 // ==========================================
@@ -261,7 +258,8 @@ function parseCookies(req) {
 }
 
 // Verify store token middleware
-function verifyStoreToken(req, res, next) {
+// Verify store token middleware
+async function verifyStoreToken(req, res, next) {
     const cookies = parseCookies(req);
     const token = req.query.token || cookies.ribhToken;
 
@@ -269,7 +267,7 @@ function verifyStoreToken(req, res, next) {
         return res.redirect('/login.html');
     }
 
-    const stores = readDB(STORES_FILE);
+    const stores = await readDB(STORES_FILE);
     const store = stores.find(s => s.ribhToken === token);
 
     if (!store) {
@@ -291,7 +289,7 @@ function verifyStoreToken(req, res, next) {
 }
 
 // Auth API endpoint - verify token
-app.get('/api/auth/verify', (req, res) => {
+app.get('/api/auth/verify', async (req, res) => {
     const cookies = parseCookies(req);
     const token = req.query.token || cookies.ribhToken;
 
@@ -299,7 +297,7 @@ app.get('/api/auth/verify', (req, res) => {
         return res.json({ success: false, error: 'No token provided' });
     }
 
-    const stores = readDB(STORES_FILE);
+    const stores = await readDB(STORES_FILE);
     const store = stores.find(s => s.ribhToken === token);
 
     if (!store) {
@@ -325,7 +323,7 @@ app.post('/api/auth/send-link', async (req, res) => {
         return res.status(400).json({ success: false, error: 'Email is required' });
     }
 
-    const stores = readDB(STORES_FILE);
+    const stores = await readDB(STORES_FILE);
     const store = stores.find(s => s.email && s.email.toLowerCase() === email.toLowerCase());
 
     if (!store) {
@@ -553,7 +551,7 @@ app.get('/oauth/callback', async (req, res) => {
         console.log(`🏪 Merchant: ${merchantName} (${merchantId})`);
 
         // Step 3: Save store with access token
-        const stores = readDB(STORES_FILE);
+        const stores = await readDB(STORES_FILE);
         let existingStore = stores.find(s => s.merchant === merchantId);
         let ribhToken;
 
@@ -569,7 +567,7 @@ app.get('/oauth/callback', async (req, res) => {
                 installedAt: new Date().toISOString(),
                 active: true
             });
-            writeDB(STORES_FILE, stores);
+            await writeDB(STORES_FILE, stores);
             console.log(`✅ New store registered: ${merchantName} with token: ${ribhToken.substring(0, 8)}...`);
         } else {
             // Update existing store with new tokens
@@ -580,7 +578,7 @@ app.get('/oauth/callback', async (req, res) => {
                 existingStore.ribhToken = generateToken();
             }
             ribhToken = existingStore.ribhToken;
-            writeDB(STORES_FILE, stores);
+            await writeDB(STORES_FILE, stores);
             console.log(`🔄 Store updated: ${merchantName}`);
         }
 
@@ -606,7 +604,7 @@ app.get('/oauth/callback', async (req, res) => {
 // ==========================================
 // Link from Salla: https://ribh.click/app
 // Flow: Click → Auto OAuth (if needed) → Dashboard
-app.get('/app', (req, res) => {
+app.get('/app', async (req, res) => {
     // Accept multiple query parameter formats from Salla
     const storeId = req.query.merchant || req.query.store || req.query.store_id ||
         req.query.merchant_id || req.query.id;
@@ -620,7 +618,7 @@ app.get('/app', (req, res) => {
 
     // OPTION 1: Store ID provided in URL
     if (storeId && storeId !== 'YOUR_STORE_ID' && !storeId.includes('{{')) {
-        const stores = readDB(STORES_FILE);
+        const stores = await readDB(STORES_FILE);
         const foundStore = stores.find(s =>
             s.merchant === storeId ||
             s.merchant === String(storeId) ||
@@ -646,7 +644,7 @@ app.get('/app', (req, res) => {
     // OPTION 2: Already has cookie from previous login
     if (cookies.ribhToken) {
         // Verify the token is still valid
-        const stores = readDB(STORES_FILE);
+        const stores = await readDB(STORES_FILE);
         const validStore = stores.find(s => s.ribhToken === cookies.ribhToken);
 
         if (validStore) {
@@ -690,13 +688,14 @@ function verifySallaSignature(req) {
 }
 
 // Webhook handler function (shared between both paths)
-function handleSallaWebhook(req, res) {
+// Webhook handler function (shared between both paths)
+async function handleSallaWebhook(req, res) {
     const event = req.body;
 
     console.log('📨 Webhook received:', event.event || 'unknown', JSON.stringify(event).substring(0, 500));
 
     // Log the webhook
-    logWebhook(event.event || 'unknown', {
+    await logWebhook(event.event || 'unknown', {
         merchant: event.merchant,
         timestamp: event.created_at
     });
@@ -2036,14 +2035,14 @@ async function sendAllReminders(cart, reminderNumber) {
 // ==========================================
 
 // Get all abandoned carts
-app.get('/api/carts', (req, res) => {
-    const carts = readDB(DB_FILE);
+app.get('/api/carts', async (req, res) => {
+    const carts = await readDB(DB_FILE);
     res.json(carts.reverse()); // Latest first
 });
 
 // Get stats
-app.get('/api/stats', (req, res) => {
-    const carts = readDB(DB_FILE);
+app.get('/api/stats', async (req, res) => {
+    const carts = await readDB(DB_FILE);
     const period = parseInt(req.query.period) || 30; // days
     const cutoff = new Date(Date.now() - period * 24 * 60 * 60 * 1000);
 
@@ -2118,8 +2117,8 @@ app.get('/api/stats', (req, res) => {
 });
 
 // Get stores
-app.get('/api/stores', (req, res) => {
-    const stores = readDB(STORES_FILE);
+app.get('/api/stores', async (req, res) => {
+    const stores = await readDB(STORES_FILE);
     res.json(stores);
 });
 
@@ -2288,26 +2287,26 @@ app.post('/api/email/test', async (req, res) => {
 });
 
 // Save custom template
-const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
-if (!fs.existsSync(TEMPLATES_FILE)) {
-    fs.writeFileSync(TEMPLATES_FILE, JSON.stringify({}));
-}
+// const TEMPLATES_FILE = path.join(__dirname, 'data', 'templates.json');
+// if (!fs.existsSync(TEMPLATES_FILE)) {
+//     fs.writeFileSync(TEMPLATES_FILE, JSON.stringify({}));
+// }
 
-app.post('/api/templates/save', (req, res) => {
+app.post('/api/templates/save', async (req, res) => {
     const { templateId, template } = req.body;
 
     if (!templateId || !template) {
         return res.status(400).json({ error: 'Missing templateId or template' });
     }
 
-    const templates = readDB(TEMPLATES_FILE);
+    const templates = await readDB('templates');
     templates[templateId] = {
         ...template,
         updatedAt: new Date().toISOString()
     };
 
     try {
-        fs.writeFileSync(TEMPLATES_FILE, JSON.stringify(templates, null, 2));
+        await writeDB('templates', Object.values(templates)); // Store as list or handle object mapping in writeDB
         console.log(`💾 Template ${templateId} saved`);
         res.json({ success: true, message: 'Template saved' });
     } catch (error) {
@@ -2315,8 +2314,8 @@ app.post('/api/templates/save', (req, res) => {
     }
 });
 
-app.get('/api/templates', (req, res) => {
-    const templates = readDB(TEMPLATES_FILE);
+app.get('/api/templates', async (req, res) => {
+    const templates = await readDB('templates');
     res.json(templates);
 });
 
@@ -2375,8 +2374,8 @@ app.post('/api/test/abandoned-cart', (req, res) => {
 });
 
 // Get webhook logs
-app.get('/api/logs', (req, res) => {
-    const logs = readDB(LOG_FILE);
+app.get('/api/logs', async (req, res) => {
+    const logs = await readDB(LOG_FILE);
     res.json(logs.reverse()); // Latest first
 });
 
