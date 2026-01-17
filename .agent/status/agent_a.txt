@@ -1,0 +1,131 @@
+STATUS: DONE
+
+==============================================
+AGENT A: FIREBASE MIGRATION RESEARCH REPORT
+==============================================
+Completed: 2026-01-17T14:35 UTC
+
+FINDINGS:
+
+1. Firebase Hosting: HARD ❌
+   - Firebase Hosting is designed for STATIC content only
+   - Our Express server.js (2600+ lines) needs a backend runtime
+   - REQUIRES converting to Cloud Functions or Cloud Run
+   - Cannot just "deploy" existing Node.js Express app directly
+
+2. Firestore Migration: EASY ✅ (Just add, don't remove!)
+   - Current: JSON files (carts.json, stores.json, webhook_logs.json)
+   - Can add Firebase Admin SDK alongside existing code
+   - Simple pattern: `npm install firebase-admin`
+   - Migration is a one-time script, not a rewrite
+   - CAN KEEP EXPRESS SERVER ON RENDER while using Firestore!
+
+3. Firebase Auth: MEDIUM ⚠️
+   - Current: Custom token system (generateToken() with crypto)
+   - Salla OAuth integration is working fine
+   - Firebase Auth would require frontend changes
+   - NOT NEEDED - current system works
+
+==============================================
+RECOMMENDATION: HYBRID APPROACH (LOWEST EFFORT!)
+==============================================
+
+🏆 WINNER: Keep Render hosting + Add Firestore only!
+
+WHY THIS IS THE LOWEST EFFORT:
+1. No hosting migration needed
+2. No code restructuring for Cloud Functions
+3. Just add firebase-admin SDK
+4. Replace readDB/writeDB functions with Firestore calls
+5. App stays on Render, just database moves
+
+ESTIMATED EFFORT: ~2-3 hours (vs 1-2 days for full migration)
+
+==============================================
+CODE SNIPPETS:
+==============================================
+
+1. INSTALL FIREBASE ADMIN SDK:
+   npm install firebase-admin
+
+2. INITIALIZE FIREBASE (add to server.js):
+```javascript
+const admin = require('firebase-admin');
+
+// Initialize with service account
+admin.initializeApp({
+  credential: admin.credential.applicationDefault(),
+  // OR: credential: admin.credential.cert(require('./serviceAccountKey.json'))
+});
+
+const db = admin.firestore();
+```
+
+3. REPLACE JSON FUNCTIONS:
+```javascript
+// OLD:
+function readDB(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
+}
+
+// NEW:
+async function readCartsDB() {
+  const snapshot = await db.collection('carts').get();
+  return snapshot.docs.map(doc => doc.data());
+}
+
+async function writeCart(cart) {
+  await db.collection('carts').doc(cart.id).set(cart);
+}
+```
+
+4. ONE-TIME MIGRATION SCRIPT:
+```javascript
+// migrate-to-firestore.js
+const admin = require('firebase-admin');
+const fs = require('fs');
+
+admin.initializeApp({ credential: admin.credential.cert('./serviceAccountKey.json') });
+const db = admin.firestore();
+
+async function migrate() {
+  // Migrate carts
+  const carts = JSON.parse(fs.readFileSync('./data/carts.json'));
+  for (const cart of carts) {
+    await db.collection('carts').doc(cart.id || String(Date.now())).set(cart);
+  }
+  
+  // Migrate stores
+  const stores = JSON.parse(fs.readFileSync('./data/stores.json'));
+  for (const store of stores) {
+    await db.collection('stores').doc(store.merchant).set(store);
+  }
+  
+  console.log('✅ Migration complete!');
+}
+
+migrate();
+```
+
+==============================================
+ALTERNATIVE: FULL FIREBASE (IF WANTED LATER)
+==============================================
+
+Option A: Cloud Functions (2nd Gen)
+- Wrap Express app in onRequest handler
+- Deploy with: firebase deploy --only functions
+- Effort: MEDIUM (need to restructure project)
+
+Option B: Cloud Run
+- More control, Docker-based
+- Better for large Express apps
+- Effort: MEDIUM-HIGH
+
+==============================================
+AGENT A VERDICT:
+==============================================
+DO NOT DO FULL MIGRATION NOW!
+Just add Firestore and keep Render hosting.
+This is 80% of the benefit with 20% of the effort.
+
+Full Firebase migration can happen later if needed.
