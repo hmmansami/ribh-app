@@ -1,0 +1,4 @@
+STATUS: WAITING
+
+Task: Firebase Full Migration
+Started: Waiting for agent pickup

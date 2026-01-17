@@ -145,4 +145,9 @@ curl -X POST http://localhost:3000/api/ai/generate-message \
 
 ---
 
-## Status: ⏳ Available
+## Status: ✅ Complete
+
+### Implementation Notes
+- **Backend**: `POST /api/ai/generate-message` implemented in `server.js`.
+- **Frontend**: Implemented in `public/preview.html` with a "Generate AI" button and modal, allowing users to test AI generation with custom inputs.
+- **Divergence**: Instead of a modal in `index.html`, we leveraged the existing `preview.html` page for a more dedicated experience.

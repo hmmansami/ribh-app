@@ -312,6 +312,8 @@
                     <span class="preview-title">معاينة البريد</span>
                     <div class="preview-actions">
                         <button class="btn btn-secondary" onclick="sendTest()">📧 إرسال تجريبي</button>
+                        <button class="btn" style="background: linear-gradient(135deg, #10B981, #6366F1); color: white;"
+                            onclick="openAIModal()">🤖 توليد بالذكاء الاصطناعي</button>
                         <button class="btn btn-primary" onclick="editTemplate()">✏️ تعديل</button>
                     </div>
                 </div>
@@ -439,7 +441,111 @@
                 }
             }
         }
+
+        // AI Generation Logic
+        function openAIModal() {
+            document.getElementById('aiModal').style.display = 'flex';
+        }
+
+        function closeAIModal() {
+            document.getElementById('aiModal').style.display = 'none';
+        }
+
+        async function generateAIMessage() {
+            const customerName = document.getElementById('aiName').value;
+            const cartValue = document.getElementById('aiValue').value;
+            const items = document.getElementById('aiItems').value.split(',').map(i => i.trim());
+            const style = document.getElementById('aiStyle').value;
+            const btn = document.getElementById('aiGenerateBtn');
+
+            if (!customerName || !cartValue) {
+                alert('الرجاء إدخال اسم العميل وقيمة السلة');
+                return;
+            }
+
+            btn.textContent = 'جاري التوليد... 🤖';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/ai/generate-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customerName, cartValue, items, channel: 'email', style })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    // Update Preview
+                    document.getElementById('emailBody').textContent = data.message;
+                    if (data.offer) {
+                        document.getElementById('offerValue').textContent = data.offer.message || 'خصم خاص';
+                        document.getElementById('emailOffer').style.display = 'block';
+                    }
+                    closeAIModal();
+
+                    // Highlight change
+                    document.getElementById('emailPreview').style.animation = 'highlight 1s';
+                } else {
+                    alert('❌ حدث خطأ: ' + data.error);
+                }
+            } catch (err) {
+                alert('❌ تعذر الاتصال بالخادم');
+                console.error(err);
+            } finally {
+                btn.textContent = '✨ توليد الرسالة';
+                btn.disabled = false;
+            }
+        }
     </script>
+
+    <!-- AI Modal -->
+    <div id="aiModal"
+        style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 1000; align-items: center; justify-content: center;">
+        <div
+            style="background: white; width: 400px; padding: 24px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="font-size: 18px; font-weight: 700;">🤖 توليد رسالة بالذكاء الاصطناعي</h3>
+                <button onclick="closeAIModal()"
+                    style="background: none; border: none; font-size: 20px; cursor: pointer;">✕</button>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500;">اسم
+                        العميل</label>
+                    <input type="text" id="aiName" value="خالد"
+                        style="width: 100%; padding: 10px; border: 1px solid #E5E5E5; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500;">قيمة السلة
+                        (ر.س)</label>
+                    <input type="number" id="aiValue" value="350"
+                        style="width: 100%; padding: 10px; border: 1px solid #E5E5E5; border-radius: 8px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500;">المنتجات
+                        (مفصولة بفاصلة)</label>
+                    <input type="text" id="aiItems" value="ساعة ذكية, سوار إضافي"
+                        style="width: 100%; padding: 10px; border: 1px solid #E5E5E5; border-radius: 8px;">
+                </div>
+                <div>
+                    <label
+                        style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500;">الأسلوب</label>
+                    <select id="aiStyle"
+                        style="width: 100%; padding: 10px; border: 1px solid #E5E5E5; border-radius: 8px;">
+                        <option value="friendly">ودود ومرحب 😊</option>
+                        <option value="urgent">عاجل (خوف من الفوات) ⏰</option>
+                    </select>
+                </div>
+
+                <button id="aiGenerateBtn" onclick="generateAIMessage()"
+                    style="background: linear-gradient(135deg, #10B981, #6366F1); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: 600; cursor: pointer; margin-top: 8px;">
+                    ✨ توليد الرسالة
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
