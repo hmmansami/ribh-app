@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | نظرية الضغطة الواحدة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: #10B981;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #9CA3AF;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* The One Click Button */
+        .oneclick-section {
+            text-align: center;
+            margin: 80px 0;
+        }
+
+        .oneclick-button {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #10B981, #059669);
+            border: none;
+            cursor: pointer;
+            box-shadow:
+                0 0 60px rgba(16, 185, 129, 0.4),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .oneclick-button:hover {
+            transform: scale(1.05);
+            box-shadow:
+                0 0 80px rgba(16, 185, 129, 0.6),
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .oneclick-button:active {
+            transform: scale(0.98);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .oneclick-button span {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .oneclick-label {
+            margin-top: 30px;
+            font-size: 1.2rem;
+            color: #9CA3AF;
+        }
+
+        /* What Happens Section */
+        .flow-section {
+            margin: 80px 0;
+        }
+
+        .flow-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            color: #fff;
+        }
+
+        .flow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .flow-step {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .step-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .step-desc {
+            font-size: 0.95rem;
+            color: #9CA3AF;
+            line-height: 1.7;
+        }
+
+        .step-time {
+            margin-top: 15px;
+            padding: 8px 15px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.85rem;
+            color: #10B981;
+        }
+
+        /* Results Preview */
+        .results-section {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 60px 0;
+        }
+
+        .results-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .result-item {
+            padding: 20px;
+        }
+
+        .result-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10B981;
+            margin-bottom: 5px;
+        }
+
+        .result-label {
+            color: #9CA3AF;
+            font-size: 0.95rem;
+        }
+
+        /* Future AI Section */
+        .ai-section {
+            margin: 80px 0;
+            text-align: center;
+        }
+
+        .ai-title {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .ai-features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .ai-feature {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            color: #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .ai-feature:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: #10B981;
+        }
+
+        /* Demo Notice */
+        .demo-notice {
+            text-align: center;
+            margin-top: 60px;
+            padding: 20px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+        }
+
+        .demo-notice span {
+            color: #FBBF24;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .oneclick-button {
+                width: 150px;
+                height: 150px;
+            }
+
+            .oneclick-button span {
+                font-size: 1.4rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="badge">🚀 رؤية المستقبل</div>
+            <h1>نظرية الضغطة الواحدة</h1>
+            <p class="subtitle">تخيل عالم حيث كل ما تحتاجه هو ضغطة واحدة - الذكاء الاصطناعي يتولى كل شيء آخر</p>
+        </header>
+
+        <!-- The One Click Button -->
+        <section class="oneclick-section">
+            <button class="oneclick-button" onclick="simulateOneClick()">
+                <span>🚀 ابدأ</span>
+            </button>
+            <p class="oneclick-label">اضغط مرة واحدة - نتولى الباقي</p>
+        </section>
+
+        <!-- What Happens -->
+        <section class="flow-section">
+            <h2 class="flow-title">ماذا يحدث بعد الضغطة الواحدة؟</h2>
+
+            <div class="flow-grid">
+                <div class="flow-step">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🔌</div>
+                    <h3 class="step-title">ربط تلقائي</h3>
+                    <p class="step-desc">نربط متجرك بسلة، نحلل بيانات عملائك، ونفهم سلوكهم الشرائي</p>
+                    <span class="step-time">⚡ 30 ثانية</span>
+                </div>
+
+                <div class="flow-step">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🧠</div>
+                    <h3 class="step-title">تحليل ذكي</h3>
+                    <p class="step-desc">الذكاء الاصطناعي يحلل: متى يتسوقون؟ ماذا يحبون؟ لماذا يتركون السلة؟</p>
+                    <span class="step-time">⚡ تلقائي</span>
+                </div>
+
+                <div class="flow-step">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">✉️</div>
+                    <h3 class="step-title">رسائل شخصية</h3>
+                    <p class="step-desc">كل عميل يحصل على رسالة مخصصة له - بالوقت المناسب، بالعرض المناسب</p>
+                    <span class="step-time">⚡ تلقائي</span>
+                </div>
+
+                <div class="flow-step">
+                    <div class="step-number">4</div>
+                    <div class="step-icon">💰</div>
+                    <h3 class="step-title">استرداد الأرباح</h3>
+                    <p class="step-desc">العملاء يعودون، يشترون، وأنت ترى الأرباح في لوحة التحكم</p>
+                    <span class="step-time">💵 ربح تلقائي</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Expected Results -->
+        <section class="results-section">
+            <h2 class="results-title">📊 النتائج المتوقعة (شهرياً)</h2>
+            <div class="results-grid">
+                <div class="result-item">
+                    <div class="result-value">23%</div>
+                    <div class="result-label">معدل استرداد السلات</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value">+15,000</div>
+                    <div class="result-label">ريال أرباح إضافية</div>
+                </div>
+                <div class="result-item">
+                    <div class="result-value">0</div>
+                    <div class="result-label">دقائق عمل منك</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Future AI Features -->
+        <section class="ai-section">
+            <h2 class="ai-title">🤖 قادم قريباً: الذكاء الخارق</h2>
+            <p class="subtitle">ميزات ستجعل رِبح أذكى من أي منافس</p>
+
+            <div class="ai-features">
+                <span class="ai-feature">📊 Google Analytics Integration</span>
+                <span class="ai-feature">🎯 تنبؤ بسلوك العميل</span>
+                <span class="ai-feature">⏰ أفضل وقت للإرسال</span>
+                <span class="ai-feature">💬 WhatsApp Business API</span>
+                <span class="ai-feature">🏷️ خصومات ديناميكية</span>
+                <span class="ai-feature">📈 A/B Testing تلقائي</span>
+                <span class="ai-feature">🔄 تتبع رحلة العميل</span>
+                <span class="ai-feature">🌍 دعم متعدد اللغات</span>
+            </div>
+        </section>
+
+        <!-- Demo Notice -->
+        <div class="demo-notice">
+            <span>⚠️ هذه صفحة عرض تجريبية</span>
+            <p style="margin-top: 10px; color: #9CA3AF;">الميزات أعلاه قيد التطوير - هذه رؤيتنا للمنتج النهائي</p>
+        </div>
+    </div>
+
+    <script>
+        function simulateOneClick() {
+            const btn = document.querySelector('.oneclick-button');
+            btn.innerHTML = '<span>✨ جاري...</span>';
+            btn.style.background = 'linear-gradient(145deg, #FBBF24, #F59E0B)';
+
+            setTimeout(() => {
+                btn.innerHTML = '<span>✅ تم!</span>';
+                btn.style.background = 'linear-gradient(145deg, #10B981, #059669)';
+
+                // Show success message
+                alert('🎉 تم تفعيل رِبح!\n\nفي النسخة النهائية، سيتم ربط متجرك تلقائياً وبدء استرداد السلات فوراً.');
+
+                setTimeout(() => {
+                    btn.innerHTML = '<span>🚀 ابدأ</span>';
+                }, 2000);
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
