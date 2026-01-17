@@ -343,6 +343,108 @@ app.get('/api/auth/logout', (req, res) => {
 
 
 // ==========================================
+// AI MESSAGE PREVIEW API (Task 4)
+// ==========================================
+
+/**
+ * Generate AI-powered cart recovery message
+ * POST /api/ai/generate-message
+ * 
+ * Request: { customerName, cartValue, items, channel, style }
+ * Response: { success, message, offer }
+ */
+app.post('/api/ai/generate-message', async (req, res) => {
+    try {
+        const { customerName, cartValue, items, channel, style } = req.body;
+
+        // Validate required fields
+        if (!customerName) {
+            return res.status(400).json({ success: false, error: 'اسم العميل مطلوب' });
+        }
+
+        // Build product list
+        const productList = Array.isArray(items) && items.length > 0
+            ? items.map(item => typeof item === 'string' ? item : item.name || item.product_name).join('، ')
+            : 'منتجات متنوعة';
+
+        // Build AI prompt
+        const prompt = `أنشئ رسالة قصيرة وودودة باللغة العربية لاسترداد سلة متروكة.
+
+معلومات العميل:
+- اسم العميل: ${customerName}
+- قيمة السلة: ${cartValue || 0} ر.س
+- المنتجات: ${productList}
+- القناة: ${channel === 'whatsapp' ? 'واتساب (قصيرة جداً، أقل من 150 حرف)' : 'بريد إلكتروني (أطول قليلاً)'}
+- الأسلوب: ${style === 'urgent' ? 'عاجل مع عنصر الندرة' : 'ودود ومرحب'}
+
+${(cartValue || 0) > 500 ? 'أضف عرض خصم 10% بكود RIBH10 لأن قيمة السلة عالية' : ''}
+
+المطلوب:
+- رسالة قصيرة وجذابة
+- استخدم إيموجي مناسب
+- اذكر اسم العميل في البداية
+- لا مقدمات، اكتب الرسالة مباشرة
+
+اكتب الرسالة فقط:`;
+
+        let message = null;
+
+        // Try Gemini first (free!)
+        if (config.GEMINI_API_KEY) {
+            message = await generateWithGemini(prompt);
+        }
+        // Fallback to OpenAI
+        else if (config.OPENAI_API_KEY) {
+            message = await generateWithOpenAI(prompt);
+        }
+
+        // If no AI available, use template
+        if (!message) {
+            const cartValueNum = cartValue || 0;
+            const hasOffer = cartValueNum > 500;
+
+            if (channel === 'whatsapp') {
+                message = `مرحباً ${customerName}! 👋\n\nسلتك (${cartValueNum} ر.س) في انتظارك 🛒\n${hasOffer ? '🎁 خصم 10% بكود RIBH10' : ''}\n\nأكمل طلبك الآن!`;
+            } else {
+                message = `مرحباً ${customerName}! 👋\n\nلاحظنا أنك تركت بعض المنتجات الرائعة في سلتك بقيمة ${cartValueNum} ر.س.\n\n${hasOffer ? '🎁 عرض خاص: خصم 10% على طلبك باستخدام كود RIBH10\n\n' : ''}نحن هنا لمساعدتك في إتمام طلبك!`;
+            }
+        }
+
+        // Determine offer based on cart value
+        const cartValueNum = parseFloat(cartValue) || 0;
+        const offer = cartValueNum > 500 ? {
+            type: 'discount',
+            value: '10%',
+            code: 'RIBH10',
+            message: 'خصم 10% على طلبك!'
+        } : cartValueNum > 200 ? {
+            type: 'free_shipping',
+            value: 'مجاني',
+            code: 'FREESHIP',
+            message: 'شحن مجاني على طلبك!'
+        } : null;
+
+        res.json({
+            success: true,
+            message: message.trim(),
+            offer,
+            channel: channel || 'whatsapp',
+            customerName,
+            cartValue: cartValueNum
+        });
+
+        console.log(`🤖 AI message generated for ${customerName} (${channel || 'whatsapp'})`);
+
+    } catch (error) {
+        console.error('❌ Error generating AI message:', error);
+        res.status(500).json({
+            success: false,
+            error: 'حدث خطأ في إنشاء الرسالة'
+        });
+    }
+});
+
+// ==========================================
 // SALLA OAUTH - App Installation
 // ==========================================
 app.get('/oauth/callback', async (req, res) => {

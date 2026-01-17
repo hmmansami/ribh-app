@@ -1,30 +1,24 @@
-AVAILABLE
+DONE
 
-Task 4: AI Message Preview & Edit - READY FOR PICKUP
+Task 4: AI Message Preview API - COMPLETED
 
-=== INSTRUCTIONS FOR NEW AGENT ===
+=== CHANGES MADE ===
 
-1. Open a NEW Antigravity window
-2. Navigate to: /Users/user/Downloads/app/ribh-app
-3. Tell the agent:
+1. Added POST /api/ai/generate-message endpoint to server.js (line ~355)
 
----
-You are working on the RIBH project. Your task is Task 4: AI Message Preview.
+Endpoint Details:
+- Request: { customerName, cartValue, items, channel, style }
+- Response: { success, message, offer, channel, customerName, cartValue }
 
-Read these files first:
-- .agent/COORDINATOR.md (project overview)
-- .agent/tasks/TASK_4_AI_PREVIEW.md (your task details)
+Features:
+- Uses Gemini AI (free!) to generate personalized Arabic messages
+- Falls back to OpenAI if Gemini not available
+- Falls back to templates if no AI configured
+- Automatically adds 10% discount offer for carts > 500 SAR
+- Adds free shipping offer for carts > 200 SAR
+- Supports both WhatsApp (short) and Email (longer) messages
+- Supports friendly and urgent styles
 
-Your job:
-1. Add POST /api/ai/generate-message endpoint to server.js
-2. The endpoint should use Gemini AI to generate personalized Arabic cart recovery messages
-3. Return the message + optional offer based on cart value
+2. This API can now be called from the dashboard to preview messages before sending
 
-The generateWithGemini() function already exists in server.js around line 697.
-
-When done:
-1. Update this status file to DONE
-2. Update COORDINATOR.md to mark Task 4 as ✅
-
-DO NOT EDIT: public/index.html (another agent is working on it)
----
+Completed: 2026-01-17 14:30
