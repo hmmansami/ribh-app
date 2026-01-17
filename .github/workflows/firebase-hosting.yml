@@ -1,13 +1,9 @@
-name: Deploy to Firebase Hosting
+name: Deploy to Firebase
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'public/**'
-      - 'firebase.json'
-      - '.firebaserc'
 
 jobs:
   deploy:
@@ -15,10 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          projectId: rich-f2a72
-          channelId: live
+          node-version: '18'
+      
+      - name: Install Functions Dependencies
+        run: cd functions && npm install
+      
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --project rich-f2a72
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
