@@ -8,7 +8,59 @@
         ],
         "rewrites": [
             {
-                "source": "**",
+                "source": "/faq",
+                "destination": "/faq.html"
+            },
+            {
+                "source": "/privacy",
+                "destination": "/privacy.html"
+            },
+            {
+                "source": "/login",
+                "destination": "/login.html"
+            },
+            {
+                "source": "/settings",
+                "destination": "/settings.html"
+            },
+            {
+                "source": "/analytics",
+                "destination": "/analytics.html"
+            },
+            {
+                "source": "/messages",
+                "destination": "/messages.html"
+            },
+            {
+                "source": "/referrals",
+                "destination": "/referrals.html"
+            },
+            {
+                "source": "/telegram",
+                "destination": "/telegram.html"
+            },
+            {
+                "source": "/welcome",
+                "destination": "/welcome.html"
+            },
+            {
+                "source": "/landing",
+                "destination": "/landing.html"
+            },
+            {
+                "source": "/magic",
+                "destination": "/magic.html"
+            },
+            {
+                "source": "/oneclick",
+                "destination": "/oneclick.html"
+            },
+            {
+                "source": "/preview",
+                "destination": "/preview.html"
+            },
+            {
+                "source": "/api/**",
                 "function": "api"
             }
         ]
