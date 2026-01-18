@@ -134,7 +134,27 @@ app.use((req, res, next) => {
 // Cookie auth will be checked later via API - for now just pass through
 // The actual auth check happens in verifyStoreToken middleware
 
-app.use(express.static('public'));
+// Clean URLs middleware - serve .html files without extension
+app.use((req, res, next) => {
+    // Skip if path has extension or is an API route
+    if (req.path.includes('.') || req.path.startsWith('/api/') || req.path.startsWith('/oauth')) {
+        return next();
+    }
+
+    // List of static HTML pages
+    const staticPages = ['faq', 'privacy', 'login', 'settings', 'analytics', 'messages',
+        'referrals', 'telegram', 'welcome', 'landing', 'magic', 'oneclick', 'preview'];
+
+    const pageName = req.path.substring(1); // Remove leading /
+
+    if (staticPages.includes(pageName)) {
+        return res.sendFile(pageName + '.html', { root: path.join(__dirname, '../public') });
+    }
+
+    next();
+});
+
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Request logging middleware
 app.use((req, res, next) => {
