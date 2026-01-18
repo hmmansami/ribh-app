@@ -15,12 +15,22 @@
         }
 
         :root {
-            --bg: #F5F5F7;
-            --card: #FFFFFF;
-            --text: #1D1D1F;
-            --muted: #86868B;
+            --bg: #0a0a0a;
+            --bg-secondary: #111111;
+            --card: rgba(20, 20, 20, 0.8);
+            --card-hover: rgba(30, 30, 30, 0.9);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --muted: #71717A;
             --primary: #10B981;
-            --border: #E5E5E5;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --success: #22C55E;
+            --warning: #F59E0B;
         }
 
         body {
@@ -30,46 +40,82 @@
             min-height: 100vh;
         }
 
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.1), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
         .header {
-            background: var(--card);
-            padding: 20px 40px;
-            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
             font-size: 28px;
             font-weight: 700;
-            color: var(--primary);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 8px;
         }
 
         .nav-links a {
-            color: var(--muted);
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            padding: 10px 18px;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
 
-        .nav-links a:hover,
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--glass);
+        }
+
         .nav-links a.active {
-            color: var(--primary);
+            color: var(--text);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
         }
 
         .main {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 48px 24px;
         }
 
         .page-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 32px;
         }
@@ -83,33 +129,45 @@
 
         .stat-card {
             background: var(--card);
-            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
             padding: 24px;
             text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            background: var(--card-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .stat-value {
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 700;
             color: var(--primary);
         }
 
         .stat-label {
             font-size: 13px;
-            color: var(--muted);
-            margin-top: 4px;
+            color: var(--text-secondary);
+            margin-top: 8px;
         }
 
         .table-card {
             background: var(--card);
-            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
             overflow: hidden;
         }
 
         .table-header {
             padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--card-border);
             font-weight: 600;
+            font-size: 18px;
         }
 
         table {
@@ -121,18 +179,24 @@
         td {
             padding: 16px 24px;
             text-align: right;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--card-border);
         }
 
         th {
-            background: #FAFAFA;
+            background: rgba(255, 255, 255, 0.02);
             font-size: 12px;
             color: var(--muted);
             font-weight: 600;
+            text-transform: uppercase;
         }
 
         td {
             font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
         }
 
         tr:last-child td {
@@ -147,135 +211,155 @@
         }
 
         .badge-sent {
-            background: #D1FAE5;
-            color: #065F46;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
         .badge-pending {
-            background: #FEF3C7;
-            color: #92400E;
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
         }
 
         .type-icon {
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text);
         }
 
         .type-icon span {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            background: #F3F4F6;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
         }
 
         @media (max-width: 768px) {
             .stats-row {
                 grid-template-columns: repeat(2, 1fr);
             }
+
+            .header {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                gap: 4px;
+            }
+
+            .nav-links a {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <header class="header">
-        <div class="logo">رِبح.</div>
-        <nav class="nav-links">
-            <a href="index.html">لوحة التحكم</a>
-            <a href="messages.html" class="active">الرسائل</a>
-            <a href="preview.html">المعاينة</a>
-            <a href="settings.html">الإعدادات</a>
-        </nav>
-    </header>
+    <div class="bg-gradient"></div>
+    <div class="content-wrapper">
+        <header class="header">
+            <div class="logo">رِبح.</div>
+            <nav class="nav-links">
+                <a href="index.html">لوحة التحكم</a>
+                <a href="messages.html" class="active">الرسائل</a>
+                <a href="preview.html">المعاينة</a>
+                <a href="settings.html">الإعدادات</a>
+            </nav>
+        </header>
 
-    <main class="main">
-        <h1 class="page-title">📧 الرسائل المرسلة</h1>
+        <main class="main">
+            <h1 class="page-title">📧 الرسائل المرسلة</h1>
 
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="stat-value">156</div>
-                <div class="stat-label">إجمالي المرسلة</div>
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">إجمالي المرسلة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">89</div>
+                    <div class="stat-label">استرداد سلات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">45</div>
+                    <div class="stat-label">بيع إضافي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">22</div>
+                    <div class="stat-label">ترحيب</div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value">89</div>
-                <div class="stat-label">استرداد سلات</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">45</div>
-                <div class="stat-label">بيع إضافي</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">22</div>
-                <div class="stat-label">ترحيب</div>
-            </div>
-        </div>
 
-        <div class="table-card">
-            <div class="table-header">آخر الرسائل</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>النوع</th>
-                        <th>المستلم</th>
-                        <th>الرسالة</th>
-                        <th>الحالة</th>
-                        <th>التاريخ</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                        </td>
-                        <td>a***@gmail.com</td>
-                        <td>سلتك تنتظرك! خصم 10%</td>
-                        <td><span class="badge badge-sent">تم الإرسال</span></td>
-                        <td>منذ 5 دقائق</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="type-icon"><span>💎</span> بيع إضافي</div>
-                        </td>
-                        <td>m***@hotmail.com</td>
-                        <td>أكمل تجربتك! عرض VIP</td>
-                        <td><span class="badge badge-sent">تم الإرسال</span></td>
-                        <td>منذ 23 دقيقة</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="type-icon"><span>🎁</span> ترحيب</div>
-                        </td>
-                        <td>s***@yahoo.com</td>
-                        <td>أهلاً بك! هدية ترحيبية</td>
-                        <td><span class="badge badge-sent">تم الإرسال</span></td>
-                        <td>منذ ساعة</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="type-icon"><span>🔄</span> إعادة تفعيل</div>
-                        </td>
-                        <td>k***@gmail.com</td>
-                        <td>اشتقنا لك! خصم 25%</td>
-                        <td><span class="badge badge-sent">تم الإرسال</span></td>
-                        <td>منذ 3 ساعات</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                        </td>
-                        <td>n***@outlook.com</td>
-                        <td>سلتك تنتظرك! خصم 15%</td>
-                        <td><span class="badge badge-pending">قيد الإرسال</span></td>
-                        <td>منذ 5 ساعات</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </main>
+            <div class="table-card">
+                <div class="table-header">آخر الرسائل</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>النوع</th>
+                            <th>المستلم</th>
+                            <th>الرسالة</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
+                            </td>
+                            <td>a***@gmail.com</td>
+                            <td>سلتك تنتظرك! خصم 10%</td>
+                            <td><span class="badge badge-sent">تم الإرسال</span></td>
+                            <td>منذ 5 دقائق</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="type-icon"><span>💎</span> بيع إضافي</div>
+                            </td>
+                            <td>m***@hotmail.com</td>
+                            <td>أكمل تجربتك! عرض VIP</td>
+                            <td><span class="badge badge-sent">تم الإرسال</span></td>
+                            <td>منذ 23 دقيقة</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="type-icon"><span>🎁</span> ترحيب</div>
+                            </td>
+                            <td>s***@yahoo.com</td>
+                            <td>أهلاً بك! هدية ترحيبية</td>
+                            <td><span class="badge badge-sent">تم الإرسال</span></td>
+                            <td>منذ ساعة</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="type-icon"><span>🔄</span> إعادة تفعيل</div>
+                            </td>
+                            <td>k***@gmail.com</td>
+                            <td>اشتقنا لك! خصم 25%</td>
+                            <td><span class="badge badge-sent">تم الإرسال</span></td>
+                            <td>منذ 3 ساعات</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
+                            </td>
+                            <td>n***@outlook.com</td>
+                            <td>سلتك تنتظرك! خصم 15%</td>
+                            <td><span class="badge badge-pending">قيد الإرسال</span></td>
+                            <td>منذ 5 ساعات</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 </body>
 
 </html>

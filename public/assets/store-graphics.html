@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - App Store Assets</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1a1a;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .size-label {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        /* ============================================
+           APP ICON - Apple Style (512x512)
+           ============================================ */
+        .app-icon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .app-icon {
+            width: 512px;
+            height: 512px;
+            border-radius: 112px;
+            /* iOS style radius */
+            background: linear-gradient(145deg, #10B981 0%, #059669 50%, #047857 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 20px 60px rgba(16, 185, 129, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        .app-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 112px 112px 0 0;
+        }
+
+        .app-icon::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
+        }
+
+        .app-icon-text {
+            font-size: 200px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+            letter-spacing: -8px;
+        }
+
+        /* Small icon variant */
+        .app-icon-small {
+            width: 256px;
+            height: 256px;
+            border-radius: 56px;
+        }
+
+        .app-icon-small .app-icon-text {
+            font-size: 100px;
+            letter-spacing: -4px;
+        }
+
+        /* ============================================
+           PROMOTIONAL BANNER 1 - 1366x768
+           ============================================ */
+        .promo-banner {
+            width: 1366px;
+            height: 768px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 80px;
+        }
+
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        .promo-content {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .promo-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-size: 16px;
+            color: #10B981;
+            margin-bottom: 30px;
+        }
+
+        .promo-title {
+            font-size: 72px;
+            font-weight: 800;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 24px;
+        }
+
+        .promo-title span {
+            background: linear-gradient(135deg, #10B981, #6366F1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .promo-subtitle {
+            font-size: 24px;
+            color: #9CA3AF;
+            max-width: 600px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .promo-stats {
+            display: flex;
+            gap: 48px;
+        }
+
+        .promo-stat {
+            text-align: right;
+        }
+
+        .promo-stat-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #10B981;
+        }
+
+        .promo-stat-label {
+            font-size: 16px;
+            color: #6B7280;
+        }
+
+        .promo-mockup {
+            position: absolute;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 400px;
+            height: 500px;
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .mockup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .mockup-logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10B981, #6366F1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .mockup-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #22C55E;
+        }
+
+        .mockup-status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22C55E;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .mockup-revenue {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mockup-revenue-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .mockup-revenue-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .mockup-activity {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .mockup-activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mockup-activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .mockup-activity-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .mockup-activity-text {
+            flex: 1;
+            font-size: 13px;
+            color: #9CA3AF;
+        }
+
+        .mockup-activity-amount {
+            font-size: 14px;
+            font-weight: 600;
+            color: #22C55E;
+        }
+
+        /* ============================================
+           FEATURE CARDS - 1600x1600
+           ============================================ */
+        .feature-card {
+            width: 1600px;
+            height: 1600px;
+            background: linear-gradient(145deg, #0a0a0a 0%, #111827 100%);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+        }
+
+        .feature-icon-large {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 140px;
+            margin-bottom: 60px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 30px 60px rgba(16, 185, 129, 0.2);
+        }
+
+        .feature-title-large {
+            font-size: 80px;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-desc-large {
+            font-size: 36px;
+            color: #9CA3AF;
+            text-align: center;
+            max-width: 1000px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           MAIN PROMO - 1600x1600
+           ============================================ */
+        .main-promo {
+            width: 1600px;
+            height: 1600px;
+            background: linear-gradient(145deg, #0a0a0a 0%, #111827 100%);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-promo::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            width: 1200px;
+            height: 1200px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 50%);
+        }
+
+        .main-promo-icon {
+            width: 400px;
+            height: 400px;
+            border-radius: 100px;
+            background: linear-gradient(145deg, #10B981 0%, #059669 50%, #047857 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 80px;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 40px 100px rgba(16, 185, 129, 0.4);
+        }
+
+        .main-promo-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 100px 100px 0 0;
+        }
+
+        .main-promo-icon-text {
+            font-size: 160px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-promo-title {
+            font-size: 100px;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-promo-subtitle {
+            font-size: 48px;
+            color: #9CA3AF;
+            text-align: center;
+            max-width: 1200px;
+            line-height: 1.5;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-promo-subtitle span {
+            color: #10B981;
+        }
+
+        /* Screenshot helper */
+        .screenshot-border {
+            border: 2px dashed #333;
+            padding: 20px;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- APP ICON 512x512 -->
+    <div class="app-icon-container">
+        <div class="section-title">أيقونة التطبيق - App Icon</div>
+        <div class="size-label">512 × 512</div>
+        <div class="screenshot-border">
+            <div class="app-icon" id="app-icon">
+                <span class="app-icon-text">رِبح</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMOTIONAL BANNER 1366x768 -->
+    <div>
+        <div class="section-title">صور دعائية للعرض - Promotional #1</div>
+        <div class="size-label">1366 × 768</div>
+        <div class="screenshot-border">
+            <div class="promo-banner" id="promo-1">
+                <div class="promo-content">
+                    <div class="promo-badge">🤖 تطبيق ذكاء اصطناعي لسلة</div>
+                    <h1 class="promo-title">استرد <span>السلات المتروكة</span><br>تلقائياً</h1>
+                    <p class="promo-subtitle">رِبح يراقب متجرك 24/7 ويسترد 2-3 عملاء من كل 10 بالذكاء الاصطناعي</p>
+                    <div class="promo-stats">
+                        <div class="promo-stat">
+                            <div class="promo-stat-value">23%</div>
+                            <div class="promo-stat-label">معدل الاسترداد</div>
+                        </div>
+                        <div class="promo-stat">
+                            <div class="promo-stat-value">+15K</div>
+                            <div class="promo-stat-label">ريال مسترد/شهر</div>
+                        </div>
+                        <div class="promo-stat">
+                            <div class="promo-stat-value">3 دقائق</div>
+                            <div class="promo-stat-label">وقت التفعيل</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="promo-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-logo">رِبح.</div>
+                        <div class="mockup-status">
+                            <div class="mockup-status-dot"></div>
+                            يعمل
+                        </div>
+                    </div>
+                    <div class="mockup-revenue">
+                        <div class="mockup-revenue-label">💰 الأرباح المستردة</div>
+                        <div class="mockup-revenue-value">14,250 ر.س</div>
+                    </div>
+                    <div class="mockup-activity">
+                        <div class="mockup-activity-item">
+                            <div class="mockup-activity-icon">💰</div>
+                            <div class="mockup-activity-text">أحمد استكمل الشراء</div>
+                            <div class="mockup-activity-amount">+450 ر.س</div>
+                        </div>
+                        <div class="mockup-activity-item">
+                            <div class="mockup-activity-icon">🤖</div>
+                            <div class="mockup-activity-text">جاري إرسال رسالة لسارة</div>
+                            <div class="mockup-activity-amount">-</div>
+                        </div>
+                        <div class="mockup-activity-item">
+                            <div class="mockup-activity-icon">💰</div>
+                            <div class="mockup-activity-text">محمد استكمل الشراء</div>
+                            <div class="mockup-activity-amount">+280 ر.س</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN PROMO 1600x1600 -->
+    <div>
+        <div class="section-title">صورة العرض الرئيسية - Main Promo</div>
+        <div class="size-label">1600 × 1600</div>
+        <div class="screenshot-border">
+            <div class="main-promo" id="main-promo">
+                <div class="main-promo-icon">
+                    <span class="main-promo-icon-text">رِبح</span>
+                </div>
+                <h1 class="main-promo-title">استرد أموالك المفقودة</h1>
+                <p class="main-promo-subtitle">
+                    ذكاء اصطناعي يكتب <span>رسائل مخصصة</span> لكل عميل<br>
+                    ويسترد السلات المتروكة <span>تلقائياً</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE 1: AI -->
+    <div>
+        <div class="section-title">ميزة #1 - الذكاء الاصطناعي</div>
+        <div class="size-label">1600 × 1600</div>
+        <div class="screenshot-border">
+            <div class="feature-card" id="feature-1">
+                <div class="feature-icon-large">🤖</div>
+                <h2 class="feature-title-large">ذكاء اصطناعي</h2>
+                <p class="feature-desc-large">رسائل مخصصة لكل عميل بناءً على سلوكه ومنتجاته<br>ليست نسخ ولصق!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE 2: Auto -->
+    <div>
+        <div class="section-title">ميزة #2 - تلقائي 100%</div>
+        <div class="size-label">1600 × 1600</div>
+        <div class="screenshot-border">
+            <div class="feature-card" id="feature-2"
+                style="background: linear-gradient(145deg, #0a0a0a 0%, #1e1b4b 100%);">
+                <div class="feature-icon-large"
+                    style="background: linear-gradient(145deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.05)); border-color: rgba(99, 102, 241, 0.3); box-shadow: 0 30px 60px rgba(99, 102, 241, 0.2);">
+                    ⚡</div>
+                <h2 class="feature-title-large">تلقائي 100%</h2>
+                <p class="feature-desc-large">فعّل مرة واحدة وانسَ<br>رِبح يعمل 24 ساعة / 7 أيام</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEATURE 3: Free -->
+    <div>
+        <div class="section-title">ميزة #3 - مجاني للبدء</div>
+        <div class="size-label">1600 × 1600</div>
+        <div class="screenshot-border">
+            <div class="feature-card" id="feature-3">
+                <div class="feature-icon-large"
+                    style="background: linear-gradient(145deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.05)); border-color: rgba(34, 197, 94, 0.3);">
+                    🎁</div>
+                <h2 class="feature-title-large">مجاني للبدء</h2>
+                <p class="feature-desc-large">500 رسالة مجانية شهرياً<br>لا يحتاج بطاقة ائتمان</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Instructions for taking screenshots
+        console.log(`
+        📸 HOW TO TAKE SCREENSHOTS:
+
+        1. EASIEST WAY - Mac Screenshot:
+           - Press Cmd + Shift + 4
+           - Drag to select just the card (inside the dashed border)
+           - Screenshot saves to Desktop
+
+        2. BROWSER DEVTOOLS (for exact sizes):
+           - Right-click element → Inspect
+           - In DevTools, right-click the element
+           - Select "Capture node screenshot"
+
+        3. PUPPETEER SCRIPT (automated):
+           I can create a script that exports all at once!
+        `);
+    </script>
+</body>
+
+</html>

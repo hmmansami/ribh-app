@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | الأسئلة الشائعة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --card: rgba(20, 20, 20, 0.8);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --primary: #10B981;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 20px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .faq-item {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .faq-question {
+            padding: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 24px;
+            color: var(--primary);
+            transition: transform 0.3s;
+        }
+
+        .faq-item.open .faq-question::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 300px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 24px 24px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+        }
+
+        .cta h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .cta p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .cta a {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <a href="/" class="logo">رِبح.</a>
+    </header>
+    <main class="main">
+        <h1>❓ الأسئلة الشائعة</h1>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">ما هو رِبح؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">رِبح تطبيق ذكي لاسترداد السلات المتروكة في متاجر سلة. يستخدم الذكاء
+                    الاصطناعي لكتابة رسائل مخصصة لكل عميل وإرسالها تلقائياً.</div>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">كم يكلف رِبح؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">الباقة المجانية تتضمن 500 رسالة شهرياً. الباقة الاحترافية بـ 49 ريال/شهر
+                    تتضمن رسائل غير محدودة + SMS.</div>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">كيف أفعّل رِبح على متجري؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">1. ثبّت التطبيق من متجر سلة<br>2. قم بالربط مع متجرك (تلقائي)<br>3. رِبح
+                    يبدأ العمل فوراً!</div>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">هل أحتاج خبرة تقنية؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">لا! رِبح مصمم ليعمل تلقائياً. فقط فعّله من متجر سلة وسيبدأ بمراقبة السلات
+                    وإرسال الرسائل.</div>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">ما معدل الاسترداد المتوقع؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">المعدل المتوسط 15-25% من السلات المتروكة. بعض المتاجر تحقق أكثر من 30%!
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">هل يمكنني تخصيص الرسائل؟</div>
+            <div class="faq-answer">
+                <div class="faq-answer-inner">نعم! يمكنك تعديل القوالب أو ترك الذكاء الاصطناعي يكتب رسائل مخصصة لكل
+                    عميل.</div>
+            </div>
+        </div>
+
+        <div class="cta">
+            <h3>لديك سؤال آخر؟</h3>
+            <p>تواصل معنا وسنرد عليك خلال 24 ساعة</p>
+            <a href="mailto:support@ribh.click">تواصل معنا</a>
+        </div>
+    </main>
+</body>
+
+</html>

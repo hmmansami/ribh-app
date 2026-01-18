@@ -15,12 +15,22 @@
         }
 
         :root {
-            --bg: #F5F5F7;
-            --card: #FFFFFF;
-            --text: #1D1D1F;
-            --muted: #86868B;
+            --bg: #0a0a0a;
+            --bg-secondary: #111111;
+            --card: rgba(20, 20, 20, 0.8);
+            --card-hover: rgba(30, 30, 30, 0.9);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --muted: #71717A;
             --primary: #10B981;
-            --border: #E5E5E5;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --success: #22C55E;
+            --warning: #F59E0B;
         }
 
         body {
@@ -30,60 +40,102 @@
             min-height: 100vh;
         }
 
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.1), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+
         .header {
-            background: var(--card);
-            padding: 20px 40px;
-            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 16px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
             font-size: 28px;
             font-weight: 700;
-            color: var(--primary);
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-links {
             display: flex;
-            gap: 32px;
+            gap: 8px;
         }
 
         .nav-links a {
-            color: var(--muted);
+            color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
             font-weight: 500;
+            padding: 10px 18px;
+            border-radius: 10px;
+            transition: all 0.3s;
         }
 
-        .nav-links a:hover,
+        .nav-links a:hover {
+            color: var(--text);
+            background: var(--glass);
+        }
+
         .nav-links a.active {
-            color: var(--primary);
+            color: var(--text);
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
         }
 
         .main {
             max-width: 700px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 48px 24px;
         }
 
         .page-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             margin-bottom: 8px;
         }
 
         .page-subtitle {
-            color: var(--muted);
+            color: var(--text-secondary);
             margin-bottom: 32px;
         }
 
         .card {
             background: var(--card);
-            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
             padding: 24px;
             margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            background: var(--card-hover);
         }
 
         .card-title {
@@ -96,7 +148,7 @@
         }
 
         .usage-bar {
-            background: #E5E5E5;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             height: 8px;
             overflow: hidden;
@@ -104,7 +156,7 @@
         }
 
         .usage-fill {
-            background: var(--primary);
+            background: var(--gradient);
             height: 100%;
             border-radius: 8px;
             transition: width 0.5s;
@@ -114,7 +166,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 14px;
-            color: var(--muted);
+            color: var(--text-secondary);
         }
 
         .channel-item {
@@ -122,7 +174,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 16px 0;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--card-border);
         }
 
         .channel-item:last-child {
@@ -136,18 +188,20 @@
         }
 
         .channel-icon {
-            width: 44px;
-            height: 44px;
-            background: #F3F4F6;
-            border-radius: 12px;
+            width: 48px;
+            height: 48px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 22px;
         }
 
         .channel-name {
             font-weight: 500;
+            color: var(--text);
         }
 
         .channel-desc {
@@ -163,151 +217,197 @@
         }
 
         .badge-active {
-            background: #D1FAE5;
-            color: #065F46;
+            background: rgba(34, 197, 94, 0.15);
+            color: #22C55E;
+            border: 1px solid rgba(34, 197, 94, 0.3);
         }
 
         .badge-coming {
-            background: #DBEAFE;
-            color: #1E40AF;
+            background: rgba(99, 102, 241, 0.15);
+            color: #818CF8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
         }
 
         .upgrade-card {
-            background: linear-gradient(135deg, #10B981, #059669);
-            border-radius: 16px;
-            padding: 32px;
+            background: var(--gradient);
+            border-radius: 24px;
+            padding: 40px;
             color: white;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upgrade-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse 100% 100% at 100% 0%, rgba(255, 255, 255, 0.2), transparent 50%);
+            pointer-events: none;
         }
 
         .upgrade-card h3 {
-            font-size: 20px;
+            font-size: 24px;
             margin-bottom: 8px;
+            position: relative;
         }
 
         .upgrade-card p {
             opacity: 0.9;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            position: relative;
         }
 
         .upgrade-btn {
             background: white;
             color: #059669;
             border: none;
-            padding: 14px 32px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
 
         .features-list {
-            margin-top: 20px;
+            margin-top: 24px;
             text-align: right;
+            position: relative;
+            list-style: none;
         }
 
         .features-list li {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            margin: 8px 0;
-            font-size: 14px;
-            opacity: 0.9;
+            margin: 10px 0;
+            font-size: 15px;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .nav-links {
+                gap: 4px;
+            }
+
+            .nav-links a {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <header class="header">
-        <div class="logo">رِبح.</div>
-        <nav class="nav-links">
-            <a href="index.html">لوحة التحكم</a>
-            <a href="messages.html">الرسائل</a>
-            <a href="preview.html">المعاينة</a>
-            <a href="settings.html" class="active">الإعدادات</a>
-        </nav>
-    </header>
+    <div class="bg-gradient"></div>
+    <div class="content-wrapper">
+        <header class="header">
+            <div class="logo">رِبح.</div>
+            <nav class="nav-links">
+                <a href="index.html">لوحة التحكم</a>
+                <a href="messages.html">الرسائل</a>
+                <a href="preview.html">المعاينة</a>
+                <a href="settings.html" class="active">الإعدادات</a>
+            </nav>
+        </header>
 
-    <main class="main">
-        <h1 class="page-title">⚙️ الإعدادات</h1>
-        <p class="page-subtitle">إدارة الباقة وقنوات التواصل</p>
+        <main class="main">
+            <h1 class="page-title">⚙️ الإعدادات</h1>
+            <p class="page-subtitle">إدارة الباقة وقنوات التواصل</p>
 
-        <!-- Usage -->
-        <div class="card">
-            <div class="card-title">📧 استخدام البريد الإلكتروني</div>
-            <div class="usage-bar">
-                <div class="usage-fill" id="usageBar" style="width: 31%"></div>
-            </div>
-            <div class="usage-text">
-                <span id="usageSent">156 رسالة مُرسلة</span>
-                <span id="usageRemaining">344 رسالة متبقية</span>
-            </div>
-            <p style="margin-top: 16px; font-size: 13px; color: var(--muted);">💡 يتم إرسال البريد تلقائياً - لا تحتاج
-                لأي إعداد!</p>
-        </div>
-
-        <!-- Channels -->
-        <div class="card">
-            <div class="card-title">📊 قنوات التواصل</div>
-
-            <div class="channel-item">
-                <div class="channel-info">
-                    <div class="channel-icon">📧</div>
-                    <div>
-                        <div class="channel-name">البريد الإلكتروني</div>
-                        <div class="channel-desc">مجاني - 500 رسالة/شهر</div>
-                    </div>
+            <!-- Usage -->
+            <div class="card">
+                <div class="card-title">📧 استخدام البريد الإلكتروني</div>
+                <div class="usage-bar">
+                    <div class="usage-fill" id="usageBar" style="width: 31%"></div>
                 </div>
-                <span class="badge badge-active">✓ مفعّل</span>
-            </div>
-
-            <div class="channel-item">
-                <div class="channel-info">
-                    <div class="channel-icon">💬</div>
-                    <div>
-                        <div class="channel-name">تيليجرام</div>
-                        <div class="channel-desc">إشعارات فورية مجانية</div>
-                    </div>
+                <div class="usage-text">
+                    <span id="usageSent">156 رسالة مُرسلة</span>
+                    <span id="usageRemaining">344 رسالة متبقية</span>
                 </div>
-                <span class="badge badge-active">✓ مفعّل</span>
+                <p style="margin-top: 16px; font-size: 13px; color: var(--muted);">💡 يتم إرسال البريد تلقائياً - لا
+                    تحتاج
+                    لأي إعداد!</p>
             </div>
 
-            <div class="channel-item">
-                <div class="channel-info">
-                    <div class="channel-icon">📱</div>
-                    <div>
-                        <div class="channel-name">الرسائل النصية SMS</div>
-                        <div class="channel-desc">0.08 ر.س/رسالة</div>
+            <!-- Channels -->
+            <div class="card">
+                <div class="card-title">📊 قنوات التواصل</div>
+
+                <div class="channel-item">
+                    <div class="channel-info">
+                        <div class="channel-icon">📧</div>
+                        <div>
+                            <div class="channel-name">البريد الإلكتروني</div>
+                            <div class="channel-desc">مجاني - 500 رسالة/شهر</div>
+                        </div>
                     </div>
+                    <span class="badge badge-active">✓ مفعّل</span>
                 </div>
-                <span class="badge badge-coming">الباقة المدفوعة</span>
-            </div>
 
-            <div class="channel-item">
-                <div class="channel-info">
-                    <div class="channel-icon">💚</div>
-                    <div>
-                        <div class="channel-name">واتساب</div>
-                        <div class="channel-desc">98% معدل فتح</div>
+                <div class="channel-item">
+                    <div class="channel-info">
+                        <div class="channel-icon">💬</div>
+                        <div>
+                            <div class="channel-name">تيليجرام</div>
+                            <div class="channel-desc">إشعارات فورية مجانية</div>
+                        </div>
                     </div>
+                    <span class="badge badge-active">✓ مفعّل</span>
                 </div>
-                <span class="badge badge-coming">قريباً</span>
-            </div>
-        </div>
 
-        <!-- Upgrade -->
-        <div class="upgrade-card">
-            <h3>🚀 ترقية إلى الباقة المدفوعة</h3>
-            <p>رسائل غير محدودة + SMS + واتساب</p>
-            <button class="upgrade-btn" onclick="showUpgrade()">49 ر.س/شهر</button>
-            <ul class="features-list">
-                <li>✓ بريد إلكتروني غير محدود</li>
-                <li>✓ رسائل SMS</li>
-                <li>✓ واتساب (قريباً)</li>
-                <li>✓ تقارير متقدمة</li>
-            </ul>
-        </div>
-    </main>
+                <div class="channel-item">
+                    <div class="channel-info">
+                        <div class="channel-icon">📱</div>
+                        <div>
+                            <div class="channel-name">الرسائل النصية SMS</div>
+                            <div class="channel-desc">0.08 ر.س/رسالة</div>
+                        </div>
+                    </div>
+                    <span class="badge badge-coming">الباقة المدفوعة</span>
+                </div>
+
+                <div class="channel-item">
+                    <div class="channel-info">
+                        <div class="channel-icon">💚</div>
+                        <div>
+                            <div class="channel-name">واتساب</div>
+                            <div class="channel-desc">98% معدل فتح</div>
+                        </div>
+                    </div>
+                    <span class="badge badge-coming">قريباً</span>
+                </div>
+            </div>
+
+            <!-- Upgrade -->
+            <div class="upgrade-card">
+                <h3>🚀 ترقية إلى الباقة المدفوعة</h3>
+                <p>رسائل غير محدودة + SMS + واتساب</p>
+                <button class="upgrade-btn" onclick="showUpgrade()">49 ر.س/شهر</button>
+                <ul class="features-list">
+                    <li>✓ بريد إلكتروني غير محدود</li>
+                    <li>✓ رسائل SMS</li>
+                    <li>✓ واتساب (قريباً)</li>
+                    <li>✓ تقارير متقدمة</li>
+                </ul>
+            </div>
+        </main>
+    </div>
 
     <script>
         async function loadUsage() {
@@ -318,13 +418,13 @@
                 document.getElementById('usageBar').style.width = pct + '%';
                 document.getElementById('usageSent').textContent = data.emailsSent + ' رسالة مُرسلة';
                 document.getElementById('usageRemaining').textContent = data.remaining + ' رسالة متبقية';
-            } catch (e) {}
+            } catch (e) { }
         }
-        
+
         function showUpgrade() {
             alert('للترقية تواصل معنا:\n\nWhatsApp: +966XXXXXXXXX\nEmail: support@ribh.click');
         }
-        
+
         loadUsage();
     </script>
 </body>
