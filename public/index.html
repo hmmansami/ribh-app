@@ -1524,6 +1524,101 @@
         }
     </script>
 
+    <!-- Footer -->
+    <footer style="
+        border-top: 1px solid var(--card-border);
+        padding: 24px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 40px;
+    ">
+        <div style="display: flex; align-items: center; gap: 24px;">
+            <a href="faq.html"
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">❓
+                الأسئلة الشائعة</a>
+            <a href="privacy.html"
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">🔒
+                سياسة الخصوصية</a>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 14px; color: var(--muted);">🌙 الوضع الداكن</span>
+            <label class="theme-toggle" style="
+                position: relative;
+                width: 48px;
+                height: 26px;
+                cursor: pointer;
+            ">
+                <input type="checkbox" id="themeToggle" style="opacity: 0; width: 0; height: 0;"
+                    onchange="toggleTheme()">
+                <span style="
+                    position: absolute;
+                    inset: 0;
+                    background: var(--glass);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 26px;
+                    transition: all 0.3s;
+                "></span>
+                <span style="
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    right: 3px;
+                    bottom: 3px;
+                    background: var(--primary);
+                    border-radius: 50%;
+                    transition: all 0.3s;
+                " class="toggle-dot"></span>
+            </label>
+        </div>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('force-light');
+            localStorage.setItem('ribh-theme', isDark ? 'light' : 'dark');
+            updateToggleDot();
+        }
+
+        function updateToggleDot() {
+            const dot = document.querySelector('.toggle-dot');
+            const isLight = document.documentElement.classList.contains('force-light');
+            if (dot) {
+                dot.style.transform = isLight ? 'translateX(-22px)' : 'translateX(0)';
+            }
+        }
+
+        // Check saved preference
+        if (localStorage.getItem('ribh-theme') === 'light') {
+            document.documentElement.classList.add('force-light');
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) toggle.checked = false;
+            updateToggleDot();
+        }
+    </script>
+
+    <style>
+        .force-light {
+            --bg: #F8FAFC !important;
+            --bg-secondary: #FFFFFF !important;
+            --card: #FFFFFF !important;
+            --card-hover: #F1F5F9 !important;
+            --card-border: #E2E8F0 !important;
+            --text: #0F172A !important;
+            --text-secondary: #64748B !important;
+            --muted: #94A3B8 !important;
+            --glass: rgba(0, 0, 0, 0.05) !important;
+            --glass-border: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        footer a:hover {
+            color: var(--primary) !important;
+        }
+    </style>
+
     <!-- Behavioral Analytics (Mom Test Style) -->
     <script src="/js/analytics.js"></script>
 </body>

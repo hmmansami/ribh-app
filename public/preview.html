@@ -272,11 +272,21 @@
         .email-frame {
             max-width: 450px;
             margin: 0 auto;
-            background: #FFFFFF;
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 32px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            color: #1D1D1F;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            color: #FFFFFF;
+        }
+
+        @media (prefers-color-scheme: light) {
+            .email-frame {
+                background: #FFFFFF;
+                border: 1px solid #E2E8F0;
+                color: #1D1D1F;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            }
         }
 
         .email-logo {
@@ -292,11 +302,11 @@
             font-weight: 700;
             margin-bottom: 16px;
             text-align: center;
-            color: #1D1D1F;
+            color: var(--text);
         }
 
         .email-body {
-            color: #666;
+            color: var(--text-secondary);
             line-height: 1.8;
             margin-bottom: 24px;
             text-align: center;
@@ -317,8 +327,9 @@
         }
 
         .email-urgency {
-            background: #FEF3C7;
-            color: #92400E;
+            background: rgba(245, 158, 11, 0.15);
+            color: #F59E0B;
+            border: 1px solid rgba(245, 158, 11, 0.3);
             padding: 12px;
             border-radius: 8px;
             text-align: center;
@@ -328,7 +339,7 @@
 
         .email-btn {
             display: block;
-            background: #1D1D1F;
+            background: var(--gradient);
             color: white;
             padding: 16px;
             border-radius: 10px;
@@ -336,6 +347,12 @@
             text-decoration: none;
             font-weight: 600;
             margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
         }
 
         /* AI Modal Dark Mode */
@@ -734,6 +751,100 @@
             }
         }
     </script>
+
+    <!-- Footer -->
+    <footer style="
+        border-top: 1px solid var(--card-border);
+        padding: 24px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 40px;
+    ">
+        <div style="display: flex; align-items: center; gap: 24px;">
+            <a href="faq.html"
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">❓
+                الأسئلة الشائعة</a>
+            <a href="privacy.html"
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">🔒
+                سياسة الخصوصية</a>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 14px; color: var(--muted);">🌙 الوضع الداكن</span>
+            <label class="theme-toggle" style="
+                position: relative;
+                width: 48px;
+                height: 26px;
+                cursor: pointer;
+            ">
+                <input type="checkbox" id="themeToggle" style="opacity: 0; width: 0; height: 0;"
+                    onchange="toggleTheme()">
+                <span style="
+                    position: absolute;
+                    inset: 0;
+                    background: var(--glass);
+                    border: 1px solid var(--glass-border);
+                    border-radius: 26px;
+                    transition: all 0.3s;
+                "></span>
+                <span style="
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    right: 3px;
+                    bottom: 3px;
+                    background: var(--primary);
+                    border-radius: 50%;
+                    transition: all 0.3s;
+                " class="toggle-dot"></span>
+            </label>
+        </div>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.toggle('force-light');
+            localStorage.setItem('ribh-theme', isDark ? 'light' : 'dark');
+            updateToggleDot();
+        }
+
+        function updateToggleDot() {
+            const dot = document.querySelector('.toggle-dot');
+            const isLight = document.documentElement.classList.contains('force-light');
+            if (dot) {
+                dot.style.transform = isLight ? 'translateX(-22px)' : 'translateX(0)';
+            }
+        }
+
+        // Check saved preference
+        if (localStorage.getItem('ribh-theme') === 'light') {
+            document.documentElement.classList.add('force-light');
+            document.getElementById('themeToggle').checked = false;
+            updateToggleDot();
+        }
+    </script>
+
+    <style>
+        .force-light {
+            --bg: #F8FAFC !important;
+            --bg-secondary: #FFFFFF !important;
+            --card: #FFFFFF !important;
+            --card-hover: #F1F5F9 !important;
+            --card-border: #E2E8F0 !important;
+            --text: #0F172A !important;
+            --text-secondary: #64748B !important;
+            --muted: #94A3B8 !important;
+            --glass: rgba(0, 0, 0, 0.05) !important;
+            --glass-border: rgba(0, 0, 0, 0.1) !important;
+        }
+
+        footer a:hover {
+            color: var(--primary) !important;
+        }
+    </style>
 </body>
 
 </html>
