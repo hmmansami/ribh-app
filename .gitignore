@@ -1,0 +1,45 @@
+# ==========================================
+# Environment Variables - NEVER COMMIT!
+# ==========================================
+.env
+.env.local
+.env.*.local
+functions/.env
+functions/.env.local
+
+# ==========================================
+# Dependencies
+# ==========================================
+node_modules/
+functions/node_modules/
+
+# ==========================================
+# Build & Logs
+# ==========================================
+*.log
+firebase-debug.log
+firebase-debug.*.log
+.firebase/
+*.cache
+
+# ==========================================
+# OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# IDE
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==========================================
+# Secrets & Keys
+# ==========================================
+*.pem
+*.key
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
