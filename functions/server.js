@@ -2597,6 +2597,113 @@ app.get('/health', (req, res) => {
 // No need for explicit / route - express.static handles it
 
 // ==========================================
+// BEHAVIORAL ANALYTICS (Mom Test Style)
+// Track what users STRUGGLE with, not just clicks
+// ==========================================
+
+const ANALYTICS_COLLECTION = 'analytics';
+
+// Receive analytics events from frontend
+app.post('/api/analytics', async (req, res) => {
+    try {
+        const event = req.body;
+
+        // Add server timestamp and user info
+        const enrichedEvent = {
+            ...event,
+            serverTimestamp: new Date().toISOString(),
+            userAgent: req.headers['user-agent'],
+            ip: req.headers['x-forwarded-for'] || req.connection?.remoteAddress,
+            // Strip IP to last segment for privacy
+            ipHash: crypto.createHash('md5').update(
+                req.headers['x-forwarded-for']?.split(',')[0] || 'unknown'
+            ).digest('hex').substring(0, 8)
+        };
+
+        // Store in Firestore
+        await db.collection(ANALYTICS_COLLECTION).add(enrichedEvent);
+
+        // Log important events
+        if (['rage_click', 'oneclick_button_clicked', 'session_end'].includes(event.event)) {
+            console.log(`📊 Analytics: ${event.event}`, JSON.stringify(event).substring(0, 200));
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        // Silent fail - analytics shouldn't break UX
+        res.json({ success: true });
+    }
+});
+
+// Get analytics summary (for your review)
+app.get('/api/analytics/summary', async (req, res) => {
+    try {
+        const snapshot = await db.collection(ANALYTICS_COLLECTION)
+            .orderBy('serverTimestamp', 'desc')
+            .limit(1000)
+            .get();
+
+        if (snapshot.empty) {
+            return res.json({ success: true, summary: { totalEvents: 0 } });
+        }
+
+        const events = snapshot.docs.map(doc => doc.data());
+
+        // Calculate insights
+        const summary = {
+            totalEvents: events.length,
+            uniqueSessions: new Set(events.map(e => e.sessionId)).size,
+
+            // Struggle indicators
+            rageClicks: events.filter(e => e.event === 'rage_click').length,
+            hesitantClicks: events.filter(e => e.wasHesitant).length,
+
+            // Conversion funnel
+            pageViews: events.filter(e => e.event === 'page_view').length,
+            oneClickViewed: events.filter(e => e.event === 'oneclick_button_viewed').length,
+            oneClickClicked: events.filter(e => e.event === 'oneclick_button_clicked').length,
+
+            // Session data
+            avgTimeOnPage: Math.round(
+                events.filter(e => e.event === 'session_end')
+                    .reduce((sum, e) => sum + (e.totalTimeMs || 0), 0) /
+                events.filter(e => e.event === 'session_end').length || 1
+            ),
+            avgScrollPercent: Math.round(
+                events.filter(e => e.event === 'session_end')
+                    .reduce((sum, e) => sum + (e.maxScrollPercent || 0), 0) /
+                events.filter(e => e.event === 'session_end').length || 1
+            ),
+
+            // Most visited pages
+            topPages: Object.entries(
+                events.filter(e => e.event === 'page_view')
+                    .reduce((acc, e) => {
+                        acc[e.url] = (acc[e.url] || 0) + 1;
+                        return acc;
+                    }, {})
+            ).sort((a, b) => b[1] - a[1]).slice(0, 5),
+
+            // Recent rage clicks (frustration points)
+            recentFrustrations: events
+                .filter(e => e.event === 'rage_click')
+                .slice(0, 10)
+                .map(e => ({
+                    page: e.url,
+                    element: e.element,
+                    time: e.serverTimestamp
+                }))
+        };
+
+        res.json({ success: true, summary });
+    } catch (error) {
+        console.error('Error getting analytics:', error);
+        res.json({ success: false, error: error.message });
+    }
+});
+
+
+// ==========================================
 // KEEP-ALIVE: Prevent Render from sleeping
 // ==========================================
 const KEEP_ALIVE_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
