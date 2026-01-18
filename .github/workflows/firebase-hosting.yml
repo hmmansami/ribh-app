@@ -16,6 +16,16 @@ jobs:
         with:
           node-version: '20'
           
+      - name: Create Functions Environment File
+        run: |
+          cat << EOF > functions/.env
+          SALLA_CLIENT_ID=${{ secrets.SALLA_CLIENT_ID }}
+          SALLA_CLIENT_SECRET=${{ secrets.SALLA_CLIENT_SECRET }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          EMAIL_FROM=ribh@ribh.click
+          EOF
+          
       - name: Install Functions Dependencies
         run: cd functions && npm install
         
