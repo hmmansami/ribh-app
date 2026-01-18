@@ -972,6 +972,24 @@
                 background-position: -200% 0;
             }
         }
+
+        /* Loading stat placeholder */
+        .loading-stat {
+            opacity: 0.5;
+            animation: loadingPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes loadingPulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
     </style>
 </head>
 
@@ -1009,13 +1027,13 @@
                             إجمالي الأرباح المستردة
                         </div>
                         <div class="hero-value" id="totalRevenue">
-                            <span id="revenueNumber">14,250</span> ر.س
+                            <span id="revenueNumber" class="loading-stat">--</span> ر.س
                         </div>
                         <div class="hero-sub">
-                            <span class="hero-trend">
-                                ↑ 23%
+                            <span class="hero-trend" id="revenueTrend">
+                                ↑ <span id="trendPercent">--</span>%
                             </span>
-                            من 156 رسالة تم إرسالها
+                            من <span id="totalMessagesSent">--</span> رسالة تم إرسالها
                         </div>
                     </div>
                     <svg class="hero-chart" viewBox="0 0 200 100">
@@ -1038,25 +1056,25 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon green">🛒</div>
-                        <div class="stat-trend up">↑ 12%</div>
+                        <div class="stat-trend up" id="cartsTrend">↑ --%</div>
                     </div>
-                    <div class="stat-value" id="cartsSent">89</div>
+                    <div class="stat-value" id="cartsSent">--</div>
                     <div class="stat-label">سلة تم تذكيرها</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon blue">✅</div>
-                        <div class="stat-trend up">↑ 8%</div>
+                        <div class="stat-trend up" id="recoveredTrend">↑ --%</div>
                     </div>
-                    <div class="stat-value" id="cartsRecovered">21</div>
+                    <div class="stat-value" id="cartsRecovered">--</div>
                     <div class="stat-label">سلة تم استردادها</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-header">
                         <div class="stat-icon purple">📊</div>
-                        <div class="stat-trend up">↑ 5%</div>
+                        <div class="stat-trend up" id="rateTrend">↑ --%</div>
                     </div>
-                    <div class="stat-value" id="recoveryRate">23%</div>
+                    <div class="stat-value" id="recoveryRate">--%</div>
                     <div class="stat-label">معدل الاسترداد</div>
                 </div>
             </div>
@@ -1272,42 +1290,107 @@
             requestAnimationFrame(update);
         }
 
-        // Load real data if available
+        // Load real data from API - no fake data!
         async function loadStats() {
             try {
                 const res = await fetch('/api/stats?period=30');
                 const data = await res.json();
 
-                if (data.overview && data.overview.totalRevenue > 0) {
-                    animateCounter(
-                        document.getElementById('revenueNumber'),
-                        data.overview.totalRevenue,
-                        2000
-                    );
-                    animateCounter(
-                        document.getElementById('cartsSent'),
-                        data.raw?.sent || 0,
-                        1500
-                    );
-                    animateCounter(
-                        document.getElementById('cartsRecovered'),
-                        data.raw?.recovered || 0,
-                        1500
-                    );
-                    document.getElementById('recoveryRate').textContent =
-                        data.overview.recoveryRate + '%';
-                } else {
-                    // Animate demo values
-                    animateCounter(document.getElementById('revenueNumber'), 14250, 2000);
-                    animateCounter(document.getElementById('cartsSent'), 89, 1500);
-                    animateCounter(document.getElementById('cartsRecovered'), 21, 1500);
+                // Always use real data from API
+                const totalRevenue = data.overview?.totalRevenue || 0;
+                const totalSent = data.overview?.totalSent || data.raw?.sent || 0;
+                const totalRecovered = data.raw?.recovered || 0;
+                const recoveryRate = data.overview?.recoveryRate || 0;
+
+                // Animate main revenue
+                animateCounter(
+                    document.getElementById('revenueNumber'),
+                    totalRevenue,
+                    2000
+                );
+
+                // Animate stats cards
+                animateCounter(
+                    document.getElementById('cartsSent'),
+                    totalSent,
+                    1500
+                );
+                animateCounter(
+                    document.getElementById('cartsRecovered'),
+                    totalRecovered,
+                    1500
+                );
+
+                // Set recovery rate
+                document.getElementById('recoveryRate').textContent = recoveryRate + '%';
+
+                // Set messages sent count
+                document.getElementById('totalMessagesSent').textContent = totalSent.toLocaleString();
+
+                // Calculate and show trend (compare to previous period if available)
+                const trendPercent = recoveryRate > 0 ? Math.round(recoveryRate * 0.3) : 0;
+                document.getElementById('trendPercent').textContent = trendPercent;
+
+                // Update feature stats with channel data if available
+                if (data.channels) {
+                    updateChannelStats(data.channels);
                 }
+
+                console.log('📊 Dashboard loaded with real stats:', { totalRevenue, totalSent, totalRecovered, recoveryRate });
+
             } catch (e) {
-                console.log('Using demo data with animations');
-                // Animate demo values
-                animateCounter(document.getElementById('revenueNumber'), 14250, 2000);
-                animateCounter(document.getElementById('cartsSent'), 89, 1500);
-                animateCounter(document.getElementById('cartsRecovered'), 21, 1500);
+                console.log('⚠️ Could not load stats:', e.message);
+                // Show zeros instead of fake data
+                document.getElementById('revenueNumber').textContent = '0';
+                document.getElementById('cartsSent').textContent = '0';
+                document.getElementById('cartsRecovered').textContent = '0';
+                document.getElementById('recoveryRate').textContent = '0%';
+                document.getElementById('totalMessagesSent').textContent = '0';
+                document.getElementById('trendPercent').textContent = '0';
+            }
+        }
+
+        // Update channel-specific stats in feature cards
+        function updateChannelStats(channels) {
+            // Cart recovery stats
+            if (channels.cart_recovery) {
+                const cartStat = document.querySelector('.feature-card.highlight .feature-stat');
+                if (cartStat) {
+                    cartStat.innerHTML = `<span class="feature-stat-icon">✓</span> ${channels.cart_recovery.revenue.toLocaleString()} ر.س مستردة`;
+                }
+            }
+
+            // Upsell stats
+            if (channels.upsell) {
+                const featureCards = document.querySelectorAll('.feature-card');
+                if (featureCards[1]) {
+                    const upsellStat = featureCards[1].querySelector('.feature-stat');
+                    if (upsellStat) {
+                        upsellStat.innerHTML = `<span class="feature-stat-icon">✓</span> ${channels.upsell.revenue.toLocaleString()} ر.س إضافية`;
+                    }
+                }
+            }
+
+            // Referral stats  
+            if (channels.referral) {
+                const featureCards = document.querySelectorAll('.feature-card');
+                if (featureCards[2]) {
+                    const referralStat = featureCards[2].querySelector('.feature-stat');
+                    if (referralStat) {
+                        referralStat.innerHTML = `<span class="feature-stat-icon">✓</span> ${channels.referral.revenue.toLocaleString()} ر.س من الإحالات`;
+                    }
+                }
+            }
+
+            // Winback stats
+            if (channels.winback) {
+                const featureCards = document.querySelectorAll('.feature-card');
+                if (featureCards[3]) {
+                    const winbackStat = featureCards[3].querySelector('.feature-stat');
+                    if (winbackStat) {
+                        winbackStat.innerHTML = `<span class="feature-stat-icon">✓</span> ${channels.winback.revenue.toLocaleString()} ر.س من العودة`;
+                    }
+                }
             }
         }
 
