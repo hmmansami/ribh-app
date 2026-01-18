@@ -17,6 +17,7 @@
         }
 
         :root {
+            /* Default: Dark Mode */
             --bg: #0a0a0a;
             --bg-secondary: #111111;
             --card: rgba(20, 20, 20, 0.8);
@@ -29,6 +30,19 @@
             --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
             --gradient-subtle: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
         }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                /* Light Mode Overrides */
+                --bg: #F8FAFC;
+                --bg-secondary: #FFFFFF;
+                --card: #FFFFFF;
+                --card-border: #E2E8F0;
+                --text: #0F172A;
+                --text-secondary: #64748B;
+            }
+        }
+
 
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;

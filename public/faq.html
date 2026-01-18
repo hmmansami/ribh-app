@@ -15,6 +15,7 @@
         }
 
         :root {
+            /* Default Dark */
             --bg: #0a0a0a;
             --card: rgba(20, 20, 20, 0.8);
             --card-border: rgba(255, 255, 255, 0.08);
@@ -22,6 +23,17 @@
             --text-secondary: #A1A1AA;
             --primary: #10B981;
             --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                /* Light Mode Overrides */
+                --bg: #F8FAFC;
+                --card: #FFFFFF;
+                --card-border: #E2E8F0;
+                --text: #0F172A;
+                --text-secondary: #64748B;
+            }
         }
 
         body {
@@ -46,6 +58,7 @@
             font-weight: 700;
             background: var(--gradient);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             text-decoration: none;
         }
