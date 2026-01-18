@@ -22,10 +22,10 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RICH_F2A72 }}'
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIBH_484706 }}'
           
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
         
       - name: Deploy to Firebase
-        run: firebase deploy --project rich-f2a72 --force
+        run: firebase deploy --project ribh-484706 --force
