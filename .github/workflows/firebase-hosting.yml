@@ -18,11 +18,11 @@ jobs:
           
       - name: Create Functions Environment File
         run: |
-          cat << 'EOF' > functions/.env
-          SALLA_CLIENT_ID=476e7ed1-796c-4731-b145-73a13d0019de
-          SALLA_CLIENT_SECRET=c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe
-          RESEND_API_KEY=re_9kVNNW8j_FV6SHD39ddc7mKkxHuHJSNmf
-          GEMINI_API_KEY=AIzaSyBqzIqS_WSrfFnY5bVbEFqhZC79TEB9JKE
+          cat << EOF > functions/.env
+          SALLA_CLIENT_ID=${{ secrets.SALLA_CLIENT_ID }}
+          SALLA_CLIENT_SECRET=${{ secrets.SALLA_CLIENT_SECRET }}
+          RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+          GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
           EMAIL_FROM=ribh@ribh.click
           EOF
           
