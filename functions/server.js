@@ -2277,6 +2277,10 @@ app.get('/api/popup/stats', (req, res) => {
 app.post('/api/email/test', async (req, res) => {
     const { email, subject, body, offer, urgency } = req.body;
 
+    console.log('📧 Test email request received');
+    console.log(`   Email: ${email}`);
+    console.log(`   Subject: ${subject}`);
+
     if (!email) {
         return res.status(400).json({ error: 'Email required' });
     }
@@ -2285,23 +2289,32 @@ app.post('/api/email/test', async (req, res) => {
         const emailSender = require('./lib/emailSender');
         const analytics = require('./lib/analytics');
 
-        await emailSender.sendOfferEmail(email, {
-            headline: subject,
-            body: body,
-            offer: offer,
-            urgency: urgency
+        const result = await emailSender.sendOfferEmail(email, {
+            headline: subject || 'رسالة تجريبية من رِبح ✨',
+            body: body || 'هذه رسالة تجريبية للتأكد من عمل النظام',
+            offer: offer || 'خصم 10%',
+            urgency: urgency || 'العرض ينتهي خلال 24 ساعة'
         }, {
             storeName: 'رِبح - رسالة تجريبية',
             checkoutUrl: 'https://ribh.click'
         });
 
-        // Log to analytics so it shows up in dashboard stats
-        analytics.track.emailSent('test-store', 'email', 'test_email', email);
-
-        console.log(`📧 Test email sent to ${email}`);
-        res.json({ success: true, message: 'Test email sent' });
+        if (result.success) {
+            // Log to analytics so it shows up in dashboard stats
+            await analytics.track.emailSent('test-store', 'email', 'test_email', email);
+            console.log(`✅ Test email sent to ${email}`);
+            res.json({ success: true, message: 'تم إرسال البريد بنجاح!', id: result.id });
+        } else {
+            console.log(`❌ Test email failed:`, result);
+            res.json({
+                success: false,
+                error: result.error,
+                details: result.details,
+                tip: 'تأكد من أن مفتاح Resend له صلاحية كاملة (Full Access) وأن النطاق ribh.click مفعّل'
+            });
+        }
     } catch (error) {
-        console.log(`❌ Test email failed:`, error.message);
+        console.log(`❌ Test email exception:`, error.message);
         res.json({ success: false, error: error.message });
     }
 });

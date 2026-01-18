@@ -1,30 +1,41 @@
 /**
  * EMAIL SENDER - Sends AI-generated offers via email
  * Uses Resend API (free 3000/month)
+ * 
+ * IMPORTANT: For Resend to work:
+ * 1. Get API key from https://resend.com/api-keys with FULL ACCESS
+ * 2. Verify your domain at https://resend.com/domains
+ * 3. Use verified domain in EMAIL_FROM (e.g., ribh@ribh.click)
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || 'ribh@ribh.click';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'onboarding@resend.dev'; // Default to Resend test email
 
 /**
  * Send an AI-generated offer email
  */
 async function sendOfferEmail(to, offer, context = {}) {
+    console.log('📧 Email sender starting...');
+    console.log(`   API Key: ${RESEND_API_KEY ? RESEND_API_KEY.substring(0, 10) + '...' : 'NOT SET'}`);
+    console.log(`   From: ${EMAIL_FROM}`);
+    console.log(`   To: ${to}`);
+
     if (!RESEND_API_KEY) {
         console.log('⚠️ Resend API key not configured, skipping email');
-        return false;
+        return { success: false, error: 'RESEND_API_KEY not configured' };
     }
 
     if (!to) {
         console.log('⚠️ No email address provided');
-        return false;
+        return { success: false, error: 'No email address provided' };
     }
 
     const { storeName = 'متجر رِبح', checkoutUrl = '#' } = context;
-
     const htmlContent = buildEmailHTML(offer, storeName, checkoutUrl);
 
     try {
+        console.log('📤 Sending request to Resend API...');
+
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
             headers: {
@@ -34,23 +45,36 @@ async function sendOfferEmail(to, offer, context = {}) {
             body: JSON.stringify({
                 from: EMAIL_FROM,
                 to: to,
-                subject: offer.headline,
+                subject: offer.headline || 'رسالة من رِبح',
                 html: htmlContent
             })
         });
 
         const result = await response.json();
+        console.log('📥 Resend API response:', JSON.stringify(result));
 
         if (result.id) {
-            console.log(`✅ Email sent to ${to}: ${offer.headline}`);
-            return true;
+            console.log(`✅ Email sent successfully! ID: ${result.id}`);
+            return { success: true, id: result.id };
         } else {
             console.log(`❌ Email failed:`, result);
-            return false;
+
+            // Provide helpful error messages
+            if (result.statusCode === 403) {
+                console.log('💡 TIP: Check if your API key has FULL ACCESS permissions');
+            }
+            if (result.message?.includes('domain')) {
+                console.log('💡 TIP: You need to verify your domain at https://resend.com/domains');
+            }
+            if (result.message?.includes('from')) {
+                console.log('💡 TIP: Use onboarding@resend.dev for testing OR verify ribh.click domain');
+            }
+
+            return { success: false, error: result.message || 'Unknown error', details: result };
         }
     } catch (error) {
         console.error('❌ Email error:', error.message);
-        return false;
+        return { success: false, error: error.message };
     }
 }
 
@@ -83,9 +107,9 @@ function buildEmailHTML(offer, storeName, checkoutUrl) {
         <div class="container">
             <div class="logo">${storeName} 💚</div>
             
-            <h1>${offer.headline}</h1>
+            <h1>${offer.headline || 'عرض خاص لك!'}</h1>
             
-            <p class="body-text">${offer.body}</p>
+            <p class="body-text">${offer.body || 'لدينا عرض رائع ينتظرك'}</p>
             
             ${offer.offer ? `
             <div class="offer-box">

@@ -330,76 +330,54 @@
                     <div class="stat-label">استرداد سلات</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">45</div>
+                    <div class="stat-value" id="upsellCount">0</div>
                     <div class="stat-label">بيع إضافي</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">22</div>
+                    <div class="stat-value" id="welcomeCount">0</div>
                     <div class="stat-label">ترحيب</div>
                 </div>
             </div>
 
             <div class="table-card">
                 <div class="table-header">آخر الرسائل</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>النوع</th>
-                            <th>المستلم</th>
-                            <th>الرسالة</th>
-                            <th>الحالة</th>
-                            <th>التاريخ</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                            </td>
-                            <td>a***@gmail.com</td>
-                            <td>سلتك تنتظرك! خصم 10%</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 5 دقائق</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>💎</span> بيع إضافي</div>
-                            </td>
-                            <td>m***@hotmail.com</td>
-                            <td>أكمل تجربتك! عرض VIP</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 23 دقيقة</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🎁</span> ترحيب</div>
-                            </td>
-                            <td>s***@yahoo.com</td>
-                            <td>أهلاً بك! هدية ترحيبية</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ ساعة</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🔄</span> إعادة تفعيل</div>
-                            </td>
-                            <td>k***@gmail.com</td>
-                            <td>اشتقنا لك! خصم 25%</td>
-                            <td><span class="badge badge-sent">تم الإرسال</span></td>
-                            <td>منذ 3 ساعات</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="type-icon"><span>🛒</span> استرداد سلة</div>
-                            </td>
-                            <td>n***@outlook.com</td>
-                            <td>سلتك تنتظرك! خصم 15%</td>
-                            <td><span class="badge badge-pending">قيد الإرسال</span></td>
-                            <td>منذ 5 ساعات</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+                <div id="messagesContainer">
+                    <!-- Empty State -->
+                    <div id="emptyState" style="
+                        text-align: center;
+                        padding: 60px 20px;
+                        color: var(--text-secondary);
+                    ">
+                        <div style="font-size: 64px; margin-bottom: 20px;">📭</div>
+                        <h3 style="color: var(--text); margin-bottom: 10px;">لا توجد رسائل بعد</h3>
+                        <p style="margin-bottom: 20px;">عندما يترك عميل سلته أو تُرسل رسائل تلقائية، ستظهر هنا</p>
+                        <a href="preview.html" style="
+                            display: inline-block;
+                            background: var(--gradient);
+                            color: white;
+                            padding: 12px 24px;
+                            border-radius: 10px;
+                            text-decoration: none;
+                            font-weight: 600;
+                        ">📧 إرسال رسالة تجريبية</a>
+                    </div>
+
+                    <!-- Messages Table (hidden initially) -->
+                    <table id="messagesTable" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>النوع</th>
+                                <th>المستلم</th>
+                                <th>الرسالة</th>
+                                <th>الحالة</th>
+                                <th>التاريخ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesBody">
+                            <!-- Dynamic content will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
         </main>
 
         <!-- Footer -->
