@@ -15,6 +15,7 @@
         }
 
         :root {
+            /* Default Dark */
             --bg: #0a0a0a;
             --bg-secondary: #111111;
             --card: rgba(20, 20, 20, 0.8);
@@ -31,6 +32,22 @@
             --glass-border: rgba(255, 255, 255, 0.1);
             --success: #22C55E;
             --warning: #F59E0B;
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                /* Light Mode Overrides */
+                --bg: #F8FAFC;
+                --bg-secondary: #FFFFFF;
+                --card: #FFFFFF;
+                --card-hover: #F1F5F9;
+                --card-border: #E2E8F0;
+                --text: #0F172A;
+                --text-secondary: #64748B;
+                --muted: #94A3B8;
+                --glass: rgba(0, 0, 0, 0.05);
+                --glass-border: rgba(0, 0, 0, 0.1);
+            }
         }
 
         body {
