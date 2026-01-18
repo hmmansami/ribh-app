@@ -34,20 +34,20 @@
             --warning: #F59E0B;
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                /* Light Mode Overrides */
-                --bg: #F8FAFC;
-                --bg-secondary: #FFFFFF;
-                --card: #FFFFFF;
-                --card-hover: #F1F5F9;
-                --card-border: #E2E8F0;
-                --text: #0F172A;
-                --text-secondary: #64748B;
-                --muted: #94A3B8;
-                --glass: rgba(0, 0, 0, 0.05);
-                --glass-border: rgba(0, 0, 0, 0.1);
-            }
+        /* Light theme is applied via .force-light class only */
+
+        /* Force light theme styles */
+        .force-light {
+            --bg: #F8FAFC !important;
+            --bg-secondary: #FFFFFF !important;
+            --card: #FFFFFF !important;
+            --card-hover: #F1F5F9 !important;
+            --card-border: #E2E8F0 !important;
+            --text: #0F172A !important;
+            --text-secondary: #64748B !important;
+            --muted: #94A3B8 !important;
+            --glass: rgba(0, 0, 0, 0.05) !important;
+            --glass-border: rgba(0, 0, 0, 0.1) !important;
         }
 
         body {
@@ -76,7 +76,7 @@
         }
 
         .header {
-            background: rgba(10, 10, 10, 0.8);
+            background: var(--card);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--card-border);
@@ -424,9 +424,65 @@
                 </ul>
             </div>
         </main>
+
+        <!-- Footer -->
+        <footer style="
+            border-top: 1px solid var(--card-border);
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 40px;
+        ">
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <a href="faq.html"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;"
+                    onmouseover="this.style.color='var(--primary)'"
+                    onmouseout="this.style.color='var(--text-secondary)'">❓ الأسئلة الشائعة</a>
+                <a href="privacy.html"
+                    style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;"
+                    onmouseover="this.style.color='var(--primary)'"
+                    onmouseout="this.style.color='var(--text-secondary)'">🔒 سياسة الخصوصية</a>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 14px; color: var(--muted);" id="themeLabel">🌙 داكن</span>
+                <label style="position: relative; width: 48px; height: 26px; cursor: pointer;">
+                    <input type="checkbox" id="themeToggle" style="opacity: 0; width: 0; height: 0;"
+                        onchange="toggleTheme()">
+                    <span
+                        style="position: absolute; inset: 0; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 26px; transition: all 0.3s;"></span>
+                    <span id="toggleDot"
+                        style="position: absolute; height: 20px; width: 20px; right: 3px; bottom: 3px; background: var(--primary); border-radius: 50%; transition: all 0.3s;"></span>
+                </label>
+            </div>
+        </footer>
     </div>
 
     <script>
+        // Theme toggle functions
+        function toggleTheme() {
+            const isLight = document.documentElement.classList.toggle('force-light');
+            localStorage.setItem('ribh-theme', isLight ? 'light' : 'dark');
+            updateThemeUI();
+        }
+
+        function updateThemeUI() {
+            const isLight = document.documentElement.classList.contains('force-light');
+            const dot = document.getElementById('toggleDot');
+            const label = document.getElementById('themeLabel');
+            if (dot) dot.style.transform = isLight ? 'translateX(-22px)' : 'translateX(0)';
+            if (label) label.textContent = isLight ? '☀️ فاتح' : '🌙 داكن';
+        }
+
+        // Load saved theme
+        if (localStorage.getItem('ribh-theme') === 'light') {
+            document.documentElement.classList.add('force-light');
+            updateThemeUI();
+        }
+
         async function loadUsage() {
             try {
                 const res = await fetch('/api/store/usage');

@@ -37,21 +37,7 @@
             --warning: #F59E0B;
         }
 
-        @media (prefers-color-scheme: light) {
-            :root {
-                /* Light Theme Overrides */
-                --bg: #F8FAFC;
-                --bg-secondary: #FFFFFF;
-                --card: #FFFFFF;
-                --card-hover: #F1F5F9;
-                --card-border: #E2E8F0;
-                --text: #0F172A;
-                --text-secondary: #64748B;
-                --muted: #94A3B8;
-                --glass: rgba(0, 0, 0, 0.05);
-                --glass-border: rgba(0, 0, 0, 0.1);
-            }
-        }
+        /* Light theme is applied via .force-light class only */
 
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -97,7 +83,7 @@
 
         /* Premium Header */
         .header {
-            background: rgba(10, 10, 10, 0.8);
+            background: var(--card);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--card-border);
@@ -1331,25 +1317,26 @@
         });
     </script>
 
-    <!-- Feedback Button -->
+    <!-- Feedback Button - Moved to RIGHT side to not cover footer -->
     <div id="feedbackBtn" style="
         position: fixed;
         bottom: 30px;
-        left: 30px;
+        right: 30px;
         z-index: 1000;
         background: linear-gradient(135deg, #10B981, #6366F1);
         color: white;
-        padding: 15px 25px;
+        padding: 12px 20px;
         border-radius: 50px;
         cursor: pointer;
         box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         font-weight: 600;
+        font-size: 14px;
         transition: all 0.3s ease;
     " onclick="openFeedback()">
-        💬 أرسل ملاحظاتك
+        💬 ملاحظات
     </div>
 
     <!-- Feedback Modal -->
@@ -1537,66 +1524,48 @@
     ">
         <div style="display: flex; align-items: center; gap: 24px;">
             <a href="faq.html"
-                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">❓
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;"
+                onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">❓
                 الأسئلة الشائعة</a>
             <a href="privacy.html"
-                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;">🔒
+                style="color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.3s;"
+                onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">🔒
                 سياسة الخصوصية</a>
         </div>
 
         <div style="display: flex; align-items: center; gap: 12px;">
-            <span style="font-size: 14px; color: var(--muted);">🌙 الوضع الداكن</span>
-            <label class="theme-toggle" style="
-                position: relative;
-                width: 48px;
-                height: 26px;
-                cursor: pointer;
-            ">
+            <span style="font-size: 14px; color: var(--muted);" id="themeLabel">🌙 داكن</span>
+            <label style="position: relative; width: 48px; height: 26px; cursor: pointer;">
                 <input type="checkbox" id="themeToggle" style="opacity: 0; width: 0; height: 0;"
                     onchange="toggleTheme()">
-                <span style="
-                    position: absolute;
-                    inset: 0;
-                    background: var(--glass);
-                    border: 1px solid var(--glass-border);
-                    border-radius: 26px;
-                    transition: all 0.3s;
-                "></span>
-                <span style="
-                    position: absolute;
-                    height: 20px;
-                    width: 20px;
-                    right: 3px;
-                    bottom: 3px;
-                    background: var(--primary);
-                    border-radius: 50%;
-                    transition: all 0.3s;
-                " class="toggle-dot"></span>
+                <span
+                    style="position: absolute; inset: 0; background: var(--glass); border: 1px solid var(--glass-border); border-radius: 26px; transition: all 0.3s;"></span>
+                <span id="toggleDot"
+                    style="position: absolute; height: 20px; width: 20px; right: 3px; bottom: 3px; background: var(--primary); border-radius: 50%; transition: all 0.3s;"></span>
             </label>
         </div>
     </footer>
 
     <script>
+        // Theme toggle functions
         function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('force-light');
-            localStorage.setItem('ribh-theme', isDark ? 'light' : 'dark');
-            updateToggleDot();
+            const isLight = document.documentElement.classList.toggle('force-light');
+            localStorage.setItem('ribh-theme', isLight ? 'light' : 'dark');
+            updateThemeUI();
         }
 
-        function updateToggleDot() {
-            const dot = document.querySelector('.toggle-dot');
+        function updateThemeUI() {
             const isLight = document.documentElement.classList.contains('force-light');
-            if (dot) {
-                dot.style.transform = isLight ? 'translateX(-22px)' : 'translateX(0)';
-            }
+            const dot = document.getElementById('toggleDot');
+            const label = document.getElementById('themeLabel');
+            if (dot) dot.style.transform = isLight ? 'translateX(-22px)' : 'translateX(0)';
+            if (label) label.textContent = isLight ? '☀️ فاتح' : '🌙 داكن';
         }
 
-        // Check saved preference
+        // Load saved theme
         if (localStorage.getItem('ribh-theme') === 'light') {
             document.documentElement.classList.add('force-light');
-            const toggle = document.getElementById('themeToggle');
-            if (toggle) toggle.checked = false;
-            updateToggleDot();
+            updateThemeUI();
         }
     </script>
 
