@@ -878,6 +878,12 @@
             .nav-links {
                 width: 100%;
                 justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .nav-links a {
+                padding: 8px 12px;
+                font-size: 12px;
             }
 
             .main {
@@ -919,6 +925,24 @@
 
             .quick-links {
                 grid-template-columns: 1fr;
+            }
+
+            /* Mobile Footer */
+            footer {
+                flex-direction: column !important;
+                text-align: center;
+                padding: 20px !important;
+            }
+
+            footer>div {
+                justify-content: center !important;
+            }
+
+            #feedbackBtn {
+                bottom: 80px !important;
+                right: 16px !important;
+                padding: 10px 16px !important;
+                font-size: 12px !important;
             }
         }
 
@@ -1579,8 +1603,24 @@
             --text: #0F172A !important;
             --text-secondary: #64748B !important;
             --muted: #94A3B8 !important;
-            --glass: rgba(0, 0, 0, 0.05) !important;
-            --glass-border: rgba(0, 0, 0, 0.1) !important;
+            --glass: rgba(0, 0, 0, 0.03) !important;
+            --glass-border: rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .force-light .quick-link {
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+        }
+
+        .force-light .quick-link:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+        }
+
+        .force-light .bg-gradient {
+            opacity: 0.5;
+        }
+
+        .force-light .hero-card {
+            background: linear-gradient(135deg, #10B981 0%, #059669 50%, #6366F1 100%) !important;
         }
 
         footer a:hover {

@@ -265,15 +265,40 @@
 
             .header {
                 padding: 16px 20px;
+                flex-direction: column;
+                gap: 12px;
             }
 
             .nav-links {
                 gap: 4px;
+                flex-wrap: wrap;
+                justify-content: center;
             }
 
             .nav-links a {
                 padding: 8px 12px;
                 font-size: 12px;
+            }
+
+            .main {
+                padding: 20px 16px;
+            }
+
+            th,
+            td {
+                padding: 12px 10px;
+                font-size: 12px;
+            }
+
+            /* Mobile Footer */
+            footer {
+                flex-direction: column !important;
+                text-align: center;
+                padding: 20px 16px !important;
+            }
+
+            footer>div {
+                justify-content: center !important;
             }
         }
     </style>
