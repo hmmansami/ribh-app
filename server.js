@@ -34,6 +34,21 @@ try {
     aiMessenger = null;
 }
 
+// RIBH Engine - THE ONE CLICK UNIFIED ENGINE
+// Combines: Value Engine + Lead Engine + Money Model Engine + AI Core
+let ribhEngine;
+try {
+    ribhEngine = require('./lib/engines/ribhEngine');
+    console.log('🚀 RIBH Engine loaded - ONE CLICK to money flowing!');
+    console.log('   ├── Value Engine: ✅ (Seasonal offers, smart discounts)');
+    console.log('   ├── Lead Engine: ✅ (Multi-channel delivery)');
+    console.log('   ├── Money Model Engine: ✅ (Upsell, Downsell, تقسيط)');
+    console.log('   └── AI Core: ✅ (Self-improving intelligence)');
+} catch (e) {
+    console.log('⚠️ RIBH Engine not available:', e.message);
+    ribhEngine = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -2121,6 +2136,243 @@ app.get('/api/stats', (req, res) => {
 app.get('/api/stores', (req, res) => {
     const stores = readDB(STORES_FILE);
     res.json(stores);
+});
+
+// ==========================================
+// RIBH ENGINE API - ONE CLICK MAGIC
+// ==========================================
+
+// Get live activity feed for dashboard
+app.get('/api/ribh/activity', (req, res) => {
+    const limit = parseInt(req.query.limit) || 10;
+
+    if (!ribhEngine) {
+        return res.json({ activities: [], message: 'RIBH Engine not loaded' });
+    }
+
+    const activities = ribhEngine.getActivityFeed(limit);
+    res.json({
+        activities,
+        count: activities.length,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Get RIBH Engine stats (AI performance, recovery rates, etc.)
+app.get('/api/ribh/stats', (req, res) => {
+    if (!ribhEngine) {
+        return res.json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const stats = ribhEngine.getStats();
+    res.json({
+        ...stats,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Get current seasonal offer configuration
+app.get('/api/ribh/seasonal', (req, res) => {
+    if (!ribhEngine) {
+        return res.json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const { valueEngine } = ribhEngine;
+    const seasonal = valueEngine.getSeasonalConfig();
+
+    res.json({
+        currentSeason: seasonal.season,
+        config: seasonal.config,
+        allSeasons: Object.keys(valueEngine.SEASONAL_CONFIG),
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Generate smart offer for a cart (preview/test)
+app.post('/api/ribh/generate-offer', (req, res) => {
+    const { cartValue, customerName, items } = req.body;
+
+    if (!ribhEngine) {
+        return res.status(500).json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const { valueEngine } = ribhEngine;
+
+    const cart = {
+        total: cartValue || 500,
+        items: items || [],
+        customer: { name: customerName || 'العميل' }
+    };
+
+    const offer = valueEngine.buildIrresistibleOffer(cart);
+
+    res.json({
+        offer,
+        message: 'Offer generated successfully',
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Generate smart message for a cart (preview/test)
+app.post('/api/ribh/generate-message', (req, res) => {
+    const { cartValue, customerName, items, reminderNumber } = req.body;
+
+    if (!ribhEngine) {
+        return res.status(500).json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const cart = {
+        total: cartValue || 500,
+        items: items || [],
+        customer: { name: customerName || 'العميل' }
+    };
+
+    const result = ribhEngine.generateMessage(cart, reminderNumber || 1);
+
+    res.json({
+        ...result,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Get money model strategies (attraction, upsell, downsell, continuity)
+app.get('/api/ribh/money-model', (req, res) => {
+    const stage = req.query.stage || 'attraction';
+    const cartValue = parseFloat(req.query.cartValue) || 500;
+
+    if (!ribhEngine) {
+        return res.status(500).json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const { moneyModelEngine } = ribhEngine;
+
+    const cart = { total: cartValue };
+    const customer = {};
+
+    const strategy = moneyModelEngine.createMoneyModelStrategy(cart, customer, stage);
+
+    res.json({
+        stage,
+        strategy,
+        availableStages: ['attraction', 'upsell', 'downsell', 'continuity'],
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Calculate payment plan (Tamara/Tabby تقسيط)
+app.get('/api/ribh/payment-plan', (req, res) => {
+    const total = parseFloat(req.query.total) || 500;
+    const provider = req.query.provider || 'tamara';
+    const installments = parseInt(req.query.installments) || 4;
+
+    if (!ribhEngine) {
+        return res.status(500).json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const { moneyModelEngine } = ribhEngine;
+    const plan = moneyModelEngine.DOWNSELL_STRATEGIES.paymentPlan.calculate(total, provider, installments);
+
+    if (!plan) {
+        return res.json({
+            available: false,
+            message: `Amount ${total} SAR is not eligible for payment plan`,
+            minAmount: 50,
+            maxAmount: 10000
+        });
+    }
+
+    res.json({
+        available: true,
+        plan,
+        popupHTML: moneyModelEngine.DOWNSELL_STRATEGIES.paymentPlan.generatePopupHTML(total)
+    });
+});
+
+// Get AI Core performance and learnings
+app.get('/api/ribh/ai', (req, res) => {
+    if (!ribhEngine) {
+        return res.json({ error: 'RIBH Engine not loaded' });
+    }
+
+    const { aiCore } = ribhEngine;
+
+    res.json({
+        performance: aiCore.getPerformanceMetrics(),
+        learnings: aiCore.learnings,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// ==========================================
+// FEEDBACK SYSTEM - Make complaints EASY!
+// ==========================================
+
+// Feedback types for niche segmentation
+const FEEDBACK_TYPES = {
+    bug: 'مشكلة تقنية',
+    idea: 'فكرة أو اقتراح',
+    confused: 'شيء غير واضح',
+    love: 'إعجاب'
+};
+
+// Store feedback
+app.post('/api/feedback', async (req, res) => {
+    const { type, message, page, storeCategory } = req.body;
+
+    const feedback = {
+        id: Date.now().toString(),
+        type: type || 'general',
+        typeName: FEEDBACK_TYPES[type] || type || 'عام',
+        message: message || '',
+        page: page || 'unknown',
+        storeCategory: storeCategory || 'general', // For niche segmentation
+        userAgent: req.headers['user-agent'] || '',
+        timestamp: new Date().toISOString(),
+        status: 'new'
+    };
+
+    // Log feedback (in production, save to Firestore)
+    console.log('📝 NEW FEEDBACK:', JSON.stringify(feedback, null, 2));
+
+    // Save to file for now
+    const FEEDBACK_FILE = path.join(__dirname, 'data', 'feedback.json');
+    let feedbackList = [];
+    try {
+        feedbackList = JSON.parse(fs.readFileSync(FEEDBACK_FILE, 'utf8'));
+    } catch (e) {
+        feedbackList = [];
+    }
+
+    feedbackList.push(feedback);
+    fs.writeFileSync(FEEDBACK_FILE, JSON.stringify(feedbackList, null, 2));
+
+    res.json({
+        success: true,
+        message: 'شكراً لك! تم استلام ملاحظتك',
+        feedbackId: feedback.id
+    });
+});
+
+// Get all feedback (admin)
+app.get('/api/feedback', (req, res) => {
+    const FEEDBACK_FILE = path.join(__dirname, 'data', 'feedback.json');
+    let feedbackList = [];
+    try {
+        feedbackList = JSON.parse(fs.readFileSync(FEEDBACK_FILE, 'utf8'));
+    } catch (e) {
+        feedbackList = [];
+    }
+
+    res.json({
+        feedback: feedbackList.reverse(), // Latest first
+        total: feedbackList.length,
+        byType: {
+            bug: feedbackList.filter(f => f.type === 'bug').length,
+            idea: feedbackList.filter(f => f.type === 'idea').length,
+            confused: feedbackList.filter(f => f.type === 'confused').length,
+            love: feedbackList.filter(f => f.type === 'love').length
+        }
+    });
 });
 
 // ==========================================

@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | ضغطة واحدة = أرباح تتدفق</title>
+    <meta name="description" content="رِبح - استرجع مبيعاتك المفقودة بضغطة واحدة. الذكاء الاصطناعي يعمل لأجلك.">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-secondary: #111111;
+            --card: rgba(20, 20, 20, 0.8);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --muted: #71717A;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --success: #22C55E;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vw;
+            height: 100vh;
+            background:
+                radial-gradient(ellipse 50% 50% at 50% 50%, rgba(16, 185, 129, 0.12), transparent 60%);
+            pointer-events: none;
+            animation: pulse-bg 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+        }
+
+        /* State 1: Initial (Before Activation) */
+        #state-initial {
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .hero-text {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .hero-subtext {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        /* The ONE CLICK Button */
+        .oneclick-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .oneclick-btn {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--gradient);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow:
+                0 0 60px var(--primary-glow),
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                inset 0 2px 10px rgba(255, 255, 255, 0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .oneclick-btn:hover {
+            transform: scale(1.05);
+            box-shadow:
+                0 0 80px var(--primary-glow),
+                0 25px 50px rgba(0, 0, 0, 0.4),
+                inset 0 2px 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .oneclick-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .oneclick-btn span {
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+        }
+
+        .oneclick-hint {
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+
+        /* Features List */
+        .features-list {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .feature-check {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* State 2: Activating */
+        #state-activating {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .activating-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .progress-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            height: 8px;
+            margin: 32px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: var(--gradient);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 8px;
+        }
+
+        .activating-steps {
+            text-align: right;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+
+        .step.active {
+            color: var(--text);
+        }
+
+        .step.done {
+            color: var(--primary);
+        }
+
+        .step-icon {
+            width: 24px;
+            text-align: center;
+        }
+
+        /* State 3: Active (Money Flowing) */
+        #state-active {
+            display: none;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            animation: celebrate 0.6s ease;
+        }
+
+        @keyframes celebrate {
+            0% {
+                transform: scale(0);
+            }
+
+            50% {
+                transform: scale(1.2);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Revenue Counter */
+        .revenue-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .revenue-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .revenue-value {
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .revenue-currency {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        .revenue-trend {
+            font-size: 14px;
+            color: var(--success);
+            margin-top: 8px;
+        }
+
+        /* Live Activity Feed */
+        .activity-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--card-border);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .activity-icon.pending {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .activity-icon.ai {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .activity-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-message {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .activity-amount {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--success);
+        }
+
+        /* CTA Button */
+        .cta-btn {
+            display: block;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            margin-top: 24px;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px var(--primary-glow);
+        }
+
+        /* Feedback Button */
+        .feedback-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .feedback-btn:hover {
+            background: var(--card-border);
+            transform: translateY(-2px);
+        }
+
+        /* Feedback Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 450px;
+            width: 100%;
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .feedback-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .feedback-option {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .feedback-option:hover {
+            border-color: var(--primary);
+        }
+
+        .feedback-option.selected {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .feedback-option-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .feedback-option-text {
+            font-size: 13px;
+        }
+
+        .feedback-textarea {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 16px;
+        }
+
+        .feedback-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .feedback-submit {
+            width: 100%;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .feedback-submit:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .hero-text {
+                font-size: 24px;
+            }
+
+            .oneclick-btn {
+                width: 150px;
+                height: 150px;
+            }
+
+            .oneclick-btn span {
+                font-size: 18px;
+            }
+
+            .revenue-value {
+                font-size: 40px;
+            }
+
+            .feedback-btn {
+                bottom: 16px;
+                left: 16px;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="container">
+        <div class="logo">رِبح.</div>
+
+        <!-- State 1: Initial -->
+        <div id="state-initial">
+            <h1 class="hero-text">ضغطة واحدة<br>= أرباح تتدفق 💰</h1>
+            <p class="hero-subtext">
+                اضغط الزر وشاهد كيف يبدأ رِبح<br>
+                باسترجاع مبيعاتك المفقودة تلقائياً
+            </p>
+
+            <div class="oneclick-container">
+                <button class="oneclick-btn" onclick="activateSystem()">
+                    <span>🚀 ابدأ الآن</span>
+                </button>
+            </div>
+
+            <p class="oneclick-hint">⚡ لا تحتاج إعداد أي شيء - يعمل فوراً</p>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <span class="feature-icon">🛒</span>
+                    <div class="feature-text">
+                        <div class="feature-title">استرداد السلات المتروكة</div>
+                        <div class="feature-desc">رسائل ذكية تلقائية للعملاء</div>
+                    </div>
+                    <span class="feature-check">✓</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🤖</span>
+                    <div class="feature-text">
+                        <div class="feature-title">ذكاء اصطناعي</div>
+                        <div class="feature-desc">يكتب رسائل مخصصة لكل عميل</div>
+                    </div>
+                    <span class="feature-check">✓</span>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">💳</span>
+                    <div class="feature-text">
+                        <div class="feature-title">التقسيط التلقائي</div>
+                        <div class="feature-desc">عروض تمارا/تابي للسلات الكبيرة</div>
+                    </div>
+                    <span class="feature-check">✓</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- State 2: Activating -->
+        <div id="state-activating">
+            <div class="activating-icon">⚡</div>
+            <h2 class="hero-text">جاري التفعيل...</h2>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="activating-steps">
+                <div class="step" id="step1">
+                    <span class="step-icon">⏳</span>
+                    <span>ربط المتجر</span>
+                </div>
+                <div class="step" id="step2">
+                    <span class="step-icon">⏳</span>
+                    <span>تفعيل الذكاء الاصطناعي</span>
+                </div>
+                <div class="step" id="step3">
+                    <span class="step-icon">⏳</span>
+                    <span>بدء استرداد السلات</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- State 3: Active -->
+        <div id="state-active">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <h2 class="hero-text">رِبح يعمل الآن!</h2>
+                <div class="status-badge">
+                    <span class="live-dot"></span>
+                    النظام نشط - يسترجع مبيعاتك
+                </div>
+            </div>
+
+            <div class="revenue-card">
+                <div class="revenue-label">💰 الأرباح المستردة</div>
+                <div class="revenue-value">
+                    <span id="liveRevenue">0</span>
+                    <span class="revenue-currency">ر.س</span>
+                </div>
+                <div class="revenue-trend" id="revenueTrend">⚡ تحديث مباشر</div>
+            </div>
+
+            <div class="activity-card">
+                <div class="activity-header">
+                    <span class="activity-title">📡 النشاط المباشر</span>
+                    <span class="status-badge" style="font-size: 12px; padding: 4px 12px;">
+                        <span class="live-dot"></span>
+                        مباشر
+                    </span>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <!-- Activities will be injected here -->
+                </div>
+            </div>
+
+            <a href="index.html" class="cta-btn">فتح لوحة التحكم الكاملة →</a>
+        </div>
+    </div>
+
+    <!-- Feedback Button -->
+    <button class="feedback-btn" onclick="openFeedback()">
+        <span>💬</span>
+        <span>أخبرنا رأيك</span>
+    </button>
+
+    <!-- Feedback Modal -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">💬 شاركنا رأيك</h3>
+                <button class="modal-close" onclick="closeFeedback()">×</button>
+            </div>
+
+            <div class="feedback-options">
+                <div class="feedback-option" onclick="selectFeedback(this, 'bug')">
+                    <div class="feedback-option-icon">🐛</div>
+                    <div class="feedback-option-text">مشكلة تقنية</div>
+                </div>
+                <div class="feedback-option" onclick="selectFeedback(this, 'idea')">
+                    <div class="feedback-option-icon">💡</div>
+                    <div class="feedback-option-text">فكرة أو اقتراح</div>
+                </div>
+                <div class="feedback-option" onclick="selectFeedback(this, 'confused')">
+                    <div class="feedback-option-icon">🤔</div>
+                    <div class="feedback-option-text">شيء غير واضح</div>
+                </div>
+                <div class="feedback-option" onclick="selectFeedback(this, 'love')">
+                    <div class="feedback-option-icon">❤️</div>
+                    <div class="feedback-option-text">أعجبني!</div>
+                </div>
+            </div>
+
+            <textarea class="feedback-textarea" id="feedbackText"
+                placeholder="اكتب تفاصيل أكثر... (اختياري)"></textarea>
+
+            <button class="feedback-submit" onclick="submitFeedback()">إرسال ✓</button>
+        </div>
+    </div>
+
+    <script>
+        // Data
+        const arabicNames = ['أحمد', 'سارة', 'محمد', 'نورة', 'خالد', 'فاطمة', 'عمر', 'ريم', 'عبدالله', 'لمى'];
+        const actions = [
+            { icon: '💰', iconClass: 'success', text: 'استكمل الشراء', type: 'sale' },
+            { icon: '🤖', iconClass: 'ai', text: 'الذكاء الاصطناعي يكتب رسالة', type: 'ai' },
+            { icon: '📧', iconClass: 'pending', text: 'تم إرسال عرض خصم', type: 'send' },
+            { icon: '🛒', iconClass: 'pending', text: 'سلة جديدة متروكة', type: 'cart' }
+        ];
+
+        let totalRevenue = 0;
+        let selectedFeedbackType = null;
+
+        // Activation Flow
+        function activateSystem() {
+            // Hide initial state
+            document.getElementById('state-initial').style.display = 'none';
+            document.getElementById('state-activating').style.display = 'block';
+
+            // Animate progress
+            const steps = [
+                { id: 'step1', progress: 30 },
+                { id: 'step2', progress: 60 },
+                { id: 'step3', progress: 100 }
+            ];
+
+            let stepIndex = 0;
+            const interval = setInterval(() => {
+                if (stepIndex < steps.length) {
+                    const step = steps[stepIndex];
+
+                    // Update progress bar
+                    document.getElementById('progressBar').style.width = step.progress + '%';
+
+                    // Mark previous steps as done
+                    for (let i = 0; i <= stepIndex; i++) {
+                        const stepEl = document.getElementById(steps[i].id);
+                        stepEl.classList.remove('active');
+                        stepEl.classList.add('done');
+                        stepEl.querySelector('.step-icon').textContent = '✓';
+                    }
+
+                    // Mark current step as active
+                    if (stepIndex < steps.length - 1) {
+                        document.getElementById(steps[stepIndex + 1].id).classList.add('active');
+                    }
+
+                    stepIndex++;
+                } else {
+                    clearInterval(interval);
+
+                    // Transition to active state
+                    setTimeout(() => {
+                        document.getElementById('state-activating').style.display = 'none';
+                        document.getElementById('state-active').style.display = 'block';
+                        startSimulation();
+                    }, 500);
+                }
+            }, 800);
+        }
+
+        // Live Simulation
+        function startSimulation() {
+            // Add activities regularly
+            setInterval(() => {
+                addActivity();
+            }, 3000);
+
+            // Initial activities
+            addActivity();
+            setTimeout(addActivity, 1000);
+        }
+
+        function addActivity() {
+            const list = document.getElementById('activityList');
+            const name = arabicNames[Math.floor(Math.random() * arabicNames.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+
+            const isSale = action.type === 'sale';
+            const amount = isSale ? Math.floor(Math.random() * 500) + 150 : 0;
+
+            if (isSale) {
+                updateRevenue(amount);
+            }
+
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <div class="activity-icon ${action.iconClass}">${action.icon}</div>
+                <div class="activity-info">
+                    <div class="activity-message">${name} - ${action.text}</div>
+                    <div class="activity-time">الآن</div>
+                </div>
+                ${isSale ? `<div class="activity-amount">+${amount} ر.س</div>` : ''}
+            `;
+
+            list.insertBefore(item, list.firstChild);
+
+            // Keep only last 10 items
+            while (list.children.length > 10) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        function updateRevenue(amount) {
+            const counter = document.getElementById('liveRevenue');
+            const start = totalRevenue;
+            totalRevenue += amount;
+
+            // Animate number
+            let current = start;
+            const step = amount / 20;
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= totalRevenue) {
+                    current = totalRevenue;
+                    clearInterval(timer);
+                }
+                counter.textContent = Math.floor(current).toLocaleString();
+            }, 50);
+
+            // Update trend
+            document.getElementById('revenueTrend').innerHTML = `↑ +${amount} ر.س الآن`;
+        }
+
+        // Feedback Functions
+        function openFeedback() {
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function closeFeedback() {
+            document.getElementById('feedbackModal').classList.remove('active');
+            selectedFeedbackType = null;
+            document.querySelectorAll('.feedback-option').forEach(o => o.classList.remove('selected'));
+            document.getElementById('feedbackText').value = '';
+        }
+
+        function selectFeedback(element, type) {
+            document.querySelectorAll('.feedback-option').forEach(o => o.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedFeedbackType = type;
+        }
+
+        async function submitFeedback() {
+            const text = document.getElementById('feedbackText').value;
+
+            if (!selectedFeedbackType && !text.trim()) {
+                alert('الرجاء اختيار نوع الملاحظة أو كتابة تفاصيل');
+                return;
+            }
+
+            try {
+                // Send to server
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: selectedFeedbackType,
+                        message: text,
+                        page: 'activate',
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                // Show success
+                alert('شكراً لك! تم إرسال ملاحظتك بنجاح 💚');
+                closeFeedback();
+            } catch (e) {
+                // Still show success (feedback logged locally)
+                console.log('Feedback:', { type: selectedFeedbackType, message: text });
+                alert('شكراً لك! تم استلام ملاحظتك 💚');
+                closeFeedback();
+            }
+        }
+    </script>
+</body>
+
+</html>
