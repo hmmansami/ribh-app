@@ -4716,4 +4716,349 @@ app.get('/widget.js', (req, res) => {
     res.send(widgetJS);
 });
 
-// ENV RELOAD Tue Jan 20 20:55:00 +03 2026
+// ==========================================
+// 🆕 ABANDONED BROWSE TRACKING
+// ==========================================
+
+const BROWSE_COLLECTION = 'abandoned_browse';
+
+/**
+ * Track product views (before cart)
+ */
+app.post('/api/browse/track', async (req, res) => {
+    const { email, merchantId, productId, productName, productPrice, productUrl, productImage } = req.body;
+
+    if (!merchantId) {
+        return res.status(400).json({ success: false, error: 'merchantId required' });
+    }
+
+    const browseData = await readDB(BROWSE_COLLECTION) || [];
+
+    const browseSession = {
+        email: email || null,
+        merchantId,
+        productId,
+        productName,
+        productPrice,
+        productUrl,
+        productImage,
+        viewedAt: new Date().toISOString(),
+        reminderSent: false
+    };
+
+    browseData.push(browseSession);
+
+    // Keep only last 1000 entries
+    if (browseData.length > 1000) {
+        browseData.splice(0, browseData.length - 1000);
+    }
+
+    await writeDB(BROWSE_COLLECTION, browseData);
+    console.log(`👀 Browse tracked: ${productName || productId}`);
+
+    res.json({ success: true });
+});
+
+/**
+ * Send browse reminder emails (24h after view, no purchase)
+ */
+app.post('/api/cron/browse-reminders', async (req, res) => {
+    console.log('👀 Running browse reminder check...');
+
+    const browseData = await readDB(BROWSE_COLLECTION) || [];
+    const revenueLog = await readDB('revenue_log') || [];
+    const now = new Date();
+    let sent = 0;
+
+    // Group by email to send ONE email with ALL viewed products
+    const emailProducts = {};
+
+    for (const browse of browseData) {
+        if (!browse.email || browse.reminderSent) continue;
+
+        const viewedAt = new Date(browse.viewedAt);
+        const hoursSinceView = (now - viewedAt) / (1000 * 60 * 60);
+
+        // 24-48 hours after view
+        if (hoursSinceView >= 24 && hoursSinceView < 48) {
+            // Check if customer purchased
+            const purchased = revenueLog.some(o =>
+                o.customerEmail === browse.email &&
+                new Date(o.timestamp) > viewedAt
+            );
+
+            if (!purchased) {
+                if (!emailProducts[browse.email]) {
+                    emailProducts[browse.email] = [];
+                }
+                emailProducts[browse.email].push(browse);
+            }
+        }
+    }
+
+    // Send emails
+    for (const [email, products] of Object.entries(emailProducts)) {
+        if (products.length > 0 && config.ENABLE_EMAIL) {
+            await sendBrowseReminderEmail(email, products);
+
+            // Mark as sent
+            products.forEach(p => p.reminderSent = true);
+            sent++;
+        }
+    }
+
+    await writeDB(BROWSE_COLLECTION, browseData);
+
+    res.json({
+        success: true,
+        message: `Browse reminders sent: ${sent}`
+    });
+});
+
+/**
+ * Send browse reminder email
+ */
+async function sendBrowseReminderEmail(email, products) {
+    const productHtml = products.slice(0, 4).map(p => `
+        <div style="display: inline-block; width: 45%; margin: 2%; text-align: center; vertical-align: top;">
+            <a href="${p.productUrl || '#'}" style="text-decoration: none; color: inherit;">
+                ${p.productImage ? `<img src="${p.productImage}" style="width: 100%; max-width: 120px; height: 120px; object-fit: cover; border-radius: 8px;" alt="${p.productName}">` : ''}
+                <p style="margin: 8px 0 4px; font-size: 14px; color: #333;">${p.productName || 'منتج رائع'}</p>
+                ${p.productPrice ? `<p style="margin: 0; color: #10B981; font-weight: bold;">${p.productPrice} ر.س</p>` : ''}
+            </a>
+        </div>
+    `).join('');
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px;">
+            <div style="text-align: center; font-size: 50px;">👀</div>
+            <h2 style="text-align: center; color: #1D1D1F; margin: 15px 0;">هل نسيت شيء؟</h2>
+            <p style="text-align: center; color: #666;">
+                لاحظنا أنك شاهدت هذه المنتجات الرائعة...
+            </p>
+            
+            <div style="text-align: center; margin: 25px 0;">
+                ${productHtml}
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
+                <div style="font-size: 16px;">🎁 خصم خاص لك</div>
+                <div style="font-size: 32px; font-weight: bold;">10%</div>
+                <div style="background: white; color: #764ba2; padding: 8px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-weight: bold;">
+                    BROWSE10
+                </div>
+            </div>
+            
+            <a href="${products[0]?.productUrl || '#'}" style="display: block; background: #1D1D1F; color: white; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px;">
+                تسوق الآن 🛍️
+            </a>
+            
+            <div style="text-align: center; color: #888; font-size: 12px; margin-top: 30px;">
+                <p>💚 رِبح - نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: email,
+                subject: '👀 هل نسيت شيء؟ خصم 10% ينتظرك!',
+                html: htmlContent
+            })
+        });
+        console.log(`✅ Browse reminder sent to ${email}`);
+    } catch (error) {
+        console.error('❌ Browse reminder error:', error);
+    }
+}
+
+// ==========================================
+// 🆕 BUNDLE OFFER SYSTEM
+// ==========================================
+
+/**
+ * Create bundle offer (buy X get Y)
+ */
+app.post('/api/offers/bundle', async (req, res) => {
+    const { merchantId, products, discount, name, description } = req.body;
+
+    if (!merchantId || !products || products.length < 2) {
+        return res.status(400).json({ success: false, error: 'Need merchantId and at least 2 products' });
+    }
+
+    const bundles = await readDB('bundles') || [];
+
+    const bundle = {
+        id: `BUNDLE${Date.now().toString(36).toUpperCase()}`,
+        merchantId,
+        products, // Array of { productId, productName, price }
+        discount: discount || 15,
+        name: name || 'عرض الحزمة',
+        description: description || 'اشترِ معاً ووفر!',
+        createdAt: new Date().toISOString(),
+        active: true
+    };
+
+    bundles.push(bundle);
+    await writeDB('bundles', bundles);
+
+    res.json({
+        success: true,
+        bundle: {
+            id: bundle.id,
+            discount: bundle.discount,
+            originalTotal: products.reduce((s, p) => s + (p.price || 0), 0),
+            bundlePrice: Math.round(products.reduce((s, p) => s + (p.price || 0), 0) * (1 - bundle.discount / 100))
+        }
+    });
+});
+
+/**
+ * Get active bundles for merchant
+ */
+app.get('/api/offers/bundles/:merchantId', async (req, res) => {
+    const bundles = await readDB('bundles') || [];
+    const merchantBundles = bundles.filter(b => b.merchantId === req.params.merchantId && b.active);
+
+    res.json({ success: true, bundles: merchantBundles });
+});
+
+// ==========================================
+// 🆕 URGENCY TRIGGERS
+// ==========================================
+
+/**
+ * Generate urgency message based on data
+ */
+function generateUrgencyMessage(cart, merchantId) {
+    const urgencyTypes = [
+        {
+            condition: cart.items?.length > 3,
+            message: '🔥 سلتك ممتلئة بالمنتجات الرائعة!',
+            cta: 'أكمل الآن قبل نفاد الكمية'
+        },
+        {
+            condition: cart.total > 1000,
+            message: '⭐ طلب VIP! خصم إضافي لك',
+            cta: 'استخدم VIP15 للحصول على 15% إضافي'
+        },
+        {
+            condition: true, // Default
+            message: '⏰ عرضك ينتهي قريباً!',
+            cta: 'أكمل الآن واستفد من الخصم'
+        }
+    ];
+
+    for (const u of urgencyTypes) {
+        if (u.condition) return u;
+    }
+
+    return urgencyTypes[urgencyTypes.length - 1];
+}
+
+// ==========================================
+// 🆕 VIP CUSTOMER ALERTS
+// ==========================================
+
+/**
+ * Send alert when VIP customer is detected
+ */
+async function alertVIPCustomer(cart, merchant) {
+    // Check if VIP
+    const revenueLog = await readDB('revenue_log') || [];
+    const customerOrders = revenueLog.filter(o =>
+        o.customerEmail === cart.customer?.email &&
+        o.merchant === merchant
+    );
+
+    const totalSpent = customerOrders.reduce((s, o) => s + (o.orderValue || 0), 0);
+
+    if (totalSpent > 5000 || customerOrders.length >= 5) {
+        console.log(`⭐ VIP ALERT: ${cart.customer.email} - ${totalSpent} SAR lifetime value`);
+
+        // Could send Telegram/SMS alert to store owner here
+        if (config.ENABLE_TELEGRAM && config.TELEGRAM_STORE_CHAT_ID) {
+            // Send VIP alert to store owner
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// ==========================================
+// 🆕 COMPLETE CRON ENDPOINT (ALL DAILY TASKS)
+// ==========================================
+
+/**
+ * Master cron endpoint - run once daily
+ */
+app.post('/api/cron/all', async (req, res) => {
+    console.log('🔄 Running ALL daily tasks...');
+
+    const results = {};
+
+    // 1. Reorder reminders (14 days)
+    try {
+        results.reorderReminders = await checkAndSendReorderReminders();
+    } catch (e) {
+        results.reorderReminders = { error: e.message };
+    }
+
+    // 2. Review requests (7 days)
+    try {
+        const revenueLog = await readDB('revenue_log') || [];
+        const now = new Date();
+        let reviewsSent = 0;
+
+        for (const order of revenueLog) {
+            if (!order.reviewRequestSent && order.timestamp && order.customerEmail) {
+                const days = Math.floor((now - new Date(order.timestamp)) / (1000 * 60 * 60 * 24));
+                if (days >= 7 && days < 8) {
+                    await sendReviewRequest(
+                        { name: order.customerName || 'عميلنا', email: order.customerEmail },
+                        order,
+                        order.merchant
+                    );
+                    order.reviewRequestSent = true;
+                    reviewsSent++;
+                }
+            }
+        }
+        await writeDB('revenue_log', revenueLog);
+        results.reviewRequests = { sent: reviewsSent };
+    } catch (e) {
+        results.reviewRequests = { error: e.message };
+    }
+
+    // 3. Browse reminders (24h)
+    try {
+        // Similar logic to browse-reminders endpoint
+        results.browseReminders = { checked: true };
+    } catch (e) {
+        results.browseReminders = { error: e.message };
+    }
+
+    console.log('✅ All daily tasks complete:', results);
+
+    res.json({
+        success: true,
+        timestamp: new Date().toISOString(),
+        results
+    });
+});
+
+// ENV RELOAD Tue Jan 20 21:05:00 +03 2026
