@@ -168,6 +168,10 @@ const db = admin.firestore();
 const DB_COLLECTION = 'carts';
 const STORES_COLLECTION = 'stores';
 const LOGS_COLLECTION = 'logs';
+// Legacy constants for compatibility with existing code
+const STORES_FILE = 'stores';
+const DB_FILE = 'carts';
+const LOG_FILE = 'logs';
 
 // Helper functions (Converted to Async for Firestore)
 async function readDB(collectionName) {
@@ -780,133 +784,8 @@ async function handleSallaWebhook(req, res) {
     });
 }
 
-// ==== SALLA SETUP GUIDE - How to add "Open App" button ====
-app.get('/salla-setup', (req, res) => {
-    res.send(`
-<!DOCTYPE html>
-<html dir="rtl" lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إعداد تطبيق رِبح في سلة</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-        }
-        h1 { color: #10B981; margin-bottom: 20px; font-size: 28px; }
-        h2 { color: #1D1D1F; margin: 30px 0 15px; font-size: 20px; }
-        p { color: #6B7280; line-height: 1.8; margin-bottom: 15px; }
-        .step { 
-            background: #F0FDF4; 
-            border-right: 4px solid #10B981;
-            padding: 15px 20px;
-            margin: 15px 0;
-            border-radius: 8px;
-        }
-        .step-number {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            background: #10B981;
-            color: white;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        code {
-            background: #1D1D1F;
-            color: #10B981;
-            padding: 12px 20px;
-            border-radius: 8px;
-            display: block;
-            font-family: 'Monaco', 'Consolas', monospace;
-            direction: ltr;
-            text-align: left;
-            margin: 15px 0;
-            font-size: 14px;
-            word-break: break-all;
-        }
-        .highlight {
-            background: #FEF3C7;
-            border: 2px solid #F59E0B;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        .success {
-            background: #DCFCE7;
-            border: 2px solid #22C55E;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        a { color: #10B981; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🔧 إعداد زر "فتح التطبيق" في سلة</h1>
-        
-        <div class="highlight">
-            <strong>❗ المشكلة:</strong> بعد تثبيت التطبيق، لا يوجد زر واضح لفتح لوحة التحكم
-        </div>
-        
-        <h2>الحل: تحديث إعدادات التطبيق في بوابة الشركاء</h2>
-        
-        <div class="step">
-            <span class="step-number">1</span>
-            ادخل على <a href="https://partner.salla.sa" target="_blank">بوابة شركاء سلة</a>
-        </div>
-        
-        <div class="step">
-            <span class="step-number">2</span>
-            اذهب إلى "تطبيقاتي" → ثم اختر تطبيق "ربح"
-        </div>
-        
-        <div class="step">
-            <span class="step-number">3</span>
-            ابحث عن قسم "إعدادات ربط التطبيق" أو "App Settings Builder"
-        </div>
-        
-        <div class="step">
-            <span class="step-number">4</span>
-            <strong>غيّر حقل الرابط (URL)</strong> من:<br>
-            <code>https://ribh.click</code>
-            <strong>إلى:</strong>
-            <code>https://ribh.click/app?merchant={{store.id}}</code>
-        </div>
-        
-        <div class="success">
-            <strong>✅ النتيجة:</strong> الآن عندما يضغط التاجر على الرابط من لوحة سلة، 
-            سيتم تعويض <code style="display:inline; padding: 4px 8px;">{{store.id}}</code> 
-            برقم المتجر تلقائياً وسيدخل مباشرة للوحة التحكم!
-        </div>
-        
-        <h2>🔗 روابط مفيدة</h2>
-        <p>
-            • <a href="https://partner.salla.sa" target="_blank">بوابة شركاء سلة</a><br>
-            • <a href="https://ribh.click/login.html">صفحة تسجيل الدخول (للتجار)</a><br>
-            • <a href="https://ribh.click/">لوحة التحكم الرئيسية</a>
-        </p>
-    </div>
-</body>
-</html>
-    `);
-});
+// Salla setup info endpoint removed to clean up code. Use documentation instead.
+
 
 // ==== GET HANDLERS FOR URL VALIDATION (FIX FOR "رابط غير صحيح") ====
 // Salla validates webhook URLs by sending a request - these handlers respond with 200 OK
@@ -1103,36 +982,127 @@ function handleAppUninstalled(merchant) {
     }
 }
 
-// Handle abandoned cart
-function handleAbandonedCart(data, merchant) {
+// ==========================================
+// CUSTOMER TYPE DETECTION & SMART OFFERS
+// ==========================================
+
+/**
+ * Detect customer type based on behavior and history
+ * Returns: NEW, WARM, PRICE_SENSITIVE, REPEAT, VIP
+ */
+async function detectCustomerType(customer, cartTotal, merchant) {
+    // Check order history
+    const carts = await readDB(DB_FILE);
+    const previousOrders = carts.filter(c =>
+        c.merchant === merchant &&
+        (c.customer?.email === customer.email || c.customer?.phone === customer.phone) &&
+        c.status === 'recovered'
+    );
+
+    const orderCount = previousOrders.length;
+    const totalSpent = previousOrders.reduce((sum, c) => sum + (c.total || 0), 0);
+
+    // Detection logic
+    if (totalSpent > 5000 || orderCount >= 5) {
+        return { type: 'VIP', orderCount, totalSpent };
+    }
+    if (orderCount >= 1) {
+        return { type: 'REPEAT', orderCount, totalSpent };
+    }
+    if (cartTotal > 500) {
+        return { type: 'PRICE_SENSITIVE', orderCount, totalSpent };
+    }
+    return { type: 'NEW', orderCount, totalSpent };
+}
+
+/**
+ * Select the best offer based on customer type
+ * Returns: offer object with type, discount, message
+ */
+function selectSmartOffer(customerType, cartTotal) {
+    const offers = {
+        VIP: {
+            type: 'VIP_EXCLUSIVE',
+            discount: 15,
+            code: 'VIP15',
+            message: '🌟 عميلنا المميز! خصم حصري 15% لك فقط',
+            includePaymentPlan: cartTotal > 300
+        },
+        REPEAT: {
+            type: 'LOYALTY',
+            discount: 10,
+            code: 'LOYAL10',
+            message: '💚 شكراً لثقتك! خصم 10% على طلبك',
+            includePaymentPlan: cartTotal > 500
+        },
+        PRICE_SENSITIVE: {
+            type: 'PAYMENT_PLAN',
+            discount: 5,
+            code: 'RIBH5',
+            message: '💳 قسّط طلبك على 4 دفعات بدون فوائد مع تمارا!',
+            includePaymentPlan: true,
+            paymentPlanText: `ادفع ${Math.ceil(cartTotal / 4)} ر.س فقط الآن واستلم طلبك!`
+        },
+        NEW: {
+            type: 'WELCOME',
+            discount: 10,
+            code: 'WELCOME10',
+            message: '🎁 خصم ترحيبي 10% على طلبك الأول!',
+            includePaymentPlan: cartTotal > 500
+        }
+    };
+
+    return offers[customerType.type] || offers.NEW;
+}
+
+// Handle abandoned cart - ENHANCED with smart detection
+async function handleAbandonedCart(data, merchant) {
     console.log('🛒 Abandoned cart detected!', data);
 
-    const carts = readDB(DB_FILE);
+    const carts = await readDB(DB_FILE);
+
+    const customer = {
+        name: data.customer?.name || 'عميل',
+        phone: data.customer?.mobile || data.customer?.phone,
+        email: data.customer?.email
+    };
+
+    const cartTotal = data.total || data.grand_total || 0;
+
+    // 🧠 SMART: Detect customer type
+    const customerType = await detectCustomerType(customer, cartTotal, merchant);
+    console.log(`🎯 Customer type: ${customerType.type} (${customerType.orderCount} orders, ${customerType.totalSpent} SAR spent)`);
+
+    // 🎁 SMART: Select best offer
+    const smartOffer = selectSmartOffer(customerType, cartTotal);
+    console.log(`💡 Selected offer: ${smartOffer.type} - ${smartOffer.discount}% off`);
 
     const cart = {
         id: data.id || Date.now(),
         merchant,
-        customer: {
-            name: data.customer?.name || 'عميل',
-            phone: data.customer?.mobile || data.customer?.phone,
-            email: data.customer?.email
-        },
+        customer,
         items: data.items || data.products || [],
-        total: data.total || data.grand_total || 0,
+        total: cartTotal,
         currency: data.currency || 'SAR',
-        // Checkout URL from Salla or construct it
         checkoutUrl: data.checkout_url || data.recovery_url || data.cart_url || '',
         storeUrl: data.store?.url || data.merchant_url || '',
         storeName: data.store?.name || merchant,
         createdAt: new Date().toISOString(),
-        status: 'pending', // pending, sent, recovered, expired
-        reminders: []
+        status: 'pending',
+        reminders: [],
+        // 🆕 NEW: Smart data
+        customerType: customerType.type,
+        customerHistory: {
+            orderCount: customerType.orderCount,
+            totalSpent: customerType.totalSpent
+        },
+        smartOffer: smartOffer
     };
 
     carts.push(cart);
-    writeDB(DB_FILE, carts);
+    await writeDB(DB_FILE, carts);
 
-    // Schedule WhatsApp reminder (in production, use a proper queue)
+    // Schedule reminder with smart offer
     scheduleReminder(cart);
 }
 
@@ -1629,17 +1599,47 @@ async function sendEmailReminder(cart, reminderNumber) {
 
     console.log(`📧 Preparing Email reminder #${reminderNumber} for ${cart.customer.email}...`);
 
-    const discount = config.REMINDER_DELAYS[reminderNumber - 1]?.discount || 0;
-    const discountCode = discount > 0 ? `RIBH${discount}` : '';
+    // 🆕 USE SMART OFFER from detection
+    const smartOffer = cart.smartOffer || { discount: 10, code: 'RIBH10', message: '🎁 خصم 10% على طلبك!' };
+    const customerType = cart.customerType || 'NEW';
+
+    // Escalate discount if reminder > 1
+    let discount = smartOffer.discount;
+    let discountCode = smartOffer.code;
+    if (reminderNumber === 2) discount += 5;
+    if (reminderNumber >= 3) discount += 10;
+    discountCode = `RIBH${discount}`;
 
     // Create product list HTML
     const productListHtml = cart.items
         .map(item => `<li>${item.name || item.product_name} (${item.quantity || 1}×)</li>`)
         .join('');
 
-    const subject = reminderNumber === 1
-        ? `${cart.customer.name}، سلتك في انتظارك! 🛒`
-        : `خصم ${discount}% على سلتك المتروكة! 🎁`;
+    // 🆕 SMART SUBJECT based on customer type
+    const subjects = {
+        VIP: `${cart.customer.name}، عميلنا المميز! سلتك بانتظارك 🌟`,
+        REPEAT: `${cart.customer.name}، شكراً لثقتك! أكمل طلبك 💚`,
+        PRICE_SENSITIVE: `${cart.customer.name}، قسّط طلبك بدون فوائد! 💳`,
+        NEW: `${cart.customer.name}، سلتك في انتظارك! 🛒`
+    };
+    const subject = subjects[customerType] || subjects.NEW;
+
+    // 🆕 PAYMENT PLAN section for high-value carts
+    const paymentPlanHtml = smartOffer.includePaymentPlan ? `
+        <div style="background: linear-gradient(135deg, #6366F1, #8B5CF6); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center;">
+            <div style="font-size: 24px; margin-bottom: 10px;">💳 قسّط بدون فوائد!</div>
+            <div style="font-size: 18px;">ادفع <strong>${Math.ceil(cart.total / 4)} ر.س</strong> فقط الآن</div>
+            <div style="font-size: 14px; opacity: 0.9; margin-top: 5px;">مع تمارا أو تابي - 4 دفعات بدون فوائد</div>
+        </div>
+    ` : '';
+
+    // 🆕 PERSONALIZED MESSAGE based on customer type
+    const personalMessages = {
+        VIP: 'أنت من عملائنا المميزين! لذلك جهزنا لك عرض حصري:',
+        REPEAT: 'شكراً لثقتك المستمرة! هذا العرض خاص لك:',
+        PRICE_SENSITIVE: 'نفهم أن السعر مهم، لذلك جهزنا لك خيارات مرنة:',
+        NEW: 'يسعدنا زيارتك! جهزنا لك عرض ترحيبي خاص:'
+    };
 
     const htmlContent = `
     <!DOCTYPE html>
@@ -1647,42 +1647,57 @@ async function sendEmailReminder(cart, reminderNumber) {
     <head>
         <meta charset="UTF-8">
         <style>
-            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; }
+            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; margin: 0; }
+            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
             .logo { text-align: center; font-size: 32px; color: #10B981; margin-bottom: 20px; }
-            h1 { color: #333; font-size: 24px; }
+            h1 { color: #1D1D1F; font-size: 24px; margin: 0 0 10px 0; }
+            .customer-type { display: inline-block; background: ${customerType === 'VIP' ? '#FFD700' : customerType === 'REPEAT' ? '#10B981' : '#6366F1'}; color: ${customerType === 'VIP' ? '#333' : 'white'}; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-bottom: 15px; }
             .products { background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0; }
-            .discount { background: #10B981; color: white; padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; margin: 20px 0; }
-            .btn { display: inline-block; background: #10B981; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; }
-            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; }
+            .products ul { margin: 0; padding-right: 20px; }
+            .products li { margin: 8px 0; }
+            .discount { background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0; }
+            .discount-value { font-size: 36px; font-weight: bold; }
+            .discount-code { background: white; color: #10B981; padding: 8px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-weight: bold; }
+            .btn { display: block; background: #10B981; color: white !important; padding: 18px 30px; text-decoration: none; border-radius: 12px; font-weight: bold; text-align: center; font-size: 18px; margin: 20px 0; }
+            .btn:hover { background: #059669; }
+            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
         </style>
     </head>
     <body>
         <div class="container">
             <div class="logo">رِبح 💚</div>
+            
             <h1>مرحباً ${cart.customer.name}!</h1>
-            <p>لاحظنا أنك تركت بعض المنتجات الرائعة في سلتك:</p>
+            ${customerType === 'VIP' ? '<span class="customer-type">⭐ عميل مميز</span>' : ''}
+            ${customerType === 'REPEAT' ? '<span class="customer-type">💚 عميل موثوق</span>' : ''}
+            
+            <p>${personalMessages[customerType] || personalMessages.NEW}</p>
             
             <div class="products">
+                <strong>منتجاتك:</strong>
                 <ul>${productListHtml}</ul>
-                <strong>المجموع: ${cart.total} ${cart.currency || 'SAR'}</strong>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <strong style="font-size: 18px;">المجموع: ${cart.total} ${cart.currency || 'ر.س'}</strong>
+                </div>
             </div>
             
-            ${discount > 0 ? `
             <div class="discount">
-                🎁 خصم خاص لك: ${discount}%<br>
-                كود الخصم: <strong>${discountCode}</strong>
+                <div>${smartOffer.message}</div>
+                <div class="discount-value">${discount}% خصم</div>
+                <div class="discount-code">${discountCode}</div>
             </div>
-            ` : ''}
             
-            <p style="text-align: center;">
-                <a href="${cart.checkoutUrl || cart.storeUrl || '#'}" class="btn" style="color: white;">أكمل طلبك الآن 🛒</a>
+            ${paymentPlanHtml}
+            
+            <a href="${cart.checkoutUrl || cart.storeUrl || '#'}" class="btn">أكمل طلبك الآن 🛒</a>
+            
+            <p style="text-align: center; color: #666; font-size: 14px;">
+                استخدم الكود <strong>${discountCode}</strong> عند الدفع
             </p>
             
-            ${discountCode ? `<p style="text-align: center; color: #666; font-size: 14px;">استخدم الكود <strong>${discountCode}</strong> عند الدفع</p>` : ''}
-            
             <div class="footer">
-                <p>هذه الرسالة من رِبح - خدمة استرجاع السلات المتروكة</p>
+                <p>هذه الرسالة من رِبح - نساعدك تستعيد مبيعاتك الضائعة</p>
+                <p style="color: #10B981;">تم توفير ${Math.round(cart.total * discount / 100)} ر.س لك! 💚</p>
             </div>
         </div>
     </body>
@@ -1704,8 +1719,6 @@ async function sendEmailReminder(cart, reminderNumber) {
     // Option 1: AWS SES ($0.10/1000 emails)
     if (config.AWS_ACCESS_KEY && config.AWS_SECRET_KEY) {
         try {
-            // AWS SES via REST API (simplified)
-            // For production, use @aws-sdk/client-ses
             const response = await sendEmailViaAWS(cart.customer.email, subject, htmlContent);
             if (response) {
                 console.log(`✅ Email sent via AWS SES to ${cart.customer.email}`);
@@ -1713,7 +1726,6 @@ async function sendEmailReminder(cart, reminderNumber) {
             }
         } catch (error) {
             console.error('❌ AWS SES error:', error);
-            // Fall through to try Resend
         }
     }
 
@@ -1737,7 +1749,7 @@ async function sendEmailReminder(cart, reminderNumber) {
             const result = await response.json();
 
             if (result.id) {
-                console.log(`✅ Email sent via Resend! ID: ${result.id}`);
+                console.log(`✅ Email sent via Resend! ID: ${result.id} (${customerType} customer, ${discount}% offer)`);
                 return true;
             } else {
                 console.log(`⚠️ Email failed:`, result);
@@ -2736,23 +2748,8 @@ app.get('/api/analytics/summary', async (req, res) => {
 });
 
 
-// ==========================================
-// KEEP-ALIVE: Prevent Render from sleeping
-// ==========================================
-const KEEP_ALIVE_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
-const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://ribh.click';
+// Keep-alive for Render removed as project moved to Firebase.
 
-function keepAlive() {
-    fetch(`${APP_URL}/health`)
-        .then(res => console.log(`💓 Keep-alive ping: ${res.status} at ${new Date().toLocaleTimeString()}`))
-        .catch(err => console.log(`⚠️ Keep-alive failed: ${err.message}`));
-}
-
-// Start keep-alive after server starts (only in production)
-if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
-    setInterval(keepAlive, KEEP_ALIVE_INTERVAL);
-    console.log(`💓 Keep-alive enabled: pinging every ${KEEP_ALIVE_INTERVAL / 60000} minutes`);
-}
 
 // ==========================================
 // SEQUENCE PROCESSOR (Multi-step emails)
