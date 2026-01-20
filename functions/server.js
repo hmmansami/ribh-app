@@ -4430,4 +4430,290 @@ app.get('/api/stats/live', async (req, res) => {
     });
 });
 
-// ENV RELOAD Tue Jan 20 20:35:00 +03 2026
+// ==========================================
+// 🆕 LEAD CAPTURE SYSTEM
+// ==========================================
+
+const LEADS_COLLECTION = 'leads';
+
+/**
+ * Save lead (email collected before cart)
+ */
+app.post('/api/leads/capture', async (req, res) => {
+    const { email, name, merchantId, source, phone } = req.body;
+
+    if (!email || !merchantId) {
+        return res.status(400).json({ success: false, error: 'Email and merchantId required' });
+    }
+
+    const leads = await readDB(LEADS_COLLECTION) || [];
+
+    // Check if lead exists
+    const existingLead = leads.find(l => l.email === email && l.merchantId === merchantId);
+
+    if (existingLead) {
+        // Update existing lead
+        existingLead.visits = (existingLead.visits || 1) + 1;
+        existingLead.lastVisit = new Date().toISOString();
+        if (phone && !existingLead.phone) existingLead.phone = phone;
+    } else {
+        // Create new lead
+        leads.push({
+            email,
+            name: name || email.split('@')[0],
+            phone: phone || null,
+            merchantId,
+            source: source || 'popup',
+            createdAt: new Date().toISOString(),
+            lastVisit: new Date().toISOString(),
+            visits: 1,
+            converted: false,
+            sentWelcome: false
+        });
+    }
+
+    await writeDB(LEADS_COLLECTION, leads);
+    console.log(`✅ Lead captured: ${email}`);
+
+    // Send welcome email to new lead
+    const lead = existingLead || leads[leads.length - 1];
+    if (!lead.sentWelcome && config.ENABLE_EMAIL) {
+        await sendLeadWelcomeEmail(lead, merchantId);
+        lead.sentWelcome = true;
+        await writeDB(LEADS_COLLECTION, leads);
+    }
+
+    res.json({ success: true, message: 'Lead captured' });
+});
+
+/**
+ * Send welcome email to new lead
+ */
+async function sendLeadWelcomeEmail(lead, merchantId) {
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px;">
+            <div style="text-align: center; font-size: 50px;">🎁</div>
+            <h1 style="text-align: center; color: #10B981;">شكراً لتسجيلك!</h1>
+            <p style="text-align: center; color: #666;">
+                مرحباً ${lead.name}! سجلنا بريدك وجهزنا لك عروض حصرية.
+            </p>
+            <div style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 25px; border-radius: 12px; text-align: center; margin: 20px 0;">
+                <div style="font-size: 16px;">خصم ترحيبي</div>
+                <div style="font-size: 40px; font-weight: bold;">15%</div>
+                <div style="background: white; color: #10B981; padding: 10px 20px; border-radius: 8px; display: inline-block; margin-top: 10px; font-weight: bold;">
+                    WELCOME15
+                </div>
+            </div>
+            <a href="#" style="display: block; background: #1D1D1F; color: white; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px;">
+                تسوق الآن 🛍️
+            </a>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: lead.email,
+                subject: `🎁 ${lead.name}، خصم 15% بانتظارك!`,
+                html: htmlContent
+            })
+        });
+        console.log(`✅ Lead welcome email sent to ${lead.email}`);
+    } catch (error) {
+        console.error('❌ Lead welcome email error:', error);
+    }
+}
+
+/**
+ * Get leads for a merchant
+ */
+app.get('/api/leads/:merchantId', async (req, res) => {
+    const leads = await readDB(LEADS_COLLECTION) || [];
+    const merchantLeads = leads.filter(l => l.merchantId === req.params.merchantId);
+
+    res.json({
+        success: true,
+        total: merchantLeads.length,
+        leads: merchantLeads.slice(-50) // Last 50
+    });
+});
+
+// ==========================================
+// 🆕 EXIT INTENT TRACKING
+// ==========================================
+
+/**
+ * Track exit intent event
+ */
+app.post('/api/exit-intent', async (req, res) => {
+    const { email, merchantId, cartValue, cartItems, exitType } = req.body;
+
+    console.log(`🚪 Exit intent detected: ${email || 'anonymous'} - ${exitType}`);
+
+    // If we have email, this is a warm lead
+    if (email && merchantId) {
+        // Save as abandoned browse
+        const leads = await readDB(LEADS_COLLECTION) || [];
+        const lead = leads.find(l => l.email === email && l.merchantId === merchantId);
+
+        if (lead) {
+            lead.exitIntents = (lead.exitIntents || 0) + 1;
+            lead.lastExitIntent = new Date().toISOString();
+            lead.lastCartValue = cartValue || 0;
+            await writeDB(LEADS_COLLECTION, leads);
+        }
+
+        // Could trigger immediate popup offer here
+    }
+
+    res.json({ success: true });
+});
+
+// ==========================================
+// 🆕 EMBEDDABLE WIDGET (JavaScript for stores)
+// ==========================================
+
+/**
+ * Returns JavaScript widget for stores to embed
+ * Usage: <script src="https://ribh.click/widget.js?merchant=xxx"></script>
+ */
+app.get('/widget.js', (req, res) => {
+    const { merchant } = req.query;
+
+    const widgetJS = `
+(function() {
+    const MERCHANT_ID = '${merchant || 'unknown'}';
+    const API_URL = 'https://ribh.click/api';
+    
+    // Styles for popup
+    const styles = \`
+        .ribh-popup-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 99999;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .ribh-popup-overlay.show { opacity: 1; }
+        .ribh-popup {
+            background: white; border-radius: 16px; padding: 30px;
+            max-width: 400px; width: 90%; text-align: center;
+            direction: rtl; font-family: -apple-system, Arial, sans-serif;
+            transform: scale(0.9); transition: transform 0.3s;
+        }
+        .ribh-popup-overlay.show .ribh-popup { transform: scale(1); }
+        .ribh-popup h2 { color: #1D1D1F; margin: 0 0 10px; font-size: 24px; }
+        .ribh-popup p { color: #666; margin: 0 0 20px; }
+        .ribh-popup input {
+            width: 100%; padding: 15px; border: 2px solid #eee;
+            border-radius: 10px; font-size: 16px; margin-bottom: 10px;
+            text-align: center; direction: ltr;
+        }
+        .ribh-popup input:focus { border-color: #10B981; outline: none; }
+        .ribh-popup button {
+            width: 100%; padding: 15px; background: #10B981; color: white;
+            border: none; border-radius: 10px; font-size: 18px;
+            cursor: pointer; font-weight: bold;
+        }
+        .ribh-popup button:hover { background: #059669; }
+        .ribh-popup .close {
+            position: absolute; top: 10px; left: 10px;
+            background: none; border: none; font-size: 24px;
+            cursor: pointer; color: #999; width: auto; padding: 5px;
+        }
+        .ribh-discount { font-size: 48px; color: #10B981; font-weight: bold; margin: 15px 0; }
+    \`;
+    
+    // Inject styles
+    const styleEl = document.createElement('style');
+    styleEl.textContent = styles;
+    document.head.appendChild(styleEl);
+    
+    // Show popup after delay or on exit intent
+    let popupShown = false;
+    
+    function showPopup() {
+        if (popupShown || localStorage.getItem('ribh_popup_shown')) return;
+        popupShown = true;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'ribh-popup-overlay';
+        overlay.innerHTML = \`
+            <div class="ribh-popup" style="position: relative;">
+                <button class="close">&times;</button>
+                <div style="font-size: 40px;">🎁</div>
+                <h2>لا تفوت الفرصة!</h2>
+                <div class="ribh-discount">15% خصم</div>
+                <p>سجل بريدك واحصل على خصم فوري</p>
+                <input type="email" id="ribh-email" placeholder="بريدك الإلكتروني" />
+                <button id="ribh-submit">احصل على الخصم</button>
+            </div>
+        \`;
+        
+        document.body.appendChild(overlay);
+        setTimeout(() => overlay.classList.add('show'), 10);
+        
+        overlay.querySelector('.close').onclick = () => {
+            overlay.classList.remove('show');
+            setTimeout(() => overlay.remove(), 300);
+            localStorage.setItem('ribh_popup_shown', 'true');
+        };
+        
+        overlay.querySelector('#ribh-submit').onclick = async () => {
+            const email = overlay.querySelector('#ribh-email').value;
+            if (!email || !email.includes('@')) {
+                alert('الرجاء إدخال بريد صحيح');
+                return;
+            }
+            
+            try {
+                await fetch(API_URL + '/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, merchantId: MERCHANT_ID, source: 'popup' })
+                });
+                
+                overlay.querySelector('.ribh-popup').innerHTML = \`
+                    <div style="font-size: 60px;">✅</div>
+                    <h2>شكراً لك!</h2>
+                    <p>تم إرسال كود الخصم إلى بريدك</p>
+                    <p style="font-size: 24px; color: #10B981; font-weight: bold;">WELCOME15</p>
+                \`;
+                
+                localStorage.setItem('ribh_popup_shown', 'true');
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    setTimeout(() => overlay.remove(), 300);
+                }, 3000);
+            } catch (e) {
+                console.error('RIBH error:', e);
+            }
+        };
+    }
+    
+    // Exit intent detection
+    document.addEventListener('mouseout', (e) => {
+        if (e.clientY <= 0) showPopup();
+    });
+    
+    // Timer fallback (30 seconds)
+    setTimeout(showPopup, 30000);
+})();
+    `;
+
+    res.set('Content-Type', 'application/javascript');
+    res.send(widgetJS);
+});
+
+// ENV RELOAD Tue Jan 20 20:55:00 +03 2026
