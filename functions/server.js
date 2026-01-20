@@ -5061,4 +5061,297 @@ app.post('/api/cron/all', async (req, res) => {
     });
 });
 
-// ENV RELOAD Tue Jan 20 21:05:00 +03 2026
+// ==========================================
+// 🆕 STORE OWNER DASHBOARD API
+// ==========================================
+
+/**
+ * Complete dashboard data for store owner
+ */
+app.get('/api/dashboard/:merchantId', async (req, res) => {
+    const { merchantId } = req.params;
+    const { period } = req.query; // day, week, month
+
+    const carts = await readDB(DB_FILE) || [];
+    const revenueLog = await readDB('revenue_log') || [];
+    const leads = await readDB(LEADS_COLLECTION) || [];
+    const referrals = await readDB(REFERRALS_COLLECTION) || [];
+
+    // Filter by merchant
+    const merchantCarts = carts.filter(c => c.merchant === merchantId);
+    const merchantRevenue = revenueLog.filter(o => o.merchant === merchantId);
+    const merchantLeads = leads.filter(l => l.merchantId === merchantId);
+    const merchantReferrals = referrals.filter(r => r.merchantId === merchantId);
+
+    // Time filter
+    const now = new Date();
+    const periodMs = {
+        day: 24 * 60 * 60 * 1000,
+        week: 7 * 24 * 60 * 60 * 1000,
+        month: 30 * 24 * 60 * 60 * 1000
+    }[period] || 7 * 24 * 60 * 60 * 1000;
+
+    const periodStart = new Date(now - periodMs);
+
+    const recentCarts = merchantCarts.filter(c => new Date(c.createdAt) > periodStart);
+    const recentRevenue = merchantRevenue.filter(o => new Date(o.timestamp) > periodStart);
+
+    // Calculate metrics
+    const metrics = {
+        // Carts
+        totalCarts: recentCarts.length,
+        pendingCarts: recentCarts.filter(c => c.status === 'pending').length,
+        recoveredCarts: recentCarts.filter(c => c.status === 'recovered').length,
+        recoveryRate: recentCarts.length > 0
+            ? Math.round((recentCarts.filter(c => c.status === 'recovered').length / recentCarts.length) * 100)
+            : 0,
+
+        // Revenue
+        totalRevenue: recentRevenue.reduce((s, o) => s + (o.orderValue || 0), 0),
+        recoveredRevenue: recentCarts
+            .filter(c => c.status === 'recovered')
+            .reduce((s, c) => s + (c.total || 0), 0),
+        avgOrderValue: recentRevenue.length > 0
+            ? Math.round(recentRevenue.reduce((s, o) => s + (o.orderValue || 0), 0) / recentRevenue.length)
+            : 0,
+
+        // Leads
+        newLeads: merchantLeads.filter(l => new Date(l.createdAt) > periodStart).length,
+        totalLeads: merchantLeads.length,
+
+        // Referrals
+        newReferrals: merchantReferrals.filter(r => new Date(r.createdAt) > periodStart).length,
+        totalReferred: merchantReferrals.reduce((s, r) => s + r.referredCount, 0),
+
+        // RIBH Commission
+        ribhCommission: Math.round(
+            recentCarts.filter(c => c.status === 'recovered').reduce((s, c) => s + (c.total || 0), 0) * 0.05
+        )
+    };
+
+    // Recent activity
+    const recentActivity = [
+        ...recentCarts.slice(-5).map(c => ({
+            type: c.status === 'recovered' ? 'recovered' : 'abandoned',
+            customer: c.customer?.name || 'عميل',
+            value: c.total,
+            time: c.createdAt
+        })),
+        ...recentRevenue.slice(-5).map(o => ({
+            type: 'order',
+            customer: o.customerName || 'عميل',
+            value: o.orderValue,
+            time: o.timestamp
+        }))
+    ].sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
+
+    res.json({
+        success: true,
+        merchantId,
+        period: period || 'week',
+        metrics,
+        recentActivity
+    });
+});
+
+// ==========================================
+// 🆕 STORE OWNER ALERTS
+// ==========================================
+
+/**
+ * Send alert to store owner
+ */
+async function sendStoreOwnerAlert(merchantId, alertType, data) {
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.merchant === merchantId);
+
+    if (!store?.ownerEmail) return;
+
+    const alerts = {
+        VIP_CART: {
+            subject: '⭐ VIP يتسوق الآن!',
+            message: `العميل ${data.customerName} (VIP - ${data.totalSpent} ريال إجمالي) لديه سلة بقيمة ${data.cartValue} ريال`
+        },
+        HIGH_VALUE_CART: {
+            subject: '💰 سلة كبيرة متروكة!',
+            message: `سلة بقيمة ${data.cartValue} ريال متروكة منذ ${data.hoursAgo} ساعة`
+        },
+        MILESTONE: {
+            subject: '🎉 وصلت لهدف جديد!',
+            message: `تهانينا! استرددت ${data.recovered} سلة هذا الشهر بقيمة ${data.value} ريال`
+        },
+        DAILY_SUMMARY: {
+            subject: '📊 ملخص اليوم',
+            message: `السلال المتروكة: ${data.abandoned} | المسترجعة: ${data.recovered} | الإيرادات: ${data.revenue} ريال`
+        }
+    };
+
+    const alert = alerts[alertType];
+    if (!alert) return;
+
+    // Could send via Email, Telegram, or SMS
+    if (config.ENABLE_EMAIL && store.ownerEmail) {
+        try {
+            await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: config.EMAIL_FROM,
+                    to: store.ownerEmail,
+                    subject: alert.subject,
+                    html: `<div dir="rtl" style="font-family: Arial; padding: 20px;">
+                        <h2>${alert.subject}</h2>
+                        <p>${alert.message}</p>
+                        <a href="https://ribh.click" style="background: #10B981; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none;">
+                            افتح لوحة التحكم
+                        </a>
+                    </div>`
+                })
+            });
+            console.log(`📢 Store alert sent: ${alertType}`);
+        } catch (error) {
+            console.error('❌ Store alert error:', error);
+        }
+    }
+}
+
+// ==========================================
+// 🆕 WINBACK CAMPAIGN (60+ days inactive)
+// ==========================================
+
+/**
+ * Aggressive winback for churned customers
+ */
+app.post('/api/campaigns/winback/:merchantId', async (req, res) => {
+    const { merchantId } = req.params;
+    const { discount } = req.body;
+
+    const segments = await segmentCustomers(merchantId);
+    const churned = segments.CHURNED || [];
+
+    if (churned.length === 0) {
+        return res.json({ success: true, sent: 0, message: 'No churned customers' });
+    }
+
+    const winbackDiscount = discount || 25;
+    let sent = 0;
+
+    for (const customer of churned) {
+        if (!customer.email || !config.ENABLE_EMAIL) continue;
+
+        const htmlContent = `
+        <!DOCTYPE html>
+        <html dir="rtl" lang="ar">
+        <head><meta charset="UTF-8"></head>
+        <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+            <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px;">
+                <div style="text-align: center; font-size: 50px;">💔</div>
+                <h2 style="text-align: center; color: #1D1D1F;">نفتقدك كثيراً!</h2>
+                
+                <p style="text-align: center; color: #666;">
+                    مرت فترة طويلة منذ آخر زيارة لك. جهزنا لك عرض استثنائي!
+                </p>
+                
+                <div style="background: linear-gradient(135deg, #EF4444, #DC2626); color: white; padding: 30px; border-radius: 12px; text-align: center; margin: 25px 0;">
+                    <div style="font-size: 18px;">🎁 عرض العودة الخاص</div>
+                    <div style="font-size: 50px; font-weight: bold;">${winbackDiscount}%</div>
+                    <div>خصم على كل شيء!</div>
+                    <div style="background: white; color: #EF4444; padding: 10px 25px; border-radius: 8px; display: inline-block; margin-top: 15px; font-weight: bold; font-size: 20px;">
+                        COMEBACK${winbackDiscount}
+                    </div>
+                </div>
+                
+                <p style="text-align: center; color: #888; font-size: 14px;">
+                    ⏰ العرض صالح لمدة 48 ساعة فقط!
+                </p>
+                
+                <a href="#" style="display: block; background: #1D1D1F; color: white; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px;">
+                    تسوق الآن 🛍️
+                </a>
+            </div>
+        </body>
+        </html>
+        `;
+
+        try {
+            await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: config.EMAIL_FROM,
+                    to: customer.email,
+                    subject: `💔 نفتقدك! خصم ${winbackDiscount}% ينتظرك`,
+                    html: htmlContent
+                })
+            });
+            sent++;
+        } catch (error) {
+            console.error('Winback email error:', error);
+        }
+    }
+
+    res.json({
+        success: true,
+        sent,
+        totalChurned: churned.length,
+        discount: winbackDiscount
+    });
+});
+
+// ==========================================
+// 🆕 QUICK ACTIONS API
+// ==========================================
+
+/**
+ * One-click actions for store owners
+ */
+app.post('/api/actions/:action', async (req, res) => {
+    const { action } = req.params;
+    const { merchantId } = req.body;
+
+    if (!merchantId) {
+        return res.status(400).json({ success: false, error: 'merchantId required' });
+    }
+
+    switch (action) {
+        case 'send-winback':
+            // Trigger winback campaign
+            const segments = await segmentCustomers(merchantId);
+            return res.json({
+                success: true,
+                action: 'winback',
+                churnedCount: (segments.CHURNED || []).length
+            });
+
+        case 'flash-sale':
+            // Create quick flash sale
+            return res.json({
+                success: true,
+                action: 'flash-sale',
+                message: 'Use POST /api/offers/flash-sale'
+            });
+
+        case 'send-test-email':
+            // Send test abandoned cart email
+            return res.json({
+                success: true,
+                action: 'test-email',
+                message: 'Use POST /api/test/abandoned-cart'
+            });
+
+        default:
+            return res.status(400).json({
+                success: false,
+                error: 'Unknown action',
+                available: ['send-winback', 'flash-sale', 'send-test-email']
+            });
+    }
+});
+
+// ENV RELOAD Tue Jan 20 21:15:00 +03 2026
