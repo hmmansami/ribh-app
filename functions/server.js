@@ -97,7 +97,123 @@ const config = {
     ]
 };
 
+// ==========================================
+// 📧 EMAIL TEMPLATE HELPER (Anti-Spam)
+// ==========================================
+
+/**
+ * Professional email wrapper to avoid spam filters
+ * - Adds proper headers
+ * - Includes unsubscribe link
+ * - Proper text-to-link ratio
+ * - CAN-SPAM compliant footer
+ */
+function wrapEmailContent(bodyContent, options = {}) {
+    const {
+        merchantName = 'المتجر',
+        unsubscribeUrl = 'https://ribh.click/unsubscribe',
+        preheader = ''
+    } = options;
+
+    return `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>رسالة من ${merchantName}</title>
+        <!--[if mso]>
+        <style type="text/css">
+            body, table, td {font-family: Arial, sans-serif !important;}
+        </style>
+        <![endif]-->
+        <style>
+            body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background-color: #f5f5f5; }
+            .wrapper { max-width: 600px; margin: 0 auto; }
+            .content { background: white; border-radius: 16px; margin: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+            .footer { text-align: center; padding: 20px; color: #888; font-size: 12px; }
+            .footer a { color: #888; text-decoration: underline; }
+            .preheader { display: none; max-height: 0; overflow: hidden; }
+        </style>
+    </head>
+    <body style="margin: 0; padding: 20px; background-color: #f5f5f5;">
+        ${preheader ? `<div class="preheader" style="display: none; max-height: 0; overflow: hidden;">${preheader}</div>` : ''}
+        
+        <div class="wrapper" style="max-width: 600px; margin: 0 auto;">
+            <div class="content" style="background: white; border-radius: 16px; padding: 30px; margin-bottom: 20px;">
+                ${bodyContent}
+            </div>
+            
+            <div class="footer" style="text-align: center; padding: 20px; color: #888; font-size: 12px;">
+                <p style="margin: 5px 0;">هذه الرسالة من ${merchantName}</p>
+                <p style="margin: 5px 0;">
+                    <a href="${unsubscribeUrl}" style="color: #888;">إلغاء الاشتراك</a> | 
+                    <a href="https://ribh.click" style="color: #888;">رِبح</a>
+                </p>
+                <p style="margin: 10px 0 0; font-size: 11px; color: #aaa;">
+                    RIBH - Riyadh, Saudi Arabia
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+}
+
+/**
+ * Send email with anti-spam best practices
+ */
+async function sendProfessionalEmail({ to, subject, body, preheader, merchantName }) {
+    // Clean subject - reduce emojis (max 1)
+    let cleanSubject = subject;
+    const emojiCount = (subject.match(/[\u{1F300}-\u{1F9FF}]/gu) || []).length;
+    if (emojiCount > 1) {
+        // Keep only first emoji
+        let found = 0;
+        cleanSubject = subject.replace(/[\u{1F300}-\u{1F9FF}]/gu, (match) => {
+            found++;
+            return found === 1 ? match : '';
+        });
+    }
+
+    const htmlContent = wrapEmailContent(body, { merchantName, preheader });
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to,
+                subject: cleanSubject,
+                html: htmlContent,
+                headers: {
+                    'List-Unsubscribe': '<https://ribh.click/unsubscribe>',
+                    'X-Entity-Ref-ID': Date.now().toString()
+                }
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Email sent to ${to}`);
+            return { success: true, id: result.id };
+        } else {
+            console.error('❌ Email error:', result);
+            return { success: false, error: result };
+        }
+    } catch (error) {
+        console.error('❌ Email error:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 // Middleware
+
 app.use(cors());
 app.use(express.json());
 
@@ -5354,4 +5470,101 @@ app.post('/api/actions/:action', async (req, res) => {
     }
 });
 
-// ENV RELOAD Tue Jan 20 21:15:00 +03 2026
+// ==========================================
+// 📧 UNSUBSCRIBE ENDPOINT (CAN-SPAM Compliance)
+// ==========================================
+
+const UNSUBSCRIBE_COLLECTION = 'unsubscribed';
+
+/**
+ * Unsubscribe page (GET)
+ */
+app.get('/unsubscribe', (req, res) => {
+    const { email } = req.query;
+
+    res.send(`
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>إلغاء الاشتراك - رِبح</title>
+        <style>
+            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+            .card { background: white; border-radius: 16px; padding: 40px; max-width: 400px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            h1 { font-size: 24px; color: #1D1D1F; margin: 0 0 20px; }
+            p { color: #666; margin: 10px 0; }
+            input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; margin: 10px 0; text-align: center; }
+            button { width: 100%; padding: 15px; background: #EF4444; color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
+            button:hover { background: #DC2626; }
+            .success { color: #10B981; }
+        </style>
+    </head>
+    <body>
+        <div class="card" id="form">
+            <h1>إلغاء الاشتراك</h1>
+            <p>هل أنت متأكد أنك تريد إلغاء اشتراكك في رسائلنا؟</p>
+            <input type="email" id="email" placeholder="بريدك الإلكتروني" value="${email || ''}">
+            <button onclick="unsubscribe()">إلغاء الاشتراك</button>
+            <p style="font-size: 12px; color: #aaa; margin-top: 20px;">سنفتقدك 💚</p>
+        </div>
+        
+        <div class="card success" id="success" style="display: none;">
+            <h1 class="success">تم إلغاء اشتراكك</h1>
+            <p>لن تتلقى المزيد من رسائلنا.</p>
+            <p style="font-size: 12px; color: #aaa;">يمكنك إعادة الاشتراك في أي وقت.</p>
+        </div>
+        
+        <script>
+            async function unsubscribe() {
+                const email = document.getElementById('email').value;
+                if (!email) { alert('الرجاء إدخال بريدك'); return; }
+                
+                const res = await fetch('/api/unsubscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (res.ok) {
+                    document.getElementById('form').style.display = 'none';
+                    document.getElementById('success').style.display = 'block';
+                }
+            }
+        </script>
+    </body>
+    </html>
+    `);
+});
+
+/**
+ * Unsubscribe API (POST)
+ */
+app.post('/api/unsubscribe', async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ success: false, error: 'Email required' });
+    }
+
+    const unsubscribed = await readDB(UNSUBSCRIBE_COLLECTION) || [];
+
+    if (!unsubscribed.includes(email.toLowerCase())) {
+        unsubscribed.push(email.toLowerCase());
+        await writeDB(UNSUBSCRIBE_COLLECTION, unsubscribed);
+        console.log(`📧 Unsubscribed: ${email}`);
+    }
+
+    res.json({ success: true, message: 'Unsubscribed successfully' });
+});
+
+/**
+ * Check if email is unsubscribed
+ */
+async function isUnsubscribed(email) {
+    if (!email) return false;
+    const unsubscribed = await readDB(UNSUBSCRIBE_COLLECTION) || [];
+    return unsubscribed.includes(email.toLowerCase());
+}
+
+// ENV RELOAD Tue Jan 20 22:30:00 +03 2026
