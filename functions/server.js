@@ -3291,4 +3291,445 @@ function groupBy(array, key) {
     }, {});
 }
 
-// ENV RELOAD Tue Jan 20 20:10:00 +03 2026
+// ==========================================
+// 🆕 SALLA API INTEGRATION
+// ==========================================
+
+/**
+ * Create a discount coupon in Salla store
+ * @param {string} merchantId - Store merchant ID
+ * @param {object} couponData - Coupon configuration
+ */
+async function createSallaCoupon(merchantId, couponData) {
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.merchant === merchantId);
+
+    if (!store?.accessToken) {
+        console.log('⚠️ No access token for store:', merchantId);
+        return null;
+    }
+
+    const defaultCoupon = {
+        code: `RIBH${Date.now().toString(36).toUpperCase()}`,
+        type: 'percentage', // percentage or fixed
+        amount: 10,
+        start_date: new Date().toISOString(),
+        end_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 days
+        usage_limit: 100,
+        minimum_amount: 0,
+        free_shipping: false,
+        ...couponData
+    };
+
+    try {
+        const response = await fetch('https://api.salla.dev/admin/v2/coupons', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${store.accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(defaultCoupon)
+        });
+
+        const result = await response.json();
+
+        if (result.data?.id) {
+            console.log(`✅ Salla coupon created: ${defaultCoupon.code}`);
+            return {
+                id: result.data.id,
+                code: defaultCoupon.code,
+                amount: defaultCoupon.amount,
+                type: defaultCoupon.type
+            };
+        } else {
+            console.log('⚠️ Coupon creation failed:', result);
+            return null;
+        }
+    } catch (error) {
+        console.error('❌ Salla coupon API error:', error);
+        return null;
+    }
+}
+
+/**
+ * Fetch products from a Salla store category
+ */
+async function fetchSallaProducts(merchantId, categoryId = null, limit = 10) {
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.merchant === merchantId);
+
+    if (!store?.accessToken) {
+        console.log('⚠️ No access token for store:', merchantId);
+        return [];
+    }
+
+    try {
+        let url = `https://api.salla.dev/admin/v2/products?per_page=${limit}`;
+        if (categoryId) {
+            url = `https://api.salla.dev/admin/v2/categories/${categoryId}/products?per_page=${limit}`;
+        }
+
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${store.accessToken}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.data) {
+            console.log(`✅ Fetched ${result.data.length} products from Salla`);
+            return result.data.map(p => ({
+                id: p.id,
+                name: p.name,
+                price: p.price?.amount || p.sale_price?.amount || 0,
+                image: p.thumbnail || p.main_image,
+                url: p.url
+            }));
+        }
+        return [];
+    } catch (error) {
+        console.error('❌ Salla products API error:', error);
+        return [];
+    }
+}
+
+/**
+ * Fetch store categories
+ */
+async function fetchSallaCategories(merchantId) {
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.merchant === merchantId);
+
+    if (!store?.accessToken) return [];
+
+    try {
+        const response = await fetch('https://api.salla.dev/admin/v2/categories', {
+            headers: {
+                'Authorization': `Bearer ${store.accessToken}`
+            }
+        });
+
+        const result = await response.json();
+        return result.data || [];
+    } catch (error) {
+        console.error('❌ Salla categories API error:', error);
+        return [];
+    }
+}
+
+// API endpoint to create coupon
+app.post('/api/coupons/create', async (req, res) => {
+    const { merchantId, code, amount, type } = req.body;
+
+    const coupon = await createSallaCoupon(merchantId, { code, amount, type });
+
+    if (coupon) {
+        res.json({ success: true, coupon });
+    } else {
+        res.status(400).json({ success: false, error: 'Failed to create coupon' });
+    }
+});
+
+// API endpoint to fetch products
+app.get('/api/products/:merchantId', async (req, res) => {
+    const products = await fetchSallaProducts(req.params.merchantId, req.query.category);
+    res.json({ success: true, products });
+});
+
+// ==========================================
+// 🆕 REFERRAL SYSTEM
+// ==========================================
+
+const REFERRALS_COLLECTION = 'referrals';
+
+/**
+ * Generate unique referral code for a customer
+ */
+function generateReferralCode(customerEmail) {
+    const hash = customerEmail.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+    return `REF${hash.toString(36).toUpperCase()}${Date.now().toString(36).slice(-3).toUpperCase()}`;
+}
+
+/**
+ * Create or get referral code for customer
+ */
+app.post('/api/referrals/generate', async (req, res) => {
+    const { email, name, merchantId } = req.body;
+
+    if (!email || !merchantId) {
+        return res.status(400).json({ success: false, error: 'Email and merchantId required' });
+    }
+
+    const referrals = await readDB(REFERRALS_COLLECTION) || [];
+
+    // Check if customer already has a code
+    let referral = referrals.find(r => r.email === email && r.merchantId === merchantId);
+
+    if (!referral) {
+        referral = {
+            code: generateReferralCode(email),
+            email,
+            name: name || email.split('@')[0],
+            merchantId,
+            createdAt: new Date().toISOString(),
+            referredCount: 0,
+            earnedDiscount: 0,
+            referredCustomers: []
+        };
+        referrals.push(referral);
+        await writeDB(REFERRALS_COLLECTION, referrals);
+        console.log(`✅ New referral code created: ${referral.code}`);
+    }
+
+    res.json({
+        success: true,
+        referral: {
+            code: referral.code,
+            referralLink: `https://ribh.click/ref/${referral.code}`,
+            stats: {
+                referredCount: referral.referredCount,
+                earnedDiscount: referral.earnedDiscount
+            }
+        }
+    });
+});
+
+/**
+ * Track referral usage when new customer signs up with code
+ */
+app.post('/api/referrals/track', async (req, res) => {
+    const { referralCode, newCustomerEmail, orderValue, merchantId } = req.body;
+
+    if (!referralCode) {
+        return res.status(400).json({ success: false, error: 'Referral code required' });
+    }
+
+    const referrals = await readDB(REFERRALS_COLLECTION) || [];
+    const referral = referrals.find(r => r.code === referralCode);
+
+    if (!referral) {
+        return res.status(404).json({ success: false, error: 'Invalid referral code' });
+    }
+
+    // Update referral stats
+    referral.referredCount++;
+    referral.earnedDiscount += 10; // Give 10% per referral
+    referral.referredCustomers.push({
+        email: newCustomerEmail,
+        orderValue: orderValue || 0,
+        date: new Date().toISOString()
+    });
+
+    await writeDB(REFERRALS_COLLECTION, referrals);
+
+    // Send thank you email to referrer
+    if (referral.email && config.ENABLE_EMAIL) {
+        await sendReferralThankYouEmail(referral);
+    }
+
+    res.json({
+        success: true,
+        message: 'Referral tracked',
+        referrerDiscount: referral.earnedDiscount
+    });
+});
+
+/**
+ * Send thank you email to referrer
+ */
+async function sendReferralThankYouEmail(referral) {
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px;">
+            <div style="text-align: center; font-size: 50px;">🎉</div>
+            <h1 style="text-align: center; color: #10B981;">شكراً على الإحالة!</h1>
+            <p style="text-align: center; color: #666;">
+                صديقك اشترى باستخدام كودك! 🛍️
+            </p>
+            <div style="background: #10B981; color: white; padding: 25px; border-radius: 12px; text-align: center; margin: 20px 0;">
+                <div style="font-size: 18px;">رصيدك الآن</div>
+                <div style="font-size: 40px; font-weight: bold;">${referral.earnedDiscount}% خصم</div>
+            </div>
+            <p style="text-align: center;">
+                كودك: <strong>${referral.code}</strong><br>
+                عدد الإحالات: ${referral.referredCount}
+            </p>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: referral.email,
+                subject: '🎉 شكراً! صديقك اشترى وحصلت على خصم!',
+                html: htmlContent
+            })
+        });
+        console.log(`✅ Referral thank you email sent to ${referral.email}`);
+    } catch (error) {
+        console.error('❌ Referral email error:', error);
+    }
+}
+
+/**
+ * Get referral stats for a customer
+ */
+app.get('/api/referrals/:code', async (req, res) => {
+    const referrals = await readDB(REFERRALS_COLLECTION) || [];
+    const referral = referrals.find(r => r.code === req.params.code);
+
+    if (!referral) {
+        return res.status(404).json({ success: false, error: 'Referral not found' });
+    }
+
+    res.json({
+        success: true,
+        referral: {
+            code: referral.code,
+            referredCount: referral.referredCount,
+            earnedDiscount: referral.earnedDiscount,
+            referredCustomers: referral.referredCustomers.length
+        }
+    });
+});
+
+// ==========================================
+// 🆕 AI-ENHANCED OFFER GENERATION
+// ==========================================
+
+/**
+ * Generate AI-powered personalized offer message
+ */
+async function generateAIOfferMessage(customer, offerType, cartData = {}) {
+    const prompts = {
+        CART_RECOVERY: `أنشئ رسالة استرداد سلة متروكة قصيرة وجذابة بالعربي للعميل "${customer.name}".
+السلة: ${cartData.total} ريال
+المنتجات: ${cartData.items?.map(i => i.name).join('، ') || 'منتجات رائعة'}
+اكتب رسالة ودودة تحفزه على إكمال الشراء. 50 كلمة كحد أقصى.`,
+
+        WELCOME: `أنشئ رسالة ترحيبية قصيرة للعميل الجديد "${customer.name}".
+عرض: خصم 15% على أول طلب
+اجعلها ودودة وحماسية. 40 كلمة كحد أقصى.`,
+
+        UPSELL: `أنشئ رسالة شكر على الشراء للعميل "${customer.name}" مع عرض خصم على الطلب القادم.
+قيمة الطلب: ${cartData.total} ريال
+عرض: 10% خصم
+30 كلمة كحد أقصى.`,
+
+        REORDER: `أنشئ رسالة "اشتقنالك" للعميل "${customer.name}" الذي لم يشترِ منذ فترة.
+عرض: 20% خصم للعودة
+اجعلها عاطفية. 40 كلمة كحد أقصى.`,
+
+        REFERRAL: `أنشئ رسالة تشجع العميل "${customer.name}" على دعوة أصدقائه مقابل خصومات.
+الفائدة: العميل والصديق يحصلان على 10% خصم
+30 كلمة كحد أقصى.`
+    };
+
+    const prompt = prompts[offerType] || prompts.CART_RECOVERY;
+
+    if (config.GEMINI_API_KEY) {
+        const aiMessage = await generateWithGemini(prompt);
+        if (aiMessage) return aiMessage.trim();
+    }
+
+    // Fallback templates
+    const fallbacks = {
+        CART_RECOVERY: `مرحباً ${customer.name}! 👋 سلتك في انتظارك. أكمل طلبك الآن!`,
+        WELCOME: `أهلاً ${customer.name}! 🎉 نرحب بك مع خصم 15% على طلبك الأول`,
+        UPSELL: `شكراً ${customer.name}! 💚 هذا خصم 10% على طلبك القادم`,
+        REORDER: `اشتقنالك ${customer.name}! 👋 عد لنا مع خصم 20%`,
+        REFERRAL: `${customer.name}، ادعُ صديقك واحصلا على 10% خصم!`
+    };
+
+    return fallbacks[offerType] || fallbacks.CART_RECOVERY;
+}
+
+// ==========================================
+// 🆕 FLASH SALE / SEASONAL OFFERS
+// ==========================================
+
+app.post('/api/offers/flash-sale', async (req, res) => {
+    const { merchantId, discount, duration_hours, productIds } = req.body;
+
+    // Create limited-time coupon
+    const coupon = await createSallaCoupon(merchantId, {
+        code: `FLASH${Date.now().toString(36).toUpperCase()}`,
+        amount: discount || 25,
+        type: 'percentage',
+        end_date: new Date(Date.now() + (duration_hours || 24) * 60 * 60 * 1000).toISOString(),
+        usage_limit: 50
+    });
+
+    if (coupon) {
+        // TODO: Send notification to all customers about flash sale
+        res.json({
+            success: true,
+            flashSale: {
+                coupon: coupon.code,
+                discount: coupon.amount,
+                expiresIn: duration_hours || 24
+            }
+        });
+    } else {
+        res.status(400).json({ success: false, error: 'Failed to create flash sale' });
+    }
+});
+
+// Seasonal offer templates
+const SEASONAL_OFFERS = {
+    RAMADAN: { discount: 20, message: '🌙 عروض رمضان - خصم 20%' },
+    EID: { discount: 25, message: '🎉 عيدك مبارك - خصم 25%' },
+    NATIONAL_DAY: { discount: 15, message: '🇸🇦 اليوم الوطني - خصم 15%' },
+    BLACK_FRIDAY: { discount: 30, message: '🖤 الجمعة البيضاء - خصم 30%' },
+    NEWYEAR: { discount: 20, message: '🎆 السنة الجديدة - خصم 20%' }
+};
+
+app.get('/api/offers/seasonal', (req, res) => {
+    res.json({ success: true, offers: SEASONAL_OFFERS });
+});
+
+// ==========================================
+// 🆕 HEALTH CHECK & STATS
+// ==========================================
+
+app.get('/api/health', async (req, res) => {
+    const carts = await readDB(DB_FILE) || [];
+    const stores = await readDB(STORES_FILE) || [];
+    const revenueLog = await readDB('revenue_log') || [];
+    const referrals = await readDB(REFERRALS_COLLECTION) || [];
+
+    res.json({
+        success: true,
+        health: 'OK',
+        stats: {
+            activeStores: stores.filter(s => s.active !== false).length,
+            totalCarts: carts.length,
+            pendingCarts: carts.filter(c => c.status === 'pending').length,
+            recoveredCarts: carts.filter(c => c.status === 'recovered').length,
+            totalOrders: revenueLog.length,
+            totalRevenue: revenueLog.reduce((s, o) => s + (o.orderValue || 0), 0),
+            totalReferrals: referrals.length,
+            totalReferred: referrals.reduce((s, r) => s + r.referredCount, 0)
+        },
+        integrations: {
+            email: !!config.RESEND_API_KEY,
+            sms: !!config.TWILIO_ACCOUNT_SID || !!config.AWS_ACCESS_KEY,
+            ai: !!config.GEMINI_API_KEY || !!config.OPENAI_API_KEY,
+            telegram: !!config.TELEGRAM_BOT_TOKEN
+        }
+    });
+});
+
+// ENV RELOAD Tue Jan 20 20:20:00 +03 2026
