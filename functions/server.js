@@ -3732,4 +3732,434 @@ app.get('/api/health', async (req, res) => {
     });
 });
 
-// ENV RELOAD Tue Jan 20 20:20:00 +03 2026
+// ==========================================
+// 🆕 A/B TESTING SYSTEM
+// ==========================================
+
+const AB_TESTS_COLLECTION = 'ab_tests';
+
+/**
+ * Simple A/B test system
+ * Randomly assigns variant and tracks conversions
+ */
+async function getABTestVariant(testName, merchantId) {
+    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+
+    if (!tests[testName]) {
+        tests[testName] = {
+            name: testName,
+            variants: {
+                A: { impressions: 0, conversions: 0 },
+                B: { impressions: 0, conversions: 0 }
+            },
+            createdAt: new Date().toISOString()
+        };
+    }
+
+    // Simple 50/50 split
+    const variant = Math.random() > 0.5 ? 'A' : 'B';
+    tests[testName].variants[variant].impressions++;
+
+    await writeDB(AB_TESTS_COLLECTION, tests);
+
+    return variant;
+}
+
+async function trackABConversion(testName, variant) {
+    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+
+    if (tests[testName] && tests[testName].variants[variant]) {
+        tests[testName].variants[variant].conversions++;
+        await writeDB(AB_TESTS_COLLECTION, tests);
+    }
+}
+
+// A/B Test Offer Variations
+const OFFER_VARIANTS = {
+    DISCOUNT: {
+        A: { discount: 10, message: '🎁 خصم 10% على طلبك!' },
+        B: { discount: 15, message: '🔥 عرض خاص! 15% خصم' }
+    },
+    URGENCY: {
+        A: { message: 'سلتك في انتظارك' },
+        B: { message: '⏰ آخر فرصة! سلتك ستنتهي قريباً' }
+    },
+    CTA: {
+        A: { button: 'أكمل طلبك الآن' },
+        B: { button: 'احصل على الخصم →' }
+    }
+};
+
+// API to get A/B test results
+app.get('/api/ab-tests', async (req, res) => {
+    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+
+    const results = {};
+    for (const [name, test] of Object.entries(tests)) {
+        const varA = test.variants.A;
+        const varB = test.variants.B;
+        results[name] = {
+            A: {
+                impressions: varA.impressions,
+                conversions: varA.conversions,
+                rate: varA.impressions > 0 ? (varA.conversions / varA.impressions * 100).toFixed(2) + '%' : '0%'
+            },
+            B: {
+                impressions: varB.impressions,
+                conversions: varB.conversions,
+                rate: varB.impressions > 0 ? (varB.conversions / varB.impressions * 100).toFixed(2) + '%' : '0%'
+            },
+            winner: varA.conversions / (varA.impressions || 1) > varB.conversions / (varB.impressions || 1) ? 'A' : 'B'
+        };
+    }
+
+    res.json({ success: true, tests: results });
+});
+
+// ==========================================
+// 🆕 BEST SEND TIME DETECTION
+// ==========================================
+
+const SEND_TIMES_COLLECTION = 'send_times';
+
+/**
+ * Track email open time to learn best send times
+ */
+async function trackEmailOpen(merchantId, customerId, openedAt) {
+    const sendTimes = await readDB(SEND_TIMES_COLLECTION) || {};
+
+    const hour = new Date(openedAt).getHours();
+    const day = new Date(openedAt).getDay(); // 0-6 (Sun-Sat)
+
+    if (!sendTimes[merchantId]) {
+        sendTimes[merchantId] = {
+            byHour: Array(24).fill(0),
+            byDay: Array(7).fill(0),
+            totalOpens: 0
+        };
+    }
+
+    sendTimes[merchantId].byHour[hour]++;
+    sendTimes[merchantId].byDay[day]++;
+    sendTimes[merchantId].totalOpens++;
+
+    await writeDB(SEND_TIMES_COLLECTION, sendTimes);
+}
+
+/**
+ * Get best send time for a merchant
+ */
+async function getBestSendTime(merchantId) {
+    const sendTimes = await readDB(SEND_TIMES_COLLECTION) || {};
+    const data = sendTimes[merchantId];
+
+    if (!data || data.totalOpens < 10) {
+        // Default: 8 PM Saudi time (high engagement)
+        return { hour: 20, day: null, confidence: 'low' };
+    }
+
+    const bestHour = data.byHour.indexOf(Math.max(...data.byHour));
+    const bestDay = data.byDay.indexOf(Math.max(...data.byDay));
+
+    return {
+        hour: bestHour,
+        day: bestDay,
+        confidence: data.totalOpens > 50 ? 'high' : 'medium',
+        totalOpens: data.totalOpens
+    };
+}
+
+// Email open tracking pixel endpoint
+app.get('/api/track/open/:trackingId', async (req, res) => {
+    const { trackingId } = req.params;
+
+    try {
+        // Decode tracking ID (format: merchantId_customerId_timestamp)
+        const parts = Buffer.from(trackingId, 'base64').toString().split('_');
+        const [merchantId, customerId] = parts;
+
+        await trackEmailOpen(merchantId, customerId, new Date().toISOString());
+        console.log(`📧 Email opened: ${trackingId}`);
+    } catch (error) {
+        console.error('❌ Track open error:', error);
+    }
+
+    // Return 1x1 transparent pixel
+    const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+    res.set('Content-Type', 'image/gif');
+    res.send(pixel);
+});
+
+// API to get best send times
+app.get('/api/analytics/send-times/:merchantId', async (req, res) => {
+    const bestTime = await getBestSendTime(req.params.merchantId);
+    const sendTimes = await readDB(SEND_TIMES_COLLECTION) || {};
+    const data = sendTimes[req.params.merchantId] || { byHour: [], byDay: [] };
+
+    res.json({
+        success: true,
+        bestTime,
+        distribution: {
+            byHour: data.byHour,
+            byDay: data.byDay
+        }
+    });
+});
+
+// ==========================================
+// 🆕 REVIEW REQUEST SYSTEM
+// ==========================================
+
+/**
+ * Send review request email X days after order delivered
+ */
+async function sendReviewRequest(customer, order, merchantId) {
+    if (!config.ENABLE_EMAIL || !customer.email) return false;
+
+    console.log(`⭐ Sending review request to ${customer.email}...`);
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px;">
+        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px;">
+            <div style="text-align: center; font-size: 50px;">⭐</div>
+            <h1 style="text-align: center; color: #1D1D1F;">كيف كانت تجربتك؟</h1>
+            
+            <p style="text-align: center; color: #666;">
+                مرحباً ${customer.name}! نتمنى أن تكون سعيداً بطلبك.<br>
+                رأيك يهمنا جداً!
+            </p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${order.storeUrl || '#'}?review=1" style="font-size: 40px; text-decoration: none;">⭐⭐⭐⭐⭐</a>
+            </div>
+            
+            <a href="${order.storeUrl || '#'}?review=1" style="display: block; background: #F59E0B; color: white; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px;">
+                شاركنا رأيك 📝
+            </a>
+            
+            <p style="text-align: center; color: #888; font-size: 14px; margin-top: 20px;">
+                كشكر لك، احصل على 5% خصم على طلبك القادم بعد كتابة التقييم!
+            </p>
+            
+            <div style="text-align: center; color: #888; font-size: 12px; margin-top: 30px;">
+                <p>💚 رِبح - نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: customer.email,
+                subject: `⭐ ${customer.name}، كيف كانت تجربتك؟`,
+                html: htmlContent
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Review request sent! ID: ${result.id}`);
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Review request error:', error);
+    }
+    return false;
+}
+
+// API to trigger review requests (call via cron 7 days after order)
+app.post('/api/cron/review-requests', async (req, res) => {
+    console.log('⭐ Running review request check...');
+
+    const revenueLog = await readDB('revenue_log') || [];
+    const now = new Date();
+    let sent = 0;
+
+    for (const order of revenueLog) {
+        if (!order.reviewRequestSent && order.timestamp) {
+            const orderDate = new Date(order.timestamp);
+            const daysSinceOrder = Math.floor((now - orderDate) / (1000 * 60 * 60 * 24));
+
+            // Send 7 days after order
+            if (daysSinceOrder >= 7 && daysSinceOrder < 8) {
+                // Get customer info
+                const customer = {
+                    name: order.customerName || 'عميلنا',
+                    email: order.customerEmail
+                };
+
+                if (customer.email) {
+                    await sendReviewRequest(customer, order, order.merchant);
+                    order.reviewRequestSent = true;
+                    sent++;
+                }
+            }
+        }
+    }
+
+    await writeDB('revenue_log', revenueLog);
+
+    res.json({
+        success: true,
+        message: `Review requests sent: ${sent}`
+    });
+});
+
+// ==========================================
+// 🆕 CUSTOMER SEGMENTATION
+// ==========================================
+
+/**
+ * Segment customers for targeted offers
+ */
+async function segmentCustomers(merchantId) {
+    const revenueLog = await readDB('revenue_log') || [];
+    const merchantOrders = revenueLog.filter(o => o.merchant === merchantId);
+
+    // Group by customer
+    const customers = {};
+    merchantOrders.forEach(order => {
+        const email = order.customerEmail;
+        if (!email) return;
+
+        if (!customers[email]) {
+            customers[email] = {
+                email,
+                orders: 0,
+                totalSpent: 0,
+                firstOrder: order.timestamp,
+                lastOrder: order.timestamp,
+                avgOrderValue: 0
+            };
+        }
+
+        customers[email].orders++;
+        customers[email].totalSpent += order.orderValue || 0;
+        if (order.timestamp > customers[email].lastOrder) {
+            customers[email].lastOrder = order.timestamp;
+        }
+    });
+
+    // Calculate segments
+    const segments = {
+        VIP: [],           // High spenders (top 10%)
+        LOYAL: [],         // 3+ orders
+        ACTIVE: [],        // Ordered in last 30 days
+        AT_RISK: [],       // No order in 30-60 days
+        CHURNED: [],       // No order in 60+ days
+        NEW: []            // 1 order only
+    };
+
+    const now = new Date();
+    const sortedBySpend = Object.values(customers).sort((a, b) => b.totalSpent - a.totalSpent);
+    const vipThreshold = sortedBySpend[Math.floor(sortedBySpend.length * 0.1)]?.totalSpent || 10000;
+
+    for (const customer of Object.values(customers)) {
+        customer.avgOrderValue = customer.orders > 0 ? customer.totalSpent / customer.orders : 0;
+        const daysSinceOrder = Math.floor((now - new Date(customer.lastOrder)) / (1000 * 60 * 60 * 24));
+
+        if (customer.totalSpent >= vipThreshold) {
+            segments.VIP.push(customer);
+        } else if (customer.orders >= 3) {
+            segments.LOYAL.push(customer);
+        } else if (daysSinceOrder <= 30) {
+            segments.ACTIVE.push(customer);
+        } else if (daysSinceOrder <= 60) {
+            segments.AT_RISK.push(customer);
+        } else if (daysSinceOrder > 60) {
+            segments.CHURNED.push(customer);
+        } else if (customer.orders === 1) {
+            segments.NEW.push(customer);
+        }
+    }
+
+    return segments;
+}
+
+// API to get customer segments
+app.get('/api/segments/:merchantId', async (req, res) => {
+    const segments = await segmentCustomers(req.params.merchantId);
+
+    res.json({
+        success: true,
+        segments: {
+            VIP: { count: segments.VIP.length, customers: segments.VIP.slice(0, 10) },
+            LOYAL: { count: segments.LOYAL.length },
+            ACTIVE: { count: segments.ACTIVE.length },
+            AT_RISK: { count: segments.AT_RISK.length },
+            CHURNED: { count: segments.CHURNED.length },
+            NEW: { count: segments.NEW.length }
+        }
+    });
+});
+
+// ==========================================
+// 🆕 CAMPAIGN BROADCAST
+// ==========================================
+
+/**
+ * Send campaign to a customer segment
+ */
+app.post('/api/campaigns/broadcast', async (req, res) => {
+    const { merchantId, segment, subject, message, discount } = req.body;
+
+    if (!merchantId || !segment) {
+        return res.status(400).json({ success: false, error: 'merchantId and segment required' });
+    }
+
+    const segments = await segmentCustomers(merchantId);
+    const targetCustomers = segments[segment] || [];
+
+    if (targetCustomers.length === 0) {
+        return res.json({ success: true, sent: 0, message: 'No customers in segment' });
+    }
+
+    let sent = 0;
+    for (const customer of targetCustomers) {
+        if (customer.email && config.ENABLE_EMAIL) {
+            // Simple campaign email
+            try {
+                await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        from: config.EMAIL_FROM,
+                        to: customer.email,
+                        subject: subject || '🎁 عرض خاص لك!',
+                        html: `
+                            <div dir="rtl" style="font-family: Arial; max-width: 500px; margin: 0 auto; padding: 20px;">
+                                <p>${message || 'لدينا عرض خاص لك!'}</p>
+                                ${discount ? `<p><strong>خصم ${discount}%</strong></p>` : ''}
+                            </div>
+                        `
+                    })
+                });
+                sent++;
+            } catch (error) {
+                console.error('Campaign email error:', error);
+            }
+        }
+    }
+
+    res.json({
+        success: true,
+        sent,
+        total: targetCustomers.length
+    });
+});
+
+// ENV RELOAD Tue Jan 20 20:30:00 +03 2026
