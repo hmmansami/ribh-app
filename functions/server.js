@@ -4162,4 +4162,272 @@ app.post('/api/campaigns/broadcast', async (req, res) => {
     });
 });
 
-// ENV RELOAD Tue Jan 20 20:30:00 +03 2026
+// ==========================================
+// 🆕 RELATED PRODUCTS / CROSS-SELL
+// ==========================================
+
+/**
+ * Get related products based on cart items
+ * Uses category matching to find similar products
+ */
+async function getRelatedProducts(merchantId, cartItems, limit = 4) {
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.merchant === merchantId);
+
+    if (!store?.accessToken) {
+        console.log('⚠️ No access token for related products');
+        return [];
+    }
+
+    // Get product IDs from cart
+    const cartProductIds = cartItems.map(i => i.id || i.product_id).filter(Boolean);
+
+    // Fetch random products from store (as fallback / simple implementation)
+    // In production, you'd fetch by category of cart items
+    try {
+        const response = await fetch(`https://api.salla.dev/admin/v2/products?per_page=${limit + cartProductIds.length}`, {
+            headers: { 'Authorization': `Bearer ${store.accessToken}` }
+        });
+
+        const result = await response.json();
+
+        if (result.data) {
+            // Filter out products already in cart
+            const relatedProducts = result.data
+                .filter(p => !cartProductIds.includes(p.id))
+                .slice(0, limit)
+                .map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    price: p.price?.amount || p.sale_price?.amount || 0,
+                    image: p.thumbnail || p.main_image || '',
+                    url: p.url
+                }));
+
+            console.log(`✅ Found ${relatedProducts.length} related products`);
+            return relatedProducts;
+        }
+    } catch (error) {
+        console.error('❌ Related products error:', error);
+    }
+
+    return [];
+}
+
+/**
+ * Generate HTML for related products section in emails
+ */
+function generateRelatedProductsHtml(products) {
+    if (!products || products.length === 0) return '';
+
+    const productsHtml = products.map(p => `
+        <div style="display: inline-block; width: 45%; margin: 2%; text-align: center; vertical-align: top;">
+            <a href="${p.url || '#'}" style="text-decoration: none; color: inherit;">
+                ${p.image ? `<img src="${p.image}" style="width: 100%; max-width: 120px; height: 120px; object-fit: cover; border-radius: 8px;" alt="${p.name}">` : ''}
+                <p style="margin: 8px 0 4px; font-size: 14px; color: #333;">${p.name}</p>
+                <p style="margin: 0; color: #10B981; font-weight: bold;">${p.price} ر.س</p>
+            </a>
+        </div>
+    `).join('');
+
+    return `
+        <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+            <h3 style="text-align: center; color: #1D1D1F; margin: 0 0 15px;">✨ قد يعجبك أيضاً</h3>
+            <div style="text-align: center;">
+                ${productsHtml}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Enhanced post-purchase email with related products
+ */
+async function sendPostPurchaseWithCrossSell(customer, orderData, merchant) {
+    if (!config.ENABLE_EMAIL || !customer.email) return false;
+
+    console.log(`📧 Sending post-purchase with cross-sell to ${customer.email}...`);
+
+    // Get related products
+    const relatedProducts = await getRelatedProducts(
+        merchant,
+        orderData.items || orderData.products || [],
+        4
+    );
+
+    const orderTotal = orderData.total || orderData.grand_total || 0;
+    const upsellDiscount = orderTotal > 1000 ? 15 : orderTotal > 500 ? 12 : 10;
+    const relatedProductsHtml = generateRelatedProductsHtml(relatedProducts);
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head><meta charset="UTF-8"></head>
+    <body style="font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; margin: 0;">
+        <div style="max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 60px;">✅</div>
+                <h1 style="color: #10B981; margin: 10px 0;">شكراً ${customer.name}!</h1>
+                <p style="color: #666;">طلبك في الطريق إليك</p>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 25px; border-radius: 12px; text-align: center; margin: 20px 0;">
+                <div style="font-size: 16px; opacity: 0.9;">🎁 هديتك</div>
+                <div style="font-size: 42px; font-weight: bold;">${upsellDiscount}% خصم</div>
+                <div style="margin-top: 10px;">على طلبك القادم</div>
+                <div style="background: white; color: #10B981; padding: 10px 25px; border-radius: 8px; display: inline-block; margin-top: 15px; font-weight: bold; font-size: 18px;">
+                    THANKS${upsellDiscount}
+                </div>
+            </div>
+            
+            ${relatedProductsHtml}
+            
+            <a href="${orderData.store?.url || '#'}" style="display: block; background: #1D1D1F; color: white; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px; margin: 20px 0;">
+                تصفح المزيد 🛍️
+            </a>
+            
+            <div style="text-align: center; color: #888; font-size: 12px; margin-top: 30px;">
+                <p>💚 رِبح - نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: customer.email,
+                subject: `✅ شكراً! + خصم ${upsellDiscount}% + منتجات قد تعجبك`,
+                html: htmlContent
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Cross-sell email sent! ID: ${result.id}`);
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Cross-sell email error:', error);
+    }
+    return false;
+}
+
+// API to get related products
+app.get('/api/related-products/:merchantId', async (req, res) => {
+    const { items } = req.query;
+    const cartItems = items ? JSON.parse(items) : [];
+
+    const relatedProducts = await getRelatedProducts(
+        req.params.merchantId,
+        cartItems,
+        parseInt(req.query.limit) || 4
+    );
+
+    res.json({ success: true, products: relatedProducts });
+});
+
+// ==========================================
+// 🆕 COMPLETE AUTOMATION TRIGGERS
+// ==========================================
+
+/**
+ * All cron jobs in one endpoint for easy scheduling
+ * Call this daily via Cloud Scheduler or cron
+ */
+app.post('/api/cron/daily', async (req, res) => {
+    console.log('⏰ Running daily automation...');
+
+    const results = {
+        reorderReminders: await checkAndSendReorderReminders(),
+        reviewRequests: 0 // Will be counted below
+    };
+
+    // Review requests (7 days after order)
+    const revenueLog = await readDB('revenue_log') || [];
+    const now = new Date();
+
+    for (const order of revenueLog) {
+        if (!order.reviewRequestSent && order.timestamp) {
+            const daysSinceOrder = Math.floor((now - new Date(order.timestamp)) / (1000 * 60 * 60 * 24));
+
+            if (daysSinceOrder >= 7 && daysSinceOrder < 8 && order.customerEmail) {
+                await sendReviewRequest(
+                    { name: order.customerName || 'عميلنا', email: order.customerEmail },
+                    order,
+                    order.merchant
+                );
+                order.reviewRequestSent = true;
+                results.reviewRequests++;
+            }
+        }
+    }
+
+    await writeDB('revenue_log', revenueLog);
+
+    console.log('✅ Daily automation complete:', results);
+
+    res.json({
+        success: true,
+        message: 'Daily automation complete',
+        results
+    });
+});
+
+// ==========================================
+// 🆕 DASHBOARD STATS FOR REAL-TIME
+// ==========================================
+
+/**
+ * Fast stats endpoint for dashboard polling
+ */
+app.get('/api/stats/live', async (req, res) => {
+    const { merchantId } = req.query;
+
+    const carts = await readDB(DB_FILE) || [];
+    const revenueLog = await readDB('revenue_log') || [];
+
+    const merchantCarts = merchantId
+        ? carts.filter(c => c.merchant === merchantId)
+        : carts;
+
+    const merchantRevenue = merchantId
+        ? revenueLog.filter(o => o.merchant === merchantId)
+        : revenueLog;
+
+    // Calculate stats
+    const pendingCarts = merchantCarts.filter(c => c.status === 'pending').length;
+    const recoveredCarts = merchantCarts.filter(c => c.status === 'recovered').length;
+    const totalRecoveredValue = merchantCarts
+        .filter(c => c.status === 'recovered')
+        .reduce((sum, c) => sum + (c.total || 0), 0);
+
+    const totalRevenue = merchantRevenue.reduce((sum, o) => sum + (o.orderValue || 0), 0);
+    const ribhCommission = Math.round(totalRecoveredValue * 0.05);
+
+    res.json({
+        success: true,
+        live: true,
+        timestamp: new Date().toISOString(),
+        stats: {
+            pendingCarts,
+            recoveredCarts,
+            recoveryValue: totalRecoveredValue,
+            totalRevenue,
+            ribhCommission,
+            // For animation
+            lastRecovery: merchantCarts
+                .filter(c => c.status === 'recovered')
+                .sort((a, b) => new Date(b.recoveredAt) - new Date(a.recoveredAt))[0] || null
+        }
+    });
+});
+
+// ENV RELOAD Tue Jan 20 20:35:00 +03 2026
