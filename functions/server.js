@@ -1106,29 +1106,176 @@ async function handleAbandonedCart(data, merchant) {
     scheduleReminder(cart);
 }
 
-// Handle order created (cart recovered!)
-function handleOrderCreated(data, merchant) {
+// Handle order created (cart recovered!) + POST-PURCHASE UPSELL
+async function handleOrderCreated(data, merchant) {
     console.log('🎉 Order created!', data);
 
-    const carts = readDB(DB_FILE);
+    const carts = await readDB(DB_FILE);
 
     // Mark cart as recovered if matches
     const cartIndex = carts.findIndex(c =>
-        c.customer?.phone === data.customer?.mobile &&
-        c.status === 'sent'
+        (c.customer?.phone === data.customer?.mobile || c.customer?.email === data.customer?.email) &&
+        (c.status === 'sent' || c.status === 'pending')
     );
 
+    let recoveredCart = null;
     if (cartIndex !== -1) {
         carts[cartIndex].status = 'recovered';
         carts[cartIndex].recoveredAt = new Date().toISOString();
         carts[cartIndex].orderId = data.id;
-        writeDB(DB_FILE, carts);
-        console.log('✅ Cart marked as recovered!');
+        carts[cartIndex].orderValue = data.total || data.grand_total || 0;
+        recoveredCart = carts[cartIndex];
+        await writeDB(DB_FILE, carts);
+        console.log(`✅ Cart recovered! Value: ${recoveredCart.orderValue} SAR`);
+    }
+
+    // 🆕 LOG REVENUE for tracking
+    await logRevenue(merchant, {
+        orderId: data.id,
+        orderValue: data.total || data.grand_total || 0,
+        wasRecovered: !!recoveredCart,
+        cartId: recoveredCart?.id || null,
+        customerType: recoveredCart?.customerType || 'DIRECT',
+        offerUsed: recoveredCart?.smartOffer?.type || 'NONE'
+    });
+
+    // 🆕 SEND POST-PURCHASE UPSELL EMAIL (after 2 hours)
+    const customer = {
+        name: data.customer?.name || data.customer?.first_name || 'عميلنا',
+        email: data.customer?.email,
+        phone: data.customer?.mobile
+    };
+
+    if (customer.email) {
+        console.log('⏰ Scheduling post-purchase upsell email for 2 hours later...');
+
+        // Schedule upsell email
+        setTimeout(async () => {
+            await sendPostPurchaseUpsell(customer, data, merchant);
+        }, 2 * 60 * 60 * 1000); // 2 hours (use 30000 for testing = 30s)
     }
 }
 
-// Handle new customer created - Send welcome offer
-function handleCustomerCreated(data, merchant) {
+// 🆕 POST-PURCHASE UPSELL EMAIL
+async function sendPostPurchaseUpsell(customer, orderData, merchant) {
+    if (!config.ENABLE_EMAIL || !customer.email) return false;
+
+    console.log(`📧 Sending post-purchase upsell to ${customer.email}...`);
+
+    const orderTotal = orderData.total || orderData.grand_total || 0;
+    const storeName = orderData.store?.name || merchant;
+
+    // Dynamic upsell based on order value
+    let upsellMessage = '';
+    let upsellDiscount = 10;
+
+    if (orderTotal > 1000) {
+        upsellMessage = 'عملاء VIP مثلك يحصلون على عروض حصرية!';
+        upsellDiscount = 15;
+    } else if (orderTotal > 500) {
+        upsellMessage = 'أنت على بعد خطوة من الحصول على شحن مجاني دائم!';
+        upsellDiscount = 12;
+    } else {
+        upsellMessage = 'شكراً لطلبك! استمتع بخصم على طلبك القادم';
+        upsellDiscount = 10;
+    }
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; margin: 0; }
+            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .header { text-align: center; margin-bottom: 30px; }
+            .check { font-size: 60px; }
+            .title { color: #10B981; font-size: 24px; margin: 10px 0; }
+            .message { color: #666; font-size: 16px; line-height: 1.6; }
+            .upsell-box { background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; }
+            .upsell-title { font-size: 18px; margin-bottom: 10px; }
+            .upsell-discount { font-size: 42px; font-weight: bold; }
+            .upsell-code { background: white; color: #10B981; padding: 10px 25px; border-radius: 8px; display: inline-block; margin-top: 15px; font-weight: bold; font-size: 18px; }
+            .btn { display: block; background: #1D1D1F; color: white !important; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px; margin: 20px 0; }
+            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="check">✅</div>
+                <div class="title">تم استلام طلبك بنجاح!</div>
+            </div>
+            
+            <p class="message">
+                شكراً لك ${customer.name}! طلبك من ${storeName} في الطريق إليك.
+            </p>
+            
+            <div class="upsell-box">
+                <div class="upsell-title">${upsellMessage}</div>
+                <div class="upsell-discount">${upsellDiscount}% خصم</div>
+                <div>على طلبك القادم</div>
+                <div class="upsell-code">THANKS${upsellDiscount}</div>
+            </div>
+            
+            <p class="message" style="text-align: center;">
+                هذا الكود صالح لمدة 7 أيام فقط ⏰
+            </p>
+            
+            <a href="${orderData.store?.url || '#'}" class="btn">تسوق الآن 🛍️</a>
+            
+            <div class="footer">
+                <p>رِبح 💚 نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: customer.email,
+                subject: `✅ شكراً على طلبك! + هدية خصم ${upsellDiscount}%`,
+                html: htmlContent
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Post-purchase upsell sent! ID: ${result.id}`);
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Upsell email error:', error);
+    }
+    return false;
+}
+
+// 🆕 LOG REVENUE for analytics
+async function logRevenue(merchant, data) {
+    try {
+        const revenueLog = await readDB('revenue_log') || [];
+        revenueLog.push({
+            ...data,
+            merchant,
+            timestamp: new Date().toISOString()
+        });
+        await writeDB('revenue_log', revenueLog);
+        console.log(`💰 Revenue logged: ${data.orderValue} SAR (recovered: ${data.wasRecovered})`);
+    } catch (error) {
+        console.error('❌ Revenue log error:', error);
+    }
+}
+
+// Handle new customer created - Send WELCOME OFFER (Attraction)
+async function handleCustomerCreated(data, merchant) {
     console.log('👋 New customer created!', data?.email || data?.mobile);
 
     const email = data?.email;
@@ -1140,19 +1287,111 @@ function handleCustomerCreated(data, merchant) {
         return;
     }
 
-    // Send welcome offer via lifecycle engine
-    if (lifecycleEngine) {
-        const stores = readDB(STORES_FILE);
-        const store = stores.find(s => s.merchant === merchant) || { merchant };
+    // 🆕 SEND WELCOME EMAIL DIRECTLY (ATTRACTION OFFER)
+    if (email && config.ENABLE_EMAIL) {
+        await sendWelcomeEmail({ name, email, phone }, merchant);
+    }
 
-        lifecycleEngine.handleNewCustomer(store, {
-            email: email,
-            name: name,
-            mobile: phone
+    // 🆕 SEND WELCOME SMS if enabled
+    if (phone && config.ENABLE_SMS) {
+        await sendSMS(phone, `مرحباً ${name}! 🎉 خصم 15% على طلبك الأول - كود WELCOME15`);
+    }
+}
+
+// 🆕 WELCOME EMAIL (Attraction Offer - High Value for New Customers)
+async function sendWelcomeEmail(customer, merchant) {
+    console.log(`📧 Sending welcome email to ${customer.email}...`);
+
+    const welcomeDiscount = 15; // Give more to new customers!
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: -apple-system, Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; margin: 0; min-height: 100vh; }
+            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+            .header { text-align: center; margin-bottom: 30px; }
+            .wave { font-size: 60px; animation: wave 1s ease-in-out infinite; }
+            @keyframes wave { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } }
+            .title { color: #1D1D1F; font-size: 28px; margin: 15px 0; font-weight: bold; }
+            .subtitle { color: #666; font-size: 16px; line-height: 1.6; }
+            .offer-box { background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 30px; border-radius: 16px; text-align: center; margin: 30px 0; }
+            .offer-title { font-size: 18px; opacity: 0.9; margin-bottom: 10px; }
+            .offer-value { font-size: 52px; font-weight: bold; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); }
+            .offer-code { background: white; color: #10B981; padding: 12px 30px; border-radius: 10px; display: inline-block; margin-top: 15px; font-weight: bold; font-size: 20px; letter-spacing: 2px; }
+            .benefits { background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0; }
+            .benefit { display: flex; align-items: center; margin: 10px 0; }
+            .benefit-icon { font-size: 24px; margin-left: 10px; }
+            .btn { display: block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white !important; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px; font-weight: bold; margin: 25px 0; box-shadow: 0 4px 15px rgba(102,126,234,0.4); }
+            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="wave">👋</div>
+                <div class="title">أهلاً بك ${customer.name}!</div>
+                <div class="subtitle">سعداء بانضمامك لعائلتنا 💚</div>
+            </div>
+            
+            <div class="offer-box">
+                <div class="offer-title">🎁 هديتك الترحيبية</div>
+                <div class="offer-value">${welcomeDiscount}%</div>
+                <div>خصم على طلبك الأول</div>
+                <div class="offer-code">WELCOME15</div>
+            </div>
+            
+            <div class="benefits">
+                <div class="benefit">
+                    <span class="benefit-icon">🚚</span>
+                    <span>شحن سريع لجميع المناطق</span>
+                </div>
+                <div class="benefit">
+                    <span class="benefit-icon">💳</span>
+                    <span>إمكانية التقسيط بدون فوائد</span>
+                </div>
+                <div class="benefit">
+                    <span class="benefit-icon">🔄</span>
+                    <span>استبدال واسترجاع سهل</span>
+                </div>
+            </div>
+            
+            <a href="#" class="btn">تسوق الآن واستخدم الخصم 🛍️</a>
+            
+            <div class="footer">
+                <p>💚 رِبح - نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: customer.email,
+                subject: `أهلاً ${customer.name}! 🎁 هديتك الترحيبية 15% خصم`,
+                html: htmlContent
+            })
         });
 
-        console.log(`📧 Welcome offer triggered for ${email || phone}`);
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Welcome email sent! ID: ${result.id}`);
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Welcome email error:', error);
     }
+    return false;
 }
 
 // Handle app installed
@@ -2834,4 +3073,222 @@ if (require.main === module) {
 }
 
 module.exports = { app };
-// ENV RELOAD Tue Jan 13 23:44:56 +03 2026
+
+// ==========================================
+// 🆕 SMS WRAPPER FUNCTION
+// ==========================================
+async function sendSMS(phoneNumber, message) {
+    if (!config.ENABLE_SMS) {
+        console.log('📱 SMS disabled, would send:', message);
+        return false;
+    }
+
+    // Normalize phone number for Saudi Arabia
+    let phone = phoneNumber.replace(/\D/g, '');
+    if (phone.startsWith('0')) phone = '966' + phone.substring(1);
+    if (!phone.startsWith('966') && !phone.startsWith('+')) phone = '966' + phone;
+    if (!phone.startsWith('+')) phone = '+' + phone;
+
+    console.log(`📱 Sending SMS to ${phone}...`);
+
+    // Use AWS SNS (cheapest) or Twilio
+    if (config.AWS_ACCESS_KEY && config.SMS_PROVIDER === 'aws') {
+        return await sendSMSviaAWS(phone, message);
+    } else if (config.TWILIO_ACCOUNT_SID) {
+        // Twilio SMS
+        try {
+            const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${config.TWILIO_ACCOUNT_SID}/Messages.json`;
+            const response = await fetch(twilioUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + Buffer.from(`${config.TWILIO_ACCOUNT_SID}:${config.TWILIO_AUTH_TOKEN}`).toString('base64'),
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    To: phone,
+                    From: config.TWILIO_SMS_NUMBER,
+                    Body: message
+                })
+            });
+            const result = await response.json();
+            if (result.sid) {
+                console.log(`✅ SMS sent via Twilio! SID: ${result.sid}`);
+                return true;
+            }
+        } catch (error) {
+            console.error('❌ Twilio SMS error:', error);
+        }
+    }
+    return false;
+}
+
+// ==========================================
+// 🆕 REORDER REMINDER SYSTEM (Continuity)
+// ==========================================
+
+// API endpoint to trigger reorder check (call via cron or Cloud Scheduler)
+app.post('/api/cron/reorder-reminders', async (req, res) => {
+    console.log('⏰ Running reorder reminder check...');
+
+    const results = await checkAndSendReorderReminders();
+
+    res.json({
+        success: true,
+        message: 'Reorder reminder check complete',
+        results
+    });
+});
+
+async function checkAndSendReorderReminders() {
+    const revenueLog = await readDB('revenue_log') || [];
+    const now = new Date();
+    const results = { checked: 0, reminders_sent: 0 };
+
+    // Group orders by customer email
+    const customerOrders = {};
+    revenueLog.forEach(order => {
+        if (!order.customerEmail) return;
+        if (!customerOrders[order.customerEmail]) {
+            customerOrders[order.customerEmail] = [];
+        }
+        customerOrders[order.customerEmail].push(order);
+    });
+
+    // Check each customer
+    for (const [email, orders] of Object.entries(customerOrders)) {
+        results.checked++;
+
+        // Get last order
+        const lastOrder = orders.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+        const daysSinceOrder = Math.floor((now - new Date(lastOrder.timestamp)) / (1000 * 60 * 60 * 24));
+
+        // If 14+ days since last order, send reorder reminder
+        if (daysSinceOrder >= 14 && daysSinceOrder < 15) { // Only on day 14
+            console.log(`📧 Customer ${email} hasn't ordered in ${daysSinceOrder} days, sending reminder...`);
+            await sendReorderReminder(email, lastOrder);
+            results.reminders_sent++;
+        }
+    }
+
+    console.log(`✅ Reorder check complete: ${results.reminders_sent} reminders sent`);
+    return results;
+}
+
+async function sendReorderReminder(email, lastOrder) {
+    if (!config.ENABLE_EMAIL) return false;
+
+    const htmlContent = `
+    <!DOCTYPE html>
+    <html dir="rtl" lang="ar">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body { font-family: -apple-system, Arial, sans-serif; background: #f5f5f5; padding: 20px; margin: 0; }
+            .container { max-width: 500px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+            .header { text-align: center; margin-bottom: 20px; }
+            .wave { font-size: 50px; }
+            .title { color: #1D1D1F; font-size: 24px; margin: 15px 0; }
+            .offer-box { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; padding: 25px; border-radius: 12px; text-align: center; margin: 25px 0; }
+            .offer-value { font-size: 38px; font-weight: bold; }
+            .offer-code { background: white; color: #D97706; padding: 10px 25px; border-radius: 8px; display: inline-block; margin-top: 10px; font-weight: bold; }
+            .btn { display: block; background: #10B981; color: white !important; padding: 18px; text-decoration: none; border-radius: 12px; text-align: center; font-size: 18px; margin: 20px 0; }
+            .footer { text-align: center; color: #888; font-size: 12px; margin-top: 30px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <div class="wave">👋</div>
+                <div class="title">اشتقنالك!</div>
+            </div>
+            
+            <p style="text-align: center; color: #666;">
+                مرت فترة من آخر زيارة لك. جهزنا لك عرض خاص للترحيب بك من جديد!
+            </p>
+            
+            <div class="offer-box">
+                <div>🎁 عرض العودة</div>
+                <div class="offer-value">20% خصم</div>
+                <div class="offer-code">MISSYOU20</div>
+            </div>
+            
+            <a href="${lastOrder.storeUrl || '#'}" class="btn">تسوق الآن 🛍️</a>
+            
+            <div class="footer">
+                <p>💚 رِبح - نساعد المتاجر على النمو</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: config.EMAIL_FROM,
+                to: email,
+                subject: '👋 اشتقنالك! خصم 20% ينتظرك',
+                html: htmlContent
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Reorder reminder sent to ${email}! ID: ${result.id}`);
+            return true;
+        }
+    } catch (error) {
+        console.error('❌ Reorder reminder error:', error);
+    }
+    return false;
+}
+
+// ==========================================
+// 🆕 ANALYTICS API
+// ==========================================
+
+app.get('/api/analytics/revenue', async (req, res) => {
+    try {
+        const revenueLog = await readDB('revenue_log') || [];
+
+        // Calculate totals
+        const totalOrders = revenueLog.length;
+        const totalRevenue = revenueLog.reduce((sum, o) => sum + (o.orderValue || 0), 0);
+        const recoveredOrders = revenueLog.filter(o => o.wasRecovered);
+        const recoveredRevenue = recoveredOrders.reduce((sum, o) => sum + (o.orderValue || 0), 0);
+        const ribhRevenue = Math.round(recoveredRevenue * 0.05); // 5% commission
+
+        res.json({
+            success: true,
+            analytics: {
+                totalOrders,
+                totalRevenue,
+                recoveredOrders: recoveredOrders.length,
+                recoveredRevenue,
+                recoveryRate: totalOrders > 0 ? Math.round((recoveredOrders.length / totalOrders) * 100) : 0,
+                ribhRevenue,
+                byOfferType: groupBy(recoveredOrders, 'offerUsed'),
+                byCustomerType: groupBy(recoveredOrders, 'customerType')
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+function groupBy(array, key) {
+    return array.reduce((result, item) => {
+        const groupKey = item[key] || 'unknown';
+        if (!result[groupKey]) result[groupKey] = { count: 0, revenue: 0 };
+        result[groupKey].count++;
+        result[groupKey].revenue += item.orderValue || 0;
+        return result;
+    }, {});
+}
+
+// ENV RELOAD Tue Jan 20 20:10:00 +03 2026
