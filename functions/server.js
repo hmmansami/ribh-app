@@ -2906,6 +2906,84 @@ app.get('/api/stores', async (req, res) => {
 });
 
 // ==========================================
+// ACTIVITY FEED ENDPOINT
+// ==========================================
+
+// Get recent activity for dashboard
+app.get('/api/ribh/activity', async (req, res) => {
+    try {
+        const cookies = parseCookies(req);
+        const token = req.query.token || cookies.ribhToken;
+
+        // Get recent carts and logs
+        const carts = await readDB(DB_FILE);
+        const logs = await readDB(LOGS_FILE);
+
+        // Build activity feed from carts and logs
+        const activities = [];
+
+        // Recent cart activities (last 20)
+        const recentCarts = carts
+            .filter(c => c.createdAt)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 20);
+
+        recentCarts.forEach(cart => {
+            let type = 'cart';
+            let message = 'سلة متروكة جديدة';
+
+            if (cart.status === 'recovered') {
+                type = 'recovered';
+                message = 'تم استرداد سلة بنجاح! 💰';
+            } else if (cart.status === 'sent') {
+                type = 'sent';
+                message = 'تم إرسال رسالة استرداد 📧';
+            } else {
+                type = 'cart';
+                message = 'سلة متروكة جديدة 🛒';
+            }
+
+            activities.push({
+                type,
+                message,
+                amount: cart.total || 0,
+                time: formatTimeAgo(cart.createdAt),
+                timestamp: cart.createdAt
+            });
+        });
+
+        // Sort by timestamp descending
+        activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+        res.json({
+            success: true,
+            activities: activities.slice(0, 10),
+            total: activities.length
+        });
+
+    } catch (error) {
+        console.error('Activity error:', error);
+        res.json({ success: true, activities: [], total: 0 });
+    }
+});
+
+// Helper: Format time ago in Arabic
+function formatTimeAgo(dateStr) {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'الآن';
+    if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
+    if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+    if (diffDays < 7) return `منذ ${diffDays} يوم`;
+    return date.toLocaleDateString('ar-SA');
+}
+
+// ==========================================
 // REFERRAL SYSTEM ENDPOINTS
 // ==========================================
 
