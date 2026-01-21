@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | Message Preview</title>
+    <meta name="description" content="شاهد الرسائل قبل إرسالها لعملائك">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --bg-secondary: #0a0a0a;
+            --card: rgba(18, 18, 18, 0.95);
+            --card-hover: rgba(28, 28, 28, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-dim: #52525B;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.5);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --whatsapp: #25D366;
+            --email: #EA4335;
+            --sms: #3B82F6;
+        }
+
+        html[dir="ltr"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        html[dir="rtl"] {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 600px 600px at 10% 20%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 90% 80%, rgba(99, 102, 241, 0.06), transparent 50%);
+            animation: bgFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, 20px);
+            }
+        }
+
+        /* Content */
+        .content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--card-hover);
+            border-color: var(--primary);
+        }
+
+        .header-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-title p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Trust Banner */
+        .trust-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 20px 28px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .trust-icon {
+            font-size: 32px;
+        }
+
+        .trust-content h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .trust-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Channel Tabs */
+        .channel-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .channel-tab {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: var(--card);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .channel-tab:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .channel-tab.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .channel-tab .icon {
+            font-size: 20px;
+        }
+
+        .channel-tab.whatsapp.active {
+            border-color: var(--whatsapp);
+            color: var(--whatsapp);
+            background: rgba(37, 211, 102, 0.1);
+        }
+
+        .channel-tab.email.active {
+            border-color: var(--email);
+            color: var(--email);
+            background: rgba(234, 67, 53, 0.1);
+        }
+
+        .channel-tab.sms.active {
+            border-color: var(--sms);
+            color: var(--sms);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Preview Container */
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Message Editor */
+        .editor-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 32px;
+        }
+
+        .editor-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px var(--primary-glow);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Phone Preview */
+        .phone-preview {
+            position: sticky;
+            top: 40px;
+        }
+
+        .phone-frame {
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 12px;
+            border: 3px solid #333;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .phone-screen {
+            background: #0a0a0a;
+            border-radius: 32px;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        /* WhatsApp Style */
+        .whatsapp-header {
+            background: #075E54;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .whatsapp-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .whatsapp-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .whatsapp-info span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .whatsapp-body {
+            padding: 20px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect fill="url(%23dots)" width="100" height="100"/></svg>');
+            min-height: 400px;
+        }
+
+        .message-bubble {
+            background: #DCF8C6;
+            color: #111;
+            padding: 12px 16px;
+            border-radius: 16px 16px 4px 16px;
+            max-width: 85%;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            animation: bubbleIn 0.3s ease-out;
+        }
+
+        @keyframes bubbleIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message-time {
+            text-align: left;
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.5);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: flex-end;
+        }
+
+        /* Email Style */
+        .email-preview {
+            display: none;
+        }
+
+        .email-preview.active {
+            display: block;
+        }
+
+        .email-header {
+            background: #f5f5f5;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .email-from {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .email-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .email-from-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .email-from-info span {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .email-subject {
+            font-size: 16px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .email-body {
+            background: white;
+            padding: 24px;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.7;
+            min-height: 350px;
+        }
+
+        /* SMS Style */
+        .sms-preview {
+            display: none;
+        }
+
+        .sms-preview.active {
+            display: block;
+        }
+
+        .sms-header {
+            background: #007AFF;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .sms-header h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .sms-body {
+            padding: 20px;
+            background: #1a1a1a;
+            min-height: 400px;
+        }
+
+        .sms-bubble {
+            background: #007AFF;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 18px 18px 4px 18px;
+            max-width: 80%;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-left: auto;
+        }
+
+        /* Preview Label */
+        .preview-label {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* Approval Section */
+        .approval-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+        }
+
+        .approval-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .approval-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .approval-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .approval-btn.approve {
+            background: var(--gradient);
+            border: none;
+            color: white;
+        }
+
+        .approval-btn.approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        .approval-btn.edit {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .approval-btn.edit:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(16, 185, 129, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .phone-preview {
+                order: -1;
+                position: static;
+                max-width: 360px;
+                margin: 0 auto;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-effects"></div>
+
+    <div class="content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <a href="/" class="back-btn">←</a>
+                <div class="header-title">
+                    <h1 data-ar="معاينة الرسائل" data-en="Message Preview">معاينة الرسائل</h1>
+                    <p data-ar="شاهد ما سيتلقاه عملاؤك قبل الإرسال"
+                        data-en="See what your customers will receive before sending">شاهد ما سيتلقاه عملاؤك قبل الإرسال
+                    </p>
+                </div>
+            </div>
+            <div class="lang-toggle" onclick="toggleLanguage()">
+                <span>🌐</span>
+                <span id="langLabel">English</span>
+            </div>
+        </header>
+
+        <!-- Trust Banner -->
+        <div class="trust-banner">
+            <span class="trust-icon">👁️</span>
+            <div class="trust-content">
+                <h3 data-ar="تحكم كامل في رسائلك" data-en="Full Control Over Your Messages">تحكم كامل في رسائلك</h3>
+                <p data-ar="كل رسالة تُعرض عليك أولاً. لا شيء يُرسل بدون موافقتك."
+                    data-en="Every message is shown to you first. Nothing is sent without your approval.">كل رسالة تُعرض
+                    عليك أولاً. لا شيء يُرسل بدون موافقتك.</p>
+            </div>
+        </div>
+
+        <!-- Channel Tabs -->
+        <div class="channel-tabs">
+            <div class="channel-tab whatsapp active" onclick="switchChannel('whatsapp')">
+                <span class="icon">💬</span>
+                <span>WhatsApp</span>
+            </div>
+            <div class="channel-tab email" onclick="switchChannel('email')">
+                <span class="icon">📧</span>
+                <span data-ar="البريد الإلكتروني" data-en="Email">البريد الإلكتروني</span>
+            </div>
+            <div class="channel-tab sms" onclick="switchChannel('sms')">
+                <span class="icon">📱</span>
+                <span>SMS</span>
+            </div>
+        </div>
+
+        <!-- Preview Container -->
+        <div class="preview-container">
+            <!-- Editor -->
+            <div class="editor-card">
+                <h2 class="editor-title">
+                    <span>🎨</span>
+                    <span data-ar="تخصيص الرسالة" data-en="Customize Message">تخصيص الرسالة</span>
+                </h2>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" data-ar="اسم العميل" data-en="Customer Name">اسم العميل</label>
+                        <input type="text" class="form-input" id="customerName" placeholder="سارة" value="سارة">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" data-ar="قيمة السلة" data-en="Cart Value">قيمة السلة</label>
+                        <input type="number" class="form-input" id="cartValue" placeholder="850" value="850">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-ar="المنتجات في السلة" data-en="Products in Cart">المنتجات في
+                        السلة</label>
+                    <input type="text" class="form-input" id="products" placeholder="حقيبة Kate Spade، عطر Dior"
+                        value="حقيبة Kate Spade، عطر Dior">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-ar="أسلوب الرسالة" data-en="Message Style">أسلوب الرسالة</label>
+                    <select class="form-input" id="messageStyle">
+                        <option value="friendly" data-ar="ودود ومرحب" data-en="Friendly & Welcoming">ودود ومرحب</option>
+                        <option value="urgent" data-ar="عاجل مع عرض" data-en="Urgent with Offer">عاجل مع عرض</option>
+                        <option value="helpful" data-ar="مساعد وداعم" data-en="Helpful & Supportive">مساعد وداعم
+                        </option>
+                    </select>
+                </div>
+
+                <button class="generate-btn" onclick="generateMessage()" id="generateBtn">
+                    <span>🤖</span>
+                    <span data-ar="إنشاء رسالة ذكية" data-en="Generate Smart Message">إنشاء رسالة ذكية</span>
+                </button>
+
+                <!-- Approval Section -->
+                <div class="approval-section">
+                    <h3 class="approval-title">
+                        <span>✅</span>
+                        <span data-ar="هل أنت راضٍ عن الرسالة؟" data-en="Happy with this message?">هل أنت راضٍ عن
+                            الرسالة؟</span>
+                    </h3>
+                    <div class="approval-options">
+                        <button class="approval-btn approve" onclick="approveMessage()">
+                            <span>👍</span>
+                            <span data-ar="موافق، استخدم هذه" data-en="Approve, use this">موافق، استخدم هذه</span>
+                        </button>
+                        <button class="approval-btn edit" onclick="regenerateMessage()">
+                            <span>🔄</span>
+                            <span data-ar="إنشاء نسخة أخرى" data-en="Generate another">إنشاء نسخة أخرى</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phone Preview -->
+            <div class="phone-preview">
+                <div class="phone-frame">
+                    <div class="phone-screen">
+                        <!-- WhatsApp Preview -->
+                        <div id="whatsappPreview" class="whatsapp-preview active">
+                            <div class="whatsapp-header">
+                                <div class="whatsapp-avatar">🏪</div>
+                                <div class="whatsapp-info">
+                                    <h4 id="storeName">متجر الأناقة</h4>
+                                    <span data-ar="متصل الآن" data-en="Online">متصل الآن</span>
+                                </div>
+                            </div>
+                            <div class="whatsapp-body">
+                                <div class="message-bubble" id="whatsappMessage">
+                                    مرحباً سارة! 👋
+                                    <br><br>
+                                    لاحظنا أنك تركتِ حقيبة Kate Spade الرائعة وعطر Dior في سلتك 🛍️
+                                    <br><br>
+                                    عندنا عرض خاص لك: خصم 10% + شحن مجاني! 🎁
+                                    <br><br>
+                                    🛒 أكملي طلبك الآن وخلينا نوصلك كل شي!
+                                    <div class="message-time">
+                                        <span>10:42 ص</span>
+                                        <span>✓✓</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email Preview -->
+                        <div id="emailPreview" class="email-preview">
+                            <div class="email-header">
+                                <div class="email-from">
+                                    <div class="email-avatar">🏪</div>
+                                    <div class="email-from-info">
+                                        <h4>متجر الأناقة</h4>
+                                        <span>noreply@elegance-store.com</span>
+                                    </div>
+                                </div>
+                                <div class="email-subject" id="emailSubject">سلتك في انتظارك 🛒</div>
+                            </div>
+                            <div class="email-body" id="emailMessage">
+                                <p>مرحباً سارة! 👋</p>
+                                <br>
+                                <p>لاحظنا أنك تركتِ بعض المنتجات الرائعة في سلتك:</p>
+                                <br>
+                                <p><strong>• حقيبة Kate Spade</strong></p>
+                                <p><strong>• عطر Dior</strong></p>
+                                <br>
+                                <p>المجموع: <strong>850 ر.س</strong></p>
+                                <br>
+                                <p>🎁 عرض خاص: خصم 10% باستخدام كود <strong>RIBH10</strong></p>
+                                <br>
+                                <p>نحن هنا لمساعدتك في إتمام طلبك!</p>
+                            </div>
+                        </div>
+
+                        <!-- SMS Preview -->
+                        <div id="smsPreview" class="sms-preview">
+                            <div class="sms-header">
+                                <h4>متجر الأناقة</h4>
+                            </div>
+                            <div class="sms-body">
+                                <div class="sms-bubble" id="smsMessage">
+                                    مرحباً سارة! سلتك (850 ر.س) في انتظارك 🛒
+                                    خصم 10% بكود RIBH10
+                                    أكملي طلبك: link.ribh.click/abc
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-label" data-ar="هذا ما سيراه عميلك"
+                        data-en="This is what your customer will see">هذا ما سيراه عميلك</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // LANGUAGE SYSTEM
+        // ==========================================
+        let currentLang = localStorage.getItem('ribhLang') || detectLanguage();
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('ar') ? 'ar' : 'en';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ribhLang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const html = document.documentElement;
+
+            if (currentLang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.getElementById('langLabel').textContent = 'العربية';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.getElementById('langLabel').textContent = 'English';
+            }
+
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        // ==========================================
+        // CHANNEL SWITCHING
+        // ==========================================
+        let currentChannel = 'whatsapp';
+
+        function switchChannel(channel) {
+            currentChannel = channel;
+
+            // Update tabs
+            document.querySelectorAll('.channel-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.channel-tab.${channel}`).classList.add('active');
+
+            // Update previews
+            document.querySelectorAll('.whatsapp-preview, .email-preview, .sms-preview').forEach(preview => {
+                preview.classList.remove('active');
+            });
+            document.getElementById(`${channel}Preview`).classList.add('active');
+        }
+
+        // ==========================================
+        // MESSAGE GENERATION
+        // ==========================================
+        async function generateMessage() {
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span><span>' + (currentLang === 'ar' ? 'جاري الإنشاء...' : 'Generating...') + '</span>';
+
+            const customerName = document.getElementById('customerName').value || 'العميل';
+            const cartValue = document.getElementById('cartValue').value || 500;
+            const products = document.getElementById('products').value || 'منتجات متنوعة';
+            const style = document.getElementById('messageStyle').value;
+
+            try {
+                const response = await fetch('/api/ai/generate-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName,
+                        cartValue,
+                        items: products.split('،').map(p => p.trim()),
+                        channel: currentChannel,
+                        style
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.message) {
+                    updatePreview(data.message, customerName, cartValue, products);
+                } else {
+                    // Fallback to template
+                    const fallbackMessage = generateFallbackMessage(customerName, cartValue, products, style);
+                    updatePreview(fallbackMessage, customerName, cartValue, products);
+                }
+            } catch (error) {
+                console.error('Error generating message:', error);
+                const fallbackMessage = generateFallbackMessage(customerName, cartValue, products, style);
+                updatePreview(fallbackMessage, customerName, cartValue, products);
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span>🤖</span><span>' + (currentLang === 'ar' ? 'إنشاء رسالة ذكية' : 'Generate Smart Message') + '</span>';
+        }
+
+        function generateFallbackMessage(name, value, products, style) {
+            const hasOffer = value > 500;
+
+            if (currentChannel === 'whatsapp') {
+                return `مرحباً ${name}! 👋\n\nلاحظنا أنك تركت ${products} في سلتك 🛍️\n\n${hasOffer ? '🎁 عرض خاص: خصم 10% بكود RIBH10\n\n' : ''}🛒 أكملي طلبك الآن!`;
+            } else if (currentChannel === 'email') {
+                return `مرحباً ${name}!\n\nلاحظنا أنك تركت بعض المنتجات الرائعة في سلتك بقيمة ${value} ر.س.\n\n${hasOffer ? '🎁 عرض خاص: خصم 10% على طلبك باستخدام كود RIBH10\n\n' : ''}نحن هنا لمساعدتك في إتمام طلبك!`;
+            } else {
+                return `مرحباً ${name}! سلتك (${value} ر.س) في انتظارك 🛒${hasOffer ? ' خصم 10% بكود RIBH10' : ''} أكملي طلبك الآن!`;
+            }
+        }
+
+        function updatePreview(message, name, value, products) {
+            // WhatsApp
+            const whatsappBubble = document.getElementById('whatsappMessage');
+            whatsappBubble.innerHTML = message.replace(/\n/g, '<br>') + `
+                <div class="message-time">
+                    <span>${new Date().toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}</span>
+                    <span>✓✓</span>
+                </div>
+            `;
+
+            // Email
+            const emailBody = document.getElementById('emailMessage');
+            emailBody.innerHTML = message.replace(/\n/g, '<br>');
+
+            // SMS
+            const smsBubble = document.getElementById('smsMessage');
+            smsBubble.textContent = message.substring(0, 160); // SMS limit
+        }
+
+        function approveMessage() {
+            const successMsg = currentLang === 'ar'
+                ? '✅ تم حفظ الرسالة! سيتم استخدامها لاسترداد السلات المتروكة.'
+                : '✅ Message saved! It will be used for cart recovery.';
+            alert(successMsg);
+        }
+
+        function regenerateMessage() {
+            generateMessage();
+        }
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+        });
+    </script>
+</body>
+
+</html>

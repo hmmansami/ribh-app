@@ -52,7 +52,7 @@ const config = {
     SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '476e7ed1-796c-4731-b145-73a13d0019de',
     SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || 'c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe',
 
-    // Shopify
+    // Shopify - Set via: firebase functions:config:set shopify.key="xxx" shopify.secret="xxx"
     SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY || '',
     SHOPIFY_API_SECRET: process.env.SHOPIFY_API_SECRET || '',
     SHOPIFY_SCOPES: process.env.SHOPIFY_SCOPES || 'read_orders,write_orders,read_checkouts,write_checkouts,read_customers,read_products',
