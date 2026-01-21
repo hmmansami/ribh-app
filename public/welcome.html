@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 تم تفعيل رِبح!</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+    <title>🚀 RIBH Activated!</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
         * {
@@ -27,8 +28,16 @@
             --success: #22C55E;
         }
 
-        body {
+        html[dir="rtl"] {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        html[dir="ltr"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: inherit;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -73,6 +82,35 @@
             width: 100%;
             padding: 24px;
             text-align: center;
+        }
+
+        /* Language Toggle */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        html[dir="ltr"] .lang-toggle {
+            left: auto;
+            right: 20px;
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--primary);
+            color: var(--text);
         }
 
         /* Success Icon */
@@ -187,6 +225,10 @@
             transform: translateX(-4px);
         }
 
+        html[dir="ltr"] .feature:hover {
+            transform: translateX(4px);
+        }
+
         .feature-icon {
             width: 44px;
             height: 44px;
@@ -221,6 +263,10 @@
         .feature-info {
             flex: 1;
             text-align: right;
+        }
+
+        html[dir="ltr"] .feature-info {
+            text-align: left;
         }
 
         .feature-name {
@@ -343,6 +389,18 @@
             }
         }
 
+        html[dir="ltr"] @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .activity-icon {
             font-size: 16px;
         }
@@ -350,6 +408,10 @@
         .activity-text {
             flex: 1;
             text-align: right;
+        }
+
+        html[dir="ltr"] .activity-text {
+            text-align: left;
         }
 
         .activity-time {
@@ -390,49 +452,16 @@
             transform: translateX(-4px);
         }
 
+        html[dir="ltr"] .cta-button:hover .cta-arrow {
+            transform: translateX(4px);
+        }
+
         /* Footer Note */
         .footer-note {
             margin-top: 32px;
             font-size: 13px;
             color: var(--text-secondary);
             animation: fadeInUp 0.6s ease-out 0.7s both;
-        }
-
-        /* Loading Dots */
-        .loading-dots {
-            display: inline-flex;
-            gap: 4px;
-        }
-
-        .loading-dots span {
-            width: 6px;
-            height: 6px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: bounce 1.4s infinite;
-        }
-
-        .loading-dots span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .loading-dots span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes bounce {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-
-            40% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
         }
 
         /* Confetti Animation */
@@ -466,6 +495,26 @@
                 opacity: 0;
             }
         }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .title {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .live-counter {
+                font-size: 36px;
+            }
+
+            .cta-button {
+                padding: 16px 32px;
+                font-size: 16px;
+            }
+        }
     </style>
 </head>
 
@@ -473,15 +522,24 @@
     <div class="bg-gradient"></div>
     <div class="confetti" id="confetti"></div>
 
+    <!-- Language Toggle -->
+    <div class="lang-toggle" onclick="toggleLanguage()">
+        <span>🌐</span>
+        <span id="langLabel">English</span>
+    </div>
+
     <div class="container">
         <!-- Success Icon -->
         <div class="success-icon">🚀</div>
 
         <!-- Title -->
-        <h1 class="title">تم تفعيل رِبح!</h1>
+        <h1 class="title" data-ar="تم تفعيل رِبح!" data-en="RIBH Activated!">تم تفعيل رِبح!</h1>
         <p class="subtitle">
-            مرحباً بك في <span class="store-name" id="storeName">متجرك</span>!
-            <br>بدأنا باسترداد مبيعاتك المفقودة
+            <span data-ar="مرحباً بك في" data-en="Welcome to">مرحباً بك في</span>
+            <span class="store-name" id="storeName">متجرك</span>!
+            <br>
+            <span data-ar="بدأنا باسترداد مبيعاتك المفقودة" data-en="We've started recovering your lost sales">بدأنا
+                باسترداد مبيعاتك المفقودة</span>
         </p>
 
         <!-- Features Activated -->
@@ -489,48 +547,55 @@
             <div class="feature">
                 <div class="feature-icon green">🛒</div>
                 <div class="feature-info">
-                    <div class="feature-name">استرداد السلات المتروكة</div>
-                    <div class="feature-desc">تذكيرات ذكية تلقائية</div>
+                    <div class="feature-name" data-ar="استرداد السلات المتروكة" data-en="Abandoned Cart Recovery">
+                        استرداد السلات المتروكة</div>
+                    <div class="feature-desc" data-ar="تذكيرات ذكية تلقائية" data-en="Smart automatic reminders">تذكيرات
+                        ذكية تلقائية</div>
                 </div>
                 <div class="feature-status">
                     <span class="status-dot"></span>
-                    مفعّل
+                    <span data-ar="مفعّل" data-en="Active">مفعّل</span>
                 </div>
             </div>
 
             <div class="feature">
                 <div class="feature-icon blue">🤖</div>
                 <div class="feature-info">
-                    <div class="feature-name">الذكاء الاصطناعي</div>
-                    <div class="feature-desc">رسائل مخصصة لكل عميل</div>
+                    <div class="feature-name" data-ar="الذكاء الاصطناعي" data-en="AI-Powered Messages">الذكاء الاصطناعي
+                    </div>
+                    <div class="feature-desc" data-ar="رسائل مخصصة لكل عميل" data-en="Personalized for each customer">
+                        رسائل مخصصة لكل عميل</div>
                 </div>
                 <div class="feature-status">
                     <span class="status-dot"></span>
-                    مفعّل
+                    <span data-ar="مفعّل" data-en="Active">مفعّل</span>
                 </div>
             </div>
 
             <div class="feature">
                 <div class="feature-icon purple">💰</div>
                 <div class="feature-info">
-                    <div class="feature-name">العروض الذكية</div>
-                    <div class="feature-desc">خصومات وتقسيط تلقائي</div>
+                    <div class="feature-name" data-ar="العروض الذكية" data-en="Smart Offers">العروض الذكية</div>
+                    <div class="feature-desc" data-ar="خصومات وتقسيط تلقائي" data-en="Auto discounts & payment plans">
+                        خصومات وتقسيط تلقائي</div>
                 </div>
                 <div class="feature-status">
                     <span class="status-dot"></span>
-                    مفعّل
+                    <span data-ar="مفعّل" data-en="Active">مفعّل</span>
                 </div>
             </div>
 
             <div class="feature">
                 <div class="feature-icon orange">📊</div>
                 <div class="feature-info">
-                    <div class="feature-name">التحسين المستمر</div>
-                    <div class="feature-desc">نتعلم ونتحسن تلقائياً</div>
+                    <div class="feature-name" data-ar="التحسين المستمر" data-en="Continuous Optimization">التحسين
+                        المستمر</div>
+                    <div class="feature-desc" data-ar="نتعلم ونتحسن تلقائياً"
+                        data-en="Learning & improving automatically">نتعلم ونتحسن تلقائياً</div>
                 </div>
                 <div class="feature-status">
                     <span class="status-dot"></span>
-                    مفعّل
+                    <span data-ar="مفعّل" data-en="Active">مفعّل</span>
                 </div>
             </div>
         </div>
@@ -539,12 +604,13 @@
         <div class="live-section">
             <div class="live-header">
                 <span class="status-dot"></span>
-                النظام يعمل الآن
+                <span data-ar="النظام يعمل الآن" data-en="System Running Now">النظام يعمل الآن</span>
             </div>
             <div class="live-counter">
-                <span id="moneyCounter">0</span> ر.س
+                <span id="moneyCounter">0</span> <span id="currencyLabel">ر.س</span>
             </div>
-            <div class="live-sub">
+            <div class="live-sub" data-ar="تم استردادها لمتاجر مثلك اليوم"
+                data-en="Recovered for stores like yours today">
                 تم استردادها لمتاجر مثلك اليوم
             </div>
 
@@ -552,34 +618,81 @@
             <div class="activity">
                 <div class="activity-item">
                     <span class="activity-icon">🛒</span>
-                    <span class="activity-text">تم رصد سلة متروكة جديدة</span>
-                    <span class="activity-time">الآن</span>
+                    <span class="activity-text" data-ar="تم رصد سلة متروكة جديدة"
+                        data-en="New abandoned cart detected">تم رصد سلة متروكة جديدة</span>
+                    <span class="activity-time" data-ar="الآن" data-en="Now">الآن</span>
                 </div>
                 <div class="activity-item">
                     <span class="activity-icon">📧</span>
-                    <span class="activity-text">تم إرسال تذكير ذكي</span>
-                    <span class="activity-time">منذ ثواني</span>
+                    <span class="activity-text" data-ar="تم إرسال تذكير ذكي" data-en="Smart reminder sent">تم إرسال
+                        تذكير ذكي</span>
+                    <span class="activity-time" data-ar="منذ ثواني" data-en="Seconds ago">منذ ثواني</span>
                 </div>
                 <div class="activity-item">
                     <span class="activity-icon">💰</span>
-                    <span class="activity-text">عميل أكمل طلبه!</span>
-                    <span class="activity-time">الآن</span>
+                    <span class="activity-text" data-ar="عميل أكمل طلبه!" data-en="Customer completed order!">عميل أكمل
+                        طلبه!</span>
+                    <span class="activity-time" data-ar="الآن" data-en="Now">الآن</span>
                 </div>
             </div>
         </div>
 
         <!-- CTA Button -->
         <a href="/" class="cta-button" id="dashboardBtn">
-            <span class="cta-arrow">←</span>
-            الذهاب إلى لوحة التحكم
+            <span class="cta-arrow" id="ctaArrow">←</span>
+            <span data-ar="الذهاب إلى لوحة التحكم" data-en="Go to Dashboard">الذهاب إلى لوحة التحكم</span>
         </a>
 
-        <p class="footer-note">
+        <p class="footer-note" data-ar="💡 لا تحتاج فعل أي شيء • رِبح يعمل تلقائياً الآن"
+            data-en="💡 No action needed • RIBH works automatically now">
             💡 لا تحتاج فعل أي شيء • رِبح يعمل تلقائياً الآن
         </p>
     </div>
 
     <script>
+        // ==========================================
+        // LANGUAGE SYSTEM
+        // ==========================================
+        let currentLang = localStorage.getItem('ribhLang') || detectLanguage();
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('ar') ? 'ar' : 'en';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ribhLang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const html = document.documentElement;
+
+            if (currentLang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.getElementById('langLabel').textContent = 'العربية';
+                document.getElementById('currencyLabel').textContent = 'SAR';
+                document.getElementById('ctaArrow').textContent = '→';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.getElementById('langLabel').textContent = 'English';
+                document.getElementById('currencyLabel').textContent = 'ر.س';
+                document.getElementById('ctaArrow').textContent = '←';
+            }
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+
         // Get store name from URL
         const params = new URLSearchParams(window.location.search);
         const storeName = params.get('store');
@@ -594,6 +707,9 @@
             document.getElementById('dashboardBtn').href = `/?token=${token}`;
         }
 
+        // Apply language on load
+        applyLanguage();
+
         // Animate money counter
         let currentMoney = 0;
         const targetMoney = 12450 + Math.floor(Math.random() * 5000);
@@ -602,7 +718,7 @@
             const step = Math.ceil(targetMoney / 80);
             if (currentMoney < targetMoney) {
                 currentMoney = Math.min(currentMoney + step, targetMoney);
-                document.getElementById('moneyCounter').textContent = currentMoney.toLocaleString('ar-SA');
+                document.getElementById('moneyCounter').textContent = currentMoney.toLocaleString(currentLang === 'ar' ? 'ar-SA' : 'en-US');
                 setTimeout(animateCounter, 30);
             }
         }
@@ -635,21 +751,6 @@
 
         // Launch confetti on load
         createConfetti();
-
-        // Update activity with real-looking times
-        setTimeout(() => {
-            const activities = document.querySelectorAll('.activity-item');
-            let delay = 0;
-            activities.forEach((item, i) => {
-                setTimeout(() => {
-                    const timeEl = item.querySelector('.activity-time');
-                    if (i === 0) timeEl.textContent = 'الآن';
-                    else if (i === 1) timeEl.textContent = 'منذ ثواني';
-                    else timeEl.textContent = 'الآن';
-                }, delay);
-                delay += 2000;
-            });
-        }, 5000);
     </script>
 </body>
 
