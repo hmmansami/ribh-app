@@ -1415,13 +1415,80 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadStats();
+            loadStoreStatus();
 
             // Add staggered animation to activity items
             const activityItems = document.querySelectorAll('.activity-item');
             activityItems.forEach((item, index) => {
                 item.style.animation = `fadeInUp 0.4s ease-out ${0.7 + index * 0.1}s both`;
             });
+
+            // Refresh data every 30 seconds for live feel
+            setInterval(() => {
+                loadStats();
+            }, 30000);
         });
+
+        // 🚀 ONE-CLICK: Load store status to show all enabled features
+        async function loadStoreStatus() {
+            try {
+                // Get token from URL or cookie
+                const params = new URLSearchParams(window.location.search);
+                const token = params.get('token');
+
+                const res = await fetch(`/api/store/status${token ? '?token=' + token : ''}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    // Update store name in greeting if available
+                    if (data.store.merchantName) {
+                        const greeting = document.querySelector('.page-title');
+                        if (greeting) {
+                            greeting.innerHTML = `أهلاً ${data.store.merchantName.split(' ')[0]}! <span class="wave">👋</span>`;
+                        }
+                    }
+
+                    // Show system is active
+                    const subtitle = document.querySelector('.page-subtitle');
+                    if (subtitle && data.system.status === 'active') {
+                        subtitle.innerHTML = `
+                            <span class="live-dot"></span>
+                            رِبح يعمل الآن • جميع الميزات مفعّلة تلقائياً
+                        `;
+                    }
+
+                    // Update feature toggles based on real status
+                    updateFeatureToggles(data.features);
+
+                    console.log('🚀 ONE-CLICK Status loaded:', data.features);
+                }
+            } catch (e) {
+                console.log('Store status not loaded:', e.message);
+            }
+        }
+
+        // Update feature toggle states based on server data
+        function updateFeatureToggles(features) {
+            const toggles = document.querySelectorAll('.feature-card input[type="checkbox"]');
+
+            // Map toggles to features
+            const featureMap = ['cartRecovery', 'upsell', 'smartOffers', 'reactivation'];
+
+            toggles.forEach((toggle, i) => {
+                const featureKey = featureMap[i];
+                if (features[featureKey]) {
+                    toggle.checked = features[featureKey].enabled;
+
+                    // Add status indicator if pending config
+                    if (features[featureKey].status === 'pending_config') {
+                        const card = toggle.closest('.feature-card');
+                        if (card) {
+                            card.style.opacity = '0.7';
+                        }
+                    }
+                }
+            });
+        }
     </script>
 
     <!-- Feedback Button - Moved to RIGHT side to not cover footer -->

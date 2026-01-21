@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 تم تفعيل رِبح!</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --card: rgba(20, 20, 20, 0.8);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+            --success: #22C55E;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.2), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.15), transparent),
+                radial-gradient(ellipse 50% 30% at 0% 100%, rgba(16, 185, 129, 0.1), transparent);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            width: 100%;
+            padding: 24px;
+            text-align: center;
+        }
+
+        /* Success Icon */
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 32px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 56px;
+            animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow:
+                0 0 60px var(--primary-glow),
+                0 0 100px rgba(16, 185, 129, 0.2);
+        }
+
+        @keyframes scaleIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon::after {
+            content: '';
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: ringPulse 2s ease-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        /* Title */
+        .title {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+
+        .subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+
+        .store-name {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features Grid */
+        .features {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
+        }
+
+        .feature {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateX(-4px);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feature-icon.green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .feature-icon.blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .feature-icon.purple {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(99, 102, 241, 0.05));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .feature-icon.orange {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .feature-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .feature-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .feature-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* Live Counter */
+        .live-section {
+            background: var(--card);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 32px;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
+        }
+
+        .live-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--success);
+        }
+
+        .live-counter {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .live-counter span {
+            color: var(--primary);
+        }
+
+        .live-sub {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Simulated Activity */
+        .activity {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 13px;
+            color: var(--text-secondary);
+            opacity: 0;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .activity-item:nth-child(1) {
+            animation-delay: 1s;
+        }
+
+        .activity-item:nth-child(2) {
+            animation-delay: 2.5s;
+        }
+
+        .activity-item:nth-child(3) {
+            animation-delay: 4s;
+        }
+
+        @keyframes slideIn {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-icon {
+            font-size: 16px;
+        }
+
+        .activity-text {
+            flex: 1;
+            text-align: right;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--primary);
+        }
+
+        /* CTA Button */
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: var(--gradient);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out 0.6s both;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px var(--primary-glow);
+        }
+
+        .cta-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover .cta-arrow {
+            transform: translateX(-4px);
+        }
+
+        /* Footer Note */
+        .footer-note {
+            margin-top: 32px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            animation: fadeInUp 0.6s ease-out 0.7s both;
+        }
+
+        /* Loading Dots */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite;
+        }
+
+        .loading-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .loading-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            animation: confettiFall 3s ease-in-out forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="confetti" id="confetti"></div>
+
+    <div class="container">
+        <!-- Success Icon -->
+        <div class="success-icon">🚀</div>
+
+        <!-- Title -->
+        <h1 class="title">تم تفعيل رِبح!</h1>
+        <p class="subtitle">
+            مرحباً بك في <span class="store-name" id="storeName">متجرك</span>!
+            <br>بدأنا باسترداد مبيعاتك المفقودة
+        </p>
+
+        <!-- Features Activated -->
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon green">🛒</div>
+                <div class="feature-info">
+                    <div class="feature-name">استرداد السلات المتروكة</div>
+                    <div class="feature-desc">تذكيرات ذكية تلقائية</div>
+                </div>
+                <div class="feature-status">
+                    <span class="status-dot"></span>
+                    مفعّل
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon blue">🤖</div>
+                <div class="feature-info">
+                    <div class="feature-name">الذكاء الاصطناعي</div>
+                    <div class="feature-desc">رسائل مخصصة لكل عميل</div>
+                </div>
+                <div class="feature-status">
+                    <span class="status-dot"></span>
+                    مفعّل
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon purple">💰</div>
+                <div class="feature-info">
+                    <div class="feature-name">العروض الذكية</div>
+                    <div class="feature-desc">خصومات وتقسيط تلقائي</div>
+                </div>
+                <div class="feature-status">
+                    <span class="status-dot"></span>
+                    مفعّل
+                </div>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon orange">📊</div>
+                <div class="feature-info">
+                    <div class="feature-name">التحسين المستمر</div>
+                    <div class="feature-desc">نتعلم ونتحسن تلقائياً</div>
+                </div>
+                <div class="feature-status">
+                    <span class="status-dot"></span>
+                    مفعّل
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Counter Section -->
+        <div class="live-section">
+            <div class="live-header">
+                <span class="status-dot"></span>
+                النظام يعمل الآن
+            </div>
+            <div class="live-counter">
+                <span id="moneyCounter">0</span> ر.س
+            </div>
+            <div class="live-sub">
+                تم استردادها لمتاجر مثلك اليوم
+            </div>
+
+            <!-- Simulated Activity -->
+            <div class="activity">
+                <div class="activity-item">
+                    <span class="activity-icon">🛒</span>
+                    <span class="activity-text">تم رصد سلة متروكة جديدة</span>
+                    <span class="activity-time">الآن</span>
+                </div>
+                <div class="activity-item">
+                    <span class="activity-icon">📧</span>
+                    <span class="activity-text">تم إرسال تذكير ذكي</span>
+                    <span class="activity-time">منذ ثواني</span>
+                </div>
+                <div class="activity-item">
+                    <span class="activity-icon">💰</span>
+                    <span class="activity-text">عميل أكمل طلبه!</span>
+                    <span class="activity-time">الآن</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Button -->
+        <a href="/" class="cta-button" id="dashboardBtn">
+            <span class="cta-arrow">←</span>
+            الذهاب إلى لوحة التحكم
+        </a>
+
+        <p class="footer-note">
+            💡 لا تحتاج فعل أي شيء • رِبح يعمل تلقائياً الآن
+        </p>
+    </div>
+
+    <script>
+        // Get store name from URL
+        const params = new URLSearchParams(window.location.search);
+        const storeName = params.get('store');
+        const token = params.get('token');
+
+        if (storeName) {
+            document.getElementById('storeName').textContent = decodeURIComponent(storeName);
+        }
+
+        // Update dashboard link with token
+        if (token) {
+            document.getElementById('dashboardBtn').href = `/?token=${token}`;
+        }
+
+        // Animate money counter
+        let currentMoney = 0;
+        const targetMoney = 12450 + Math.floor(Math.random() * 5000);
+
+        function animateCounter() {
+            const step = Math.ceil(targetMoney / 80);
+            if (currentMoney < targetMoney) {
+                currentMoney = Math.min(currentMoney + step, targetMoney);
+                document.getElementById('moneyCounter').textContent = currentMoney.toLocaleString('ar-SA');
+                setTimeout(animateCounter, 30);
+            }
+        }
+
+        setTimeout(animateCounter, 800);
+
+        // Create confetti
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            const colors = ['#10B981', '#6366F1', '#F59E0B', '#22C55E', '#EC4899'];
+
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 2 + 's';
+                piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+                piece.style.width = (5 + Math.random() * 10) + 'px';
+                piece.style.height = piece.style.width;
+                piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confettiContainer.appendChild(piece);
+            }
+
+            // Remove confetti after animation
+            setTimeout(() => {
+                confettiContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Launch confetti on load
+        createConfetti();
+
+        // Update activity with real-looking times
+        setTimeout(() => {
+            const activities = document.querySelectorAll('.activity-item');
+            let delay = 0;
+            activities.forEach((item, i) => {
+                setTimeout(() => {
+                    const timeEl = item.querySelector('.activity-time');
+                    if (i === 0) timeEl.textContent = 'الآن';
+                    else if (i === 1) timeEl.textContent = 'منذ ثواني';
+                    else timeEl.textContent = 'الآن';
+                }, delay);
+                delay += 2000;
+            });
+        }, 5000);
+    </script>
+</body>
+
+</html>

@@ -694,9 +694,13 @@ app.get('/oauth/callback', async (req, res) => {
         const stores = await readDB(STORES_FILE);
         let existingStore = stores.find(s => s.merchant === merchantId);
         let ribhToken;
+        let isNewStore = false;
 
         if (!existingStore) {
             ribhToken = generateToken();
+            isNewStore = true;
+
+            // 🚀 ONE-CLICK ACTIVATION - Smart defaults for new stores
             stores.push({
                 merchant: merchantId,
                 merchantName: merchantName,
@@ -705,10 +709,30 @@ app.get('/oauth/callback', async (req, res) => {
                 refreshToken: tokenData.refresh_token,
                 ribhToken: ribhToken,
                 installedAt: new Date().toISOString(),
-                active: true
+                active: true,
+                // ====== AUTO-ENABLED FEATURES ======
+                settings: {
+                    cartRecoveryEnabled: true,
+                    enableEmail: true,
+                    enableWhatsApp: true,
+                    enableTelegram: true,
+                    smartOffersEnabled: true,
+                    upsellEnabled: true,
+                    paymentPlansEnabled: true,
+                    paymentPlanThreshold: 500,
+                    reactivationEnabled: true,
+                    aiLearningEnabled: true,
+                    language: 'ar'
+                },
+                stats: {
+                    cartsReceived: 0,
+                    cartsRecovered: 0,
+                    revenueRecovered: 0,
+                    messagesSent: 0
+                }
             });
             await writeDB(STORES_FILE, stores);
-            console.log(`✅ New store registered: ${merchantName} with token: ${ribhToken.substring(0, 8)}...`);
+            console.log(`🚀 ONE-CLICK ACTIVATION: ${merchantName} installed with ALL features enabled!`);
         } else {
             // Update existing store with new tokens
             existingStore.accessToken = tokenData.access_token;
@@ -716,6 +740,16 @@ app.get('/oauth/callback', async (req, res) => {
             existingStore.merchantName = merchantName;
             if (!existingStore.ribhToken) {
                 existingStore.ribhToken = generateToken();
+            }
+            // Ensure settings exist for older stores
+            if (!existingStore.settings) {
+                existingStore.settings = {
+                    cartRecoveryEnabled: true,
+                    enableEmail: true,
+                    enableWhatsApp: true,
+                    smartOffersEnabled: true,
+                    language: 'ar'
+                };
             }
             ribhToken = existingStore.ribhToken;
             await writeDB(STORES_FILE, stores);
@@ -730,8 +764,14 @@ app.get('/oauth/callback', async (req, res) => {
             sameSite: 'lax'
         });
 
-        // Step 5: Redirect to dashboard with Ribh token (auto-login)
-        res.redirect(`/?token=${ribhToken}&welcome=true`);
+        // Step 5: Redirect based on whether this is a new or returning store
+        if (isNewStore) {
+            // New store → Show amazing activation experience!
+            res.redirect(`/welcome.html?token=${ribhToken}&store=${encodeURIComponent(merchantName)}`);
+        } else {
+            // Returning store → Go directly to dashboard
+            res.redirect(`/?token=${ribhToken}`);
+        }
 
     } catch (error) {
         console.error('❌ OAuth error:', error);
@@ -1518,20 +1558,77 @@ function handleAppInstalled(data, merchant) {
     const existingStore = stores.find(s => s.merchant === merchant);
 
     if (!existingStore) {
-        // Generate token and extract email from Salla data
+        // Generate token and extract info from Salla data
         const token = generateToken();
         const email = data?.owner?.email || data?.email || data?.store?.email || '';
+        const storeName = data?.store?.name || data?.name || 'متجر';
 
+        // ============================================
+        // 🚀 ONE-CLICK ACTIVATION - AUTO-ENABLE EVERYTHING!
+        // ============================================
+        // Smart defaults that work out of the box
         stores.push({
             merchant,
             token,
+            ribhToken: token, // For dashboard login
             email,
+            merchantName: storeName,
             installedAt: new Date().toISOString(),
             active: true,
+            // ====== AUTO-ENABLED FEATURES ======
+            settings: {
+                // 🛒 Cart Recovery (CORE VALUE)
+                cartRecoveryEnabled: true,
+                cartRecoverySequence: 'smart', // AI-optimized timing
+
+                // 📧 Email (FREE - always on)
+                enableEmail: true,
+                emailStyle: 'friendly', // or 'urgent'
+
+                // 📱 WhatsApp (when configured)
+                enableWhatsApp: true, // Will work when META_WHATSAPP_TOKEN is set
+
+                // 🔔 Telegram (when configured)
+                enableTelegram: true,
+
+                // 💰 Smart Offers (AI-powered)
+                smartOffersEnabled: true,
+                maxDiscount: 15, // Max auto-discount percentage
+
+                // 🎁 Upsell/Cross-sell
+                upsellEnabled: true,
+
+                // 💳 Payment Plans (Tamara/Tabby)
+                paymentPlansEnabled: true,
+                paymentPlanThreshold: 500, // Offer تقسيط above 500 SAR
+
+                // 🔄 Customer Reactivation
+                reactivationEnabled: true,
+                reactivationDays: 30, // Remind after 30 days inactive
+
+                // 📊 AI Learning
+                aiLearningEnabled: true,
+
+                // Language
+                language: 'ar'
+            },
+            // Track initial stats
+            stats: {
+                cartsReceived: 0,
+                cartsRecovered: 0,
+                revenueRecovered: 0,
+                messagesSent: 0
+            },
             data
         });
         writeDB(STORES_FILE, stores);
-        console.log(`✅ Store ${merchant} installed with token: ${token.substring(0, 8)}...`);
+        console.log(`🚀 ONE-CLICK ACTIVATION: Store ${storeName} (${merchant}) installed with ALL features enabled!`);
+        console.log(`   ✅ Cart Recovery: ON`);
+        console.log(`   ✅ Smart Offers: ON`);
+        console.log(`   ✅ Email: ON`);
+        console.log(`   ✅ WhatsApp: READY`);
+        console.log(`   ✅ Payment Plans: ON`);
+        console.log(`   ✅ AI Learning: ON`);
     }
 }
 
@@ -2909,6 +3006,114 @@ app.get('/api/store/usage', (req, res) => {
     const stats = getStoreUsageStats(storeId);
     res.json(stats);
 });
+
+// ==========================================
+// 🚀 ONE-CLICK STORE STATUS API
+// ==========================================
+// Returns complete store status for dashboard display
+
+app.get('/api/store/status', async (req, res) => {
+    const cookies = parseCookies(req);
+    const token = req.query.token || cookies.ribhToken;
+
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'Not authenticated' });
+    }
+
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.ribhToken === token);
+
+    if (!store) {
+        return res.status(404).json({ success: false, error: 'Store not found' });
+    }
+
+    // Get store settings from both places (legacy + new)
+    const legacySettings = readSettings()[store.merchant] || {};
+    const storeSettings = store.settings || {};
+
+    // Merge settings (prefer store.settings, fallback to legacy)
+    const settings = {
+        ...legacySettings,
+        ...storeSettings
+    };
+
+    // Get real-time stats
+    const carts = await readDB(DB_FILE);
+    const storeCarts = carts.filter(c => c.merchant === store.merchant);
+    const recoveredCarts = storeCarts.filter(c => c.status === 'recovered');
+    const revenueRecovered = recoveredCarts.reduce((sum, c) => sum + (c.total || 0), 0);
+
+    res.json({
+        success: true,
+        store: {
+            merchant: store.merchant,
+            merchantName: store.merchantName || 'متجر',
+            email: store.email,
+            installedAt: store.installedAt,
+            active: store.active !== false
+        },
+        // Features status (ONE-CLICK shows all as enabled)
+        features: {
+            cartRecovery: {
+                enabled: settings.cartRecoveryEnabled !== false,
+                status: 'active',
+                label: 'استرداد السلات'
+            },
+            email: {
+                enabled: settings.enableEmail !== false,
+                status: config.RESEND_API_KEY ? 'active' : 'pending_config',
+                label: 'البريد الإلكتروني'
+            },
+            whatsapp: {
+                enabled: settings.enableWhatsApp !== false,
+                status: process.env.META_WHATSAPP_TOKEN ? 'active' : 'pending_config',
+                label: 'واتساب'
+            },
+            telegram: {
+                enabled: settings.enableTelegram !== false,
+                status: config.TELEGRAM_BOT_TOKEN ? 'active' : 'pending_config',
+                label: 'تيليجرام'
+            },
+            smartOffers: {
+                enabled: settings.smartOffersEnabled !== false,
+                status: 'active',
+                label: 'العروض الذكية'
+            },
+            upsell: {
+                enabled: settings.upsellEnabled !== false,
+                status: 'active',
+                label: 'زيادة المبيعات'
+            },
+            paymentPlans: {
+                enabled: settings.paymentPlansEnabled !== false,
+                status: 'active',
+                label: 'التقسيط'
+            },
+            aiLearning: {
+                enabled: settings.aiLearningEnabled !== false,
+                status: 'active',
+                label: 'التعلم الذكي'
+            }
+        },
+        // Live stats
+        stats: {
+            cartsReceived: storeCarts.length,
+            cartsRecovered: recoveredCarts.length,
+            revenueRecovered: revenueRecovered,
+            recoveryRate: storeCarts.length > 0
+                ? Math.round((recoveredCarts.length / storeCarts.length) * 100)
+                : 0,
+            messagesSent: store.stats?.messagesSent || 0
+        },
+        // System status
+        system: {
+            status: 'active',
+            lastActivity: new Date().toISOString(),
+            version: '2.0'
+        }
+    });
+});
+
 
 // ==========================================
 // TELEGRAM SUBSCRIPTION ENDPOINTS
