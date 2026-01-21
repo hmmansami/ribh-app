@@ -18,11 +18,19 @@ jobs:
           
       - name: Create Functions Environment File
         run: |
-          cat << EOF > functions/.env
+          cat <<EOF > functions/.env
           SALLA_CLIENT_ID=${{ secrets.SALLA_CLIENT_ID }}
           SALLA_CLIENT_SECRET=${{ secrets.SALLA_CLIENT_SECRET }}
           RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
           GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+          SHOPIFY_API_KEY=${{ secrets.SHOPIFY_API_KEY }}
+          SHOPIFY_API_SECRET=${{ secrets.SHOPIFY_API_SECRET }}
+          AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}
+          AWS_REGION=eu-north-1
+          ENABLE_SMS=true
+          TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          ENABLE_TELEGRAM=true
           EMAIL_FROM=ribh@ribh.click
           EOF
           
