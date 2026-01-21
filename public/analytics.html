@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | Analytics</title>
+    <meta name="description" content="تحليلات استرداد السلات - RIBH">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --bg-secondary: #0a0a0a;
+            --card: rgba(18, 18, 18, 0.95);
+            --card-hover: rgba(28, 28, 28, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-dim: #52525B;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.5);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        html[dir="ltr"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        html[dir="rtl"] {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Animated Background */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 600px 600px at 30% 20%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 70% 80%, rgba(99, 102, 241, 0.06), transparent 50%);
+            animation: bgFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, 20px);
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-left: 1px solid var(--card-border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        html[dir="ltr"] .sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 1px solid var(--card-border);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 32px;
+        }
+
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding-top: 24px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            width: 100%;
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-right: 260px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        html[dir="ltr"] .main-content {
+            margin-right: 0;
+            margin-left: 260px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .date-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .filter-btn.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .stat-card.highlight {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            margin-top: 8px;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .stat-trend.up {
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .stat-trend.down {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 28px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Simple Bar Chart */
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 200px;
+            padding-top: 20px;
+            gap: 12px;
+        }
+
+        .bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 40px;
+            background: var(--gradient);
+            border-radius: 6px 6px 0 0;
+            transition: height 0.5s ease;
+            position: relative;
+        }
+
+        .bar:hover {
+            filter: brightness(1.1);
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* Donut Chart */
+        .donut-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .donut {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0deg 230deg,
+                    var(--secondary) 230deg 290deg,
+                    var(--warning) 290deg 330deg,
+                    var(--text-dim) 330deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .donut::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: var(--card);
+            border-radius: 50%;
+        }
+
+        .donut-center {
+            position: relative;
+            text-align: center;
+        }
+
+        .donut-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .donut-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+
+        html[dir="ltr"] .legend-dot {
+            margin-left: 0;
+            margin-right: 10px;
+        }
+
+        .legend-name {
+            display: flex;
+            align-items: center;
+            color: var(--text-secondary);
+        }
+
+        .legend-value {
+            font-weight: 600;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .activity-icon.success {
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .activity-icon.pending {
+            background: rgba(245, 158, 11, 0.15);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .activity-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .activity-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-right: 0;
+                margin-left: 0;
+                padding: 24px 16px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-effects"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">رِبح.</div>
+
+        <nav class="nav-menu">
+            <a href="/" class="nav-item">
+                <span class="icon">📊</span>
+                <span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+            <a href="/analytics.html" class="nav-item active">
+                <span class="icon">📈</span>
+                <span data-ar="التحليلات" data-en="Analytics">التحليلات</span>
+            </a>
+            <a href="/preview.html" class="nav-item">
+                <span class="icon">👁️</span>
+                <span data-ar="معاينة الرسائل" data-en="Messages">معاينة الرسائل</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
+                <span class="icon">⚙️</span>
+                <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="lang-toggle" onclick="toggleLanguage()">
+                <span>🌐</span>
+                <span id="langLabel">English</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1 class="page-title" data-ar="📈 التحليلات" data-en="📈 Analytics">📈 التحليلات</h1>
+            <div class="date-filter">
+                <button class="filter-btn" data-ar="اليوم" data-en="Today">اليوم</button>
+                <button class="filter-btn active" data-ar="7 أيام" data-en="7 Days">7 أيام</button>
+                <button class="filter-btn" data-ar="30 يوم" data-en="30 Days">30 يوم</button>
+                <button class="filter-btn" data-ar="الكل" data-en="All Time">الكل</button>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card highlight">
+                <div class="stat-label" data-ar="الإيرادات المستردة" data-en="Recovered Revenue">الإيرادات المستردة
+                </div>
+                <div class="stat-value" id="totalRevenue">12,450 <span
+                        style="font-size: 18px; color: var(--text-secondary);" data-ar="ر.س" data-en="SAR">ر.س</span>
+                </div>
+                <div class="stat-trend up">
+                    <span>↑</span>
+                    <span>+24%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label" data-ar="السلات المستردة" data-en="Carts Recovered">السلات المستردة</div>
+                <div class="stat-value" id="recoveredCarts">47</div>
+                <div class="stat-trend up">
+                    <span>↑</span>
+                    <span>+18%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label" data-ar="الرسائل المُرسلة" data-en="Messages Sent">الرسائل المُرسلة</div>
+                <div class="stat-value" id="messagesSent">234</div>
+                <div class="stat-trend up">
+                    <span>↑</span>
+                    <span>+12%</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label" data-ar="معدل الاسترداد" data-en="Recovery Rate">معدل الاسترداد</div>
+                <div class="stat-value" id="recoveryRate">20<span style="font-size: 18px;">%</span></div>
+                <div class="stat-trend up">
+                    <span>↑</span>
+                    <span>+5%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid">
+            <!-- Revenue Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" data-ar="الإيرادات اليومية" data-en="Daily Revenue">الإيرادات اليومية</h3>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-placeholder">
+                        <div class="bar-chart" id="barChart">
+                            <!-- Bars will be generated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Channel Distribution -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" data-ar="توزيع القنوات" data-en="Channel Distribution">توزيع القنوات</h3>
+                </div>
+                <div class="donut-container">
+                    <div class="donut">
+                        <div class="donut-center">
+                            <div class="donut-value">234</div>
+                            <div class="donut-label" data-ar="رسالة" data-en="messages">رسالة</div>
+                        </div>
+                    </div>
+                    <div class="donut-legend">
+                        <div class="legend-item">
+                            <span class="legend-name">
+                                <span class="legend-dot" style="background: var(--primary);"></span>
+                                WhatsApp
+                            </span>
+                            <span class="legend-value">64%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-name">
+                                <span class="legend-dot" style="background: var(--secondary);"></span>
+                                <span data-ar="بريد إلكتروني" data-en="Email">بريد إلكتروني</span>
+                            </span>
+                            <span class="legend-value">25%</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-name">
+                                <span class="legend-dot" style="background: var(--warning);"></span>
+                                SMS
+                            </span>
+                            <span class="legend-value">11%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" data-ar="آخر الاستردادات" data-en="Recent Recoveries">آخر الاستردادات</h3>
+            </div>
+            <div class="activity-list" id="activityList">
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-info">
+                        <div class="activity-title">سارة</div>
+                        <div class="activity-subtitle" data-ar="استرداد عبر WhatsApp" data-en="Recovered via WhatsApp">
+                            استرداد عبر WhatsApp</div>
+                    </div>
+                    <div class="activity-amount">+850 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-info">
+                        <div class="activity-title">أحمد</div>
+                        <div class="activity-subtitle" data-ar="استرداد عبر البريد" data-en="Recovered via Email">
+                            استرداد عبر البريد</div>
+                    </div>
+                    <div class="activity-amount">+1,200 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon pending">⏳</div>
+                    <div class="activity-info">
+                        <div class="activity-title">نورة</div>
+                        <div class="activity-subtitle" data-ar="رسالة مُرسلة - بانتظار"
+                            data-en="Message sent - Pending">رسالة مُرسلة - بانتظار</div>
+                    </div>
+                    <div class="activity-amount" style="color: var(--warning);">650 <span data-ar="ر.س"
+                            data-en="SAR">ر.س</span></div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-info">
+                        <div class="activity-title">فهد</div>
+                        <div class="activity-subtitle" data-ar="استرداد عبر SMS" data-en="Recovered via SMS">استرداد عبر
+                            SMS</div>
+                    </div>
+                    <div class="activity-amount">+320 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // LANGUAGE SYSTEM
+        // ==========================================
+        let currentLang = localStorage.getItem('ribhLang') || detectLanguage();
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('ar') ? 'ar' : 'en';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ribhLang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const html = document.documentElement;
+
+            if (currentLang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.getElementById('langLabel').textContent = 'العربية';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.getElementById('langLabel').textContent = 'English';
+            }
+
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        // ==========================================
+        // BAR CHART
+        // ==========================================
+        function renderBarChart() {
+            const data = [
+                { day: 'السبت', dayEn: 'Sat', value: 1200 },
+                { day: 'الأحد', dayEn: 'Sun', value: 850 },
+                { day: 'الاثنين', dayEn: 'Mon', value: 2100 },
+                { day: 'الثلاثاء', dayEn: 'Tue', value: 1650 },
+                { day: 'الأربعاء', dayEn: 'Wed', value: 2800 },
+                { day: 'الخميس', dayEn: 'Thu', value: 1950 },
+                { day: 'الجمعة', dayEn: 'Fri', value: 1900 }
+            ];
+
+            const maxValue = Math.max(...data.map(d => d.value));
+            const container = document.getElementById('barChart');
+            container.innerHTML = '';
+
+            data.forEach(item => {
+                const height = (item.value / maxValue) * 180;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bar-wrapper';
+                wrapper.innerHTML = `
+                    <div class="bar" style="height: ${height}px;">
+                        <span class="bar-value">${item.value.toLocaleString()}</span>
+                    </div>
+                    <span class="bar-label" data-ar="${item.day}" data-en="${item.dayEn}">${currentLang === 'ar' ? item.day : item.dayEn}</span>
+                `;
+                container.appendChild(wrapper);
+            });
+        }
+
+        // ==========================================
+        // FILTER BUTTONS
+        // ==========================================
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                // Could fetch new data based on filter
+            });
+        });
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+            renderBarChart();
+        });
+    </script>
+</body>
+
+</html>

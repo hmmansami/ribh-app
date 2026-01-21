@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | FAQ</title>
+    <meta name="description" content="الأسئلة الشائعة - RIBH">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --bg-secondary: #0a0a0a;
+            --card: rgba(18, 18, 18, 0.95);
+            --card-hover: rgba(28, 28, 28, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-dim: #52525B;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.5);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        html[dir="ltr"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        html[dir="rtl"] {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(99, 102, 241, 0.06), transparent 50%);
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--primary);
+        }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* FAQ Items */
+        .faq-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .faq-item {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .faq-question h3 {
+            font-size: 17px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .faq-icon {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.open .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-inner {
+            padding: 0 24px 24px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .faq-answer-inner strong {
+            color: var(--primary);
+        }
+
+        /* Categories */
+        .faq-category {
+            margin-top: 40px;
+            margin-bottom: 24px;
+        }
+
+        .faq-category h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CTA */
+        .cta-section {
+            margin-top: 60px;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 24px;
+            text-align: center;
+        }
+
+        .cta-section h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 32px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 14px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .faq-question h3 {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-effects"></div>
+
+    <div class="content">
+        <!-- Header -->
+        <div class="header">
+            <a href="/" class="back-btn">
+                <span>←</span>
+                <span data-ar="العودة" data-en="Back">العودة</span>
+            </a>
+            <div class="lang-toggle" onclick="toggleLanguage()">
+                <span>🌐</span>
+                <span id="langLabel">English</span>
+            </div>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <h1 data-ar="❓ الأسئلة الشائعة" data-en="❓ FAQ">❓ الأسئلة الشائعة</h1>
+            <p data-ar="كل ما تحتاج معرفته عن RIBH" data-en="Everything you need to know about RIBH">كل ما تحتاج معرفته
+                عن RIBH</p>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="faq-category">
+            <h2>
+                <span>🚀</span>
+                <span data-ar="البداية" data-en="Getting Started">البداية</span>
+            </h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>📱</span>
+                        <span data-ar="كيف أبدأ باستخدام RIBH؟" data-en="How do I start using RIBH?">كيف أبدأ باستخدام
+                            RIBH؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="ببساطة، قم بربط متجرك من خلال Salla أو Shopify بضغطة واحدة. <strong>سنبدأ تلقائياً</strong> بإرسال رسائل استرداد للعملاء الذين يتركون سلاتهم. لا تحتاج أي إعداد إضافي!"
+                        data-en="Simply connect your store via Salla or Shopify with one click. We'll <strong>automatically start</strong> sending recovery messages to customers who abandon their carts. No additional setup needed!">
+                        ببساطة، قم بربط متجرك من خلال Salla أو Shopify بضغطة واحدة. <strong>سنبدأ تلقائياً</strong>
+                        بإرسال رسائل استرداد للعملاء الذين يتركون سلاتهم. لا تحتاج أي إعداد إضافي!
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>💰</span>
+                        <span data-ar="هل RIBH مجاني؟" data-en="Is RIBH free?">هل RIBH مجاني؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="نعم! الباقة المجانية تشمل <strong>500 رسالة بريد إلكتروني شهرياً</strong>. تدفع فقط عندما تريد استخدام ميزات إضافية مثل WhatsApp أو SMS."
+                        data-en="Yes! The free plan includes <strong>500 email messages per month</strong>. You only pay when you want to use additional features like WhatsApp or SMS.">
+                        نعم! الباقة المجانية تشمل <strong>500 رسالة بريد إلكتروني شهرياً</strong>. تدفع فقط عندما تريد
+                        استخدام ميزات إضافية مثل WhatsApp أو SMS.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust & Safety -->
+        <div class="faq-category">
+            <h2>
+                <span>🛡️</span>
+                <span data-ar="الثقة والأمان" data-en="Trust & Safety">الثقة والأمان</span>
+            </h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>👁️</span>
+                        <span data-ar="هل يمكنني معاينة الرسائل قبل إرسالها؟"
+                            data-en="Can I preview messages before they're sent?">هل يمكنني معاينة الرسائل قبل
+                            إرسالها؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="<strong>نعم، بالتأكيد!</strong> يمكنك معاينة كل رسالة قبل إرسالها. نعطيك التحكم الكامل في ما يراه عملاؤك."
+                        data-en="<strong>Yes, absolutely!</strong> You can preview every message before it's sent. We give you full control over what your customers see.">
+                        <strong>نعم، بالتأكيد!</strong> يمكنك معاينة كل رسالة قبل إرسالها. نعطيك التحكم الكامل في ما
+                        يراه عملاؤك.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>🏪</span>
+                        <span data-ar="هل ستُرسل الرسائل باسم متجري؟"
+                            data-en="Will messages be sent from my store name?">هل ستُرسل الرسائل باسم متجري؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="<strong>نعم!</strong> كل رسالة تُرسل باسم متجرك. عملاؤك يرون اسم علامتك التجارية، ليس RIBH. هذا يبني الثقة ويحافظ على هوية علامتك."
+                        data-en="<strong>Yes!</strong> Every message is sent from your store name. Your customers see your brand name, not RIBH. This builds trust and maintains your brand identity.">
+                        <strong>نعم!</strong> كل رسالة تُرسل باسم متجرك. عملاؤك يرون اسم علامتك التجارية، ليس RIBH. هذا
+                        يبني الثقة ويحافظ على هوية علامتك.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>🚫</span>
+                        <span data-ar="ماذا لو بدأ العملاء يحظروننا؟"
+                            data-en="What if customers start blocking us?">ماذا لو بدأ العملاء يحظروننا؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="لدينا <strong>حارس السمعة</strong> الذكي. إذا ارتفعت معدلات الحظر، نوقف الرسائل تلقائياً ونُعلمك. نحمي سمعة متجرك كأنها سمعتنا."
+                        data-en="We have a smart <strong>Reputation Guard</strong>. If block rates increase, we automatically pause messages and notify you. We protect your store's reputation as if it were our own.">
+                        لدينا <strong>حارس السمعة</strong> الذكي. إذا ارتفعت معدلات الحظر، نوقف الرسائل تلقائياً
+                        ونُعلمك. نحمي سمعة متجرك كأنها سمعتنا.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing -->
+        <div class="faq-category">
+            <h2>
+                <span>💵</span>
+                <span data-ar="الأسعار" data-en="Pricing">الأسعار</span>
+            </h2>
+        </div>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>📊</span>
+                        <span data-ar="كيف يعمل الدفع على النتائج؟" data-en="How does pay-on-results work?">كيف يعمل
+                            الدفع على النتائج؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="بسيط جداً: <strong>تدفع فقط عندما نسترد لك أموال!</strong> إذا لم نسترد شيء، لا تدفع شيء. نجاحك هو نجاحنا."
+                        data-en="Very simple: <strong>You only pay when we recover money for you!</strong> If we don't recover anything, you don't pay anything. Your success is our success.">
+                        بسيط جداً: <strong>تدفع فقط عندما نسترد لك أموال!</strong> إذا لم نسترد شيء، لا تدفع شيء. نجاحك
+                        هو نجاحنا.
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <h3>
+                        <span>🔓</span>
+                        <span data-ar="هل يمكنني الإلغاء في أي وقت؟" data-en="Can I cancel anytime?">هل يمكنني الإلغاء
+                            في أي وقت؟</span>
+                    </h3>
+                    <span class="faq-icon">+</span>
+                </div>
+                <div class="faq-answer">
+                    <div class="faq-answer-inner"
+                        data-ar="<strong>نعم، بضغطة واحدة!</strong> لا عقود، لا التزامات، لا أسئلة. إذا لم تكن راضياً، يمكنك الإلغاء فوراً."
+                        data-en="<strong>Yes, with one click!</strong> No contracts, no commitments, no questions asked. If you're not satisfied, you can cancel immediately.">
+                        <strong>نعم، بضغطة واحدة!</strong> لا عقود، لا التزامات، لا أسئلة. إذا لم تكن راضياً، يمكنك
+                        الإلغاء فوراً.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h3 data-ar="لديك سؤال آخر؟" data-en="Have another question?">لديك سؤال آخر؟</h3>
+            <p data-ar="فريقنا جاهز لمساعدتك" data-en="Our team is ready to help">فريقنا جاهز لمساعدتك</p>
+            <a href="mailto:support@ribh.click" class="cta-btn">
+                <span>📧</span>
+                <span data-ar="تواصل معنا" data-en="Contact Us">تواصل معنا</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let currentLang = localStorage.getItem('ribhLang') || (navigator.language.startsWith('ar') ? 'ar' : 'en');
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ribhLang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const html = document.documentElement;
+            if (currentLang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.getElementById('langLabel').textContent = 'العربية';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.getElementById('langLabel').textContent = 'English';
+            }
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        function toggleFaq(element) {
+            const item = element.closest('.faq-item');
+            const wasOpen = item.classList.contains('open');
+
+            // Close all items
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+
+            // Open clicked if it was closed
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', applyLanguage);
+    </script>
+</body>
+
+</html>
