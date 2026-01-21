@@ -52,6 +52,11 @@ const config = {
     SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '476e7ed1-796c-4731-b145-73a13d0019de',
     SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || 'c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe',
 
+    // Shopify
+    SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY || '',
+    SHOPIFY_API_SECRET: process.env.SHOPIFY_API_SECRET || '',
+    SHOPIFY_SCOPES: process.env.SHOPIFY_SCOPES || 'read_orders,write_orders,read_checkouts,write_checkouts,read_customers,read_products',
+
     // ========== EMAIL OPTIONS ==========
     // Option 1: Resend (FREE - 3000/month)
     RESEND_API_KEY: process.env.RESEND_API_KEY || '',
@@ -845,6 +850,300 @@ app.get('/app', async (req, res) => {
         `&scope=offline_access`;
 
     return res.redirect(oauthUrl);
+});
+
+// ==========================================
+// SHOPIFY OAUTH - App Installation
+// ==========================================
+
+// Step 1: Shopify Install Route - Redirects to Shopify OAuth
+app.get('/shopify/install', (req, res) => {
+    const { shop } = req.query;
+
+    if (!shop) {
+        // No shop provided - show shop input form
+        return res.send(`
+            <!DOCTYPE html>
+            <html dir="rtl" lang="ar">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>رِبح | تثبيت على شوبيفاي</title>
+                <style>
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+                        background: #0a0a0a; 
+                        color: white; 
+                        min-height: 100vh;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .container { 
+                        max-width: 400px; 
+                        padding: 40px; 
+                        text-align: center; 
+                    }
+                    .logo { font-size: 48px; margin-bottom: 24px; }
+                    h1 { font-size: 28px; margin-bottom: 16px; }
+                    p { color: #888; margin-bottom: 32px; }
+                    input {
+                        width: 100%;
+                        padding: 16px;
+                        border-radius: 12px;
+                        border: 1px solid #333;
+                        background: #111;
+                        color: white;
+                        font-size: 16px;
+                        margin-bottom: 16px;
+                        text-align: center;
+                    }
+                    input:focus { outline: none; border-color: #10B981; }
+                    button {
+                        width: 100%;
+                        padding: 16px;
+                        border-radius: 12px;
+                        border: none;
+                        background: linear-gradient(135deg, #10B981, #6366F1);
+                        color: white;
+                        font-size: 18px;
+                        font-weight: 600;
+                        cursor: pointer;
+                    }
+                    button:hover { transform: translateY(-2px); }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="logo">🛍️</div>
+                    <h1>تثبيت رِبح على شوبيفاي</h1>
+                    <p>أدخل رابط متجرك للمتابعة</p>
+                    <form action="/shopify/install" method="GET">
+                        <input type="text" name="shop" placeholder="your-store.myshopify.com" required>
+                        <button type="submit">← تثبيت الآن</button>
+                    </form>
+                </div>
+            </body>
+            </html>
+        `);
+    }
+
+    // Validate shop format
+    const shopDomain = shop.replace('https://', '').replace('http://', '').replace('/', '');
+
+    if (!config.SHOPIFY_API_KEY) {
+        return res.status(500).send('Shopify API not configured. Please set SHOPIFY_API_KEY and SHOPIFY_API_SECRET.');
+    }
+
+    // Build OAuth URL
+    const redirectUri = 'https://ribh.click/shopify/callback';
+    const nonce = crypto.randomBytes(16).toString('hex');
+
+    // Store nonce for verification
+    // In production, use Redis or DB. For now, we trust the flow.
+
+    const authUrl = `https://${shopDomain}/admin/oauth/authorize?` +
+        `client_id=${config.SHOPIFY_API_KEY}` +
+        `&scope=${config.SHOPIFY_SCOPES}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&state=${nonce}`;
+
+    console.log(`🛍️ Shopify OAuth started for: ${shopDomain}`);
+    res.redirect(authUrl);
+});
+
+// Step 2: Shopify OAuth Callback
+app.get('/shopify/callback', async (req, res) => {
+    const { shop, code, state } = req.query;
+
+    console.log('🛍️ Shopify OAuth callback:', { shop, hasCode: !!code });
+
+    if (!shop || !code) {
+        return res.status(400).send('Missing shop or code parameter');
+    }
+
+    try {
+        // Exchange code for access token
+        const tokenResponse = await fetch(`https://${shop}/admin/oauth/access_token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                client_id: config.SHOPIFY_API_KEY,
+                client_secret: config.SHOPIFY_API_SECRET,
+                code: code
+            })
+        });
+
+        const tokenData = await tokenResponse.json();
+
+        if (!tokenData.access_token) {
+            console.error('❌ Shopify token error:', tokenData);
+            return res.status(400).send('Failed to get access token');
+        }
+
+        console.log('✅ Shopify access token received');
+
+        // Get shop info
+        const shopResponse = await fetch(`https://${shop}/admin/api/2024-01/shop.json`, {
+            headers: { 'X-Shopify-Access-Token': tokenData.access_token }
+        });
+
+        const shopData = await shopResponse.json();
+        const shopInfo = shopData.shop || {};
+
+        // Save store to database
+        const stores = await readDB(STORES_FILE);
+        let existingStore = stores.find(s => s.merchant === shop || s.shopDomain === shop);
+        let ribhToken;
+        let isNewStore = false;
+
+        if (!existingStore) {
+            ribhToken = generateToken();
+            isNewStore = true;
+
+            stores.push({
+                platform: 'shopify',
+                merchant: shop,
+                shopDomain: shop,
+                merchantName: shopInfo.name || shop,
+                email: shopInfo.email || '',
+                accessToken: tokenData.access_token,
+                ribhToken: ribhToken,
+                installedAt: new Date().toISOString(),
+                active: true,
+                settings: {
+                    cartRecoveryEnabled: true,
+                    enableEmail: true,
+                    enableWhatsApp: true,
+                    smartOffersEnabled: true,
+                    language: 'ar'
+                },
+                stats: {
+                    cartsReceived: 0,
+                    cartsRecovered: 0,
+                    revenueRecovered: 0,
+                    messagesSent: 0
+                }
+            });
+
+            await writeDB(STORES_FILE, stores);
+            console.log(`🚀 Shopify store installed: ${shopInfo.name || shop}`);
+        } else {
+            // Update existing
+            existingStore.accessToken = tokenData.access_token;
+            existingStore.merchantName = shopInfo.name || existingStore.merchantName;
+            if (!existingStore.ribhToken) existingStore.ribhToken = generateToken();
+            ribhToken = existingStore.ribhToken;
+            await writeDB(STORES_FILE, stores);
+            console.log(`🔄 Shopify store updated: ${shopInfo.name || shop}`);
+        }
+
+        // Register webhooks for cart abandonment
+        await registerShopifyWebhooks(shop, tokenData.access_token);
+
+        // Set cookie and redirect
+        res.cookie('ribhToken', ribhToken, {
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
+
+        if (isNewStore) {
+            res.redirect(`/welcome.html?token=${ribhToken}&store=${encodeURIComponent(shopInfo.name || shop)}`);
+        } else {
+            res.redirect(`/?token=${ribhToken}`);
+        }
+
+    } catch (error) {
+        console.error('❌ Shopify OAuth error:', error);
+        res.status(500).send('OAuth failed: ' + error.message);
+    }
+});
+
+// Register Shopify webhooks for abandoned checkouts
+async function registerShopifyWebhooks(shop, accessToken) {
+    const webhooks = [
+        { topic: 'checkouts/create', address: 'https://ribh.click/api/shopify/webhook/checkout' },
+        { topic: 'checkouts/update', address: 'https://ribh.click/api/shopify/webhook/checkout' },
+        { topic: 'orders/create', address: 'https://ribh.click/api/shopify/webhook/order' }
+    ];
+
+    for (const webhook of webhooks) {
+        try {
+            await fetch(`https://${shop}/admin/api/2024-01/webhooks.json`, {
+                method: 'POST',
+                headers: {
+                    'X-Shopify-Access-Token': accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ webhook })
+            });
+            console.log(`✅ Webhook registered: ${webhook.topic}`);
+        } catch (e) {
+            console.log(`⚠️ Webhook registration failed: ${webhook.topic}`, e.message);
+        }
+    }
+}
+
+// Shopify Webhook: Checkout Created/Updated (Potential Abandonment)
+app.post('/api/shopify/webhook/checkout', async (req, res) => {
+    const checkout = req.body;
+    const shop = req.headers['x-shopify-shop-domain'];
+
+    console.log('🛒 Shopify checkout webhook:', { shop, checkoutId: checkout.id });
+
+    // Log it
+    await logWebhook('shopify.checkout', { shop, checkoutId: checkout.id });
+
+    // If checkout has email and items, treat as potential abandoned cart
+    if (checkout.email && checkout.line_items && checkout.line_items.length > 0) {
+        const cartData = {
+            id: checkout.id || checkout.token,
+            customer: {
+                first_name: checkout.billing_address?.first_name || checkout.shipping_address?.first_name || '',
+                email: checkout.email,
+                mobile: checkout.billing_address?.phone || checkout.shipping_address?.phone || ''
+            },
+            items: checkout.line_items.map(item => ({
+                product_name: item.title,
+                quantity: item.quantity,
+                price: item.price
+            })),
+            total: checkout.total_price || checkout.subtotal_price,
+            currency: checkout.currency || 'SAR',
+            checkout_url: checkout.abandoned_checkout_url || checkout.web_url
+        };
+
+        // Use the same abandoned cart handler as Salla
+        handleAbandonedCart(cartData, shop);
+    }
+
+    res.status(200).json({ success: true });
+});
+
+// Shopify Webhook: Order Created (Cart Recovered!)
+app.post('/api/shopify/webhook/order', async (req, res) => {
+    const order = req.body;
+    const shop = req.headers['x-shopify-shop-domain'];
+
+    console.log('💰 Shopify order webhook:', { shop, orderId: order.id });
+
+    // Mark as recovered if it was an abandoned cart
+    if (order.checkout_id || order.checkout_token) {
+        handleOrderCreated({
+            id: order.id,
+            checkout_id: order.checkout_id,
+            total: order.total_price,
+            customer: {
+                email: order.email,
+                first_name: order.customer?.first_name
+            }
+        }, shop);
+    }
+
+    res.status(200).json({ success: true });
 });
 
 // ==========================================
