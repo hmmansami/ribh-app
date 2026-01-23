@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0A0A0F;
+            --surface: rgba(255, 255, 255, 0.03);
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-hover: rgba(255, 255, 255, 0.1);
+            --text: #FFFFFF;
+            --text-soft: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --emerald: #34D399;
+            --emerald-soft: rgba(52, 211, 153, 0.2);
+            --violet: #A78BFA;
+            --violet-soft: rgba(167, 139, 250, 0.2);
+            --amber: #FBBF24;
+            --rose: #FB7185;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           AURORA BACKGROUND - The Magic
+        ============================================ */
+        .aurora {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .aurora-orb.emerald {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(52, 211, 153, 0.4), transparent 70%);
+            top: -10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .aurora-orb.violet {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(167, 139, 250, 0.3), transparent 70%);
+            top: 30%;
+            right: -10%;
+            animation-delay: -7s;
+        }
+
+        .aurora-orb.amber {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(251, 191, 36, 0.25), transparent 70%);
+            bottom: -5%;
+            left: 40%;
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            25% {
+                transform: translate(30px, -30px) scale(1.05);
+            }
+
+            50% {
+                transform: translate(-20px, 20px) scale(0.95);
+            }
+
+            75% {
+                transform: translate(20px, 10px) scale(1.02);
+            }
+        }
+
+        /* ============================================
+           APP STRUCTURE
+        ============================================ */
+        .app {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* ============================================
+           HEADER - Minimal Beauty
+        ============================================ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--emerald), var(--violet));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 8px 32px rgba(52, 211, 153, 0.3);
+        }
+
+        .logo-text {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--emerald), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--emerald);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px var(--emerald), 0 0 40px var(--emerald);
+            }
+
+            50% {
+                box-shadow: 0 0 10px var(--emerald), 0 0 20px var(--emerald);
+            }
+        }
+
+        .status-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-soft);
+        }
+
+        /* ============================================
+           HERO CARD - The Money
+        ============================================ */
+        .hero-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 48px;
+            backdrop-filter: blur(40px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        }
+
+        .hero-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(52, 211, 153, 0.08), transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-sparkle {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.6;
+            animation: sparkle 3s ease-in-out infinite;
+        }
+
+        .hero-sparkle:nth-child(1) {
+            top: 20px;
+            right: 40px;
+            animation-delay: 0s;
+        }
+
+        .hero-sparkle:nth-child(2) {
+            top: 60px;
+            left: 50px;
+            animation-delay: 1s;
+        }
+
+        .hero-sparkle:nth-child(3) {
+            bottom: 40px;
+            right: 80px;
+            animation-delay: 2s;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(0.8) rotate(0deg);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1) rotate(180deg);
+            }
+        }
+
+        .hero-label {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-amount {
+            font-size: clamp(56px, 14vw, 88px);
+            font-weight: 800;
+            background: linear-gradient(180deg, #FFFFFF 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            letter-spacing: -3px;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.2s ease;
+        }
+
+        .hero-amount.pulse {
+            animation: amountPulse 0.4s ease-out;
+        }
+
+        @keyframes amountPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .hero-currency {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .hero-stat-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           ACTION BUTTONS - Interactive Magic
+        ============================================ */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .action-btn {
+            padding: 24px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .action-btn:hover {
+            background: var(--glass-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(-2px);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: transform 0.3s ease;
+        }
+
+        .action-btn:hover .action-icon {
+            transform: scale(1.1);
+        }
+
+        .action-btn.messages .action-icon {
+            background: linear-gradient(135deg, var(--emerald-soft), rgba(52, 211, 153, 0.1));
+            box-shadow: 0 8px 24px rgba(52, 211, 153, 0.2);
+        }
+
+        .action-btn.analytics .action-icon {
+            background: linear-gradient(135deg, var(--violet-soft), rgba(167, 139, 250, 0.1));
+            box-shadow: 0 8px 24px rgba(167, 139, 250, 0.2);
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .action-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .action-badge {
+            padding: 4px 12px;
+            background: var(--emerald-soft);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--emerald);
+        }
+
+        /* ============================================
+           LIVE ACTIVITY - Beautiful Feed
+        ============================================ */
+        .feed {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            backdrop-filter: blur(40px);
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .feed-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .feed-title-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: feedPulse 2s infinite;
+        }
+
+        @keyframes feedPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .feed-list {
+            max-height: 360px;
+            overflow-y: auto;
+        }
+
+        .feed-list::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .feed-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .feed-avatar.success {
+            background: linear-gradient(135deg, var(--emerald-soft), rgba(52, 211, 153, 0.1));
+        }
+
+        .feed-avatar.pending {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 191, 36, 0.1));
+        }
+
+        .feed-avatar.sent {
+            background: linear-gradient(135deg, var(--violet-soft), rgba(167, 139, 250, 0.1));
+        }
+
+        .feed-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .feed-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .feed-action {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .feed-result {
+            text-align: left;
+            direction: ltr;
+        }
+
+        .feed-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--emerald);
+        }
+
+        .feed-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* New item animation */
+        .feed-item.new {
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ============================================
+           TOAST NOTIFICATION - Magic Moment
+        ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 28px;
+            background: linear-gradient(135deg, rgba(52, 211, 153, 0.95), rgba(16, 185, 129, 0.95));
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 20px 60px rgba(52, 211, 153, 0.4);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 600px) {
+            .app {
+                padding: 20px 16px;
+            }
+
+            .hero-card {
+                padding: 36px 24px;
+            }
+
+            .hero-stats {
+                gap: 24px;
+            }
+
+            .actions {
+                grid-template-columns: 1fr;
+            }
+
+            .feed-item {
+                padding: 16px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Aurora Background -->
+    <div class="aurora">
+        <div class="aurora-orb emerald"></div>
+        <div class="aurora-orb violet"></div>
+        <div class="aurora-orb amber"></div>
+    </div>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">💚</div>
+                <span class="logo-text">رِبح</span>
+            </div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span class="status-text">متجر الأناقة</span>
+            </div>
+        </header>
+
+        <!-- Hero Card -->
+        <div class="hero-card">
+            <span class="hero-sparkle">✨</span>
+            <span class="hero-sparkle">⭐</span>
+            <span class="hero-sparkle">✨</span>
+            <div class="hero-label">أرباحك هذا الشهر</div>
+            <div class="hero-amount" id="amount">23,450</div>
+            <div class="hero-currency">ريال سعودي</div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="customers">47</div>
+                    <div class="hero-stat-label">عميل سعيد</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="messages">128</div>
+                    <div class="hero-stat-label">رسالة مُرسلة</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+            <a href="#" class="action-btn messages" id="messagesBtn">
+                <div class="action-icon">💬</div>
+                <span class="action-title">الرسائل</span>
+                <span class="action-badge">3 جديدة</span>
+            </a>
+            <a href="#" class="action-btn analytics" id="analyticsBtn">
+                <div class="action-icon">📊</div>
+                <span class="action-title">التقارير</span>
+                <span class="action-subtitle">شاهد أداءك</span>
+            </a>
+        </div>
+
+        <!-- Live Feed -->
+        <section class="feed">
+            <div class="feed-header">
+                <div class="feed-title">
+                    <span class="feed-title-dot"></span>
+                    <span>الآن</span>
+                </div>
+            </div>
+            <div class="feed-list" id="feed">
+                <div class="feed-item">
+                    <div class="feed-avatar success">🎉</div>
+                    <div class="feed-content">
+                        <div class="feed-name">سارة أحمد</div>
+                        <div class="feed-action">عادت وأكملت طلبها</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-amount">+450</div>
+                        <div class="feed-time">الآن</div>
+                    </div>
+                </div>
+
+                <div class="feed-item">
+                    <div class="feed-avatar sent">📤</div>
+                    <div class="feed-content">
+                        <div class="feed-name">فاطمة علي</div>
+                        <div class="feed-action">تم إرسال رسالة</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-time">دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="feed-item">
+                    <div class="feed-avatar success">🎉</div>
+                    <div class="feed-content">
+                        <div class="feed-name">عبدالله محمد</div>
+                        <div class="feed-action">اشترى بعد التذكير</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-amount">+890</div>
+                        <div class="feed-time">3 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="feed-item">
+                    <div class="feed-avatar pending">⏳</div>
+                    <div class="feed-content">
+                        <div class="feed-name">نورة سعد</div>
+                        <div class="feed-action">شاهدت العرض</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-time">5 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="feed-item">
+                    <div class="feed-avatar success">🎉</div>
+                    <div class="feed-content">
+                        <div class="feed-name">خالد عمر</div>
+                        <div class="feed-action">قبل عرض التقسيط</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-amount">+1,200</div>
+                        <div class="feed-time">8 دقائق</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">🎉</span>
+        <span class="toast-text" id="toastText">+450 ريال!</span>
+    </div>
+
+    <script>
+        const names = ['سارة', 'فاطمة', 'عبدالله', 'نورة', 'خالد', 'ريم', 'مريم', 'يوسف', 'هدى', 'لينا', 'عمر', 'دانة'];
+        const actions = ['عادت وأكملت طلبها', 'اشترى بعد التذكير', 'قبلت عرض الخصم', 'أكمل طلبه'];
+
+        let total = 23450;
+        let customers = 47;
+        let messages = 128;
+
+        const amountEl = document.getElementById('amount');
+        const customersEl = document.getElementById('customers');
+        const messagesEl = document.getElementById('messages');
+        const feedEl = document.getElementById('feed');
+        const toastEl = document.getElementById('toast');
+        const toastTextEl = document.getElementById('toastText');
+
+        function showToast(amount) {
+            toastTextEl.textContent = `+${amount} ريال!`;
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 3000);
+        }
+
+        function addEvent() {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const isSale = Math.random() > 0.3;
+            const amount = Math.floor(Math.random() * 900) + 200;
+
+            messages++;
+            messagesEl.textContent = messages;
+
+            const item = document.createElement('div');
+            item.className = 'feed-item new';
+
+            if (isSale) {
+                total += amount;
+                customers++;
+
+                amountEl.textContent = total.toLocaleString();
+                amountEl.classList.add('pulse');
+                setTimeout(() => amountEl.classList.remove('pulse'), 400);
+
+                customersEl.textContent = customers;
+
+                item.innerHTML = `
+                    <div class="feed-avatar success">🎉</div>
+                    <div class="feed-content">
+                        <div class="feed-name">${name}</div>
+                        <div class="feed-action">${actions[Math.floor(Math.random() * actions.length)]}</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-amount">+${amount.toLocaleString()}</div>
+                        <div class="feed-time">الآن</div>
+                    </div>
+                `;
+
+                showToast(amount);
+            } else {
+                item.innerHTML = `
+                    <div class="feed-avatar sent">📤</div>
+                    <div class="feed-content">
+                        <div class="feed-name">${name}</div>
+                        <div class="feed-action">تم إرسال رسالة</div>
+                    </div>
+                    <div class="feed-result">
+                        <div class="feed-time">الآن</div>
+                    </div>
+                `;
+            }
+
+            feedEl.insertBefore(item, feedEl.firstChild);
+
+            while (feedEl.children.length > 10) {
+                feedEl.removeChild(feedEl.lastChild);
+            }
+
+            setTimeout(() => item.classList.remove('new'), 500);
+        }
+
+        // Interactive buttons
+        document.getElementById('messagesBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.target.closest('.action-btn').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                e.target.closest('.action-btn').style.transform = '';
+            }, 150);
+        });
+
+        document.getElementById('analyticsBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.target.closest('.action-btn').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                e.target.closest('.action-btn').style.transform = '';
+            }, 150);
+        });
+
+        // Add event every 8-15 seconds
+        setInterval(addEvent, Math.random() * 7000 + 8000);
+    </script>
+</body>
+
+</html>

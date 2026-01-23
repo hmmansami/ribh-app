@@ -643,6 +643,114 @@ ${(cartValue || 0) > 200 ? 'ذكر العميل بإمكانية التقسيط 
 });
 
 // ==========================================
+// AI OFFER GENERATOR API
+// ==========================================
+let OfferGenerator;
+try {
+    const offerModule = require('./lib/offer-generator');
+    OfferGenerator = offerModule.OfferGenerator;
+    console.log('✅ AI Offer Generator loaded');
+} catch (e) {
+    console.log('⚠️ AI Offer Generator not available:', e.message);
+    OfferGenerator = null;
+}
+
+/**
+ * Generate intelligent, context-aware offers
+ * POST /api/ai/generate-offer
+ * 
+ * Request: { season?, productType?, cartValue?, productName?, customerType?, behavior?, abandonTime? }
+ * Response: { success, offer: { headline, urgency, scarcity, bonus, guarantee, cta, fullMessage, ... } }
+ */
+app.post('/api/ai/generate-offer', async (req, res) => {
+    try {
+        if (!OfferGenerator) {
+            return res.status(500).json({
+                success: false,
+                error: 'AI Offer Generator not available'
+            });
+        }
+
+        const generator = new OfferGenerator({
+            language: req.body.language || 'ar',
+            merchantName: req.body.merchantName || 'متجرنا'
+        });
+
+        const offer = generator.generate({
+            season: req.body.season,
+            productType: req.body.productType,
+            cartValue: req.body.cartValue,
+            productName: req.body.productName,
+            customerType: req.body.customerType,
+            behavior: req.body.behavior,
+            abandonTime: req.body.abandonTime
+        });
+
+        res.json({
+            success: true,
+            offer
+        });
+
+        console.log(`🧠 AI Offer generated: ${offer.headline.substring(0, 50)}...`);
+
+    } catch (error) {
+        console.error('❌ Error generating offer:', error);
+        res.status(500).json({
+            success: false,
+            error: 'حدث خطأ في إنشاء العرض'
+        });
+    }
+});
+
+/**
+ * Generate offer for a specific cart
+ * POST /api/ai/generate-cart-offer
+ * 
+ * Request: { cart: { total, items, createdAt }, customer?: { totalOrders, totalSpent, daysSinceLastOrder } }
+ * Response: { success, offer }
+ */
+app.post('/api/ai/generate-cart-offer', async (req, res) => {
+    try {
+        if (!OfferGenerator) {
+            return res.status(500).json({
+                success: false,
+                error: 'AI Offer Generator not available'
+            });
+        }
+
+        const { cart, customer } = req.body;
+
+        if (!cart) {
+            return res.status(400).json({
+                success: false,
+                error: 'Cart data is required'
+            });
+        }
+
+        const generator = new OfferGenerator({
+            language: req.body.language || 'ar',
+            merchantName: req.body.merchantName || 'متجرنا'
+        });
+
+        const offer = generator.generateForCart(cart, customer);
+
+        res.json({
+            success: true,
+            offer
+        });
+
+        console.log(`🛒 Cart offer generated: ${offer.headline.substring(0, 50)}...`);
+
+    } catch (error) {
+        console.error('❌ Error generating cart offer:', error);
+        res.status(500).json({
+            success: false,
+            error: 'حدث خطأ في إنشاء العرض'
+        });
+    }
+});
+
+// ==========================================
 // SALLA OAUTH - App Installation
 // ==========================================
 app.get('/oauth/callback', async (req, res) => {
@@ -3222,29 +3330,151 @@ app.get('/api/ab/results', (req, res) => {
     }
 });
 
-// Test webhook (for development)
-app.post('/api/test/abandoned-cart', (req, res) => {
+// Test webhook (for development) - ENHANCED
+app.post('/api/test/abandoned-cart', async (req, res) => {
+    // Allow custom test data from request body
+    const customData = req.body || {};
+
     const testData = {
         event: 'cart.abandoned',
-        merchant: 'test-store',
+        merchant: customData.merchant || 'test-store',
         data: {
-            id: Date.now(),
+            id: customData.id || Date.now(),
             customer: {
-                name: 'أحمد محمد',
-                mobile: '+966501234567',
-                email: 'ahmed@example.com'
+                name: customData.customerName || 'أحمد محمد',
+                mobile: customData.phone || '+966501234567',
+                email: customData.email || 'ahmed@example.com'
             },
-            items: [
+            items: customData.items || [
                 { name: 'قميص أزرق', quantity: 2, price: 150 },
                 { name: 'بنطلون جينز', quantity: 1, price: 200 }
             ],
-            total: 500,
-            currency: 'SAR'
+            total: customData.total || 500,
+            currency: customData.currency || 'SAR'
         }
     };
 
-    handleAbandonedCart(testData.data, testData.merchant);
-    res.json({ success: true, message: 'Test cart created!' });
+    try {
+        await handleAbandonedCart(testData.data, testData.merchant);
+        res.json({
+            success: true,
+            message: 'Test cart created!',
+            cartId: testData.data.id,
+            customer: testData.data.customer.name,
+            total: testData.data.total
+        });
+    } catch (error) {
+        console.error('❌ Test cart error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// 🧪 COMPREHENSIVE TEST - Test ALL channels at once
+app.post('/api/test/all', async (req, res) => {
+    console.log('\n🧪 ===========================================');
+    console.log('🧪 COMPREHENSIVE SYSTEM TEST');
+    console.log('🧪 ===========================================\n');
+
+    const { email, phone, customerName } = req.body;
+    const testResults = {
+        timestamp: new Date().toISOString(),
+        channels: {
+            email: { tested: false, success: false, error: null },
+            sms: { tested: false, success: false, error: null },
+            ai: { tested: false, success: false, message: null, error: null },
+            telegram: { tested: false, success: false, error: null }
+        },
+        summary: {}
+    };
+
+    // Test Email
+    if (email && config.RESEND_API_KEY) {
+        testResults.channels.email.tested = true;
+        try {
+            const response = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${config.RESEND_API_KEY}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    from: config.EMAIL_FROM || 'ribh@ribh.click',
+                    to: email,
+                    subject: '🧪 RIBH Test - Email Working!',
+                    html: `
+                    <div style="font-family: -apple-system, Arial, sans-serif; background: linear-gradient(135deg, #10B981, #8B5CF6); padding: 40px; text-align: center;">
+                        <div style="background: white; border-radius: 20px; padding: 40px; max-width: 400px; margin: 0 auto;">
+                            <h1 style="color: #10B981; margin: 0;">✅ نجح الاختبار!</h1>
+                            <p style="color: #666; margin-top: 20px;">Hello ${customerName || 'there'}! Your RIBH email integration is working perfectly.</p>
+                            <p style="color: #888; font-size: 14px; margin-top: 30px;">RIBH Test • ${new Date().toISOString()}</p>
+                        </div>
+                    </div>
+                    `
+                })
+            });
+            const result = await response.json();
+            testResults.channels.email.success = !!result.id;
+            testResults.channels.email.messageId = result.id;
+        } catch (error) {
+            testResults.channels.email.error = error.message;
+        }
+    }
+
+    // Test SMS (AWS SNS)
+    if (phone && config.AWS_ACCESS_KEY) {
+        testResults.channels.sms.tested = true;
+        try {
+            const smsResult = await sendSMS(phone, `🧪 RIBH Test: SMS is working! • ${new Date().toLocaleTimeString('ar-SA')}`);
+            testResults.channels.sms.success = !!smsResult;
+        } catch (error) {
+            testResults.channels.sms.error = error.message;
+        }
+    }
+
+    // Test AI (Gemini)
+    if (config.GEMINI_API_KEY) {
+        testResults.channels.ai.tested = true;
+        try {
+            const prompt = `اكتب رسالة واتساب قصيرة ومقنعة لاسترجاع سلة متروكة للعميل ${customerName || 'أحمد'}. السلة تحتوي على منتجات بقيمة 500 ريال. اكتب الرسالة مباشرة.`;
+            const aiMessage = await generateWithGemini(prompt);
+            testResults.channels.ai.success = !!aiMessage;
+            testResults.channels.ai.message = aiMessage;
+        } catch (error) {
+            testResults.channels.ai.error = error.message;
+        }
+    }
+
+    // Test Telegram (if configured)
+    if (config.TELEGRAM_BOT_TOKEN && req.body.telegramChatId) {
+        testResults.channels.telegram.tested = true;
+        try {
+            const response = await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: req.body.telegramChatId,
+                    text: `🧪 RIBH Test Success!\n\n✅ Telegram integration is working.\n\n🕐 ${new Date().toLocaleTimeString('ar-SA')}`
+                })
+            });
+            const result = await response.json();
+            testResults.channels.telegram.success = result.ok;
+        } catch (error) {
+            testResults.channels.telegram.error = error.message;
+        }
+    }
+
+    // Calculate summary
+    const channels = Object.values(testResults.channels);
+    testResults.summary = {
+        tested: channels.filter(c => c.tested).length,
+        passed: channels.filter(c => c.success).length,
+        failed: channels.filter(c => c.tested && !c.success).length,
+        status: channels.filter(c => c.tested).every(c => c.success) ? '✅ ALL PASSED' : '⚠️ SOME FAILED'
+    };
+
+    console.log('\n🧪 Test Results:', JSON.stringify(testResults.summary, null, 2));
+
+    res.json(testResults);
 });
 
 // Get webhook logs

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #FFFFFF;
+            --text-soft: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --green: #34D399;
+            --green-soft: rgba(52, 211, 153, 0.15);
+            --gold: #FBBF24;
+            --gold-soft: rgba(251, 191, 36, 0.15);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           AMBIENT GLOW - The Magic
+        ============================================ */
+        .glow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .glow::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(52, 211, 153, 0.12) 0%, transparent 60%);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.1);
+            }
+        }
+
+        /* ============================================
+           APP STRUCTURE
+        ============================================ */
+        .app {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================
+           HEADER - Minimal, Just Logo
+        ============================================ */
+        .header {
+            padding: 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #34D399 0%, #FBBF24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ============================================
+           THE MONEY - Hero Section
+        ============================================ */
+        .hero {
+            text-align: center;
+            padding: 60px 0 48px;
+        }
+
+        .hero-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--green-soft);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 100px;
+            margin-bottom: 32px;
+            font-size: 15px;
+            color: var(--green);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 12px var(--green);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+        }
+
+        .hero-amount {
+            font-size: clamp(56px, 12vw, 96px);
+            font-weight: 800;
+            background: linear-gradient(180deg, #FFFFFF 20%, var(--green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            letter-spacing: -3px;
+            margin-bottom: 8px;
+        }
+
+        .hero-currency {
+            font-size: 20px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ============================================
+           LIVE FEED - The Machine Working
+        ============================================ */
+        .feed {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feed-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .feed-count {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .feed-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feed-list::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* ============================================
+           ACTIVITY ITEM - Each Event
+        ============================================ */
+        .item {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 16px;
+            align-items: center;
+            padding: 18px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.2s ease;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item:hover {
+            background: var(--surface-hover);
+        }
+
+        .item-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .item-status.success {
+            background: var(--green);
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.5);
+        }
+
+        .item-status.pending {
+            background: var(--gold);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .item-action {
+            font-size: 14px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-result {
+            text-align: left;
+            direction: ltr;
+        }
+
+        .item-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .item-amount.pending {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gold);
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* New item animation */
+        .item.new {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Amount bump animation */
+        .hero-amount.bump {
+            animation: bump 0.3s ease-out;
+        }
+
+        @keyframes bump {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.02);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 600px) {
+            .app {
+                padding: 0 16px;
+            }
+
+            .hero {
+                padding: 40px 0 32px;
+            }
+
+            .item {
+                padding: 16px 20px;
+                gap: 12px;
+            }
+
+            .item-action {
+                max-width: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow"></div>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">💚</span>
+                <span class="logo-text">رِبح</span>
+            </div>
+        </header>
+
+        <!-- Hero - The Money -->
+        <section class="hero">
+            <div class="hero-status">
+                <span class="status-dot"></span>
+                <span>يعمل الآن</span>
+            </div>
+            <div class="hero-amount" id="amount">23,450</div>
+            <div class="hero-currency">ريال سعودي</div>
+        </section>
+
+        <!-- Live Feed -->
+        <section class="feed">
+            <div class="feed-header">
+                <div class="feed-title">
+                    <span>⚡</span>
+                    <span>الآن</span>
+                </div>
+                <div class="feed-count">اليوم</div>
+            </div>
+            <div class="feed-list" id="feed">
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">سارة</span>
+                        <span class="item-action">عادت وأكملت الشراء</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+450</div>
+                        <div class="item-time">الآن</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">فاطمة</span>
+                        <span class="item-action">اشترت للمرة الثانية</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+890</div>
+                        <div class="item-time">2 دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">عبدالله</span>
+                        <span class="item-action">اشترك وحصل على 15%</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+320</div>
+                        <div class="item-time">5 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status pending"></div>
+                    <div class="item-info">
+                        <span class="item-name">أحمد</span>
+                        <span class="item-action">يفكر في التقسيط</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount pending">انتظار</div>
+                        <div class="item-time">8 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">نورة</span>
+                        <span class="item-action">قبلت عرض المنتج الإضافي</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+280</div>
+                        <div class="item-time">12 دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">خالد</span>
+                        <span class="item-action">أكمل طلبه بعد التذكير</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+1,200</div>
+                        <div class="item-time">18 دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-status success"></div>
+                    <div class="item-info">
+                        <span class="item-name">ريم</span>
+                        <span class="item-action">عميلة عادت بعد 30 يوم</span>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+650</div>
+                        <div class="item-time">25 دقيقة</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // The Machine - Live Updates
+        const names = ['سارة', 'فاطمة', 'أحمد', 'نورة', 'خالد', 'ريم', 'عبدالله', 'مريم', 'يوسف', 'هدى', 'لينا', 'عمر'];
+        const actions = [
+            'عادت وأكملت الشراء',
+            'اشترت للمرة الثانية',
+            'قبلت عرض الخصم',
+            'أكمل طلبه بعد التذكير',
+            'اشترك وحصل على 15%',
+            'قبلت عرض المنتج الإضافي',
+            'عميلة عادت بعد 30 يوم'
+        ];
+
+        let total = 23450;
+        const amountEl = document.getElementById('amount');
+        const feedEl = document.getElementById('feed');
+
+        function addEvent() {
+            const gain = Math.floor(Math.random() * 900) + 200;
+            total += gain;
+
+            // Update total with animation
+            amountEl.textContent = total.toLocaleString();
+            amountEl.classList.add('bump');
+            setTimeout(() => amountEl.classList.remove('bump'), 300);
+
+            // Create new item
+            const item = document.createElement('div');
+            item.className = 'item new';
+            item.innerHTML = `
+                <div class="item-status success"></div>
+                <div class="item-info">
+                    <span class="item-name">${names[Math.floor(Math.random() * names.length)]}</span>
+                    <span class="item-action">${actions[Math.floor(Math.random() * actions.length)]}</span>
+                </div>
+                <div class="item-result">
+                    <div class="item-amount">+${gain.toLocaleString()}</div>
+                    <div class="item-time">الآن</div>
+                </div>
+            `;
+
+            // Insert at top
+            feedEl.insertBefore(item, feedEl.firstChild);
+
+            // Remove animation class
+            setTimeout(() => item.classList.remove('new'), 400);
+
+            // Keep max 12 items
+            while (feedEl.children.length > 12) {
+                feedEl.removeChild(feedEl.lastChild);
+            }
+        }
+
+        // Add new event every 10-20 seconds
+        setInterval(addEvent, Math.random() * 10000 + 10000);
+    </script>
+</body>
+
+</html>

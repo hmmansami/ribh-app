@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #09090B;
+            --bg-elevated: #18181B;
+            --card: rgba(24, 24, 27, 0.8);
+            --card-hover: rgba(39, 39, 42, 0.9);
+            --border: rgba(255, 255, 255, 0.06);
+            --border-hover: rgba(255, 255, 255, 0.12);
+            --text: #FAFAFA;
+            --text-secondary: #A1A1AA;
+            --text-muted: #71717A;
+
+            /* Brand Colors */
+            --emerald: #10B981;
+            --emerald-glow: rgba(16, 185, 129, 0.3);
+            --purple: #8B5CF6;
+            --purple-glow: rgba(139, 92, 246, 0.3);
+            --gold: #F59E0B;
+            --gold-glow: rgba(245, 158, 11, 0.3);
+            --blue: #3B82F6;
+            --pink: #EC4899;
+
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+            --gradient-gold: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            --gradient-card: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           ANIMATED BACKGROUND
+        ============================================ */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-gradient::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 800px 800px at 20% 20%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 600px 600px at 80% 80%, rgba(139, 92, 246, 0.06), transparent 50%),
+                radial-gradient(ellipse 400px 400px at 50% 50%, rgba(245, 158, 11, 0.04), transparent 50%);
+            animation: bgFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(2%, 2%) rotate(2deg);
+            }
+
+            66% {
+                transform: translate(-2%, 1%) rotate(-1deg);
+            }
+        }
+
+        /* ============================================
+           LAYOUT
+        ============================================ */
+        .app {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================
+           HEADER
+        ============================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, #10B981 0%, #8B5CF6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .store-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .store-selector:hover {
+            border-color: var(--border-hover);
+            background: var(--card-hover);
+        }
+
+        .store-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .store-platform {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+        }
+
+        .header-btn:hover {
+            border-color: var(--emerald);
+            color: var(--emerald);
+        }
+
+        .header-btn.has-notification {
+            position: relative;
+        }
+
+        .header-btn.has-notification::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--pink);
+            border-radius: 50%;
+            border: 2px solid var(--bg);
+        }
+
+        /* ============================================
+           MAIN CONTENT
+        ============================================ */
+        .main {
+            flex: 1;
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ============================================
+           HERO STATS - THE BIG NUMBER
+        ============================================ */
+        .hero-stats {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--emerald);
+            margin-bottom: 24px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            }
+
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+        }
+
+        .hero-label {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .hero-amount {
+            font-size: 72px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10B981 0%, #8B5CF6 50%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+            letter-spacing: -2px;
+        }
+
+        .hero-currency {
+            font-size: 28px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .hero-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 20px;
+            color: var(--emerald);
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+
+        /* ============================================
+           THREE LEVERS - REVENUE = A × B × C
+        ============================================ */
+        .levers-section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .levers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .lever-card {
+            position: relative;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lever-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .lever-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+        }
+
+        .lever-card:hover::before {
+            opacity: 0.5;
+        }
+
+        /* Price More - Emerald */
+        .lever-card.price::before {
+            background: var(--emerald);
+        }
+
+        /* More Times - Purple */
+        .lever-card.times::before {
+            background: var(--purple);
+        }
+
+        /* More People - Gold */
+        .lever-card.people::before {
+            background: var(--gold);
+        }
+
+        .lever-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .lever-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .lever-card.price .lever-icon {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .lever-card.times .lever-icon {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .lever-card.people .lever-icon {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .lever-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .lever-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .lever-amount {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .lever-card.price .lever-amount {
+            color: var(--emerald);
+        }
+
+        .lever-card.times .lever-amount {
+            color: var(--purple);
+        }
+
+        .lever-card.people .lever-amount {
+            color: var(--gold);
+        }
+
+        .lever-unit {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .lever-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .lever-card.price .lever-change {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--emerald);
+        }
+
+        .lever-card.times .lever-change {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--purple);
+        }
+
+        .lever-card.people .lever-change {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold);
+        }
+
+        .lever-methods {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .lever-method {
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ============================================
+           LIVE ACTIVITY FEED
+        ============================================ */
+        .activity-section {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .activity-title-icon {
+            font-size: 20px;
+        }
+
+        .activity-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.3);
+            color: var(--emerald);
+        }
+
+        .activity-list {
+            padding: 8px 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 28px;
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .activity-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .activity-status.success {
+            background: var(--emerald);
+            box-shadow: 0 0 12px var(--emerald-glow);
+        }
+
+        .activity-status.pending {
+            background: var(--gold);
+            box-shadow: 0 0 12px var(--gold-glow);
+            animation: pendingPulse 2s infinite;
+        }
+
+        .activity-status.info {
+            background: var(--blue);
+        }
+
+        @keyframes pendingPulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-flow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .activity-step {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .activity-arrow {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        .activity-step.highlight {
+            color: var(--emerald);
+            font-weight: 600;
+        }
+
+        .activity-step.amount {
+            background: rgba(16, 185, 129, 0.15);
+            padding: 2px 10px;
+            border-radius: 6px;
+            color: var(--emerald);
+            font-weight: 700;
+        }
+
+        .activity-details {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .activity-customer {
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .activity-product {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .activity-time {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            margin-right: auto;
+        }
+
+        .activity-empty {
+            text-align: center;
+            padding: 60px 28px;
+            color: var(--text-muted);
+        }
+
+        .activity-empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 1024px) {
+            .levers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-amount {
+                font-size: 56px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .hero-amount {
+                font-size: 42px;
+            }
+
+            .store-selector {
+                display: none;
+            }
+
+            .lever-card {
+                padding: 20px;
+            }
+
+            .activity-item {
+                padding: 16px 20px;
+            }
+
+            .activity-flow {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .activity-arrow {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <span>💚</span>
+                    <span class="logo-text">رِبح</span>
+                </div>
+                <div class="store-selector">
+                    <span>🏪</span>
+                    <div>
+                        <div class="store-name">متجر الأناقة</div>
+                        <div class="store-platform">سلة</div>
+                    </div>
+                    <span style="color: var(--text-muted);">▼</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="header-btn has-notification">🔔</button>
+                <button class="header-btn">⚙️</button>
+                <button class="header-btn">👤</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Hero Stats -->
+            <section class="hero-stats">
+                <div class="live-indicator">
+                    <span class="live-dot"></span>
+                    <span>المكينة شغالة • آخر حركة منذ 12 ثانية</span>
+                </div>
+
+                <div class="hero-label">إجمالي الأرباح المستردة هذا الشهر</div>
+                <div class="hero-amount">23,450</div>
+                <div class="hero-currency">ريال سعودي</div>
+
+                <div class="hero-change">
+                    <span>↑</span>
+                    <span>+43% مقارنة بالشهر الماضي</span>
+                </div>
+            </section>
+
+            <!-- Three Levers -->
+            <section class="levers-section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">روافع الأرباح الثلاثة</div>
+                        <div class="section-subtitle">الإيرادات = السعر × المرات × العملاء</div>
+                    </div>
+                </div>
+
+                <div class="levers-grid">
+                    <!-- Price More -->
+                    <div class="lever-card price">
+                        <div class="lever-header">
+                            <div class="lever-icon">💰</div>
+                            <div>
+                                <div class="lever-title">سعر أكبر</div>
+                                <div class="lever-subtitle">رفع قيمة الطلب</div>
+                            </div>
+                        </div>
+                        <div class="lever-amount">8,200</div>
+                        <div class="lever-unit">ريال مسترد</div>
+                        <div class="lever-change">
+                            <span>↑</span>
+                            <span>+24%</span>
+                        </div>
+                        <div class="lever-methods">
+                            <span class="lever-method">عروض ذكية</span>
+                            <span class="lever-method">حزم منتجات</span>
+                            <span class="lever-method">Upsell</span>
+                        </div>
+                    </div>
+
+                    <!-- More Times -->
+                    <div class="lever-card times">
+                        <div class="lever-header">
+                            <div class="lever-icon">🔄</div>
+                            <div>
+                                <div class="lever-title">مرات أكثر</div>
+                                <div class="lever-subtitle">تكرار الشراء</div>
+                            </div>
+                        </div>
+                        <div class="lever-amount">12,100</div>
+                        <div class="lever-unit">ريال مسترد</div>
+                        <div class="lever-change">
+                            <span>↑</span>
+                            <span>+67%</span>
+                        </div>
+                        <div class="lever-methods">
+                            <span class="lever-method">سلات متروكة</span>
+                            <span class="lever-method">إعادة تنشيط</span>
+                            <span class="lever-method">ولاء</span>
+                        </div>
+                    </div>
+
+                    <!-- More People -->
+                    <div class="lever-card people">
+                        <div class="lever-header">
+                            <div class="lever-icon">👥</div>
+                            <div>
+                                <div class="lever-title">عملاء أكثر</div>
+                                <div class="lever-subtitle">جذب مشترين جدد</div>
+                            </div>
+                        </div>
+                        <div class="lever-amount">3,150</div>
+                        <div class="lever-unit">ريال مسترد</div>
+                        <div class="lever-change">
+                            <span>↑</span>
+                            <span>+12%</span>
+                        </div>
+                        <div class="lever-methods">
+                            <span class="lever-method">التقاط الزوار</span>
+                            <span class="lever-method">إحالات</span>
+                            <span class="lever-method">عروض ترحيب</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Activity Feed -->
+            <section class="activity-section">
+                <div class="activity-header">
+                    <div class="activity-title">
+                        <span class="activity-title-icon">⚡</span>
+                        <span>النشاط المباشر</span>
+                    </div>
+                    <div class="activity-filter">
+                        <button class="filter-btn active">الكل</button>
+                        <button class="filter-btn">💰 مبيعات</button>
+                        <button class="filter-btn">📧 رسائل</button>
+                        <button class="filter-btn">👥 عملاء</button>
+                    </div>
+                </div>
+
+                <div class="activity-list">
+                    <!-- Success: Cart Recovered -->
+                    <div class="activity-item">
+                        <div class="activity-status success"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">سلة متروكة</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">SMS مُرسل</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step highlight">عاد العميل!</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step amount">+450 ر.س</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">سارة أحمد</span>
+                                <span>•</span>
+                                <span class="activity-product">حقيبة Kate Spade</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">الآن</div>
+                    </div>
+
+                    <!-- Success: Lead Captured -->
+                    <div class="activity-item">
+                        <div class="activity-status success"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">زائر جديد</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step highlight">تم التقاطه!</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">عرض ترحيب 15% مُرسل</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">عبدالله محمد</span>
+                                <span>•</span>
+                                <span class="activity-product">مشترك جديد</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">منذ 2 دقيقة</div>
+                    </div>
+
+                    <!-- Success: Reactivation -->
+                    <div class="activity-item">
+                        <div class="activity-status success"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">عميل غير نشط 30 يوم</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">رسالة إعادة تنشيط</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step highlight">شراء!</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step amount">+890 ر.س</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">فاطمة علي</span>
+                                <span>•</span>
+                                <span class="activity-product">عرض VIP مقبول</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">منذ 5 دقائق</div>
+                    </div>
+
+                    <!-- Pending: Payment Plan -->
+                    <div class="activity-item">
+                        <div class="activity-status pending"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">سلة كبيرة 2,400 ر.س</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">عرض تقسيط تمارا</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">في الانتظار...</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">أحمد خالد</span>
+                                <span>•</span>
+                                <span class="activity-product">4 دفعات بدون فوائد</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">منذ 8 دقائق</div>
+                    </div>
+
+                    <!-- Success: Upsell -->
+                    <div class="activity-item">
+                        <div class="activity-status success"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">عميل اشترى</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">عرض Upsell</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step highlight">قبل!</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step amount">+320 ر.س</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">نورة سعد</span>
+                                <span>•</span>
+                                <span class="activity-product">أضافت منتج إضافي</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">منذ 12 دقيقة</div>
+                    </div>
+
+                    <!-- Info: WhatsApp Sent -->
+                    <div class="activity-item">
+                        <div class="activity-status info"></div>
+                        <div class="activity-content">
+                            <div class="activity-flow">
+                                <span class="activity-step">سلة متروكة</span>
+                                <span class="activity-arrow">→</span>
+                                <span class="activity-step">واتساب مُرسل</span>
+                            </div>
+                            <div class="activity-details">
+                                <span class="activity-customer">ريم عبدالرحمن</span>
+                                <span>•</span>
+                                <span class="activity-product">ساعة Apple Watch</span>
+                            </div>
+                        </div>
+                        <div class="activity-time">منذ 15 دقيقة</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Simulate live updates
+        function animateCounter() {
+            const heroAmount = document.querySelector('.hero-amount');
+            let current = 23450;
+
+            setInterval(() => {
+                // Random small increment
+                current += Math.floor(Math.random() * 50);
+                heroAmount.textContent = current.toLocaleString('en-US');
+            }, 15000); // Every 15 seconds
+        }
+
+        // Filter buttons interaction
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Initialize
+        animateCounter();
+    </script>
+</body>
+
+</html>

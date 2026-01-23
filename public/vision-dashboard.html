@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - The Complete Money Machine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --secondary: #6366F1;
+            --accent: #F59E0B;
+            --danger: #EF4444;
+            --dark: #0F172A;
+            --dark-2: #1E293B;
+            --dark-3: #334155;
+            --light: #F8FAFC;
+            --gray: #94A3B8;
+            --gradient-money: linear-gradient(135deg, #10B981 0%, #059669 50%, #047857 100%);
+            --gradient-leads: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            --gradient-offers: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            --gradient-continuity: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            animation: bgPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            50% {
+                transform: translate(-5%, -5%) rotate(5deg);
+            }
+        }
+
+        /* Header */
+        .header {
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-money);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-money);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .phase-indicator {
+            display: flex;
+            gap: 8px;
+        }
+
+        .phase-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .phase-dot.active {
+            background: var(--gradient-money);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+        }
+
+        .phase-dot.upcoming {
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+        }
+
+        /* Main Container */
+        .main {
+            padding: 30px 40px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Money Hero Section */
+        .money-hero {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .money-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-money);
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 8px;
+        }
+
+        .hero-stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            background: var(--gradient-money);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-stat-sub {
+            font-size: 14px;
+            color: var(--primary);
+            margin-top: 8px;
+        }
+
+        .hero-stat-sub.positive {
+            color: var(--primary);
+        }
+
+        .hero-stat-sub.positive::before {
+            content: '↑ ';
+        }
+
+        /* The 3 Methods Grid */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .method-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .method-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .method-card.offers {
+            border-top: 3px solid var(--accent);
+        }
+
+        .method-card.leads {
+            border-top: 3px solid var(--secondary);
+        }
+
+        .method-card.models {
+            border-top: 3px solid #EC4899;
+        }
+
+        .method-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .method-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .method-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .method-icon.offers {
+            background: var(--gradient-offers);
+        }
+
+        .method-icon.leads {
+            background: var(--gradient-leads);
+        }
+
+        .method-icon.models {
+            background: var(--gradient-continuity);
+        }
+
+        .method-stat {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .method-stat-label {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        /* Money Flow Section */
+        .money-flow {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title-icon {
+            font-size: 24px;
+        }
+
+        /* Money Models - 4 Stages */
+        .money-models-flow {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            position: relative;
+        }
+
+        .money-models-flow::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(to left, var(--primary), var(--secondary), var(--accent), #EC4899);
+            z-index: 0;
+        }
+
+        .model-stage {
+            background: var(--dark-2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s;
+        }
+
+        .model-stage:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+
+        .model-stage.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .stage-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stage-icon.attraction {
+            background: var(--gradient-offers);
+        }
+
+        .stage-icon.upsell {
+            background: var(--gradient-leads);
+        }
+
+        .stage-icon.downsell {
+            background: linear-gradient(135deg, #14B8A6, #0D9488);
+        }
+
+        .stage-icon.continuity {
+            background: var(--gradient-continuity);
+        }
+
+        .stage-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stage-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stage-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .stage-tools {
+            margin-top: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .stage-tool {
+            font-size: 10px;
+            padding: 4px 10px;
+            background: var(--dark-3);
+            border-radius: 20px;
+            color: var(--gray);
+        }
+
+        .stage-tool.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Live Activity Feed */
+        .activity-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .activity-feed {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--dark-2);
+            border-radius: 12px;
+            border-right: 3px solid transparent;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-item.cart-recovery {
+            border-right-color: var(--primary);
+        }
+
+        .activity-item.upsell {
+            border-right-color: var(--secondary);
+        }
+
+        .activity-item.lead-capture {
+            border-right-color: var(--accent);
+        }
+
+        .activity-item.winback {
+            border-right-color: #EC4899;
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.cart-recovery {
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .activity-icon.upsell {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .activity-icon.lead-capture {
+            background: rgba(245, 158, 11, 0.2);
+        }
+
+        .activity-icon.winback {
+            background: rgba(236, 72, 153, 0.2);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-details {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .activity-amount {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--gray);
+        }
+
+        /* Channels Performance */
+        .channels-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .channel-item:last-child {
+            border-bottom: none;
+        }
+
+        .channel-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .channel-icon.whatsapp {
+            background: #25D366;
+        }
+
+        .channel-icon.sms {
+            background: var(--secondary);
+        }
+
+        .channel-icon.email {
+            background: var(--accent);
+        }
+
+        .channel-icon.telegram {
+            background: #0088CC;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .channel-stats {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .channel-rate {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* AI Offer Generator Preview */
+        .offer-preview {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .offer-demo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .offer-phone {
+            max-width: 320px;
+            margin: 0 auto;
+            background: var(--dark-2);
+            border-radius: 40px;
+            padding: 20px;
+            border: 3px solid var(--dark-3);
+        }
+
+        .phone-notch {
+            width: 120px;
+            height: 24px;
+            background: var(--dark);
+            border-radius: 20px;
+            margin: 0 auto 20px;
+        }
+
+        .phone-content {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            min-height: 400px;
+        }
+
+        .whatsapp-message {
+            background: #DCF8C6;
+            border-radius: 16px 16px 4px 16px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #111;
+            position: relative;
+        }
+
+        .whatsapp-message::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+            border-top-color: #DCF8C6;
+            border-right: 0;
+        }
+
+        .message-emoji {
+            font-size: 24px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .message-headline {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #000;
+        }
+
+        .message-body {
+            margin-bottom: 12px;
+        }
+
+        .message-urgency {
+            background: #FEF3C7;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-bonus {
+            background: #D1FAE5;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .message-cta {
+            background: #25D366;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .message-time {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            font-size: 11px;
+            color: #667;
+        }
+
+        .offer-config {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .config-label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray);
+        }
+
+        .config-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .config-option {
+            padding: 10px 18px;
+            background: var(--dark-2);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .config-option:hover {
+            border-color: var(--primary);
+        }
+
+        .config-option.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Phases Roadmap */
+        .phases-roadmap {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .phases-timeline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .phase-card {
+            background: var(--dark-2);
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .phase-card.current {
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+        }
+
+        .phase-card.current::before {
+            content: 'الآن';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .phase-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--dark-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .phase-card.current .phase-number {
+            background: var(--gradient-money);
+        }
+
+        .phase-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .phase-features {
+            list-style: none;
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .phase-features li {
+            padding: 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phase-features li::before {
+            content: '•';
+            color: var(--primary);
+        }
+
+        .phase-card.current .phase-features li::before {
+            content: '✓';
+        }
+
+        /* One Click Activation */
+        .activation-section {
+            background: var(--gradient-money);
+            border-radius: 24px;
+            padding: 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activation-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+        }
+
+        .activation-title {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .activation-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .activate-btn {
+            background: white;
+            color: var(--primary-dark);
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .activate-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .activation-promise {
+            margin-top: 24px;
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+
+            .methods-grid,
+            .phases-timeline {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .money-models-flow {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .money-models-flow::before {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .money-hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .methods-grid,
+            .phases-timeline,
+            .money-models-flow {
+                grid-template-columns: 1fr;
+            }
+
+            .activity-section {
+                grid-template-columns: 1fr;
+            }
+
+            .offer-demo {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes moneyPulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 40px rgba(16, 185, 129, 0.8);
+            }
+        }
+
+        .hero-stat-value {
+            animation: moneyPulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">ر</div>
+            <span class="logo-text">RIBH</span>
+        </div>
+        <div class="phase-indicator">
+            <div class="phase-dot active" title="المرحلة 1: الاسترداد">1</div>
+            <div class="phase-dot upcoming" title="المرحلة 2: التضخيم">2</div>
+            <div class="phase-dot upcoming" title="المرحلة 3: الاحتفاظ">3</div>
+            <div class="phase-dot upcoming" title="المرحلة 4: المضاعفة">4</div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Money Hero -->
+        <section class="money-hero">
+            <div class="hero-stat">
+                <div class="hero-stat-label">إجمالي الأرباح المستردة</div>
+                <div class="hero-stat-value">٤٧,٥٠٠ ر.س</div>
+                <div class="hero-stat-sub positive">+23% هذا الأسبوع</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-label">السلات المستردة</div>
+                <div class="hero-stat-value">١٢٣</div>
+                <div class="hero-stat-sub positive">38% معدل الاسترداد</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-label">العملاء المكتسبين</div>
+                <div class="hero-stat-value">٨٩٤</div>
+                <div class="hero-stat-sub positive">+156 هذا الشهر</div>
+            </div>
+        </section>
+
+        <!-- 3 Methods Grid -->
+        <section class="methods-grid">
+            <div class="method-card offers">
+                <div class="method-header">
+                    <span class="method-title">📕 $100M Offers</span>
+                    <div class="method-icon offers">✨</div>
+                </div>
+                <div class="method-stat">٨٧%</div>
+                <div class="method-stat-label">معدل فتح العروض</div>
+                <div style="margin-top: 16px; font-size: 13px; color: var(--gray);">
+                    العروض المرسلة: <strong style="color: white;">347</strong>
+                </div>
+            </div>
+            <div class="method-card leads">
+                <div class="method-header">
+                    <span class="method-title">📗 $100M Leads</span>
+                    <div class="method-icon leads">🎯</div>
+                </div>
+                <div class="method-stat">٢,٤٥٦</div>
+                <div class="method-stat-label">إجمالي العملاء المحتملين</div>
+                <div style="margin-top: 16px; font-size: 13px; color: var(--gray);">
+                    سلات متروكة: <strong style="color: white;">89</strong> • عملاء سابقين: <strong
+                        style="color: white;">1,245</strong>
+                </div>
+            </div>
+            <div class="method-card models">
+                <div class="method-header">
+                    <span class="method-title">📘 $100M Money Models</span>
+                    <div class="method-icon models">💎</div>
+                </div>
+                <div class="method-stat">٣.٢x</div>
+                <div class="method-stat-label">مضاعف العائد على الاستثمار</div>
+                <div style="margin-top: 16px; font-size: 13px; color: var(--gray);">
+                    قيمة العميل: <strong style="color: white;">450 ر.س</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Money Models Flow -->
+        <section class="money-flow">
+            <h2 class="section-title">
+                <span class="section-title-icon">💰</span>
+                تسلسل النقود - Money Models
+            </h2>
+            <div class="money-models-flow">
+                <div class="model-stage active">
+                    <div class="stage-icon attraction">🧲</div>
+                    <div class="stage-title">الجذب</div>
+                    <div class="stage-value">٢٣,٥٠٠</div>
+                    <div class="stage-label">ر.س من العملاء الجدد</div>
+                    <div class="stage-tools">
+                        <span class="stage-tool active">استرداد السلات</span>
+                        <span class="stage-tool active">التقاط العملاء</span>
+                        <span class="stage-tool">عروض الترحيب</span>
+                    </div>
+                </div>
+                <div class="model-stage">
+                    <div class="stage-icon upsell">⬆️</div>
+                    <div class="stage-title">زيادة القيمة</div>
+                    <div class="stage-value">١٢,٣٠٠</div>
+                    <div class="stage-label">ر.س من الترقيات</div>
+                    <div class="stage-tools">
+                        <span class="stage-tool">ترقية المنتج</span>
+                        <span class="stage-tool">الباقات</span>
+                        <span class="stage-tool">بيع متقاطع</span>
+                    </div>
+                </div>
+                <div class="model-stage">
+                    <div class="stage-icon downsell">🔄</div>
+                    <div class="stage-title">إنقاذ البيع</div>
+                    <div class="stage-value">٨,٢٠٠</div>
+                    <div class="stage-label">ر.س من التقسيط</div>
+                    <div class="stage-tools">
+                        <span class="stage-tool">Tabby</span>
+                        <span class="stage-tool">Tamara</span>
+                        <span class="stage-tool">نسخة مصغرة</span>
+                    </div>
+                </div>
+                <div class="model-stage">
+                    <div class="stage-icon continuity">♾️</div>
+                    <div class="stage-title">الاستمرارية</div>
+                    <div class="stage-value">٣,٥٠٠</div>
+                    <div class="stage-label">ر.س شهرياً متكرر</div>
+                    <div class="stage-tools">
+                        <span class="stage-tool">استعادة العملاء</span>
+                        <span class="stage-tool">الولاء</span>
+                        <span class="stage-tool">الاشتراكات</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity + Channels -->
+        <section class="activity-section">
+            <div class="activity-feed">
+                <h2 class="section-title">
+                    <span class="section-title-icon">⚡</span>
+                    النشاط المباشر
+                </h2>
+                <div class="activity-list">
+                    <div class="activity-item cart-recovery">
+                        <div class="activity-icon cart-recovery">🛒</div>
+                        <div class="activity-content">
+                            <div class="activity-title">تم استرداد سلة!</div>
+                            <div class="activity-details">عميل أكمل طلبه بعد 47 دقيقة</div>
+                        </div>
+                        <div>
+                            <div class="activity-amount">+٣٤٥ ر.س</div>
+                            <div class="activity-time">منذ 2 دقيقة</div>
+                        </div>
+                    </div>
+                    <div class="activity-item lead-capture">
+                        <div class="activity-icon lead-capture">📧</div>
+                        <div class="activity-content">
+                            <div class="activity-title">عميل محتمل جديد</div>
+                            <div class="activity-details">التقاط من نافذة الخروج</div>
+                        </div>
+                        <div>
+                            <div class="activity-amount">+عميل</div>
+                            <div class="activity-time">منذ 5 دقائق</div>
+                        </div>
+                    </div>
+                    <div class="activity-item cart-recovery">
+                        <div class="activity-icon cart-recovery">🛒</div>
+                        <div class="activity-content">
+                            <div class="activity-title">تم استرداد سلة!</div>
+                            <div class="activity-details">عرض "شحن مجاني" نجح</div>
+                        </div>
+                        <div>
+                            <div class="activity-amount">+٥٢٠ ر.س</div>
+                            <div class="activity-time">منذ 12 دقيقة</div>
+                        </div>
+                    </div>
+                    <div class="activity-item upsell">
+                        <div class="activity-icon upsell">⬆️</div>
+                        <div class="activity-content">
+                            <div class="activity-title">ترقية ناجحة</div>
+                            <div class="activity-details">عميل أضاف منتج إضافي</div>
+                        </div>
+                        <div>
+                            <div class="activity-amount">+٨٩ ر.س</div>
+                            <div class="activity-time">منذ 18 دقيقة</div>
+                        </div>
+                    </div>
+                    <div class="activity-item winback">
+                        <div class="activity-icon winback">💕</div>
+                        <div class="activity-content">
+                            <div class="activity-title">عميل عاد!</div>
+                            <div class="activity-details">لم يشتري منذ 45 يوم - عاد الآن</div>
+                        </div>
+                        <div>
+                            <div class="activity-amount">+٢٧٨ ر.س</div>
+                            <div class="activity-time">منذ 25 دقيقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="channels-card">
+                <h2 class="section-title">
+                    <span class="section-title-icon">📱</span>
+                    قنوات التواصل
+                </h2>
+                <div class="channel-item">
+                    <div class="channel-icon whatsapp">💬</div>
+                    <div class="channel-info">
+                        <div class="channel-name">واتساب</div>
+                        <div class="channel-stats">٢٣٤ رسالة • ٢١٢ مفتوحة</div>
+                    </div>
+                    <div class="channel-rate">٩١%</div>
+                </div>
+                <div class="channel-item">
+                    <div class="channel-icon sms">📱</div>
+                    <div class="channel-info">
+                        <div class="channel-name">SMS</div>
+                        <div class="channel-stats">١٥٦ رسالة • ١٣٤ مفتوحة</div>
+                    </div>
+                    <div class="channel-rate">٨٦%</div>
+                </div>
+                <div class="channel-item">
+                    <div class="channel-icon email">✉️</div>
+                    <div class="channel-info">
+                        <div class="channel-name">البريد</div>
+                        <div class="channel-stats">٤٥٦ رسالة • ٩٨ مفتوحة</div>
+                    </div>
+                    <div class="channel-rate">٢٢%</div>
+                </div>
+                <div class="channel-item">
+                    <div class="channel-icon telegram">✈️</div>
+                    <div class="channel-info">
+                        <div class="channel-name">تيليجرام</div>
+                        <div class="channel-stats">٨٧ رسالة • ٦٥ مفتوحة</div>
+                    </div>
+                    <div class="channel-rate">٧٥%</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Offer Generator Preview -->
+        <section class="offer-preview">
+            <h2 class="section-title">
+                <span class="section-title-icon">🤖</span>
+                مولد العروض الذكي - AI Offer Generator
+            </h2>
+            <div class="offer-demo">
+                <div class="offer-phone">
+                    <div class="phone-notch"></div>
+                    <div class="phone-content">
+                        <div class="whatsapp-message">
+                            <span class="message-emoji">🛒✨</span>
+                            <div class="message-headline">سلتك تنتظرك يا أحمد!</div>
+                            <div class="message-body">
+                                لاحظنا إنك تركت <strong>حذاء Nike Air Max</strong> في سلة التسوق.
+                            </div>
+                            <div class="message-urgency">
+                                ⏰ ينتهي العرض خلال <strong>ساعتين</strong>
+                            </div>
+                            <div class="message-bonus">
+                                🎁 شحن مجاني + خصم 15% للطلب الآن
+                            </div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                ✅ ضمان استرجاع 30 يوم بدون سؤال
+                            </div>
+                            <div class="message-cta">
+                                أكمل طلبك الآن ←
+                            </div>
+                            <span class="message-time">10:45 ص ✓✓</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="offer-config">
+                    <div>
+                        <div class="config-label">🎯 نوع العرض</div>
+                        <div class="config-options">
+                            <span class="config-option active">استرداد سلة</span>
+                            <span class="config-option">ترحيب</span>
+                            <span class="config-option">استعادة عميل</span>
+                            <span class="config-option">ترقية</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="config-label">⏰ الاستعجال</div>
+                        <div class="config-options">
+                            <span class="config-option">ساعة</span>
+                            <span class="config-option active">ساعتين</span>
+                            <span class="config-option">24 ساعة</span>
+                            <span class="config-option">بدون</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="config-label">🎁 البونص</div>
+                        <div class="config-options">
+                            <span class="config-option active">شحن مجاني</span>
+                            <span class="config-option">هدية</span>
+                            <span class="config-option">خصم</span>
+                            <span class="config-option">نقاط</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="config-label">📅 الموسم</div>
+                        <div class="config-options">
+                            <span class="config-option">عادي</span>
+                            <span class="config-option">رمضان</span>
+                            <span class="config-option">عيد</span>
+                            <span class="config-option active">تخفيضات</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="config-label">✅ الضمان</div>
+                        <div class="config-options">
+                            <span class="config-option active">استرجاع 30 يوم</span>
+                            <span class="config-option">ضمان سنة</span>
+                            <span class="config-option">رضا 100%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phases Roadmap -->
+        <section class="phases-roadmap">
+            <h2 class="section-title">
+                <span class="section-title-icon">🗺️</span>
+                خارطة الطريق
+            </h2>
+            <div class="phases-timeline">
+                <div class="phase-card current">
+                    <div class="phase-number">1</div>
+                    <div class="phase-title">🔴 الاسترداد</div>
+                    <ul class="phase-features">
+                        <li>استرداد السلات المتروكة</li>
+                        <li>مولد العروض الذكي</li>
+                        <li>قنوات متعددة (واتس/SMS/ايميل)</li>
+                        <li>التقاط العملاء المحتملين</li>
+                    </ul>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <div class="phase-title">🟡 التضخيم</div>
+                    <ul class="phase-features">
+                        <li>عروض الترقية (Upsell)</li>
+                        <li>إنقاذ البيع (Downsell)</li>
+                        <li>تقسيط (Tabby/Tamara)</li>
+                        <li>باقات ذكية</li>
+                    </ul>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <div class="phase-title">🟢 الاحتفاظ</div>
+                    <ul class="phase-features">
+                        <li>استعادة العملاء (Win-back)</li>
+                        <li>برنامج الولاء</li>
+                        <li>نظام الإحالة</li>
+                        <li>VIP تصنيفات</li>
+                    </ul>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-number">4</div>
+                    <div class="phase-title">🔵 المضاعفة</div>
+                    <ul class="phase-features">
+                        <li>نظام التسويق بالعمولة</li>
+                        <li>برنامج السفراء</li>
+                        <li>الاشتراكات المتكررة</li>
+                        <li>شراكات المؤثرين</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- One Click Activation -->
+        <section class="activation-section">
+            <h2 class="activation-title">ضغطة واحدة. أرباح فورية. بدون مخاطر.</h2>
+            <p class="activation-subtitle">النظام جاهز للعمل. فعّل الآن وشاهد الأموال تتدفق.</p>
+            <button class="activate-btn">🚀 تفعيل آلة الأرباح</button>
+            <p class="activation-promise">✨ مضمون: إذا لم ترَ نتائج، لا تدفع شيئاً</p>
+        </section>
+    </main>
+
+    <script>
+        // Simulate live activity
+        const activities = [
+            { type: 'cart-recovery', title: 'تم استرداد سلة!', detail: 'عميل أكمل طلبه', amount: '+٤٥٦ ر.س' },
+            { type: 'lead-capture', title: 'عميل محتمل جديد', detail: 'من نافذة الخروج', amount: '+عميل' },
+            { type: 'upsell', title: 'ترقية ناجحة', detail: 'عميل أضاف منتج', amount: '+١٢٣ ر.س' },
+            { type: 'winback', title: 'عميل عاد!', detail: 'بعد 30 يوم غياب', amount: '+٣٤٥ ر.س' },
+        ];
+
+        // Config option click handler
+        document.querySelectorAll('.config-option').forEach(option => {
+            option.addEventListener('click', function () {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.config-option').forEach(o => o.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Phase dot hover
+        document.querySelectorAll('.phase-dot').forEach(dot => {
+            dot.addEventListener('click', function () {
+                document.querySelectorAll('.phase-dot').forEach(d => d.classList.remove('active'));
+                document.querySelectorAll('.phase-dot').forEach(d => d.classList.add('upcoming'));
+                this.classList.remove('upcoming');
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

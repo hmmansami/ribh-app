@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FFFFFF;
+            --surface: #F8FAFC;
+            --border: #E2E8F0;
+            --text: #0F172A;
+            --text-soft: #475569;
+            --text-muted: #94A3B8;
+            --green: #10B981;
+            --green-light: #D1FAE5;
+            --green-soft: #ECFDF5;
+            --gold: #F59E0B;
+            --gold-light: #FEF3C7;
+            --blue: #3B82F6;
+            --pink: #EC4899;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           APP 
+        ============================================ */
+        .app {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================
+           HEADER - Logo + Store
+        ============================================ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        .store {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--text-soft);
+        }
+
+        .store-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+        }
+
+        /* ============================================
+           HERO - The Money (JOY!)
+        ============================================ */
+        .hero {
+            text-align: center;
+            padding: 48px 0;
+            background: linear-gradient(180deg, var(--green-soft) 0%, var(--bg) 100%);
+            border-radius: 32px;
+            margin-bottom: 32px;
+        }
+
+        .hero-label {
+            font-size: 16px;
+            color: var(--text-soft);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .hero-label .sparkle {
+            animation: sparkle 1s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+
+        .hero-amount {
+            font-size: clamp(48px, 12vw, 80px);
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .hero-amount.counting {
+            animation: count 0.15s ease-out;
+        }
+
+        @keyframes count {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.03);
+                color: var(--green);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .hero-currency {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .hero-growth {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: var(--green-light);
+            border-radius: 100px;
+            color: var(--green);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           LIVE MESSAGES - Seeing Each One Sent
+        ============================================ */
+        .messages-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .messages-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .messages-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .messages-title .icon {
+            font-size: 18px;
+        }
+
+        .messages-count {
+            padding: 4px 12px;
+            background: var(--green-light);
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        .messages-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        /* ============================================
+           MESSAGE ITEM - Each Sent Message
+        ============================================ */
+        .message {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            transition: background 0.2s ease;
+        }
+
+        .message:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .message-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message-avatar.sent {
+            background: var(--green-light);
+        }
+
+        .message-avatar.waiting {
+            background: var(--gold-light);
+        }
+
+        .message-avatar.success {
+            background: linear-gradient(135deg, var(--green-light), #A7F3D0);
+        }
+
+        .message-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .message-top {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .message-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .message-status {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .message-status.success {
+            color: var(--green);
+        }
+
+        .message-preview {
+            font-size: 14px;
+            color: var(--text-soft);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .message-result {
+            text-align: left;
+            direction: ltr;
+        }
+
+        .message-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Sending animation */
+        .message.sending {
+            animation: sending 0.6s ease-out;
+        }
+
+        @keyframes sending {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+                background: var(--green-soft);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+                background: transparent;
+            }
+        }
+
+        /* Success celebration */
+        .message.celebrate .message-avatar {
+            animation: celebrate 0.5s ease-out;
+        }
+
+        @keyframes celebrate {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.15);
+            }
+        }
+
+        /* ============================================
+           HAPPY SOUND EFFECT (Visual Indicator)
+        ============================================ */
+        .sound-indicator {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: var(--text);
+            color: var(--bg);
+            border-radius: 100px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .sound-indicator.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 600px) {
+            .app {
+                padding: 16px;
+            }
+
+            .hero {
+                padding: 32px 16px;
+                border-radius: 24px;
+            }
+
+            .message {
+                padding: 14px 20px;
+            }
+
+            .message-preview {
+                max-width: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">💚</span>
+                <span class="logo-text">رِبح</span>
+            </div>
+            <div class="store">
+                <span class="store-dot"></span>
+                <span>متجر الأناقة</span>
+            </div>
+        </header>
+
+        <!-- Hero - The Money -->
+        <section class="hero">
+            <div class="hero-label">
+                <span class="sparkle">✨</span>
+                <span>أرباحك اليوم</span>
+                <span class="sparkle">✨</span>
+            </div>
+            <div class="hero-amount" id="amount">23,450</div>
+            <div class="hero-currency">ريال</div>
+            <div class="hero-growth">
+                <span>↑</span>
+                <span>+12 عميل سعيد اليوم</span>
+            </div>
+        </section>
+
+        <!-- Messages Being Sent -->
+        <section class="messages-section">
+            <div class="messages-header">
+                <div class="messages-title">
+                    <span class="icon">💬</span>
+                    <span>رسائلك تُرسل الآن</span>
+                </div>
+                <div class="messages-count" id="count">47 رسالة</div>
+            </div>
+            <div class="messages-list" id="messages">
+                <div class="message celebrate">
+                    <div class="message-avatar success">🎉</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">سارة أحمد</span>
+                            <span class="message-status success">اشترت!</span>
+                        </div>
+                        <div class="message-preview">عادت وأكملت طلبها بعد رسالتك</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-amount">+450</div>
+                        <div class="message-time">الآن</div>
+                    </div>
+                </div>
+
+                <div class="message sending">
+                    <div class="message-avatar sent">📤</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">فاطمة علي</span>
+                            <span class="message-status">تم الإرسال</span>
+                        </div>
+                        <div class="message-preview">"مرحباً فاطمة! لاحظنا إنك..."</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-time">الآن</div>
+                    </div>
+                </div>
+
+                <div class="message celebrate">
+                    <div class="message-avatar success">🎉</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">عبدالله محمد</span>
+                            <span class="message-status success">اشترى!</span>
+                        </div>
+                        <div class="message-preview">أكمل طلبه بقيمة 890 ريال</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-amount">+890</div>
+                        <div class="message-time">دقيقتين</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar sent">📤</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">نورة سعد</span>
+                            <span class="message-status">تم الإرسال</span>
+                        </div>
+                        <div class="message-preview">"نورة، عرض خاص لك..."</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-time">5 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="message celebrate">
+                    <div class="message-avatar success">🎉</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">خالد عمر</span>
+                            <span class="message-status success">اشترى!</span>
+                        </div>
+                        <div class="message-preview">قبل عرض التقسيط واشترى</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-amount">+1,200</div>
+                        <div class="message-time">8 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-avatar waiting">⏳</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">ريم خالد</span>
+                            <span class="message-status">شافت الرسالة</span>
+                        </div>
+                        <div class="message-preview">"ريم، سلتك تنتظرك..."</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-time">12 دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="message celebrate">
+                    <div class="message-avatar success">🎉</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">مريم أحمد</span>
+                            <span class="message-status success">اشترت!</span>
+                        </div>
+                        <div class="message-preview">عميلة VIP عادت بعد شهر</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-amount">+650</div>
+                        <div class="message-time">15 دقيقة</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Sound indicator -->
+    <div class="sound-indicator" id="soundIndicator">
+        <span>🔔</span>
+        <span id="soundText">+450 ريال!</span>
+    </div>
+
+    <script>
+        const names = ['سارة', 'فاطمة', 'عبدالله', 'نورة', 'خالد', 'ريم', 'مريم', 'يوسف', 'هدى', 'لينا', 'عمر', 'دانة'];
+        const previews = [
+            '"مرحباً! لاحظنا إنك تركت سلتك..."',
+            '"عرض خاص لك: خصم 15%..."',
+            '"سلتك تنتظرك! أكمل طلبك..."',
+            '"اشتقنا لك! عدنا بعرض..."'
+        ];
+
+        let total = 23450;
+        let messageCount = 47;
+        const amountEl = document.getElementById('amount');
+        const messagesEl = document.getElementById('messages');
+        const countEl = document.getElementById('count');
+        const soundEl = document.getElementById('soundIndicator');
+        const soundTextEl = document.getElementById('soundText');
+
+        function showNotification(amount) {
+            soundTextEl.textContent = `+${amount} ريال!`;
+            soundEl.classList.add('show');
+            setTimeout(() => soundEl.classList.remove('show'), 2000);
+        }
+
+        function addMessage() {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const isSale = Math.random() > 0.4; // 60% chance of sale
+            const amount = Math.floor(Math.random() * 900) + 200;
+
+            messageCount++;
+            countEl.textContent = `${messageCount} رسالة`;
+
+            const message = document.createElement('div');
+            message.className = 'message sending';
+
+            if (isSale) {
+                total += amount;
+                amountEl.textContent = total.toLocaleString();
+                amountEl.classList.add('counting');
+                setTimeout(() => amountEl.classList.remove('counting'), 200);
+
+                message.classList.add('celebrate');
+                message.innerHTML = `
+                    <div class="message-avatar success">🎉</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">${name}</span>
+                            <span class="message-status success">اشترى!</span>
+                        </div>
+                        <div class="message-preview">عاد وأكمل طلبه بعد رسالتك</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-amount">+${amount.toLocaleString()}</div>
+                        <div class="message-time">الآن</div>
+                    </div>
+                `;
+
+                showNotification(amount);
+            } else {
+                message.innerHTML = `
+                    <div class="message-avatar sent">📤</div>
+                    <div class="message-content">
+                        <div class="message-top">
+                            <span class="message-name">${name}</span>
+                            <span class="message-status">تم الإرسال</span>
+                        </div>
+                        <div class="message-preview">${previews[Math.floor(Math.random() * previews.length)]}</div>
+                    </div>
+                    <div class="message-result">
+                        <div class="message-time">الآن</div>
+                    </div>
+                `;
+            }
+
+            messagesEl.insertBefore(message, messagesEl.firstChild);
+
+            // Remove old messages
+            while (messagesEl.children.length > 15) {
+                messagesEl.removeChild(messagesEl.lastChild);
+            }
+
+            setTimeout(() => message.classList.remove('sending'), 600);
+        }
+
+        // Add message every 6-12 seconds
+        setInterval(addMessage, Math.random() * 6000 + 6000);
+    </script>
+</body>
+
+</html>

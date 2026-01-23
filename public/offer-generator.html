@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Offer Generator | RIBH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --accent-green: #00d084;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --gradient-primary: linear-gradient(135deg, #00d084, #3b82f6);
+            --gradient-ramadan: linear-gradient(135deg, #8b5cf6, #ec4899);
+            --gradient-summer: linear-gradient(135deg, #f59e0b, #ef4444);
+            --gradient-eid: linear-gradient(135deg, #00d084, #8b5cf6);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --glow-green: 0 0 40px rgba(0, 208, 132, 0.3);
+            --glow-purple: 0 0 40px rgba(139, 92, 246, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-pattern {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 208, 132, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 20px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 208, 132, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 0 3px rgba(0, 208, 132, 0.1);
+        }
+
+        .form-select option {
+            background: #1a1a2e;
+            color: white;
+        }
+
+        /* Season Cards */
+        .season-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .season-card {
+            padding: 1rem 0.5rem;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .season-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .season-card.active {
+            border-color: var(--accent-green);
+            background: rgba(0, 208, 132, 0.1);
+        }
+
+        .season-card .emoji {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .season-card .name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Customer Behavior Chips */
+        .behavior-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .behavior-chip {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .behavior-chip:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .behavior-chip.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: white;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: var(--gradient-primary);
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-green);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .generate-btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            position: relative;
+        }
+
+        .phone-mockup {
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            border-radius: 40px;
+            padding: 1rem;
+            border: 3px solid #2a2a3e;
+            max-width: 380px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .phone-screen {
+            background: #25D366;
+            border-radius: 30px;
+            overflow: hidden;
+            min-height: 500px;
+        }
+
+        .whatsapp-header {
+            background: #075E54;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .whatsapp-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .whatsapp-name {
+            font-weight: 600;
+        }
+
+        .whatsapp-status {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .whatsapp-chat {
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23e5ddd5" width="100" height="100"/><rect fill="%23d5c8b8" x="0" y="0" width="50" height="50" opacity="0.3"/><rect fill="%23d5c8b8" x="50" y="50" width="50" height="50" opacity="0.3"/></svg>');
+            background-size: 50px;
+            padding: 1rem;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            background: white;
+            color: #1a1a1a;
+            padding: 0.75rem 1rem;
+            border-radius: 0 12px 12px 12px;
+            max-width: 90%;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            line-height: 1.5;
+            font-size: 0.95rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-bubble.offer {
+            background: linear-gradient(135deg, #dcf8c6, #c8e6b0);
+        }
+
+        .offer-badge {
+            display: inline-block;
+            background: var(--accent-orange);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .offer-headline {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 0.5rem;
+        }
+
+        .offer-body {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .offer-urgency {
+            color: var(--accent-red);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .offer-cta {
+            display: block;
+            background: var(--accent-green);
+            color: white;
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-top: 0.75rem;
+            text-decoration: none;
+        }
+
+        .message-time {
+            text-align: left;
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.25rem;
+        }
+
+        /* Offer Parts Breakdown */
+        .offer-breakdown {
+            margin-top: 1.5rem;
+        }
+
+        .part-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            border-right: 3px solid var(--accent-green);
+        }
+
+        .part-number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .part-content {
+            flex: 1;
+        }
+
+        .part-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .part-value {
+            font-weight: 600;
+            margin-top: 0.125rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Context Badge */
+        .context-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Time Display */
+        .current-time {
+            text-align: center;
+            padding: 0.75rem;
+            background: rgba(0, 208, 132, 0.1);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .current-time span {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-pattern"></div>
+
+    <div class="container">
+        <header class="header">
+            <h1>🧠 AI Offer Generator</h1>
+            <p>Generate intelligent, context-aware offers that convert</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Input Panel -->
+            <div class="input-panel">
+                <div class="card">
+                    <div class="card-title">
+                        <span class="icon" style="background: var(--gradient-primary);">📅</span>
+                        Season & Context
+                    </div>
+
+                    <div class="current-time">
+                        الآن: <span id="currentTime">--</span> | <span id="currentDate">--</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">اختر الموسم</label>
+                        <div class="season-grid">
+                            <div class="season-card active" data-season="normal">
+                                <div class="emoji">📦</div>
+                                <div class="name">عادي</div>
+                            </div>
+                            <div class="season-card" data-season="ramadan">
+                                <div class="emoji">🌙</div>
+                                <div class="name">رمضان</div>
+                            </div>
+                            <div class="season-card" data-season="eid">
+                                <div class="emoji">🎉</div>
+                                <div class="name">العيد</div>
+                            </div>
+                            <div class="season-card" data-season="summer">
+                                <div class="emoji">☀️</div>
+                                <div class="name">صيف</div>
+                            </div>
+                            <div class="season-card" data-season="whitefriday">
+                                <div class="emoji">🛍️</div>
+                                <div class="name">الجمعة البيضاء</div>
+                            </div>
+                            <div class="season-card" data-season="national">
+                                <div class="emoji">🇸🇦</div>
+                                <div class="name">اليوم الوطني</div>
+                            </div>
+                            <div class="season-card" data-season="newyear">
+                                <div class="emoji">🎆</div>
+                                <div class="name">نهاية السنة</div>
+                            </div>
+                            <div class="season-card" data-season="backtoschool">
+                                <div class="emoji">📚</div>
+                                <div class="name">العودة للمدارس</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">🛒</span>
+                        Cart & Product Info
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">نوع المنتج</label>
+                        <select class="form-select" id="productType">
+                            <option value="fashion">ملابس وأزياء</option>
+                            <option value="electronics">إلكترونيات</option>
+                            <option value="beauty">مستحضرات تجميل</option>
+                            <option value="food">مأكولات</option>
+                            <option value="home">منزل وديكور</option>
+                            <option value="sports">رياضة</option>
+                            <option value="kids">أطفال</option>
+                            <option value="gifts">هدايا</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">قيمة السلة (ر.س)</label>
+                        <input type="number" class="form-input" id="cartValue" value="350" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">اسم المنتج (اختياري)</label>
+                        <input type="text" class="form-input" id="productName" placeholder="مثال: فستان سهرة أنيق">
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1rem;">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">👤</span>
+                        Customer Behavior
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">نوع العميل</label>
+                        <select class="form-select" id="customerType">
+                            <option value="new">عميل جديد (أول مرة)</option>
+                            <option value="returning">عميل عائد</option>
+                            <option value="vip">عميل VIP (مشتريات عالية)</option>
+                            <option value="inactive">عميل غير نشط (30+ يوم)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">سلوك العميل</label>
+                        <div class="behavior-chips">
+                            <button class="behavior-chip active" data-behavior="abandoned">ترك السلة</button>
+                            <button class="behavior-chip" data-behavior="browsing">يتصفح فقط</button>
+                            <button class="behavior-chip" data-behavior="pricesensitive">حساس للسعر</button>
+                            <button class="behavior-chip" data-behavior="exitintent">نية الخروج</button>
+                            <button class="behavior-chip" data-behavior="repeat">كرر الزيارة</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">وقت منذ الترك</label>
+                        <select class="form-select" id="abandonTime">
+                            <option value="5m">5 دقائق</option>
+                            <option value="1h" selected>ساعة واحدة</option>
+                            <option value="6h">6 ساعات</option>
+                            <option value="24h">24 ساعة</option>
+                            <option value="3d">3 أيام</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="generateOffer()">
+                    <span>✨</span>
+                    <span>Generate Smart Offer</span>
+                </button>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="preview-panel">
+                <div class="card">
+                    <div class="card-title">
+                        <span class="icon" style="background: linear-gradient(135deg, #00d084, #3b82f6);">📱</span>
+                        Live Preview
+                    </div>
+
+                    <div id="contextBadge" class="context-badge" style="display: none;">
+                        <span id="contextIcon">🌙</span>
+                        <span id="contextText">Ramadan Mode Active</span>
+                    </div>
+
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <div class="whatsapp-header">
+                                <div class="whatsapp-avatar">🏪</div>
+                                <div>
+                                    <div class="whatsapp-name">متجر رِبح</div>
+                                    <div class="whatsapp-status">متصل الآن</div>
+                                </div>
+                            </div>
+                            <div class="whatsapp-chat" id="chatPreview">
+                                <div class="empty-state">
+                                    <div class="icon">✨</div>
+                                    <p>اضغط Generate لإنشاء عرض ذكي</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="offer-breakdown" id="offerBreakdown" style="display: none;">
+                        <div class="card-title" style="margin-top: 1rem;">📋 Offer Breakdown</div>
+                        <div id="breakdownContent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // 🧠 AI OFFER GENERATOR - INTELLIGENCE ENGINE
+        // ========================================
+
+        // Current state
+        let state = {
+            season: 'normal',
+            productType: 'fashion',
+            cartValue: 350,
+            productName: '',
+            customerType: 'new',
+            behavior: 'abandoned',
+            abandonTime: '1h',
+            timeOfDay: 'afternoon'
+        };
+
+        // Season configurations with psychology-based messaging
+        const seasonConfigs = {
+            normal: {
+                theme: 'default',
+                urgencyMultiplier: 1,
+                bonusType: 'shipping',
+                emoji: '📦',
+                greeting: '',
+                colors: { primary: '#00d084', secondary: '#3b82f6' }
+            },
+            ramadan: {
+                theme: 'spiritual',
+                urgencyMultiplier: 1.3,
+                bonusType: 'blessing',
+                emoji: '🌙',
+                greeting: 'رمضان كريم! ',
+                colors: { primary: '#8b5cf6', secondary: '#ec4899' },
+                specialOffers: ['توصيل مجاني للإفطار', 'هدية رمضانية', 'عرض السحور']
+            },
+            eid: {
+                theme: 'celebration',
+                urgencyMultiplier: 1.5,
+                bonusType: 'gift',
+                emoji: '🎉',
+                greeting: 'كل عام وأنت بخير! ',
+                colors: { primary: '#00d084', secondary: '#8b5cf6' },
+                specialOffers: ['تغليف هدايا مجاني', 'توصيل يوم العيد', 'خصم العيد']
+            },
+            summer: {
+                theme: 'vibrant',
+                urgencyMultiplier: 1.2,
+                bonusType: 'bundle',
+                emoji: '☀️',
+                greeting: 'صيف حار 🔥 عروض أحر! ',
+                colors: { primary: '#f59e0b', secondary: '#ef4444' },
+                specialOffers: ['تخفيضات الصيف', 'اشتري 2 واحصل على 1', 'عرض الشاطئ']
+            },
+            whitefriday: {
+                theme: 'urgent',
+                urgencyMultiplier: 2,
+                bonusType: 'discount',
+                emoji: '🛍️',
+                greeting: '⚡ الجمعة البيضاء! ',
+                colors: { primary: '#ef4444', secondary: '#f59e0b' },
+                specialOffers: ['خصم 50%', 'عرض لا يتكرر', 'آخر فرصة']
+            },
+            national: {
+                theme: 'patriotic',
+                urgencyMultiplier: 1.3,
+                bonusType: 'special',
+                emoji: '🇸🇦',
+                greeting: '🇸🇦 اليوم الوطني السعودي! ',
+                colors: { primary: '#00d084', secondary: '#00d084' },
+                specialOffers: ['خصم 93%', 'هدية وطنية', 'توصيل مجاني للمملكة']
+            },
+            newyear: {
+                theme: 'finale',
+                urgencyMultiplier: 1.8,
+                bonusType: 'clearance',
+                emoji: '🎆',
+                greeting: '✨ تصفية نهاية السنة! ',
+                colors: { primary: '#8b5cf6', secondary: '#ec4899' },
+                specialOffers: ['تصفية كاملة', 'آخر القطع', 'أسعار لا تتكرر']
+            },
+            backtoschool: {
+                theme: 'practical',
+                urgencyMultiplier: 1.4,
+                bonusType: 'bundle',
+                emoji: '📚',
+                greeting: '📚 موسم العودة للمدارس! ',
+                colors: { primary: '#3b82f6', secondary: '#00d084' },
+                specialOffers: ['باقة المدرسة', 'خصم الطلاب', 'توصيل سريع']
+            }
+        };
+
+        // Product type specific messaging
+        const productConfigs = {
+            fashion: { urgency: 'الموضة تتغير سريعاً', scarcity: 'مقاسات محدودة', bonus: 'تغليف أنيق مجاني' },
+            electronics: { urgency: 'الكمية محدودة', scarcity: 'آخر القطع بالمخزون', bonus: 'ضمان إضافي مجاني' },
+            beauty: { urgency: 'عرض حصري', scarcity: 'إصدار محدود', bonus: 'عينات مجانية' },
+            food: { urgency: 'طازج يومياً', scarcity: 'الكمية اليوم فقط', bonus: 'توصيل سريع' },
+            home: { urgency: 'تجديد منزلك اليوم', scarcity: 'آخر قطعة', bonus: 'تركيب مجاني' },
+            sports: { urgency: 'ابدأ رحلتك الصحية', scarcity: 'مقاسات محدودة', bonus: 'حقيبة رياضية مجانية' },
+            kids: { urgency: 'أطفالك يستحقون الأفضل', scarcity: 'الأطفال يكبرون سريعاً', bonus: 'لعبة هدية' },
+            gifts: { urgency: 'المناسبة قريبة', scarcity: 'تغليف مميز', bonus: 'بطاقة إهداء مجانية' }
+        };
+
+        // Customer type specific approaches
+        const customerApproaches = {
+            new: { tone: 'welcoming', discount: 10, guarantee: 'استرجاع مجاني خلال 14 يوم' },
+            returning: { tone: 'familiar', discount: 5, guarantee: 'نقدر ولائك - استرجاع 30 يوم' },
+            vip: { tone: 'exclusive', discount: 0, guarantee: 'خدمة VIP - أولوية التوصيل' },
+            inactive: { tone: 'winback', discount: 15, guarantee: 'اشتقنالك! عرض خاص للعودة' }
+        };
+
+        // Time-based urgency
+        const timeUrgency = {
+            '5m': { text: 'سلتك لا تزال محفوظة!', urgencyLevel: 'low' },
+            '1h': { text: 'سلتك تنتظرك', urgencyLevel: 'medium' },
+            '6h': { text: 'منتجاتك قد تنفد قريباً', urgencyLevel: 'high' },
+            '24h': { text: 'آخر فرصة لإتمام طلبك', urgencyLevel: 'urgent' },
+            '3d': { text: 'سلتك على وشك الانتهاء!', urgencyLevel: 'critical' }
+        };
+
+        // ========================================
+        // 🎯 OFFER GENERATION ENGINE
+        // ========================================
+
+        function generateOffer() {
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span><span>جاري التوليد...</span>';
+
+            // Gather current state
+            updateState();
+
+            // Simulate AI processing
+            setTimeout(() => {
+                const offer = createIntelligentOffer();
+                displayOffer(offer);
+                btn.disabled = false;
+                btn.innerHTML = '<span>✨</span><span>Generate Smart Offer</span>';
+            }, 800);
+        }
+
+        function updateState() {
+            state.productType = document.getElementById('productType').value;
+            state.cartValue = parseInt(document.getElementById('cartValue').value) || 350;
+            state.productName = document.getElementById('productName').value;
+            state.customerType = document.getElementById('customerType').value;
+            state.abandonTime = document.getElementById('abandonTime').value;
+
+            // Determine time of day
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) state.timeOfDay = 'morning';
+            else if (hour >= 12 && hour < 17) state.timeOfDay = 'afternoon';
+            else if (hour >= 17 && hour < 21) state.timeOfDay = 'evening';
+            else state.timeOfDay = 'night';
+        }
+
+        function createIntelligentOffer() {
+            const season = seasonConfigs[state.season];
+            const product = productConfigs[state.productType];
+            const customer = customerApproaches[state.customerType];
+            const timing = timeUrgency[state.abandonTime];
+
+            // Calculate dynamic discount
+            let discount = customer.discount;
+            if (state.cartValue > 500) discount = Math.max(discount - 5, 0); // High value = less discount needed
+            if (timing.urgencyLevel === 'critical') discount += 5;
+            discount = Math.round(discount * season.urgencyMultiplier);
+            discount = Math.min(discount, 25); // Cap at 25%
+
+            // Calculate urgency hours based on abandon time and season
+            let urgencyHours = 2;
+            if (state.abandonTime === '24h' || state.abandonTime === '3d') urgencyHours = 4;
+            if (state.season === 'whitefriday') urgencyHours = 1;
+
+            // Generate scarcity (intelligent based on product)
+            const scarcityItems = Math.floor(Math.random() * 5) + 1;
+
+            // Determine best bonus
+            let bonus = product.bonus;
+            if (state.cartValue >= 200 && state.cartValue < 300) bonus = 'شحن مجاني';
+            if (state.cartValue >= 300) bonus = season.specialOffers?.[0] || 'شحن مجاني + هدية';
+
+            // Build headline based on behavior
+            let headline = '';
+            if (state.behavior === 'abandoned') {
+                headline = state.productName
+                    ? `${state.productName} لا يزال ينتظرك! 🛒`
+                    : 'سلتك تنتظرك! 🛒';
+            } else if (state.behavior === 'pricesensitive') {
+                headline = `وفّر ${discount}% - عرض خاص لك! 💰`;
+            } else if (state.behavior === 'exitintent') {
+                headline = 'لحظة! عندنا عرض ما راح تلاقيه ثاني 🎁';
+            } else {
+                headline = `${season.greeting}عرض حصري لك! ✨`;
+            }
+
+            // Build guarantee based on customer type
+            let guarantee = customer.guarantee;
+
+            // Build CTA based on urgency
+            let cta = 'أكمل طلبك الآن';
+            if (timing.urgencyLevel === 'urgent' || timing.urgencyLevel === 'critical') {
+                cta = '⚡ اطلب قبل فوات الأوان';
+            } else if (discount > 0) {
+                cta = `🎁 وفّر ${discount}% الآن`;
+            }
+
+            return {
+                headline,
+                urgency: `⏰ ينتهي خلال ${urgencyHours} ساعات`,
+                scarcity: `📦 باقي ${scarcityItems} قطع فقط`,
+                bonus: `🎁 ${bonus}`,
+                guarantee: `✅ ${guarantee}`,
+                cta,
+                discount,
+                season: state.season,
+                colors: season.colors,
+                fullMessage: buildFullMessage(headline, timing.text, discount, bonus, guarantee, urgencyHours, scarcityItems, cta, season)
+            };
+        }
+
+        function buildFullMessage(headline, timingText, discount, bonus, guarantee, hours, items, cta, season) {
+            let msg = `${season.greeting}${headline}\n\n`;
+            msg += `${timingText}\n\n`;
+
+            if (discount > 0) {
+                msg += `💥 خصم ${discount}% على طلبك\n`;
+            }
+            msg += `🎁 ${bonus}\n`;
+            msg += `✅ ${guarantee}\n\n`;
+            msg += `⏰ العرض ينتهي خلال ${hours} ساعات\n`;
+            msg += `📦 متبقي ${items} قطع فقط!\n\n`;
+            msg += `👇 ${cta}`;
+
+            return msg;
+        }
+
+        function displayOffer(offer) {
+            // Update context badge
+            const contextBadge = document.getElementById('contextBadge');
+            const season = seasonConfigs[state.season];
+            if (state.season !== 'normal') {
+                contextBadge.style.display = 'inline-flex';
+                document.getElementById('contextIcon').textContent = season.emoji;
+                document.getElementById('contextText').textContent = `${season.greeting.trim()} Mode`;
+            } else {
+                contextBadge.style.display = 'none';
+            }
+
+            // Update chat preview
+            const chatPreview = document.getElementById('chatPreview');
+            chatPreview.innerHTML = `
+                <div class="message-bubble offer">
+                    <div class="offer-badge">${season.emoji} عرض خاص</div>
+                    <div class="offer-headline">${offer.headline}</div>
+                    <div class="offer-body" style="white-space: pre-line;">${offer.fullMessage}</div>
+                    <a href="#" class="offer-cta">${offer.cta} →</a>
+                    <div class="message-time">الآن ✓✓</div>
+                </div>
+            `;
+
+            // Update breakdown
+            document.getElementById('offerBreakdown').style.display = 'block';
+            document.getElementById('breakdownContent').innerHTML = `
+                <div class="part-item">
+                    <div class="part-number">1</div>
+                    <div class="part-content">
+                        <div class="part-label">HEADLINE</div>
+                        <div class="part-value">${offer.headline}</div>
+                    </div>
+                </div>
+                <div class="part-item">
+                    <div class="part-number">2</div>
+                    <div class="part-content">
+                        <div class="part-label">URGENCY</div>
+                        <div class="part-value">${offer.urgency}</div>
+                    </div>
+                </div>
+                <div class="part-item">
+                    <div class="part-number">3</div>
+                    <div class="part-content">
+                        <div class="part-label">SCARCITY</div>
+                        <div class="part-value">${offer.scarcity}</div>
+                    </div>
+                </div>
+                <div class="part-item">
+                    <div class="part-number">4</div>
+                    <div class="part-content">
+                        <div class="part-label">BONUS</div>
+                        <div class="part-value">${offer.bonus}</div>
+                    </div>
+                </div>
+                <div class="part-item">
+                    <div class="part-number">5</div>
+                    <div class="part-content">
+                        <div class="part-label">GUARANTEE</div>
+                        <div class="part-value">${offer.guarantee}</div>
+                    </div>
+                </div>
+                <div class="part-item">
+                    <div class="part-number">6</div>
+                    <div class="part-content">
+                        <div class="part-label">CTA</div>
+                        <div class="part-value">${offer.cta}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ========================================
+        // 🎛️ UI EVENT HANDLERS
+        // ========================================
+
+        // Season selection
+        document.querySelectorAll('.season-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.season-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                state.season = card.dataset.season;
+            });
+        });
+
+        // Behavior chips
+        document.querySelectorAll('.behavior-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.behavior-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                state.behavior = chip.dataset.behavior;
+            });
+        });
+
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('ar-SA', { weekday: 'long', day: 'numeric', month: 'long' });
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr;
+        }
+        updateTime();
+        setInterval(updateTime, 60000);
+
+        // Auto-generate on load with slight delay
+        setTimeout(generateOffer, 500);
+    </script>
+</body>
+
+</html>

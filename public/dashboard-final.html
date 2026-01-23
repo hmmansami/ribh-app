@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================
+           STEP 1: FOUNDATION & LAYOUT
+           Clean, light theme with premium feel
+        ============================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light theme colors - soft and premium */
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --border-light: #F3F4F6;
+
+            /* Text colors */
+            --text: #111827;
+            --text-medium: #6B7280;
+            --text-light: #9CA3AF;
+
+            /* Brand colors - vibrant but not overwhelming */
+            --emerald: #10B981;
+            --emerald-light: #D1FAE5;
+            --purple: #8B5CF6;
+            --purple-light: #EDE9FE;
+            --amber: #F59E0B;
+            --amber-light: #FEF3C7;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Clean container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Simple header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--emerald);
+        }
+
+        .store-name {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-medium);
+        }
+
+        /* Grid layout for sections */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        /* Card component */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            .header {
+                margin-bottom: 32px;
+            }
+
+            .card {
+                padding: 24px;
+            }
+        }
+
+        /* Typography scale */
+        .text-xs {
+            font-size: 12px;
+        }
+
+        .text-sm {
+            font-size: 14px;
+        }
+
+        .text-base {
+            font-size: 16px;
+        }
+
+        .text-lg {
+            font-size: 18px;
+        }
+
+        .text-xl {
+            font-size: 20px;
+        }
+
+        .text-2xl {
+            font-size: 24px;
+        }
+
+        .text-3xl {
+            font-size: 30px;
+        }
+
+        .text-4xl {
+            font-size: 36px;
+        }
+
+        .text-5xl {
+            font-size: 48px;
+        }
+
+        /* Font weights */
+        .font-normal {
+            font-weight: 400;
+        }
+
+        .font-medium {
+            font-weight: 500;
+        }
+
+        .font-semibold {
+            font-weight: 600;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        .font-black {
+            font-weight: 800;
+        }
+
+        /* ============================================
+           STEP 2: THE MONEY SECTION
+        ============================================ */
+        .hero-card {
+            text-align: center;
+            background: linear-gradient(to bottom, #ECFDF5, var(--surface));
+            border: 1px solid var(--border);
+        }
+
+        .hero-label {
+            font-size: 14px;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .hero-amount {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+        }
+
+        .hero-currency {
+            font-size: 18px;
+            color: var(--text-medium);
+            margin-bottom: 24px;
+        }
+
+        .hero-growth {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: var(--emerald-light);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--emerald);
+            margin-bottom: 32px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        @media (max-width: 768px) {
+            .hero-amount {
+                font-size: 56px;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+        }
+
+        /* ============================================
+           STEP 3: INTERACTIVE ACTIONS
+        ============================================ */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .action-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--emerald);
+        }
+
+        .action-btn:active {
+            transform: translateY(0);
+        }
+
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .action-btn.messages .action-icon {
+            background: var(--emerald-light);
+        }
+
+        .action-btn.analytics .action-icon {
+            background: var(--purple-light);
+        }
+
+        .action-btn.settings .action-icon {
+            background: var(--amber-light);
+        }
+
+        .action-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .action-subtitle {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .action-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 10px;
+            background: var(--emerald);
+            color: white;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .action-btn {
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ============================================
+           STEP 4: LIVE ACTIVITY FEED
+        ============================================ */
+        .activity-card {
+            padding: 0;
+        }
+
+        .activity-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .activity-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .activity-count {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: background 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--bg);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .activity-avatar.success {
+            background: var(--emerald-light);
+        }
+
+        .activity-avatar.sent {
+            background: var(--purple-light);
+        }
+
+        .activity-avatar.pending {
+            background: var(--amber-light);
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .activity-action {
+            font-size: 13px;
+            color: var(--text-medium);
+        }
+
+        .activity-result {
+            text-align: left;
+            direction: ltr;
+        }
+
+        .activity-amount {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--emerald);
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
+        /* ============================================
+           STEP 5: VISUAL MAGIC & POLISH
+        ============================================ */
+
+        /* Smooth transitions everywhere */
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Hero amount animation */
+        .hero-amount {
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .hero-amount.bump {
+            animation: amountBump 0.4s ease-out;
+        }
+
+        @keyframes amountBump {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* New activity item slide in */
+        .activity-item.new {
+            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Notification toast */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 28px;
+            background: linear-gradient(135deg, var(--emerald), #059669);
+            border-radius: 100px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 1000;
+            color: white;
+            font-weight: 600;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast-text {
+            font-size: 15px;
+        }
+
+        /* Subtle gradient overlay on hover for cards */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent, rgba(16, 185, 129, 0.02));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+
+        .card {
+            position: relative;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        /* Smooth scrollbar */
+        .activity-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .activity-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 100px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
+
+        /* Loading state for future */
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">💚</span>
+                <span class="logo-text">رِبح</span>
+            </div>
+            <div class="store-name">متجر الأناقة</div>
+        </header>
+
+        <!-- Content Grid -->
+        <div class="grid">
+            <!-- Step 2: The Money Section -->
+            <div class="card hero-card">
+                <div class="hero-label">أرباحك هذا الشهر</div>
+                <div class="hero-amount" id="heroAmount">23,450</div>
+                <div class="hero-currency">ريال سعودي</div>
+                <div class="hero-growth">
+                    <span>↑</span>
+                    <span>+43% من الشهر الماضي</span>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="statCustomers">47</div>
+                        <div class="stat-label">عميل سعيد</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="statMessages">128</div>
+                        <div class="stat-label">رسالة مُرسلة</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">معدل النجاح</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Interactive Actions -->
+            <div class="actions-grid">
+                <a href="#" class="action-btn messages">
+                    <span class="action-badge">3</span>
+                    <div class="action-icon">💬</div>
+                    <div class="action-title">الرسائل</div>
+                    <div class="action-subtitle">شاهد ما يُرسل</div>
+                </a>
+
+                <a href="#" class="action-btn analytics">
+                    <div class="action-icon">📊</div>
+                    <div class="action-title">التقارير</div>
+                    <div class="action-subtitle">تحليل الأداء</div>
+                </a>
+
+                <a href="#" class="action-btn settings">
+                    <div class="action-icon">⚙️</div>
+                    <div class="action-title">الإعدادات</div>
+                    <div class="action-subtitle">تحكم كامل</div>
+                </a>
+            </div>
+
+            <!-- Step 4: Live Activity Feed -->
+            <div class="card activity-card">
+                <div class="activity-header">
+                    <div class="activity-title">
+                        <span class="activity-live-dot"></span>
+                        <span>النشاط المباشر</span>
+                    </div>
+                    <div class="activity-count">اليوم</div>
+                </div>
+
+                <div class="activity-list" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-avatar success">🎉</div>
+                        <div class="activity-content">
+                            <div class="activity-name">سارة أحمد</div>
+                            <div class="activity-action">عادت وأكملت طلبها</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-amount">+450</div>
+                            <div class="activity-time">الآن</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar sent">📤</div>
+                        <div class="activity-content">
+                            <div class="activity-name">فاطمة علي</div>
+                            <div class="activity-action">تم إرسال رسالة تذكير</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-time">دقيقتين</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar success">🎉</div>
+                        <div class="activity-content">
+                            <div class="activity-name">عبدالله محمد</div>
+                            <div class="activity-action">اشترى بعد التذكير</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-amount">+890</div>
+                            <div class="activity-time">5 دقائق</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar pending">⏳</div>
+                        <div class="activity-content">
+                            <div class="activity-name">نورة سعد</div>
+                            <div class="activity-action">شاهدت الرسالة</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-time">8 دقائق</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar success">🎉</div>
+                        <div class="activity-content">
+                            <div class="activity-name">خالد عمر</div>
+                            <div class="activity-action">قبل عرض التقسيط واشترى</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-amount">+1,200</div>
+                            <div class="activity-time">12 دقيقة</div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar success">🎉</div>
+                        <div class="activity-content">
+                            <div class="activity-name">ريم خالد</div>
+                            <div class="activity-action">عميلة VIP عادت بعد شهر</div>
+                        </div>
+                        <div class="activity-result">
+                            <div class="activity-amount">+650</div>
+                            <div class="activity-time">18 دقيقة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">🎉</span>
+        <span class="toast-text" id="toastText">+450 ريال!</span>
+    </div>
+
+    <script>
+        // Live magic - simulate real activity
+        const names = ['سارة', 'فاطمة', 'عبدالله', 'نورة', 'خالد', 'ريم', 'مريم', 'يوسف', 'هدى', 'لينا'];
+        const actions = ['عادت وأكملت طلبها', 'اشترى بعد التذكير', 'قبل عرض الخصم', 'أكمل طلبه'];
+
+        let totalAmount = 23450;
+        let totalCustomers = 47;
+        let totalMessages = 128;
+
+        const heroAmount = document.getElementById('heroAmount');
+        const statCustomers = document.getElementById('statCustomers');
+        const statMessages = document.getElementById('statMessages');
+        const activityFeed = document.getElementById('activityFeed');
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toastText');
+
+        function showToast(amount) {
+            toastText.textContent = `+${amount} ريال!`;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function addActivity() {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const isSale = Math.random() > 0.3; // 70% chance of sale
+            const amount = Math.floor(Math.random() * 900) + 200;
+
+            totalMessages++;
+            statMessages.textContent = totalMessages;
+
+            const item = document.createElement('div');
+            item.className = 'activity-item new';
+
+            if (isSale) {
+                // Sale happened!
+                totalAmount += amount;
+                totalCustomers++;
+
+                heroAmount.textContent = totalAmount.toLocaleString();
+                heroAmount.classList.add('bump');
+                setTimeout(() => heroAmount.classList.remove('bump'), 400);
+
+                statCustomers.textContent = totalCustomers;
+
+                item.innerHTML = `
+                    <div class="activity-avatar success">🎉</div>
+                    <div class="activity-content">
+                        <div class="activity-name">${name}</div>
+                        <div class="activity-action">${actions[Math.floor(Math.random() * actions.length)]}</div>
+                    </div>
+                    <div class="activity-result">
+                        <div class="activity-amount">+${amount.toLocaleString()}</div>
+                        <div class="activity-time">الآن</div>
+                    </div>
+                `;
+
+                showToast(amount);
+            } else {
+                // Message sent
+                item.innerHTML = `
+                    <div class="activity-avatar sent">📤</div>
+                    <div class="activity-content">
+                        <div class="activity-name">${name}</div>
+                        <div class="activity-action">تم إرسال رسالة تذكير</div>
+                    </div>
+                    <div class="activity-result">
+                        <div class="activity-time">الآن</div>
+                    </div>
+                `;
+            }
+
+            activityFeed.insertBefore(item, activityFeed.firstChild);
+
+            // Keep max 10 items
+            while (activityFeed.children.length > 10) {
+                activityFeed.removeChild(activityFeed.lastChild);
+            }
+
+            // Remove animation class after animation
+            setTimeout(() => item.classList.remove('new'), 500);
+        }
+
+        // Add new activity every 8-15 seconds
+        setInterval(addActivity, Math.random() * 7000 + 8000);
+
+        // Prevent default on action buttons for demo
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+            });
+        });
+    </script>
+    </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <!-- Header -->
+            <header class="header">
+                <div class="logo">
+                    <span class="logo-icon">💚</span>
+                    <span class="logo-text">رِبح</span>
+                </div>
+                <div class="store-name">متجر الأناقة</div>
+            </header>
+
+            <!-- Content Grid -->
+            <div class="grid">
+                <!-- Step 2: The Money Section -->
+                <div class="card hero-card">
+                    <div class="hero-label">أرباحك هذا الشهر</div>
+                    <div class="hero-amount">23,450</div>
+                    <div class="hero-currency">ريال سعودي</div>
+                    <div class="hero-growth">
+                        <span>↑</span>
+                        <span>+43% من الشهر الماضي</span>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <div class="stat-value">47</div>
+                            <div class="stat-label">عميل سعيد</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">128</div>
+                            <div class="stat-label">رسالة مُرسلة</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">89%</div>
+                            <div class="stat-label">معدل النجاح</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Interactive Actions -->
+                <div class="actions-grid">
+                    <a href="#" class="action-btn messages">
+                        <span class="action-badge">3</span>
+                        <div class="action-icon">💬</div>
+                        <div class="action-title">الرسائل</div>
+                        <div class="action-subtitle">شاهد ما يُرسل</div>
+                    </a>
+
+                    <a href="#" class="action-btn analytics">
+                        <div class="action-icon">📊</div>
+                        <div class="action-title">التقارير</div>
+                        <div class="action-subtitle">تحليل الأداء</div>
+                    </a>
+
+                    <a href="#" class="action-btn settings">
+                        <div class="action-icon">⚙️</div>
+                        <div class="action-title">الإعدادات</div>
+                        <div class="action-subtitle">تحكم كامل</div>
+                    </a>
+                </div>
+
+                <!-- Step 4: Live Activity Feed -->
+                <div class="card activity-card">
+                    <div class="activity-header">
+                        <div class="activity-title">
+                            <span class="activity-live-dot"></span>
+                            <span>النشاط المباشر</span>
+                        </div>
+                        <div class="activity-count">اليوم</div>
+                    </div>
+
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-avatar success">🎉</div>
+                            <div class="activity-content">
+                                <div class="activity-name">سارة أحمد</div>
+                                <div class="activity-action">عادت وأكملت طلبها</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-amount">+450</div>
+                                <div class="activity-time">الآن</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-avatar sent">📤</div>
+                            <div class="activity-content">
+                                <div class="activity-name">فاطمة علي</div>
+                                <div class="activity-action">تم إرسال رسالة تذكير</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-time">دقيقتين</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-avatar success">🎉</div>
+                            <div class="activity-content">
+                                <div class="activity-name">عبدالله محمد</div>
+                                <div class="activity-action">اشترى بعد التذكير</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-amount">+890</div>
+                                <div class="activity-time">5 دقائق</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-avatar pending">⏳</div>
+                            <div class="activity-content">
+                                <div class="activity-name">نورة سعد</div>
+                                <div class="activity-action">شاهدت الرسالة</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-time">8 دقائق</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-avatar success">🎉</div>
+                            <div class="activity-content">
+                                <div class="activity-name">خالد عمر</div>
+                                <div class="activity-action">قبل عرض التقسيط واشترى</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-amount">+1,200</div>
+                                <div class="activity-time">12 دقيقة</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-avatar success">🎉</div>
+                            <div class="activity-content">
+                                <div class="activity-name">ريم خالد</div>
+                                <div class="activity-action">عميلة VIP عادت بعد شهر</div>
+                            </div>
+                            <div class="activity-result">
+                                <div class="activity-amount">+650</div>
+                                <div class="activity-time">18 دقيقة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

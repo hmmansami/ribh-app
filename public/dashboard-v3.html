@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --text: #FFFFFF;
+            --text-dim: #666666;
+            --green: #00FF88;
+            --green-dim: rgba(0, 255, 136, 0.15);
+            --gold: #FFD700;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================
+           THE MONEY - Center of Everything
+        ============================================ */
+        .money {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+        }
+
+        .money::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 32px;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .amount {
+            font-size: clamp(64px, 15vw, 140px);
+            font-weight: 800;
+            background: linear-gradient(180deg, #FFFFFF 0%, #00FF88 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            letter-spacing: -4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .currency {
+            font-size: clamp(18px, 4vw, 28px);
+            color: var(--text-dim);
+            font-weight: 400;
+            margin-top: 8px;
+        }
+
+        /* ============================================
+           THE MACHINE - Live Activity
+        ============================================ */
+        .machine {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            max-height: 45vh;
+            overflow-y: auto;
+        }
+
+        .machine::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .activity {
+            display: flex;
+            align-items: center;
+            padding: 20px 32px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            gap: 16px;
+            transition: background 0.2s ease;
+        }
+
+        .activity:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .activity:last-child {
+            border-bottom: none;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .dot.live {
+            background: var(--green);
+            box-shadow: 0 0 16px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        .dot.waiting {
+            background: var(--gold);
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        .who {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .what {
+            font-size: 15px;
+            color: var(--text-dim);
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .gain {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--green);
+            direction: ltr;
+            text-align: left;
+            min-width: 80px;
+        }
+
+        .gain.pending {
+            color: var(--gold);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* New activity animation */
+        .activity.new {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 600px) {
+            .money {
+                padding: 32px 20px;
+            }
+
+            .activity {
+                padding: 16px 20px;
+            }
+
+            .what {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- THE MONEY -->
+    <div class="money">
+        <div class="logo">💚</div>
+        <div class="amount" id="amount">23,450</div>
+        <div class="currency">ر.س</div>
+    </div>
+
+    <!-- THE MACHINE -->
+    <div class="machine" id="machine">
+        <div class="activity">
+            <div class="dot live"></div>
+            <div class="who">سارة</div>
+            <div class="what">عادت واشترت</div>
+            <div class="gain">+450</div>
+        </div>
+
+        <div class="activity">
+            <div class="dot live"></div>
+            <div class="who">فاطمة</div>
+            <div class="what">اشترت مرة ثانية</div>
+            <div class="gain">+890</div>
+        </div>
+
+        <div class="activity">
+            <div class="dot live"></div>
+            <div class="who">عبدالله</div>
+            <div class="what">مشترك جديد</div>
+            <div class="gain">+15%</div>
+        </div>
+
+        <div class="activity">
+            <div class="dot waiting"></div>
+            <div class="who">أحمد</div>
+            <div class="what">ينتظر تقسيط</div>
+            <div class="gain pending">انتظار</div>
+        </div>
+
+        <div class="activity">
+            <div class="dot live"></div>
+            <div class="who">نورة</div>
+            <div class="what">أضافت منتج إضافي</div>
+            <div class="gain">+320</div>
+        </div>
+
+        <div class="activity">
+            <div class="dot live"></div>
+            <div class="who">خالد</div>
+            <div class="what">أكمل الشراء</div>
+            <div class="gain">+1,200</div>
+        </div>
+    </div>
+
+    <script>
+        // The machine works - simulate live updates
+        const names = ['سارة', 'فاطمة', 'أحمد', 'نورة', 'خالد', 'ريم', 'عبدالله', 'مريم', 'يوسف', 'هدى'];
+        const actions = ['عادت واشترت', 'اشترت مرة ثانية', 'أكمل الشراء', 'قبل العرض', 'مشترك جديد'];
+
+        let total = 23450;
+
+        function addActivity() {
+            const machine = document.getElementById('machine');
+            const amount = document.getElementById('amount');
+
+            const gain = Math.floor(Math.random() * 800) + 200;
+            total += gain;
+
+            const activity = document.createElement('div');
+            activity.className = 'activity new';
+            activity.innerHTML = `
+                <div class="dot live"></div>
+                <div class="who">${names[Math.floor(Math.random() * names.length)]}</div>
+                <div class="what">${actions[Math.floor(Math.random() * actions.length)]}</div>
+                <div class="gain">+${gain}</div>
+            `;
+
+            machine.insertBefore(activity, machine.firstChild);
+            amount.textContent = total.toLocaleString();
+
+            // Remove old activities (keep max 10)
+            while (machine.children.length > 10) {
+                machine.removeChild(machine.lastChild);
+            }
+
+            // Remove animation class after animation
+            setTimeout(() => activity.classList.remove('new'), 500);
+        }
+
+        // Add new activity every 8-15 seconds
+        setInterval(addActivity, Math.random() * 7000 + 8000);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0A0A0F;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-soft: rgba(255, 255, 255, 0.7);
+            --text-dim: rgba(255, 255, 255, 0.4);
+            --violet: #A855F7;
+            --violet-soft: rgba(168, 85, 247, 0.15);
+            --emerald: #10B981;
+            --emerald-soft: rgba(16, 185, 129, 0.15);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           PREMIUM BACKGROUND - Violet Glow
+        ============================================ */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1000px;
+            height: 1000px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 60%);
+            animation: breathe 8s ease-in-out infinite;
+        }
+
+        .bg::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, transparent 60%);
+            animation: breathe 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 0.6;
+                transform: translateX(-50%) scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.1);
+            }
+        }
+
+        /* ============================================
+           APP CONTAINER
+        ============================================ */
+        .app {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 24px;
+        }
+
+        /* ============================================
+           MINIMAL HEADER
+        ============================================ */
+        .header {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--violet) 0%, var(--emerald) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            backdrop-filter: blur(20px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+            }
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: var(--text-soft);
+        }
+
+        /* ============================================
+           THE HERO - Just The Number
+        ============================================ */
+        .hero {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .hero-label {
+            font-size: 15px;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .hero-amount {
+            font-size: clamp(64px, 15vw, 120px);
+            font-weight: 800;
+            line-height: 1;
+            background: linear-gradient(180deg, var(--text) 0%, rgba(255, 255, 255, 0.6) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .hero-amount.bump {
+            transform: scale(1.02);
+        }
+
+        .hero-currency {
+            font-size: 18px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        /* ============================================
+           GLASS CARD - Live Feed
+        ============================================ */
+        .feed-card {
+            width: 100%;
+            max-width: 600px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            backdrop-filter: blur(40px);
+            overflow: hidden;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .feed-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-soft);
+        }
+
+        .feed-count {
+            font-size: 13px;
+            color: var(--violet);
+            padding: 4px 12px;
+            background: var(--violet-soft);
+            border-radius: 100px;
+        }
+
+        .feed-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* ============================================
+           FEED ITEM - Minimal
+        ============================================ */
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.2s ease;
+        }
+
+        .item:last-child {
+            border-bottom: none;
+        }
+
+        .item:hover {
+            background: var(--glass-hover);
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .item-icon.win {
+            background: var(--emerald-soft);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .item-icon.sent {
+            background: var(--violet-soft);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .item-icon.wait {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .item-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .item-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-result {
+            text-align: left;
+            direction: ltr;
+        }
+
+        .item-amount {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--emerald);
+        }
+
+        .item-time {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* New item animation */
+        .item.new {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+                background: var(--emerald-soft);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                background: transparent;
+            }
+        }
+
+        /* ============================================
+           BOTTOM GLASS BAR - Channels
+        ============================================ */
+        .channels {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 24px;
+            padding: 16px 24px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            backdrop-filter: blur(40px);
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .channel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-dim);
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .channel:hover {
+            color: var(--text-soft);
+        }
+
+        .channel.active {
+            color: var(--emerald);
+        }
+
+        .channel-icon {
+            font-size: 18px;
+        }
+
+        .channel-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--emerald);
+            border-radius: 50%;
+        }
+
+        /* ============================================
+           TOAST
+        ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--violet) 0%, #7C3AED 100%);
+            border-radius: 100px;
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 600px) {
+            .app {
+                padding: 24px 16px;
+            }
+
+            .header {
+                margin-bottom: 40px;
+            }
+
+            .channels {
+                gap: 16px;
+                padding: 12px 16px;
+            }
+
+            .channel span:not(.channel-icon):not(.channel-dot) {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        .feed-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .feed-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .feed-list::-webkit-scrollbar-thumb {
+            background: var(--glass-border);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg"></div>
+
+    <div class="app">
+        <!-- Minimal Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">💚</span>
+                <span class="logo-text">رِبح</span>
+            </div>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span class="status-text">شغال</span>
+            </div>
+        </header>
+
+        <!-- THE NUMBER -->
+        <section class="hero">
+            <div class="hero-label">أرباحك المستردة</div>
+            <div class="hero-amount" id="amount">23,450</div>
+            <div class="hero-currency">ريال</div>
+        </section>
+
+        <!-- Live Feed -->
+        <div class="feed-card">
+            <div class="feed-header">
+                <span class="feed-title">النشاط المباشر</span>
+                <span class="feed-count" id="count">47</span>
+            </div>
+            <div class="feed-list" id="feed">
+                <div class="item">
+                    <div class="item-icon win">🎉</div>
+                    <div class="item-content">
+                        <div class="item-name">سارة أحمد</div>
+                        <div class="item-desc">رجعت واشترت!</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+450</div>
+                        <div class="item-time">الآن</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon sent">💬</div>
+                    <div class="item-content">
+                        <div class="item-name">فاطمة علي</div>
+                        <div class="item-desc">تم إرسال رسالة</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-time">دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon win">🎉</div>
+                    <div class="item-content">
+                        <div class="item-name">عبدالله محمد</div>
+                        <div class="item-desc">أكمل طلبه</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+890</div>
+                        <div class="item-time">3 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon sent">💬</div>
+                    <div class="item-content">
+                        <div class="item-name">نورة سعد</div>
+                        <div class="item-desc">عرض خاص مُرسل</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-time">5 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon win">🎉</div>
+                    <div class="item-content">
+                        <div class="item-name">خالد عمر</div>
+                        <div class="item-desc">قبل عرض التقسيط</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+1,200</div>
+                        <div class="item-time">8 دقائق</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon wait">⏳</div>
+                    <div class="item-content">
+                        <div class="item-name">ريم خالد</div>
+                        <div class="item-desc">فتحت الرسالة...</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-time">12 دقيقة</div>
+                    </div>
+                </div>
+
+                <div class="item">
+                    <div class="item-icon win">🎉</div>
+                    <div class="item-content">
+                        <div class="item-name">مريم أحمد</div>
+                        <div class="item-desc">عادت بعد شهر!</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+650</div>
+                        <div class="item-time">15 دقيقة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Channels -->
+        <div class="channels">
+            <div class="channel active">
+                <span class="channel-icon">📧</span>
+                <span>إيميل</span>
+                <span class="channel-dot"></span>
+            </div>
+            <div class="channel active">
+                <span class="channel-icon">💬</span>
+                <span>واتساب</span>
+                <span class="channel-dot"></span>
+            </div>
+            <div class="channel">
+                <span class="channel-icon">📱</span>
+                <span>SMS</span>
+            </div>
+            <div class="channel active">
+                <span class="channel-icon">✈️</span>
+                <span>تيليجرام</span>
+                <span class="channel-dot"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        const names = ['سارة', 'فاطمة', 'عبدالله', 'نورة', 'خالد', 'ريم', 'مريم', 'يوسف', 'هدى', 'لينا', 'عمر', 'دانة', 'محمد', 'ليلى', 'أحمد'];
+        const actions = ['رجعت واشترت!', 'أكمل طلبه', 'قبل العرض', 'عادت للمتجر'];
+
+        let total = 23450;
+        let count = 47;
+
+        const amountEl = document.getElementById('amount');
+        const feedEl = document.getElementById('feed');
+        const countEl = document.getElementById('count');
+        const toastEl = document.getElementById('toast');
+
+        function showToast(text) {
+            toastEl.textContent = text;
+            toastEl.classList.add('show');
+            setTimeout(() => toastEl.classList.remove('show'), 3000);
+        }
+
+        function addItem() {
+            const name = names[Math.floor(Math.random() * names.length)];
+            const isSale = Math.random() > 0.4;
+            const amount = Math.floor(Math.random() * 800) + 200;
+
+            count++;
+            countEl.textContent = count;
+
+            const item = document.createElement('div');
+            item.className = 'item new';
+
+            if (isSale) {
+                total += amount;
+                amountEl.textContent = total.toLocaleString();
+                amountEl.classList.add('bump');
+                setTimeout(() => amountEl.classList.remove('bump'), 200);
+
+                item.innerHTML = `
+                    <div class="item-icon win">🎉</div>
+                    <div class="item-content">
+                        <div class="item-name">${name}</div>
+                        <div class="item-desc">${actions[Math.floor(Math.random() * actions.length)]}</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-amount">+${amount.toLocaleString()}</div>
+                        <div class="item-time">الآن</div>
+                    </div>
+                `;
+
+                showToast(`🎉 +${amount.toLocaleString()} ريال`);
+            } else {
+                item.innerHTML = `
+                    <div class="item-icon sent">💬</div>
+                    <div class="item-content">
+                        <div class="item-name">${name}</div>
+                        <div class="item-desc">تم إرسال رسالة</div>
+                    </div>
+                    <div class="item-result">
+                        <div class="item-time">الآن</div>
+                    </div>
+                `;
+            }
+
+            feedEl.insertBefore(item, feedEl.firstChild);
+
+            while (feedEl.children.length > 15) {
+                feedEl.removeChild(feedEl.lastChild);
+            }
+
+            setTimeout(() => item.classList.remove('new'), 500);
+        }
+
+        setInterval(addItem, 6000);
+    </script>
+</body>
+
+</html>
