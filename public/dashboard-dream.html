@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | مالك يشتغل</title>
+    <meta name="description" content="رِبح - المكينة تشتغل، مالك يزيد">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================
+           THE DREAM DASHBOARD - Emotion First
+           "One Click → Money Flows"
+        ============================================ */
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* The Money Green - feels like success */
+            --money: #00D47E;
+            --money-glow: rgba(0, 212, 126, 0.4);
+            --money-soft: rgba(0, 212, 126, 0.1);
+
+            /* Deep Cosmic Night - mysterious, premium */
+            --void: #050510;
+            --abyss: #0A0A1A;
+            --surface: rgba(255, 255, 255, 0.02);
+            --surface-hover: rgba(255, 255, 255, 0.05);
+
+            /* The Magic Purple - creative, powerful */
+            --magic: #7C3AED;
+            --magic-glow: rgba(124, 58, 237, 0.3);
+
+            /* Gold - premium, reward */
+            --gold: #FFB800;
+            --gold-glow: rgba(255, 184, 0, 0.3);
+
+            /* Text with soul */
+            --text-bright: #FFFFFF;
+            --text-soft: rgba(255, 255, 255, 0.7);
+            --text-ghost: rgba(255, 255, 255, 0.4);
+
+            /* The ultimate gradient - money flowing */
+            --flow: linear-gradient(135deg, #00D47E 0%, #7C3AED 50%, #FFB800 100%);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--void);
+            color: var(--text-bright);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================
+           THE LIVING COSMOS - Background that breathes
+        ============================================ */
+        .cosmos {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        /* Giant breathing orbs - like the universe is alive */
+        .cosmos-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: cosmicPulse 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, var(--money-glow) 0%, transparent 70%);
+            top: -300px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--magic-glow) 0%, transparent 70%);
+            bottom: -200px;
+            left: -200px;
+            animation-delay: -4s;
+        }
+
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+            top: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation-delay: -2s;
+            opacity: 0.3;
+        }
+
+        @keyframes cosmicPulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1) translateY(0);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: scale(1.1) translateY(-20px);
+            }
+        }
+
+        /* Floating particles - money atoms in the air */
+        .particles {
+            position: absolute;
+            inset: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--money);
+            border-radius: 50%;
+            opacity: 0;
+            animation: particleFloat 10s ease-in-out infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+
+            10% {
+                opacity: 0.8;
+            }
+
+            90% {
+                opacity: 0.8;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+
+        /* ============================================
+           THE APP SHELL
+        ============================================ */
+        .app {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================
+           HEADER - Minimal but present
+        ============================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: linear-gradient(to bottom, var(--void) 0%, transparent 100%);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-mark {
+            width: 48px;
+            height: 48px;
+            background: var(--flow);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 40px var(--money-glow), 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: brandGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes brandGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 40px var(--money-glow), 0 8px 32px rgba(0, 0, 0, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 60px var(--money-glow), 0 8px 48px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        .brand-name {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--flow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            color: var(--text-ghost);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-hover);
+            color: var(--text-soft);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           MAIN CONTENT
+        ============================================ */
+        .main {
+            flex: 1;
+            padding: 0 40px 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* ============================================
+           THE HERO - THE EMOTION CENTER
+           This is where they FEEL the money
+        ============================================ */
+        .hero {
+            text-align: center;
+            padding: 40px 0 60px;
+            position: relative;
+        }
+
+        /* Status Badge - Machine is alive */
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: var(--money-soft);
+            border: 1px solid rgba(0, 212, 126, 0.2);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--money);
+            margin-bottom: 48px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--money);
+            border-radius: 50%;
+            animation: statusPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--money);
+        }
+
+        @keyframes statusPulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.3);
+                opacity: 0.7;
+            }
+        }
+
+        /* The micro-label */
+        .hero-micro {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--text-ghost);
+            margin-bottom: 20px;
+        }
+
+        /* THE BIG NUMBER - This is where magic happens */
+        .hero-money {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 16px;
+        }
+
+        /* The ethereal glow behind */
+        .money-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 200px;
+            background: radial-gradient(ellipse, var(--money-glow) 0%, transparent 70%);
+            filter: blur(40px);
+            opacity: 0.6;
+            animation: moneyBreath 4s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes moneyBreath {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .money-amount {
+            font-size: clamp(72px, 12vw, 120px);
+            font-weight: 800;
+            background: var(--flow);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            letter-spacing: -4px;
+            position: relative;
+            animation: moneyShine 3s linear infinite;
+            background-size: 200% 100%;
+        }
+
+        @keyframes moneyShine {
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        .money-currency {
+            font-size: 18px;
+            color: var(--text-soft);
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        /* The little + animation when money comes */
+        .money-pop {
+            position: absolute;
+            top: 0;
+            right: -20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--money);
+            opacity: 0;
+            animation: moneyPop 3s ease-out infinite;
+        }
+
+        @keyframes moneyPop {
+            0% {
+                opacity: 0;
+                transform: translateY(0) scale(0.5);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1);
+            }
+
+            60% {
+                opacity: 1;
+                transform: translateY(-30px) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.8);
+            }
+        }
+
+        /* Celebration confetti on hover - Easter egg */
+        .hero-money:hover .celebration {
+            opacity: 1;
+        }
+
+        /* ============================================
+           THE PROOF STRIP - Social proof, mini stats
+        ============================================ */
+        .proof-strip {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 48px;
+            padding: 24px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .proof-item {
+            text-align: center;
+        }
+
+        .proof-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .proof-value.green {
+            color: var(--money);
+        }
+
+        .proof-value.purple {
+            color: var(--magic);
+        }
+
+        .proof-value.gold {
+            color: var(--gold);
+        }
+
+        .proof-label {
+            font-size: 13px;
+            color: var(--text-ghost);
+        }
+
+        /* ============================================
+           THE LIVE FEED - This is where life happens
+        ============================================ */
+        .live-section {
+            margin-top: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .section-title-icon {
+            font-size: 20px;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--money);
+            background: var(--money-soft);
+            padding: 6px 12px;
+            border-radius: 100px;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--money);
+            border-radius: 50%;
+            animation: statusPulse 1.5s ease-in-out infinite;
+        }
+
+        /* The Feed Container */
+        .feed {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 24px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        /* Individual Feed Items */
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feed-item:last-child {
+            border-bottom: none;
+        }
+
+        .feed-item:hover {
+            background: var(--surface-hover);
+        }
+
+        /* Success items get a subtle green glow */
+        .feed-item.success::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--money);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feed-item.success:hover::before {
+            opacity: 1;
+        }
+
+        /* The icon/avatar */
+        .feed-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feed-icon.success {
+            background: var(--money-soft);
+        }
+
+        .feed-icon.pending {
+            background: rgba(255, 184, 0, 0.1);
+        }
+
+        .feed-icon.magic {
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        /* Content */
+        .feed-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .feed-headline {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feed-amount {
+            color: var(--money);
+            font-weight: 700;
+        }
+
+        .feed-meta {
+            font-size: 13px;
+            color: var(--text-ghost);
+        }
+
+        /* Timestamp */
+        .feed-time {
+            font-size: 12px;
+            color: var(--text-ghost);
+            white-space: nowrap;
+        }
+
+        /* NEW animation for just-arrived items */
+        .feed-item.new {
+            animation: newItem 0.6s ease-out;
+        }
+
+        @keyframes newItem {
+            0% {
+                opacity: 0;
+                transform: translateX(20px);
+                background: var(--money-soft);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+                background: transparent;
+            }
+        }
+
+        /* ============================================
+           CELEBRATION TOAST - When money comes in
+        ============================================ */
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--money);
+            color: var(--void);
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px var(--money-glow), 0 0 60px var(--money-glow);
+            z-index: 1000;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 768px) {
+            .main {
+                padding: 0 20px 60px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .money-amount {
+                font-size: 56px;
+                letter-spacing: -2px;
+            }
+
+            .proof-strip {
+                flex-wrap: wrap;
+                gap: 24px;
+            }
+
+            .proof-item {
+                flex: 1;
+                min-width: 100px;
+            }
+        }
+
+        /* ============================================
+           THE SECRET SAUCE - Micro-interactions
+        ============================================ */
+
+        /* Hover lift effect */
+        .feed-item:hover .feed-icon {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+
+        /* Click ripple */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Smooth scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- The Living Cosmos -->
+    <div class="cosmos">
+        <div class="cosmos-orb orb-1"></div>
+        <div class="cosmos-orb orb-2"></div>
+        <div class="cosmos-orb orb-3"></div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <!-- Celebration Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">💰</span>
+        <span class="toast-text">+450 ر.س مبروك!</span>
+    </div>
+
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-mark">💚</div>
+                <span class="brand-name">رِبح</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn">⚙️</button>
+            </div>
+        </header>
+
+        <!-- Main -->
+        <main class="main">
+            <!-- The Hero Zone -->
+            <section class="hero">
+                <div class="status">
+                    <span class="status-dot"></span>
+                    <span>المكينة شغالة</span>
+                </div>
+
+                <div class="hero-micro">الأرباح المستردة</div>
+
+                <div class="hero-money">
+                    <div class="money-glow"></div>
+                    <div class="money-amount" id="moneyAmount">23,450</div>
+                    <span class="money-pop" id="moneyPop">+50</span>
+                </div>
+
+                <div class="money-currency">ريال سعودي</div>
+
+                <!-- Proof Strip -->
+                <div class="proof-strip">
+                    <div class="proof-item">
+                        <div class="proof-value green">24</div>
+                        <div class="proof-label">طلب تم استرداده</div>
+                    </div>
+                    <div class="proof-item">
+                        <div class="proof-value purple">89%</div>
+                        <div class="proof-label">نسبة النجاح</div>
+                    </div>
+                    <div class="proof-item">
+                        <div class="proof-value gold">5 دقائق</div>
+                        <div class="proof-label">متوسط وقت الاسترداد</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Live Feed -->
+            <section class="live-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="section-title-icon">⚡</span>
+                        <span>يحدث الآن</span>
+                    </h2>
+                    <div class="live-badge">
+                        <span class="live-dot"></span>
+                        <span>مباشر</span>
+                    </div>
+                </div>
+
+                <div class="feed" id="feed">
+                    <div class="feed-item success new">
+                        <div class="feed-icon success">🎉</div>
+                        <div class="feed-content">
+                            <div class="feed-headline">
+                                سلة متروكة ← عاد العميل!
+                                <span class="feed-amount">+450 ر.س</span>
+                            </div>
+                            <div class="feed-meta">سارة أحمد • حقيبة Kate Spade</div>
+                        </div>
+                        <div class="feed-time">الآن</div>
+                    </div>
+
+                    <div class="feed-item success">
+                        <div class="feed-icon success">💰</div>
+                        <div class="feed-content">
+                            <div class="feed-headline">
+                                عميل غير نشط ← شراء!
+                                <span class="feed-amount">+890 ر.س</span>
+                            </div>
+                            <div class="feed-meta">فاطمة علي • عرض VIP</div>
+                        </div>
+                        <div class="feed-time">منذ 5 دقائق</div>
+                    </div>
+
+                    <div class="feed-item pending">
+                        <div class="feed-icon pending">⏳</div>
+                        <div class="feed-content">
+                            <div class="feed-headline">
+                                سلة 2,400 ر.س ← عرض تقسيط مُرسل
+                            </div>
+                            <div class="feed-meta">أحمد خالد • في الانتظار</div>
+                        </div>
+                        <div class="feed-time">منذ 8 دقائق</div>
+                    </div>
+
+                    <div class="feed-item success">
+                        <div class="feed-icon magic">✨</div>
+                        <div class="feed-content">
+                            <div class="feed-headline">
+                                Upsell ← قبل!
+                                <span class="feed-amount">+320 ر.س</span>
+                            </div>
+                            <div class="feed-meta">نورة سعد • منتج إضافي</div>
+                        </div>
+                        <div class="feed-time">منذ 12 دقيقة</div>
+                    </div>
+
+                    <div class="feed-item success">
+                        <div class="feed-icon success">💚</div>
+                        <div class="feed-content">
+                            <div class="feed-headline">
+                                رسالة تقسيط ← أتم الشراء!
+                                <span class="feed-amount">+1,200 ر.س</span>
+                            </div>
+                            <div class="feed-meta">محمد العتيبي • iPhone 15</div>
+                        </div>
+                        <div class="feed-time">منذ 20 دقيقة</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // THE MAGIC SCRIPTS - Making it feel ALIVE
+        // ============================================
+
+        // Generate floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.animationDuration = `${8 + Math.random() * 6}s`;
+
+                // Random colors
+                const colors = ['var(--money)', 'var(--magic)', 'var(--gold)'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+                container.appendChild(particle);
+            }
+        }
+
+        // Animate the money counter
+        let currentMoney = 23450;
+        const moneyDisplay = document.getElementById('moneyAmount');
+        const moneyPop = document.getElementById('moneyPop');
+        const toast = document.getElementById('toast');
+
+        function addMoney() {
+            const increment = Math.floor(Math.random() * 100) + 20;
+            currentMoney += increment;
+
+            // Update display
+            moneyDisplay.textContent = currentMoney.toLocaleString('en-US');
+
+            // Show pop animation
+            moneyPop.textContent = `+${increment}`;
+            moneyPop.style.animation = 'none';
+            void moneyPop.offsetWidth; // Trigger reflow
+            moneyPop.style.animation = 'moneyPop 3s ease-out';
+
+            // Occasionally show toast
+            if (Math.random() > 0.6) {
+                showToast(increment);
+            }
+        }
+
+        function showToast(amount) {
+            toast.querySelector('.toast-text').textContent = `+${amount} ر.س مبروك! 🎉`;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // Add new feed item occasionally
+        function addFeedItem() {
+            const feed = document.getElementById('feed');
+            const items = [
+                { icon: '🎉', text: 'سلة جديدة ← تم الاسترداد!', amount: '+350 ر.س', meta: 'هند محمد • ساعة Casio' },
+                { icon: '💰', text: 'عميل عائد ← طلب جديد!', amount: '+720 ر.س', meta: 'عبدالله سعيد • 3 منتجات' },
+                { icon: '✨', text: 'خصم ذكي ← نجح!', amount: '+180 ر.س', meta: 'لمى أحمد • مستحضرات تجميل' },
+            ];
+
+            const randomItem = items[Math.floor(Math.random() * items.length)];
+
+            const newItem = document.createElement('div');
+            newItem.className = 'feed-item success new';
+            newItem.innerHTML = `
+                <div class="feed-icon success">${randomItem.icon}</div>
+                <div class="feed-content">
+                    <div class="feed-headline">
+                        ${randomItem.text}
+                        <span class="feed-amount">${randomItem.amount}</span>
+                    </div>
+                    <div class="feed-meta">${randomItem.meta}</div>
+                </div>
+                <div class="feed-time">الآن</div>
+            `;
+
+            feed.insertBefore(newItem, feed.firstChild);
+
+            // Remove old items if too many
+            if (feed.children.length > 8) {
+                feed.removeChild(feed.lastChild);
+            }
+
+            // Update times on other items
+            const times = ['منذ دقيقة', 'منذ 3 دقائق', 'منذ 5 دقائق', 'منذ 8 دقائق', 'منذ 12 دقيقة', 'منذ 18 دقيقة', 'منذ 25 دقيقة'];
+            Array.from(feed.children).slice(1).forEach((item, index) => {
+                const timeEl = item.querySelector('.feed-time');
+                if (timeEl && times[index]) {
+                    timeEl.textContent = times[index];
+                }
+            });
+        }
+
+        // Initialize
+        createParticles();
+
+        // Periodic updates - feels alive
+        setInterval(addMoney, 8000);
+        setInterval(addFeedItem, 15000);
+
+        // Click ripple effect on feed items
+        document.querySelectorAll('.feed-item').forEach(item => {
+            item.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = `${e.offsetX}px`;
+                ripple.style.top = `${e.offsetY}px`;
+                this.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Initial toast after 3 seconds
+        setTimeout(() => {
+            showToast(450);
+        }, 3000);
+    </script>
+</body>
+
+</html>

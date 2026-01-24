@@ -40,6 +40,16 @@ try {
     aiMessenger = null;
 }
 
+// WhatsApp Bridge - QR Code based merchant connections (FREE unlimited messaging!)
+let whatsappBridge;
+try {
+    whatsappBridge = require('./lib/whatsappBridge');
+    console.log('✅ WhatsApp Bridge loaded - FREE unlimited messaging via merchant QR!');
+} catch (e) {
+    console.log('⚠️ WhatsApp Bridge not available:', e.message);
+    whatsappBridge = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -264,7 +274,7 @@ app.use((req, res, next) => {
 
     // List of static HTML pages
     const staticPages = ['faq', 'privacy', 'login', 'settings', 'analytics', 'messages',
-        'referrals', 'telegram', 'welcome', 'landing', 'magic', 'oneclick', 'preview'];
+        'referrals', 'telegram', 'welcome', 'landing', 'magic', 'oneclick', 'preview', 'whatsapp'];
 
     const pageName = req.path.substring(1); // Remove leading /
 
@@ -746,6 +756,295 @@ app.post('/api/ai/generate-cart-offer', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'حدث خطأ في إنشاء العرض'
+        });
+    }
+});
+
+// ==========================================
+// 📱 WHATSAPP BRIDGE API - Merchant QR Connection
+// FREE unlimited messaging via merchant's own WhatsApp!
+// ==========================================
+
+/**
+ * Initialize WhatsApp connection for merchant
+ * GET /api/whatsapp/connect?merchant=xxx
+ * Returns QR code to scan or ready status if already connected
+ */
+app.get('/api/whatsapp/connect', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.status(503).json({
+                success: false,
+                error: 'WhatsApp Bridge not available'
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+        if (!merchantId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Merchant ID required'
+            });
+        }
+
+        console.log(`📱 WhatsApp connect request for merchant: ${merchantId}`);
+
+        const result = await whatsappBridge.initMerchantWhatsApp(merchantId);
+
+        res.json({
+            success: true,
+            ...result
+        });
+
+    } catch (error) {
+        console.error('❌ WhatsApp connect error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Get WhatsApp connection status for merchant
+ * GET /api/whatsapp/status?merchant=xxx
+ */
+app.get('/api/whatsapp/status', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.json({
+                success: false,
+                status: 'not_available',
+                connected: false
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+        if (!merchantId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Merchant ID required'
+            });
+        }
+
+        const status = whatsappBridge.getStatus(merchantId);
+        const pendingQR = whatsappBridge.getPendingQR(merchantId);
+
+        res.json({
+            success: true,
+            ...status,
+            qrCode: pendingQR
+        });
+
+    } catch (error) {
+        console.error('❌ WhatsApp status error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Get QR code for merchant (if pending)
+ * GET /api/whatsapp/qr?merchant=xxx
+ */
+app.get('/api/whatsapp/qr', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.status(503).json({
+                success: false,
+                error: 'WhatsApp Bridge not available'
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+        if (!merchantId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Merchant ID required'
+            });
+        }
+
+        const qrCode = whatsappBridge.getPendingQR(merchantId);
+
+        if (qrCode) {
+            res.json({
+                success: true,
+                qrCode,
+                message: 'Scan this QR code with WhatsApp'
+            });
+        } else {
+            const status = whatsappBridge.getStatus(merchantId);
+            res.json({
+                success: false,
+                status: status.status,
+                connected: status.connected,
+                message: status.connected ? 'Already connected' : 'No QR code available. Try /connect first.'
+            });
+        }
+
+    } catch (error) {
+        console.error('❌ WhatsApp QR error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Send WhatsApp message via merchant's number
+ * POST /api/whatsapp/send
+ * Body: { merchant, to, message }
+ */
+app.post('/api/whatsapp/send', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.status(503).json({
+                success: false,
+                error: 'WhatsApp Bridge not available'
+            });
+        }
+
+        const { merchant, to, message } = req.body;
+        const merchantId = merchant || req.storeId;
+
+        if (!merchantId || !to || !message) {
+            return res.status(400).json({
+                success: false,
+                error: 'merchant, to, and message are required'
+            });
+        }
+
+        console.log(`📤 Sending WhatsApp via ${merchantId} to ${to}`);
+
+        const result = await whatsappBridge.sendMessage(merchantId, to, message);
+
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ WhatsApp send error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Send cart recovery via merchant's WhatsApp
+ * POST /api/whatsapp/send-cart-recovery
+ * Body: { merchant, phone, customerName, cartValue, items, checkoutUrl, discount }
+ */
+app.post('/api/whatsapp/send-cart-recovery', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.status(503).json({
+                success: false,
+                error: 'WhatsApp Bridge not available'
+            });
+        }
+
+        const { merchant, phone, customerName, cartValue, items, checkoutUrl, discount } = req.body;
+        const merchantId = merchant || req.storeId;
+
+        if (!merchantId || !phone) {
+            return res.status(400).json({
+                success: false,
+                error: 'merchant and phone are required'
+            });
+        }
+
+        console.log(`🛒 Sending cart recovery via ${merchantId} to ${phone}`);
+
+        const result = await whatsappBridge.sendCartRecovery(merchantId, {
+            phone,
+            customerName: customerName || 'عميلنا العزيز',
+            cartValue: cartValue || 0,
+            items: items || [],
+            checkoutUrl: checkoutUrl || '',
+            discount: discount || 0
+        });
+
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ WhatsApp cart recovery error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Disconnect merchant's WhatsApp
+ * POST /api/whatsapp/disconnect
+ * Body: { merchant }
+ */
+app.post('/api/whatsapp/disconnect', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.status(503).json({
+                success: false,
+                error: 'WhatsApp Bridge not available'
+            });
+        }
+
+        const merchantId = req.body.merchant || req.storeId;
+
+        if (!merchantId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Merchant ID required'
+            });
+        }
+
+        console.log(`📵 Disconnecting WhatsApp for merchant: ${merchantId}`);
+
+        const result = await whatsappBridge.disconnect(merchantId);
+
+        res.json({
+            success: true,
+            message: 'WhatsApp disconnected successfully'
+        });
+
+    } catch (error) {
+        console.error('❌ WhatsApp disconnect error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Get all connected merchants (admin)
+ * GET /api/whatsapp/connected
+ */
+app.get('/api/whatsapp/connected', async (req, res) => {
+    try {
+        if (!whatsappBridge) {
+            return res.json({
+                success: true,
+                merchants: []
+            });
+        }
+
+        const merchants = whatsappBridge.getConnectedMerchants();
+
+        res.json({
+            success: true,
+            count: merchants.length,
+            merchants
+        });
+
+    } catch (error) {
+        console.error('❌ WhatsApp connected list error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
         });
     }
 });
@@ -3505,6 +3804,161 @@ app.post('/api/winback/run', async (req, res) => {
 });
 
 // ==========================================
+// WHATSAPP QR CONNECTION API (Instant - No Meta API needed!)
+// ==========================================
+
+let whatsappManager = null;
+try {
+    const { whatsappManager: wm } = require('./lib/whatsappQR');
+    whatsappManager = wm;
+    console.log('📱 WhatsApp QR service loaded');
+} catch (error) {
+    console.log('⚠️ WhatsApp QR service not available (install whatsapp-web.js)');
+}
+
+// Initialize WhatsApp connection for a store (returns QR code)
+app.post('/api/whatsapp/connect', async (req, res) => {
+    if (!whatsappManager) {
+        return res.status(503).json({
+            success: false,
+            error: 'WhatsApp QR service not available. Run: npm install whatsapp-web.js qrcode'
+        });
+    }
+
+    const { storeId } = req.body;
+    if (!storeId) {
+        return res.status(400).json({ success: false, error: 'storeId required' });
+    }
+
+    try {
+        const service = await whatsappManager.connect(storeId);
+
+        // Set up event handlers for this request
+        const timeout = setTimeout(() => {
+            res.json({
+                success: true,
+                status: service.getStatus(),
+                message: 'Connection initiated. Poll /api/whatsapp/status for QR code.'
+            });
+        }, 5000);
+
+        // If QR is generated quickly, return it
+        service.once('qr', (qrCode) => {
+            clearTimeout(timeout);
+            res.json({
+                success: true,
+                status: 'qr_ready',
+                qrCode: qrCode,
+                message: 'Scan this QR code with WhatsApp'
+            });
+        });
+
+        // If already connected
+        if (service.isReady) {
+            clearTimeout(timeout);
+            res.json({
+                success: true,
+                status: 'connected',
+                message: 'WhatsApp already connected!'
+            });
+        }
+
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get WhatsApp connection status
+app.get('/api/whatsapp/status', async (req, res) => {
+    if (!whatsappManager) {
+        return res.json({
+            available: false,
+            message: 'WhatsApp QR not installed'
+        });
+    }
+
+    const { storeId } = req.query;
+
+    if (storeId) {
+        const service = await whatsappManager.getStore(storeId);
+        res.json({
+            available: true,
+            ...service.getStatus()
+        });
+    } else {
+        res.json({
+            available: true,
+            stores: whatsappManager.getAllStatus()
+        });
+    }
+});
+
+// Send WhatsApp message
+app.post('/api/whatsapp/send', async (req, res) => {
+    if (!whatsappManager) {
+        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
+    }
+
+    const { storeId, phone, message } = req.body;
+
+    if (!storeId || !phone || !message) {
+        return res.status(400).json({
+            success: false,
+            error: 'storeId, phone, and message are required'
+        });
+    }
+
+    try {
+        const result = await whatsappManager.sendMessage(storeId, phone, message);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Send cart recovery via WhatsApp
+app.post('/api/whatsapp/cart-recovery', async (req, res) => {
+    if (!whatsappManager) {
+        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
+    }
+
+    const { storeId, phone, customerName, cartTotal, checkoutUrl, discount } = req.body;
+
+    if (!storeId || !phone || !customerName || !cartTotal) {
+        return res.status(400).json({
+            success: false,
+            error: 'storeId, phone, customerName, cartTotal are required'
+        });
+    }
+
+    try {
+        const result = await whatsappManager.sendCartRecovery(
+            storeId, phone, customerName, cartTotal, checkoutUrl || '', discount || 0
+        );
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Disconnect WhatsApp
+app.post('/api/whatsapp/disconnect', async (req, res) => {
+    if (!whatsappManager) {
+        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
+    }
+
+    const { storeId } = req.body;
+
+    try {
+        const service = await whatsappManager.getStore(storeId);
+        await service.disconnect();
+        res.json({ success: true, message: 'WhatsApp disconnected' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ==========================================
 // STORE SETTINGS API (Per-Store Config)
 // ==========================================
 
@@ -3997,6 +4451,63 @@ if (require.main === module) {
         if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
             setTimeout(keepAlive, 10000);
         }
+    });
+}
+
+// ==========================================
+// TESTING & DIAGNOSTICS
+// ==========================================
+
+/**
+ * Test WhatsApp directly
+ * POST /api/test/whatsapp
+ * Request: { phone, message, provider? }
+ */
+app.post('/api/test/whatsapp', async (req, res) => {
+    const { phone, message, provider = 'twilio' } = req.body;
+
+    if (!phone || !message) {
+        return res.status(400).json({ success: false, error: 'Phone and message are required' });
+    }
+
+    console.log(`🧪 TRIGGERING WHATSAPP TEST: To ${phone} via ${provider}`);
+
+    try {
+        let sent = false;
+        let details = {};
+
+        if (provider === 'twilio') {
+            if (!config.TWILIO_ACCOUNT_SID || !config.TWILIO_AUTH_TOKEN) {
+                return res.status(400).json({ success: false, error: 'Twilio not configured' });
+            }
+            sent = await sendViaTwilio(phone, message);
+            details = { provider: 'twilio', sid: 'test_sid' };
+        } else if (provider === 'meta') {
+            const metaWhatsApp = require('./lib/metaWhatsApp');
+            if (!metaWhatsApp.isConfigured()) {
+                return res.status(400).json({ success: false, error: 'Meta WhatsApp not configured' });
+            }
+            const result = await metaWhatsApp.sendWhatsApp(phone, message);
+            sent = result.success;
+            details = { provider: 'meta', result };
+        }
+
+        if (sent) {
+            res.json({ success: true, message: 'Message sent successfully!', details });
+        } else {
+            res.status(500).json({ success: false, error: 'Failed to send message', details });
+        }
+    } catch (error) {
+        console.error('❌ Test WhatsApp error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Finally, start the server if not running as a function
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 RIBH Backend running on http://localhost:${PORT}`);
+        console.log(`💚 Ready to recover revenue!\n`);
     });
 }
 

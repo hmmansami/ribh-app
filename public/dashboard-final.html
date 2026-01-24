@@ -4,14 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح | لوحة التحكم</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+    <title>RIBH | لوحة القيادة السحرية</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
         /* ============================================
-           STEP 1: FOUNDATION & LAYOUT
-           Clean, light theme with premium feel
+           THEME & FOUNDATION
+           "Magical Glass Dark Mode"
         ============================================ */
+        :root {
+            --bg-dark: #05050A;
+            /* Deep dark void */
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --bg-glass-hover: rgba(255, 255, 255, 0.07);
+            --bg-glass-active: rgba(255, 255, 255, 0.12);
+            --border-glass: rgba(255, 255, 255, 0.08);
+
+            /* Neon Accents */
+            --primary: #8B5CF6;
+            /* Magical Purple */
+            --primary-glow: rgba(139, 92, 246, 0.5);
+            --success: #10B981;
+            /* Money Green */
+            --success-glow: rgba(16, 185, 129, 0.5);
+            --warning: #F59E0B;
+            /* Amber */
+            --danger: #EF4444;
+            /* Red */
+
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+
+            --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
 
         * {
             margin: 0;
@@ -19,997 +45,897 @@
             box-sizing: border-box;
         }
 
-        :root {
-            /* Light theme colors - soft and premium */
-            --bg: #FAFAFA;
-            --surface: #FFFFFF;
-            --border: #E5E7EB;
-            --border-light: #F3F4F6;
-
-            /* Text colors */
-            --text: #111827;
-            --text-medium: #6B7280;
-            --text-light: #9CA3AF;
-
-            /* Brand colors - vibrant but not overwhelming */
-            --emerald: #10B981;
-            --emerald-light: #D1FAE5;
-            --purple: #8B5CF6;
-            --purple-light: #EDE9FE;
-            --amber: #F59E0B;
-            --amber-light: #FEF3C7;
-
-            /* Shadows */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
         body {
-            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Clean container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        /* Simple header */
-        .header {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            /* App-like feel */
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 48px;
         }
 
-        .logo {
+        /* Ambient Background Effects */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: orbFloat 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            top: -200px;
+            right: -200px;
+            background: var(--primary);
+        }
+
+        .orb-2 {
+            bottom: -200px;
+            left: -200px;
+            background: var(--success);
+            animation-delay: -10s;
+        }
+
+        @keyframes orbFloat {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            100% {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        /* ============================================
+           SIDEBAR
+        ============================================ */
+        .sidebar {
+            width: 280px;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.6);
+            backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 10;
+        }
+
+        .brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-bottom: 40px;
+            padding: 8px;
         }
 
-        .logo-icon {
+        .brand-icon {
             font-size: 32px;
+            filter: drop-shadow(0 0 10px var(--success-glow));
         }
 
-        .logo-text {
-            font-size: 24px;
+        .brand-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 28px;
             font-weight: 800;
-            color: var(--emerald);
+            background: linear-gradient(135deg, #fff, var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .store-name {
-            padding: 8px 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-medium);
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        /* Grid layout for sections */
-        .grid {
-            display: grid;
-            gap: 24px;
-        }
-
-        /* Card component */
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
+        .nav-item {
+            padding: 14px 16px;
             border-radius: 16px;
-            padding: 32px;
-            box-shadow: var(--shadow-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            font-weight: 500;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 24px 16px;
-            }
-
-            .header {
-                margin-bottom: 32px;
-            }
-
-            .card {
-                padding: 24px;
-            }
+        .nav-item:hover {
+            background: var(--bg-glass-hover);
+            color: white;
+            transform: translateX(-5px);
         }
 
-        /* Typography scale */
-        .text-xs {
-            font-size: 12px;
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(139, 92, 246, 0.15), transparent);
+            border-right: 3px solid var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
         }
 
-        .text-sm {
-            font-size: 14px;
-        }
-
-        .text-base {
-            font-size: 16px;
-        }
-
-        .text-lg {
-            font-size: 18px;
-        }
-
-        .text-xl {
+        .nav-icon {
             font-size: 20px;
         }
 
-        .text-2xl {
-            font-size: 24px;
-        }
-
-        .text-3xl {
-            font-size: 30px;
-        }
-
-        .text-4xl {
-            font-size: 36px;
-        }
-
-        .text-5xl {
-            font-size: 48px;
-        }
-
-        /* Font weights */
-        .font-normal {
-            font-weight: 400;
-        }
-
-        .font-medium {
-            font-weight: 500;
-        }
-
-        .font-semibold {
-            font-weight: 600;
-        }
-
-        .font-bold {
-            font-weight: 700;
-        }
-
-        .font-black {
-            font-weight: 800;
-        }
-
         /* ============================================
-           STEP 2: THE MONEY SECTION
+           MAIN CONTENT
         ============================================ */
-        .hero-card {
-            text-align: center;
-            background: linear-gradient(to bottom, #ECFDF5, var(--surface));
-            border: 1px solid var(--border);
+        .main-content {
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            position: relative;
+            padding: 40px;
         }
 
-        .hero-label {
-            font-size: 14px;
-            color: var(--text-medium);
-            margin-bottom: 16px;
-            font-weight: 500;
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
         }
 
-        .hero-amount {
-            font-size: 72px;
-            font-weight: 800;
-            color: var(--text);
-            line-height: 1;
-            letter-spacing: -2px;
-            margin-bottom: 8px;
+        .page-section.active {
+            display: block;
         }
 
-        .hero-currency {
-            font-size: 18px;
-            color: var(--text-medium);
-            margin-bottom: 24px;
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .hero-growth {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: var(--emerald-light);
-            border-radius: 100px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--emerald);
-            margin-bottom: 32px;
-        }
-
-        .hero-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            padding-top: 32px;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
+        .header-title {
+            font-family: 'Tajawal', sans-serif;
             font-size: 32px;
             font-weight: 700;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        @media (max-width: 768px) {
-            .hero-amount {
-                font-size: 56px;
-            }
-
-            .hero-stats {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-        }
-
-        /* ============================================
-           STEP 3: INTERACTIVE ACTIONS
-        ============================================ */
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .action-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 12px;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--emerald);
-        }
-
-        .action-btn:active {
-            transform: translateY(0);
-        }
-
-        .action-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 4px;
-        }
-
-        .action-btn.messages .action-icon {
-            background: var(--emerald-light);
-        }
-
-        .action-btn.analytics .action-icon {
-            background: var(--purple-light);
-        }
-
-        .action-btn.settings .action-icon {
-            background: var(--amber-light);
-        }
-
-        .action-title {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .action-subtitle {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .action-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            padding: 4px 10px;
-            background: var(--emerald);
-            color: white;
-            border-radius: 100px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .action-btn {
-            position: relative;
-        }
-
-        @media (max-width: 768px) {
-            .actions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* ============================================
-           STEP 4: LIVE ACTIVITY FEED
-        ============================================ */
-        .activity-card {
-            padding: 0;
-        }
-
-        .activity-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 32px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .activity-title {
-            font-size: 16px;
+        .status-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--text);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .activity-live-dot {
+        .status-dot {
             width: 8px;
             height: 8px;
-            background: var(--emerald);
+            background: var(--success);
             border-radius: 50%;
+            box-shadow: 0 0 10px var(--success);
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-
-            0%,
-            100% {
+            0% {
                 opacity: 1;
             }
 
             50% {
                 opacity: 0.5;
             }
-        }
-
-        .activity-count {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .activity-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .activity-item {
-            padding: 16px 24px;
-            border-bottom: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: background 0.2s ease;
-        }
-
-        .activity-item:hover {
-            background: var(--bg);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            flex-shrink: 0;
-        }
-
-        .activity-avatar.success {
-            background: var(--emerald-light);
-        }
-
-        .activity-avatar.sent {
-            background: var(--purple-light);
-        }
-
-        .activity-avatar.pending {
-            background: var(--amber-light);
-        }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-name {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-
-        .activity-action {
-            font-size: 13px;
-            color: var(--text-medium);
-        }
-
-        .activity-result {
-            text-align: left;
-            direction: ltr;
-        }
-
-        .activity-amount {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--emerald);
-        }
-
-        .activity-time {
-            font-size: 12px;
-            color: var(--text-light);
-            margin-top: 2px;
-        }
-
-        /* ============================================
-           STEP 5: VISUAL MAGIC & POLISH
-        ============================================ */
-
-        /* Smooth transitions everywhere */
-        * {
-            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-        }
-
-        /* Hero amount animation */
-        .hero-amount {
-            transition: transform 0.3s ease, color 0.3s ease;
-        }
-
-        .hero-amount.bump {
-            animation: amountBump 0.4s ease-out;
-        }
-
-        @keyframes amountBump {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
 
             100% {
-                transform: scale(1);
-            }
-        }
-
-        /* New activity item slide in */
-        .activity-item.new {
-            animation: slideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-
-            to {
                 opacity: 1;
-                transform: translateX(0);
             }
         }
 
-        /* Notification toast */
-        .toast {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 16px 28px;
-            background: linear-gradient(135deg, var(--emerald), #059669);
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: var(--shadow-lg);
-            opacity: 0;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 1000;
-            color: white;
-            font-weight: 600;
+        /* Cards */
+        .glass-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            margin-bottom: 24px;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        /* DASHBOARD GRID */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
         }
 
-        .toast-icon {
-            font-size: 20px;
+        /* Hero Stat */
+        .hero-stat {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            text-align: center;
+            padding: 60px 32px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .toast-text {
-            font-size: 15px;
-        }
-
-        /* Subtle gradient overlay on hover for cards */
-        .card::before {
+        .hero-stat::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, transparent, rgba(16, 185, 129, 0.02));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            border-radius: 16px;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.2), transparent 70%);
         }
 
-        .card {
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 16px;
+            margin-bottom: 16px;
             position: relative;
         }
 
-        .card:hover::before {
-            opacity: 1;
+        .stat-value {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 80px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff, var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            text-shadow: 0 0 40px rgba(16, 185, 129, 0.2);
         }
 
-        /* Smooth scrollbar */
-        .activity-list::-webkit-scrollbar {
+        .stat-sub {
+            color: var(--success);
+            font-weight: 600;
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        /* Toggles */
+        .toggles-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .toggle-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            padding: 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .toggle-card:hover {
+            background: var(--bg-glass-hover);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-card.active {
+            background: rgba(16, 185, 129, 0.05);
+            /* Slight green tint */
+            border-color: var(--success);
+        }
+
+        .toggle-card.active .toggle-icon {
+            background: var(--success);
+            color: black;
+            box-shadow: 0 0 15px var(--success-glow);
+        }
+
+        .toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .toggle-knob {
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toggle-card.active .toggle-switch {
+            background: var(--success);
+        }
+
+        .toggle-card.active .toggle-knob {
+            transform: translateX(-16px);
+        }
+
+        /* Activity Feed */
+        .feed-list {
+            height: 100%;
+            overflow-y: auto;
+            max-height: 500px;
+            padding-right: 8px;
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-glass);
+            transition: 0.3s;
+        }
+
+        .feed-item:hover {
+            background: var(--bg-glass-hover);
+            border-radius: 12px;
+            border-color: transparent;
+        }
+
+        .feed-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+        }
+
+        .feed-content h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .feed-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .feed-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-right: auto;
+        }
+
+        .amount-badge {
+            background: var(--success);
+            color: black;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        /* ============================================
+           AI OFFER GENERATOR STYLES
+           (Ported & Adapted)
+        ============================================ */
+        .generator-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .form-select,
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            color: white;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .form-select:focus,
+        .form-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary), #EC4899);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.6);
+        }
+
+        /* Preview Phone */
+        .phone-mockup {
+            background: #000;
+            border-radius: 40px;
+            padding: 12px;
+            border: 4px solid #333;
+            max-width: 320px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .phone-screen {
+            background: #121b22;
+            border-radius: 30px;
+            height: 500px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .whatsapp-header {
+            background: #1f2c34;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-area {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            height: calc(100% - 60px);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1h98v98H1V1z' fill='%230b141a' fill-opacity='1'/%3E%3C/svg%3E");
+        }
+
+        .msg-bubble {
+            background: #005c4b;
+            color: white;
+            padding: 10px;
+            border-radius: 10px 0 10px 10px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
             width: 6px;
         }
 
-        .activity-list::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-track {
             background: transparent;
         }
 
-        .activity-list::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 100px;
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
         }
 
-        .activity-list::-webkit-scrollbar-thumb:hover {
-            background: var(--text-light);
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Loading state for future */
-        @keyframes shimmer {
-            0% {
-                background-position: -200% 0;
+        /* Responsive */
+        @media (max-width: 1024px) {
+
+            .dashboard-grid,
+            .generator-grid {
+                grid-template-columns: 1fr;
             }
 
-            100% {
-                background-position: 200% 0;
+            .sidebar {
+                width: 80px;
+                padding: 16px 8px;
+            }
+
+            .nav-text,
+            .brand-text {
+                display: none;
+            }
+
+            .nav-item {
+                justify-content: center;
+                padding: 14px 0;
+                border-right: none;
+                border-bottom: 3px solid transparent;
+            }
+
+            .nav-item.active {
+                border-right: none;
+                border-bottom: 3px solid var(--primary);
+            }
+
+            .hero-stat {
+                padding: 40px 20px;
+            }
+
+            .stat-value {
+                font-size: 56px;
             }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <span class="logo-icon">💚</span>
-                <span class="logo-text">رِبح</span>
-            </div>
-            <div class="store-name">متجر الأناقة</div>
-        </header>
 
-        <!-- Content Grid -->
-        <div class="grid">
-            <!-- Step 2: The Money Section -->
-            <div class="card hero-card">
-                <div class="hero-label">أرباحك هذا الشهر</div>
-                <div class="hero-amount" id="heroAmount">23,450</div>
-                <div class="hero-currency">ريال سعودي</div>
-                <div class="hero-growth">
-                    <span>↑</span>
-                    <span>+43% من الشهر الماضي</span>
-                </div>
+    <!-- Background Orbs -->
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
 
-                <div class="hero-stats">
-                    <div class="stat">
-                        <div class="stat-value" id="statCustomers">47</div>
-                        <div class="stat-label">عميل سعيد</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="statMessages">128</div>
-                        <div class="stat-label">رسالة مُرسلة</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">89%</div>
-                        <div class="stat-label">معدل النجاح</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Interactive Actions -->
-            <div class="actions-grid">
-                <a href="#" class="action-btn messages">
-                    <span class="action-badge">3</span>
-                    <div class="action-icon">💬</div>
-                    <div class="action-title">الرسائل</div>
-                    <div class="action-subtitle">شاهد ما يُرسل</div>
-                </a>
-
-                <a href="#" class="action-btn analytics">
-                    <div class="action-icon">📊</div>
-                    <div class="action-title">التقارير</div>
-                    <div class="action-subtitle">تحليل الأداء</div>
-                </a>
-
-                <a href="#" class="action-btn settings">
-                    <div class="action-icon">⚙️</div>
-                    <div class="action-title">الإعدادات</div>
-                    <div class="action-subtitle">تحكم كامل</div>
-                </a>
-            </div>
-
-            <!-- Step 4: Live Activity Feed -->
-            <div class="card activity-card">
-                <div class="activity-header">
-                    <div class="activity-title">
-                        <span class="activity-live-dot"></span>
-                        <span>النشاط المباشر</span>
-                    </div>
-                    <div class="activity-count">اليوم</div>
-                </div>
-
-                <div class="activity-list" id="activityFeed">
-                    <div class="activity-item">
-                        <div class="activity-avatar success">🎉</div>
-                        <div class="activity-content">
-                            <div class="activity-name">سارة أحمد</div>
-                            <div class="activity-action">عادت وأكملت طلبها</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-amount">+450</div>
-                            <div class="activity-time">الآن</div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-avatar sent">📤</div>
-                        <div class="activity-content">
-                            <div class="activity-name">فاطمة علي</div>
-                            <div class="activity-action">تم إرسال رسالة تذكير</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-time">دقيقتين</div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-avatar success">🎉</div>
-                        <div class="activity-content">
-                            <div class="activity-name">عبدالله محمد</div>
-                            <div class="activity-action">اشترى بعد التذكير</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-amount">+890</div>
-                            <div class="activity-time">5 دقائق</div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-avatar pending">⏳</div>
-                        <div class="activity-content">
-                            <div class="activity-name">نورة سعد</div>
-                            <div class="activity-action">شاهدت الرسالة</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-time">8 دقائق</div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-avatar success">🎉</div>
-                        <div class="activity-content">
-                            <div class="activity-name">خالد عمر</div>
-                            <div class="activity-action">قبل عرض التقسيط واشترى</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-amount">+1,200</div>
-                            <div class="activity-time">12 دقيقة</div>
-                        </div>
-                    </div>
-
-                    <div class="activity-item">
-                        <div class="activity-avatar success">🎉</div>
-                        <div class="activity-content">
-                            <div class="activity-name">ريم خالد</div>
-                            <div class="activity-action">عميلة VIP عادت بعد شهر</div>
-                        </div>
-                        <div class="activity-result">
-                            <div class="activity-amount">+650</div>
-                            <div class="activity-time">18 دقيقة</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="brand">
+            <span class="brand-icon">💚</span>
+            <span class="brand-text">رِبح</span>
         </div>
-    </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="switchTab('dashboard', this)">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">لوحة التحكم</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('generator', this)">
+                <span class="nav-icon">🧠</span>
+                <span class="nav-text">صانع العروض (AI)</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('automation', this)">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">الأتمتة</span>
+            </li>
+            <li class="nav-item" onclick="switchTab('settings', this)">
+                <span class="nav-icon">🔒</span>
+                <span class="nav-text">الإعدادات</span>
+            </li>
+        </ul>
+    </aside>
 
-    <!-- Notification Toast -->
-    <div class="toast" id="toast">
-        <span class="toast-icon">🎉</span>
-        <span class="toast-text" id="toastText">+450 ريال!</span>
-    </div>
+    <!-- Main Application Area -->
+    <main class="main-content">
 
-    <script>
-        // Live magic - simulate real activity
-        const names = ['سارة', 'فاطمة', 'عبدالله', 'نورة', 'خالد', 'ريم', 'مريم', 'يوسف', 'هدى', 'لينا'];
-        const actions = ['عادت وأكملت طلبها', 'اشترى بعد التذكير', 'قبل عرض الخصم', 'أكمل طلبه'];
-
-        let totalAmount = 23450;
-        let totalCustomers = 47;
-        let totalMessages = 128;
-
-        const heroAmount = document.getElementById('heroAmount');
-        const statCustomers = document.getElementById('statCustomers');
-        const statMessages = document.getElementById('statMessages');
-        const activityFeed = document.getElementById('activityFeed');
-        const toast = document.getElementById('toast');
-        const toastText = document.getElementById('toastText');
-
-        function showToast(amount) {
-            toastText.textContent = `+${amount} ريال!`;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function addActivity() {
-            const name = names[Math.floor(Math.random() * names.length)];
-            const isSale = Math.random() > 0.3; // 70% chance of sale
-            const amount = Math.floor(Math.random() * 900) + 200;
-
-            totalMessages++;
-            statMessages.textContent = totalMessages;
-
-            const item = document.createElement('div');
-            item.className = 'activity-item new';
-
-            if (isSale) {
-                // Sale happened!
-                totalAmount += amount;
-                totalCustomers++;
-
-                heroAmount.textContent = totalAmount.toLocaleString();
-                heroAmount.classList.add('bump');
-                setTimeout(() => heroAmount.classList.remove('bump'), 400);
-
-                statCustomers.textContent = totalCustomers;
-
-                item.innerHTML = `
-                    <div class="activity-avatar success">🎉</div>
-                    <div class="activity-content">
-                        <div class="activity-name">${name}</div>
-                        <div class="activity-action">${actions[Math.floor(Math.random() * actions.length)]}</div>
-                    </div>
-                    <div class="activity-result">
-                        <div class="activity-amount">+${amount.toLocaleString()}</div>
-                        <div class="activity-time">الآن</div>
-                    </div>
-                `;
-
-                showToast(amount);
-            } else {
-                // Message sent
-                item.innerHTML = `
-                    <div class="activity-avatar sent">📤</div>
-                    <div class="activity-content">
-                        <div class="activity-name">${name}</div>
-                        <div class="activity-action">تم إرسال رسالة تذكير</div>
-                    </div>
-                    <div class="activity-result">
-                        <div class="activity-time">الآن</div>
-                    </div>
-                `;
-            }
-
-            activityFeed.insertBefore(item, activityFeed.firstChild);
-
-            // Keep max 10 items
-            while (activityFeed.children.length > 10) {
-                activityFeed.removeChild(activityFeed.lastChild);
-            }
-
-            // Remove animation class after animation
-            setTimeout(() => item.classList.remove('new'), 500);
-        }
-
-        // Add new activity every 8-15 seconds
-        setInterval(addActivity, Math.random() * 7000 + 8000);
-
-        // Prevent default on action buttons for demo
-        document.querySelectorAll('.action-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-            });
-        });
-    </script>
-    </style>
-    </head>
-
-    <body>
-        <div class="container">
-            <!-- Header -->
-            <header class="header">
-                <div class="logo">
-                    <span class="logo-icon">💚</span>
-                    <span class="logo-text">رِبح</span>
-                </div>
-                <div class="store-name">متجر الأناقة</div>
+        <!-- DASHBOARD SECTION -->
+        <section id="dashboard" class="page-section active">
+            <header class="header-title">
+                <div>نظرة عامة</div>
+                <div class="status-badge"><span class="status-dot"></span> متصل بالمتجر</div>
             </header>
 
-            <!-- Content Grid -->
-            <div class="grid">
-                <!-- Step 2: The Money Section -->
-                <div class="card hero-card">
-                    <div class="hero-label">أرباحك هذا الشهر</div>
-                    <div class="hero-amount">23,450</div>
-                    <div class="hero-currency">ريال سعودي</div>
-                    <div class="hero-growth">
-                        <span>↑</span>
-                        <span>+43% من الشهر الماضي</span>
+            <div class="dashboard-grid">
+                <!-- Left: Stats & Controls -->
+                <div>
+                    <!-- Hero Stat Card -->
+                    <div class="glass-card hero-stat">
+                        <div class="stat-label">إجمالي المبيعات المستردة هذا الشهر</div>
+                        <div class="stat-value">23,450 <span
+                                style="font-size: 24px; color: rgba(255,255,255,0.5)">ر.س</span></div>
+                        <div class="stat-sub">↑ 43% نمو</div>
+
+                        <div class="toggles-grid">
+                            <div class="toggle-card active" onclick="toggleSwitch(this)">
+                                <div class="toggle-header">
+                                    <div class="toggle-icon">💬</div>
+                                    <div class="toggle-switch">
+                                        <div class="toggle-knob"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; font-weight:600">واتساب</div>
+                            </div>
+                            <div class="toggle-card active" onclick="toggleSwitch(this)">
+                                <div class="toggle-header">
+                                    <div class="toggle-icon">🤖</div>
+                                    <div class="toggle-switch">
+                                        <div class="toggle-knob"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; font-weight:600">الذكاء</div>
+                            </div>
+                            <div class="toggle-card active" onclick="toggleSwitch(this)">
+                                <div class="toggle-header">
+                                    <div class="toggle-icon">🛒</div>
+                                    <div class="toggle-switch">
+                                        <div class="toggle-knob"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; font-weight:600">السلات</div>
+                            </div>
+                            <div class="toggle-card" onclick="toggleSwitch(this)">
+                                <div class="toggle-header">
+                                    <div class="toggle-icon">✉️</div>
+                                    <div class="toggle-switch">
+                                        <div class="toggle-knob"></div>
+                                    </div>
+                                </div>
+                                <div style="font-size: 13px; font-weight:600">SMS</div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="hero-stats">
-                        <div class="stat">
-                            <div class="stat-value">47</div>
-                            <div class="stat-label">عميل سعيد</div>
+                    <!-- Mini Charts / Stats Row -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div class="glass-card" style="padding: 24px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700;">87%</div>
+                            <div style="color: var(--text-muted); font-size: 14px;">معدل التحويل</div>
                         </div>
-                        <div class="stat">
-                            <div class="stat-value">128</div>
-                            <div class="stat-label">رسالة مُرسلة</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value">89%</div>
-                            <div class="stat-label">معدل النجاح</div>
+                        <div class="glass-card" style="padding: 24px; text-align: center;">
+                            <div style="font-size: 32px; font-weight: 700;">143</div>
+                            <div style="color: var(--text-muted); font-size: 14px;">عميل تم استعادته</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Step 3: Interactive Actions -->
-                <div class="actions-grid">
-                    <a href="#" class="action-btn messages">
-                        <span class="action-badge">3</span>
-                        <div class="action-icon">💬</div>
-                        <div class="action-title">الرسائل</div>
-                        <div class="action-subtitle">شاهد ما يُرسل</div>
-                    </a>
-
-                    <a href="#" class="action-btn analytics">
-                        <div class="action-icon">📊</div>
-                        <div class="action-title">التقارير</div>
-                        <div class="action-subtitle">تحليل الأداء</div>
-                    </a>
-
-                    <a href="#" class="action-btn settings">
-                        <div class="action-icon">⚙️</div>
-                        <div class="action-title">الإعدادات</div>
-                        <div class="action-subtitle">تحكم كامل</div>
-                    </a>
+                <!-- Right: Live Feed -->
+                <div class="glass-card" style="display: flex; flex-direction: column; overflow: hidden;">
+                    <div
+                        style="font-weight: 700; margin-bottom: 20px; font-size: 18px; display: flex; align-items: center; gap: 8px;">
+                        ⚡ النشاط المباشر
+                    </div>
+                    <div class="feed-list" id="feedList">
+                        <!-- Feed Items will be injected here -->
+                    </div>
                 </div>
+            </div>
+        </section>
 
-                <!-- Step 4: Live Activity Feed -->
-                <div class="card activity-card">
-                    <div class="activity-header">
-                        <div class="activity-title">
-                            <span class="activity-live-dot"></span>
-                            <span>النشاط المباشر</span>
+        <!-- GENERATOR SECTION -->
+        <section id="generator" class="page-section">
+            <header class="header-title">صانع العروض الذكي (AI)</header>
+
+            <div class="glass-card">
+                <div class="generator-grid">
+                    <!-- Input -->
+                    <div>
+                        <div class="form-group">
+                            <label class="form-label">🛒 نوع المنتج</label>
+                            <select class="form-select" id="productType">
+                                <option value="fashion">ملابس وأزياء</option>
+                                <option value="electronics">إلكترونيات</option>
+                                <option value="home">منزل وديكور</option>
+                            </select>
                         </div>
-                        <div class="activity-count">اليوم</div>
+
+                        <div class="form-group">
+                            <label class="form-label">👥 سلوك العميل</label>
+                            <select class="form-select" id="customerType">
+                                <option value="abandoned">ترك السلة (منذ ساعة)</option>
+                                <option value="inactive">غير نشط (30 يوم)</option>
+                                <option value="vip">عميل VIP</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">📅 الموسم/المناسبة</label>
+                            <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;">
+                                <button class="toggle-card active"
+                                    style="min-width: 80px; text-align: center; padding: 10px;"
+                                    onclick="selectSeason(this)">🌙 رمضان</button>
+                                <button class="toggle-card" style="min-width: 80px; text-align: center; padding: 10px;"
+                                    onclick="selectSeason(this)">🎉 العيد</button>
+                                <button class="toggle-card" style="min-width: 80px; text-align: center; padding: 10px;"
+                                    onclick="selectSeason(this)">📦 عادي</button>
+                            </div>
+                        </div>
+
+                        <button class="btn-generate" onclick="generateOffer()">
+                            <span>✨</span> إنشاء العرض السحري
+                        </button>
                     </div>
 
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-avatar success">🎉</div>
-                            <div class="activity-content">
-                                <div class="activity-name">سارة أحمد</div>
-                                <div class="activity-action">عادت وأكملت طلبها</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-amount">+450</div>
-                                <div class="activity-time">الآن</div>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-avatar sent">📤</div>
-                            <div class="activity-content">
-                                <div class="activity-name">فاطمة علي</div>
-                                <div class="activity-action">تم إرسال رسالة تذكير</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-time">دقيقتين</div>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-avatar success">🎉</div>
-                            <div class="activity-content">
-                                <div class="activity-name">عبدالله محمد</div>
-                                <div class="activity-action">اشترى بعد التذكير</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-amount">+890</div>
-                                <div class="activity-time">5 دقائق</div>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-avatar pending">⏳</div>
-                            <div class="activity-content">
-                                <div class="activity-name">نورة سعد</div>
-                                <div class="activity-action">شاهدت الرسالة</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-time">8 دقائق</div>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-avatar success">🎉</div>
-                            <div class="activity-content">
-                                <div class="activity-name">خالد عمر</div>
-                                <div class="activity-action">قبل عرض التقسيط واشترى</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-amount">+1,200</div>
-                                <div class="activity-time">12 دقيقة</div>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-avatar success">🎉</div>
-                            <div class="activity-content">
-                                <div class="activity-name">ريم خالد</div>
-                                <div class="activity-action">عميلة VIP عادت بعد شهر</div>
-                            </div>
-                            <div class="activity-result">
-                                <div class="activity-amount">+650</div>
-                                <div class="activity-time">18 دقيقة</div>
+                    <!-- Preview -->
+                    <div>
+                        <div class="phone-mockup">
+                            <div class="phone-screen">
+                                <div class="whatsapp-header">
+                                    <div style="width: 30px; height: 30px; background: #25D366; border-radius: 50%;">
+                                    </div>
+                                    <div style="font-size: 14px; font-weight: 600;">متجر رِبح</div>
+                                </div>
+                                <div class="chat-area" id="whatsappChat">
+                                    <div
+                                        style="text-align: center; color: rgba(255,255,255,0.3); margin-top: auto; margin-bottom: auto;">
+                                        اضغط Generate لإنشاء العرض
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </body>
+        </section>
+
+        <!-- AUTOMATION SECTION (Placeholder) -->
+        <section id="automation" class="page-section">
+            <header class="header-title">الأتمتة والقواعد</header>
+            <div class="glass-card">
+                <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                    <h1>🔜</h1>
+                    <p>إعدادات الأتمتة المتقدمة قادمة قريباً</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ===================================
+        // UI INTERACTION LOGIC
+        // ===================================
+
+        // Navigation
+        function switchTab(tabId, navItem) {
+            // Remove active class from all items and sections
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+
+            // Activate selected
+            navItem.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Toggles
+        function toggleSwitch(card) {
+            card.classList.toggle('active');
+        }
+
+        function selectSeason(btn) {
+            btn.parentElement.querySelectorAll('.toggle-card').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        // ===================================
+        // LIVE FEED SIMULATOR
+        // ===================================
+        const feedList = document.getElementById('feedList');
+        const activities = [
+            { icon: '🎉', title: 'سارة أتمت الشراء', sub: 'سلة متروكة (450 ر.س)', amount: '+450' },
+            { icon: '📤', title: 'رسالة تذكير', sub: 'تم الإرسال لـ فهد', amount: '' },
+            { icon: '🤖', title: 'رد تلقائي ذكي', sub: 'الرد على استفسار مخزون', amount: '' },
+            { icon: '💎', title: 'عميل VIP عاد', sub: 'خالد (اشترى 3 مرات)', amount: '+1,200' },
+        ];
+
+        function renderFeed() {
+            feedList.innerHTML = activities.map(item => `
+                <div class="feed-item">
+                    <div class="feed-icon">${item.icon}</div>
+                    <div class="feed-content">
+                        <h4>${item.title}</h4>
+                        <p>${item.sub}</p>
+                    </div>
+                    <div style="margin-right: auto; text-align: left;">
+                        ${item.amount ? `<div class="amount-badge">${item.amount}</div>` : ''}
+                        <div class="feed-time">الآن</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        renderFeed();
+
+        // Add live activity effect
+        setInterval(() => {
+            const newItem = activities[Math.floor(Math.random() * activities.length)];
+            const div = document.createElement('div');
+            div.className = 'feed-item';
+            div.style.animation = 'fadeIn 0.5s';
+            div.innerHTML = `
+                <div class="feed-icon">${newItem.icon}</div>
+                <div class="feed-content">
+                    <h4>${newItem.title}</h4>
+                    <p>${newItem.sub}</p>
+                </div>
+                <div style="margin-right: auto; text-align: left;">
+                    ${newItem.amount ? `<div class="amount-badge">${newItem.amount}</div>` : ''}
+                    <div class="feed-time">الآن</div>
+                </div>
+            `;
+            feedList.prepend(div);
+            if (feedList.children.length > 10) feedList.lastElementChild.remove();
+        }, 3500);
+
+
+        // ===================================
+        // AI GENERATOR LOGIC
+        // ===================================
+        function generateOffer() {
+            const chat = document.getElementById('whatsappChat');
+
+            // Show loading or typing
+            chat.innerHTML = `<div style="padding:10px; color:#aaa;">جاري الكتابة...</div>`;
+
+            setTimeout(() => {
+                const product = document.getElementById('productType').value;
+                const messages = [
+                    "أهلاً محمد! 👋 لاحظنا أنك نسيت شي مميز في سلتك..",
+                    "بمناسبة شهر رمضان المبارك 🌙 حبينا نقدم لك عرض خاص",
+                    "🎁 كود خصم: RAMADAN20 يخصم لك 20% فوراً!",
+                    "العرض ينتهي الليلة! رابط السلة: ribh.sa/cart/123"
+                ];
+
+                chat.innerHTML = messages.map(msg => `<div class="msg-bubble">${msg}</div>`).join('');
+            }, 1000);
+        }
+
+    </script>
+</body>
 
 </html>

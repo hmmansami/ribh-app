@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FAFAFA;
+            --card: #FFFFFF;
+            --text: #1D1D1F;
+            --text-secondary: #86868B;
+            --text-muted: #AEAEB2;
+            --border: #E5E5EA;
+            --green: #34C759;
+            --green-bg: #E8F9ED;
+            --purple: #AF52DE;
+            --purple-bg: #F5E9FB;
+            --blue: #007AFF;
+            --blue-bg: #E5F2FF;
+            --orange: #FF9500;
+            --orange-bg: #FFF4E5;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============================================
+           LAYOUT
+        ============================================ */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ============================================
+           SIDEBAR - Clean & Simple
+        ============================================ */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #34C759, #30D158);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .nav-section {
+            margin-bottom: 24px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: var(--green-bg);
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-badge {
+            margin-right: auto;
+            background: var(--green);
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .store-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .store-info:hover {
+            background: var(--bg);
+        }
+
+        .store-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #5E5CE6, #BF5AF2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .store-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .store-plan {
+            font-size: 12px;
+            color: var(--green);
+        }
+
+        /* ============================================
+           MAIN CONTENT
+        ============================================ */
+        .main {
+            flex: 1;
+            margin-right: 260px;
+            padding: 32px;
+        }
+
+        /* ============================================
+           HEADER
+        ============================================ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .greeting {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .greeting-sub {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .header-btn {
+            width: 44px;
+            height: 44px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 18px;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .header-btn:hover {
+            border-color: var(--green);
+            color: var(--green);
+            background: var(--green-bg);
+        }
+
+        .header-btn .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: #FF3B30;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============================================
+           HERO REVENUE CARD - The Big Number
+        ============================================ */
+        .hero-card {
+            background: linear-gradient(135deg, #1D1D1F 0%, #2C2C2E 100%);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(52, 199, 89, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(52, 199, 89, 0.15);
+            border: 1px solid rgba(52, 199, 89, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .hero-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.8);
+            }
+        }
+
+        .hero-status-text {
+            color: var(--green);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .hero-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .hero-amount {
+            font-size: 64px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .hero-amount .currency {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .hero-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--green);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-stat {
+            text-align: right;
+        }
+
+        .hero-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .hero-stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           QUICK ACTIONS - One Click Magic
+        ============================================ */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .action-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+            border-color: transparent;
+        }
+
+        .action-card.primary {
+            background: linear-gradient(135deg, var(--green), #30D158);
+            border: none;
+            color: white;
+        }
+
+        .action-card.primary:hover {
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .action-card:not(.primary) .action-icon {
+            background: var(--bg);
+        }
+
+        .action-card.primary .action-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .action-subtitle {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           LIVE ACTIVITY FEED - The Magic Happening
+        ============================================ */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 24px;
+        }
+
+        .activity-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .activity-count {
+            background: var(--green);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+            cursor: pointer;
+            animation: slideIn 0.4s ease backwards;
+        }
+
+        .activity-item:hover {
+            background: var(--bg);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+        }
+
+        .activity-item:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .activity-item:nth-child(2) {
+            animation-delay: 0.05s;
+        }
+
+        .activity-item:nth-child(3) {
+            animation-delay: 0.1s;
+        }
+
+        .activity-item:nth-child(4) {
+            animation-delay: 0.15s;
+        }
+
+        .activity-item:nth-child(5) {
+            animation-delay: 0.2s;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.green {
+            background: var(--green-bg);
+        }
+
+        .activity-icon.purple {
+            background: var(--purple-bg);
+        }
+
+        .activity-icon.blue {
+            background: var(--blue-bg);
+        }
+
+        .activity-icon.orange {
+            background: var(--orange-bg);
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .activity-text strong {
+            font-weight: 600;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .activity-amount {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+            background: var(--green-bg);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* ============================================
+           CHANNELS STATUS - WhatsApp, Email, etc.
+        ============================================ */
+        .channels-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px;
+        }
+
+        .channels-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .channels-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .channel-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .channel-item:last-child {
+            border-bottom: none;
+        }
+
+        .channel-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .channel-icon.whatsapp {
+            background: #E7F9ED;
+            color: #25D366;
+        }
+
+        .channel-icon.email {
+            background: #E5F2FF;
+            color: #007AFF;
+        }
+
+        .channel-icon.sms {
+            background: #F5E9FB;
+            color: #AF52DE;
+        }
+
+        .channel-icon.telegram {
+            background: #E5F5FF;
+            color: #0088CC;
+        }
+
+        .channel-info {
+            flex: 1;
+        }
+
+        .channel-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .channel-status {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .channel-toggle {
+            width: 48px;
+            height: 28px;
+            background: var(--border);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .channel-toggle.active {
+            background: var(--green);
+        }
+
+        .channel-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .channel-toggle.active::after {
+            transform: translateX(-20px);
+        }
+
+        /* ============================================
+           STATS MINI CARDS
+        ============================================ */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .stat-mini {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-mini-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-mini-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           WHATSAPP QR CONNECT CARD
+        ============================================ */
+        .whatsapp-connect {
+            background: linear-gradient(135deg, #128C7E, #25D366);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-top: 16px;
+            color: white;
+            text-align: center;
+        }
+
+        .whatsapp-connect h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .whatsapp-connect p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+
+        .whatsapp-connect .btn {
+            background: white;
+            color: #128C7E;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: inherit;
+        }
+
+        .whatsapp-connect .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* ============================================
+           TOAST NOTIFICATIONS
+        ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: var(--text);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: toastIn 0.4s ease, toastOut 0.4s ease 4s forwards;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        @keyframes toastOut {
+            to {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+        }
+
+        .toast-icon {
+            font-size: 24px;
+        }
+
+        .toast-text {
+            font-size: 14px;
+        }
+
+        .toast-text strong {
+            display: block;
+            font-weight: 600;
+        }
+
+        /* ============================================
+           MONEY ANIMATION
+        ============================================ */
+        .money-particle {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 999;
+            animation: moneyFall 2s ease-out forwards;
+        }
+
+        @keyframes moneyFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-right: 0;
+                padding: 16px;
+            }
+
+            .hero-amount {
+                font-size: 48px;
+            }
+
+            .hero-stats {
+                flex-wrap: wrap;
+                gap: 24px;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">ر</div>
+                <div class="logo-text">رِبح</div>
+            </div>
+
+            <nav class="nav-section">
+                <div class="nav-label">القائمة الرئيسية</div>
+                <a class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>لوحة التحكم</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">🛒</span>
+                    <span>السلات المتروكة</span>
+                    <span class="nav-badge">12</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">💬</span>
+                    <span>الرسائل</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>التحليلات</span>
+                </a>
+            </nav>
+
+            <nav class="nav-section">
+                <div class="nav-label">الإعدادات</div>
+                <a class="nav-item">
+                    <span class="nav-icon">🔗</span>
+                    <span>القنوات</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">🎨</span>
+                    <span>تخصيص الرسائل</span>
+                </a>
+                <a class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>الإعدادات</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="store-info">
+                    <div class="store-avatar">م</div>
+                    <div>
+                        <div class="store-name">متجر الأناقة</div>
+                        <div class="store-plan">✨ مفعّل</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div>
+                    <h1 class="greeting">صباح الخير، محمد 👋</h1>
+                    <p class="greeting-sub">هذا ما حققه متجرك اليوم</p>
+                </div>
+                <div class="header-actions">
+                    <button class="header-btn">
+                        🔔
+                        <span class="badge">3</span>
+                    </button>
+                    <button class="header-btn">❓</button>
+                </div>
+            </header>
+
+            <!-- Hero Revenue Card -->
+            <div class="hero-card">
+                <div class="hero-status">
+                    <span class="hero-status-dot"></span>
+                    <span class="hero-status-text">النظام يعمل • آخر رسالة قبل 2 دقيقة</span>
+                </div>
+
+                <div class="hero-label">الأرباح المستردة اليوم</div>
+                <div class="hero-amount">
+                    <span id="revenue">4,250</span>
+                    <span class="currency">ر.س</span>
+                </div>
+                <div class="hero-change">
+                    ↑ 23% مقارنة بأمس
+                </div>
+
+                <div class="hero-stats">
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="carts-recovered">8</div>
+                        <div class="hero-stat-label">سلات مستردة</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value" id="messages-sent">24</div>
+                        <div class="hero-stat-label">رسالة أرسلت</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">33%</div>
+                        <div class="hero-stat-label">معدل الاسترداد</div>
+                    </div>
+                    <div class="hero-stat">
+                        <div class="hero-stat-value">531</div>
+                        <div class="hero-stat-label">متوسط قيمة السلة</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="actions-grid">
+                <div class="action-card primary" onclick="triggerRecovery()">
+                    <div class="action-icon">🚀</div>
+                    <div class="action-title">استرداد الآن</div>
+                    <div class="action-subtitle">12 سلة جاهزة</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📱</div>
+                    <div class="action-title">ربط واتساب</div>
+                    <div class="action-subtitle">مسح QR للربط</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">🎁</div>
+                    <div class="action-title">إنشاء عرض</div>
+                    <div class="action-subtitle">عرض خاص جديد</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon">📊</div>
+                    <div class="action-title">تقرير اليوم</div>
+                    <div class="action-subtitle">تحميل PDF</div>
+                </div>
+            </div>
+
+            <!-- Content Grid -->
+            <div class="content-grid">
+                <!-- Live Activity -->
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <div class="activity-title">
+                            <span>⚡</span>
+                            <span>النشاط المباشر</span>
+                        </div>
+                        <span class="activity-count">مباشر</span>
+                    </div>
+                    <div class="activity-list" id="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon green">💚</div>
+                            <div class="activity-content">
+                                <div class="activity-text">
+                                    <strong>أحمد محمد</strong> أكمل طلبه بعد رسالة واتساب
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">منذ دقيقتين</span>
+                                    <span class="activity-amount">+750 ر.س</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon purple">📱</div>
+                            <div class="activity-content">
+                                <div class="activity-text">
+                                    رسالة واتساب أرسلت إلى <strong>سارة أحمد</strong>
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">منذ 5 دقائق</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon green">💚</div>
+                            <div class="activity-content">
+                                <div class="activity-text">
+                                    <strong>فهد العتيبي</strong> استخدم كود الخصم
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">منذ 8 دقائق</span>
+                                    <span class="activity-amount">+1,200 ر.س</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon blue">📧</div>
+                            <div class="activity-content">
+                                <div class="activity-text">
+                                    إيميل تذكير أرسل إلى <strong>نورة الحربي</strong>
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">منذ 12 دقيقة</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon orange">🛒</div>
+                            <div class="activity-content">
+                                <div class="activity-text">
+                                    سلة جديدة متروكة من <strong>خالد الشمري</strong>
+                                </div>
+                                <div class="activity-meta">
+                                    <span class="activity-time">منذ 15 دقيقة</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div>
+                    <!-- Channels Status -->
+                    <div class="channels-card">
+                        <div class="channels-header">
+                            <span class="channels-title">قنوات التواصل</span>
+                        </div>
+
+                        <div class="channel-item">
+                            <div class="channel-icon whatsapp">📱</div>
+                            <div class="channel-info">
+                                <div class="channel-name">واتساب</div>
+                                <div class="channel-status">متصل • 156 رسالة اليوم</div>
+                            </div>
+                            <div class="channel-toggle active"></div>
+                        </div>
+
+                        <div class="channel-item">
+                            <div class="channel-icon email">📧</div>
+                            <div class="channel-info">
+                                <div class="channel-name">البريد الإلكتروني</div>
+                                <div class="channel-status">متصل • 89 رسالة اليوم</div>
+                            </div>
+                            <div class="channel-toggle active"></div>
+                        </div>
+
+                        <div class="channel-item">
+                            <div class="channel-icon sms">💬</div>
+                            <div class="channel-info">
+                                <div class="channel-name">SMS</div>
+                                <div class="channel-status">متصل • 45 رسالة اليوم</div>
+                            </div>
+                            <div class="channel-toggle active"></div>
+                        </div>
+
+                        <div class="whatsapp-connect" id="whatsapp-connect" style="display: none;">
+                            <h3>📱 ربط واتساب الآن</h3>
+                            <p>امسح الكود من تطبيق واتساب للربط الفوري</p>
+                            <button class="btn" onclick="showQRCode()">عرض رمز QR</button>
+                        </div>
+
+                        <div class="stats-row">
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">92%</div>
+                                <div class="stat-mini-label">معدل التسليم</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">68%</div>
+                                <div class="stat-mini-label">معدل الفتح</div>
+                            </div>
+                            <div class="stat-mini">
+                                <div class="stat-mini-value">23%</div>
+                                <div class="stat-mini-label">معدل التحويل</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast" style="display: none;">
+        <span class="toast-icon">💚</span>
+        <div class="toast-text">
+            <strong>طلب جديد!</strong>
+            <span>أحمد محمد أكمل طلبه - 750 ر.س</span>
+        </div>
+    </div>
+
+    <script>
+        // Simulate live activity
+        const activities = [
+            { icon: '💚', iconClass: 'green', text: '<strong>عبدالله السعيد</strong> أكمل طلبه بعد رسالة واتساب', time: 'الآن', amount: '+890 ر.س' },
+            { icon: '📱', iconClass: 'purple', text: 'رسالة واتساب أرسلت إلى <strong>هند العمري</strong>', time: 'منذ دقيقة', amount: null },
+            { icon: '💚', iconClass: 'green', text: '<strong>محمد الغامدي</strong> استخدم كود الخصم', time: 'منذ 3 دقائق', amount: '+1,450 ر.س' },
+            { icon: '📧', iconClass: 'blue', text: 'إيميل تذكير أرسل إلى <strong>لمى الحربي</strong>', time: 'منذ 5 دقائق', amount: null },
+            { icon: '🛒', iconClass: 'orange', text: 'سلة جديدة متروكة من <strong>سلطان القحطاني</strong>', time: 'منذ 7 دقائق', amount: null },
+        ];
+
+        let currentRevenue = 4250;
+        let cartsRecovered = 8;
+        let messagesSent = 24;
+
+        // Add new activity every 8 seconds
+        setInterval(() => {
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            addActivity(activity);
+
+            // Random chance to trigger a sale
+            if (Math.random() > 0.6) {
+                const amount = Math.floor(Math.random() * 1000) + 300;
+                triggerSale(amount);
+            }
+        }, 8000);
+
+        function addActivity(activity) {
+            const list = document.getElementById('activity-list');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <div class="activity-icon ${activity.iconClass}">${activity.icon}</div>
+                <div class="activity-content">
+                    <div class="activity-text">${activity.text}</div>
+                    <div class="activity-meta">
+                        <span class="activity-time">${activity.time}</span>
+                        ${activity.amount ? `<span class="activity-amount">${activity.amount}</span>` : ''}
+                    </div>
+                </div>
+            `;
+            list.insertBefore(item, list.firstChild);
+
+            // Remove old items if more than 10
+            while (list.children.length > 10) {
+                list.removeChild(list.lastChild);
+            }
+        }
+
+        function triggerSale(amount) {
+            currentRevenue += amount;
+            cartsRecovered += 1;
+            messagesSent += Math.floor(Math.random() * 3) + 1;
+
+            // Update display with animation
+            animateValue('revenue', currentRevenue - amount, currentRevenue, 1000);
+            document.getElementById('carts-recovered').textContent = cartsRecovered;
+            document.getElementById('messages-sent').textContent = messagesSent;
+
+            // Show toast
+            showToast(amount);
+
+            // Money particles
+            createMoneyParticles();
+        }
+
+        function animateValue(id, start, end, duration) {
+            const obj = document.getElementById(id);
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    clearInterval(timer);
+                    current = end;
+                }
+                obj.textContent = Math.floor(current).toLocaleString('ar-SA');
+            }, 16);
+        }
+
+        function showToast(amount) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('span:last-child').textContent = `تم استرداد ${amount.toLocaleString('ar-SA')} ر.س`;
+            toast.style.display = 'flex';
+
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 4500);
+        }
+
+        function createMoneyParticles() {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'money-particle';
+                    particle.textContent = '💚';
+                    particle.style.left = (Math.random() * 300 + 200) + 'px';
+                    particle.style.top = '200px';
+                    document.body.appendChild(particle);
+
+                    setTimeout(() => particle.remove(), 2000);
+                }, i * 100);
+            }
+        }
+
+        function triggerRecovery() {
+            // Simulate triggering recovery for all pending carts
+            const btn = event.target.closest('.action-card');
+            btn.innerHTML = `
+                <div class="action-icon">⏳</div>
+                <div class="action-title">جاري الإرسال...</div>
+                <div class="action-subtitle">12 رسالة</div>
+            `;
+
+            setTimeout(() => {
+                btn.innerHTML = `
+                    <div class="action-icon">✅</div>
+                    <div class="action-title">تم الإرسال!</div>
+                    <div class="action-subtitle">12 رسالة مرسلة</div>
+                `;
+
+                // Add activities for sent messages
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        addActivity({
+                            icon: '📱',
+                            iconClass: 'purple',
+                            text: `رسالة واتساب أرسلت إلى <strong>عميل ${i + 1}</strong>`,
+                            time: 'الآن',
+                            amount: null
+                        });
+                    }, i * 500);
+                }
+
+                setTimeout(() => {
+                    btn.innerHTML = `
+                        <div class="action-icon">🚀</div>
+                        <div class="action-title">استرداد الآن</div>
+                        <div class="action-subtitle">0 سلات جاهزة</div>
+                    `;
+                }, 3000);
+            }, 2000);
+        }
+
+        function showQRCode() {
+            alert('سيظهر رمز QR هنا - امسحه من واتساب');
+        }
+
+        // Toggle channel
+        document.querySelectorAll('.channel-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function () {
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+
+</html>

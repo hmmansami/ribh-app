@@ -10,7 +10,7 @@
         rel="stylesheet">
     <style>
         /* ============================================
-           CSS RESET & BASE
+           CSS RESET & BASE - ULTRA MINIMAL
         ============================================ */
         *,
         *::before,
@@ -21,51 +21,33 @@
         }
 
         :root {
-            /* Core Colors - Pure Black Base */
-            --bg-primary: #000000;
-            --bg-secondary: #050505;
-            --bg-elevated: #0a0a0a;
+            /* Magical Purple Glass Theme */
+            --bg-deep: #0a0a12;
+            --bg-surface: #13131f;
 
-            /* Card Colors - Glassy */
-            --card-bg: rgba(12, 12, 12, 0.7);
-            --card-bg-hover: rgba(18, 18, 18, 0.8);
-            --card-border: rgba(255, 255, 255, 0.05);
-            --card-border-hover: rgba(16, 185, 129, 0.3);
+            /* Glass Effect */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-bg-hover: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-glow: rgba(139, 92, 246, 0.15);
 
-            /* Text Colors */
+            /* Text */
             --text-primary: #FFFFFF;
-            --text-secondary: #A1A1AA;
-            --text-muted: #52525B;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --text-muted: rgba(255, 255, 255, 0.35);
 
-            /* Brand Colors */
+            /* Accent Colors */
             --emerald: #10B981;
-            --emerald-light: #34D399;
-            --emerald-glow: rgba(16, 185, 129, 0.4);
             --purple: #8B5CF6;
-            --purple-glow: rgba(139, 92, 246, 0.3);
+            --purple-light: #A78BFA;
             --gold: #F59E0B;
-            --gold-glow: rgba(245, 158, 11, 0.3);
-            --pink: #EC4899;
-            --blue: #3B82F6;
 
-            /* Gradients */
-            --gradient-primary: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            --gradient-accent: linear-gradient(135deg, #10B981 0%, #8B5CF6 100%);
-            --gradient-gold: linear-gradient(135deg, #F59E0B 0%, #F97316 100%);
-            --gradient-hero: linear-gradient(135deg, #10B981 0%, #8B5CF6 50%, #F59E0B 100%);
-            --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            /* Magical Gradient */
+            --gradient-magic: linear-gradient(135deg, #10B981 0%, #8B5CF6 50%, #F59E0B 100%);
+            --gradient-purple: linear-gradient(135deg, rgba(139, 92, 246, 0.4) 0%, rgba(16, 185, 129, 0.2) 100%);
 
-            /* Shadows */
-            --shadow-glow: 0 0 60px var(--emerald-glow);
-            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.3);
-
-            /* Border Radius */
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
-            --radius-2xl: 24px;
-            --radius-full: 9999px;
+            --radius: 20px;
+            --radius-sm: 12px;
         }
 
         html {
@@ -74,7 +56,7 @@
 
         body {
             font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-primary);
+            background: var(--bg-deep);
             color: var(--text-primary);
             min-height: 100vh;
             overflow-x: hidden;
@@ -82,9 +64,9 @@
         }
 
         /* ============================================
-           PREMIUM ANIMATED BACKGROUND
+           MAGICAL BACKGROUND
         ============================================ */
-        .bg-canvas {
+        .magic-bg {
             position: fixed;
             top: 0;
             left: 0;
@@ -95,96 +77,42 @@
             overflow: hidden;
         }
 
-        /* Gradient Orbs */
-        .orb {
+        /* Purple Haze Orb - Top Right */
+        .orb-purple {
             position: absolute;
+            width: 600px;
+            height: 600px;
             border-radius: 50%;
-            filter: blur(100px);
-            opacity: 0.5;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, transparent 60%);
+            top: -200px;
+            right: -100px;
+            filter: blur(60px);
+            animation: floatSlow 20s ease-in-out infinite;
         }
 
-        .orb-1 {
+        /* Emerald Haze - Bottom Left */
+        .orb-emerald {
+            position: absolute;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%);
-            top: -150px;
-            right: -100px;
-            animation: float-1 25s ease-in-out infinite;
-        }
-
-        .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
-            bottom: -100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 60%);
+            bottom: -150px;
             left: -100px;
-            animation: float-2 30s ease-in-out infinite;
+            filter: blur(80px);
+            animation: floatSlow 25s ease-in-out infinite reverse;
         }
 
-        .orb-3 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
-            top: 40%;
-            left: 40%;
-            animation: float-3 20s ease-in-out infinite;
-        }
-
-        @keyframes float-1 {
+        @keyframes floatSlow {
 
             0%,
             100% {
                 transform: translate(0, 0) scale(1);
             }
 
-            33% {
-                transform: translate(-40px, 25px) scale(1.05);
-            }
-
-            66% {
-                transform: translate(25px, -15px) scale(0.95);
-            }
-        }
-
-        @keyframes float-2 {
-
-            0%,
-            100% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-
             50% {
-                transform: translate(30px, -30px) rotate(180deg);
+                transform: translate(30px, 20px) scale(1.05);
             }
-        }
-
-        @keyframes float-3 {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.4;
-            }
-
-            50% {
-                transform: scale(1.15);
-                opacity: 0.6;
-            }
-        }
-
-        /* Grid Pattern Overlay */
-        .grid-pattern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 50px 50px;
-            pointer-events: none;
-            z-index: 1;
         }
 
         /* ============================================
@@ -199,134 +127,91 @@
         }
 
         /* ============================================
-           HEADER - Glassmorphism
+           HEADER - Ultra Clean
         ============================================ */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 32px;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--card-border);
+            padding: 20px 40px;
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-        }
-
         .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .logo-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--gradient-primary);
-            border-radius: var(--radius-md);
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-magic);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            box-shadow: var(--shadow-glow);
+            font-size: 22px;
+            box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
         }
 
         .logo-text {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 800;
-            background: var(--gradient-accent);
+            background: var(--gradient-magic);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .store-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 18px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-lg);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .store-selector:hover {
-            border-color: var(--card-border-hover);
-            background: var(--card-bg-hover);
-        }
-
-        .store-icon {
-            font-size: 20px;
-        }
-
-        .store-info {
-            text-align: right;
-        }
-
-        .store-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .store-platform {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .store-arrow {
-            color: var(--text-muted);
-            font-size: 12px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-btn {
+        /* One clean settings button with tooltip */
+        .settings-btn {
             width: 44px;
             height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-sm);
             color: var(--text-secondary);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 18px;
-            backdrop-filter: blur(10px);
+            font-size: 20px;
+            backdrop-filter: blur(20px);
+            position: relative;
         }
 
-        .header-btn:hover {
-            border-color: var(--emerald);
-            color: var(--emerald);
-            background: rgba(16, 185, 129, 0.1);
+        .settings-btn:hover {
+            background: var(--glass-bg-hover);
+            color: var(--purple-light);
+            box-shadow: 0 0 20px var(--glass-glow);
         }
 
-        .header-btn.has-notification::after {
-            content: '';
+        /* Tooltip */
+        .settings-btn::after {
+            content: "الإعدادات";
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 8px;
-            height: 8px;
-            background: var(--pink);
-            border-radius: 50%;
-            border: 2px solid var(--bg-primary);
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: var(--bg-surface);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            border: 1px solid var(--glass-border);
+        }
+
+        .settings-btn:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
         }
 
         /* ============================================
@@ -334,42 +219,41 @@
         ============================================ */
         .main {
             flex: 1;
-            padding: 32px;
-            max-width: 1400px;
+            padding: 20px 40px 60px;
+            max-width: 1200px;
             margin: 0 auto;
             width: 100%;
         }
 
         /* ============================================
-           HERO STATS - THE BIG NUMBER
+           HERO - THE BIG MONEY NUMBER
         ============================================ */
-        .hero-section {
+        .hero {
             text-align: center;
-            margin-bottom: 48px;
-            padding: 48px 0;
+            padding: 60px 0;
+            margin-bottom: 40px;
         }
 
-        .live-badge {
+        .live-pulse {
             display: inline-flex;
             align-items: center;
             gap: 10px;
             padding: 10px 24px;
             background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            border-radius: var(--radius-full);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 999px;
             font-size: 14px;
-            color: var(--emerald-light);
-            margin-bottom: 28px;
-            backdrop-filter: blur(10px);
+            color: var(--emerald);
+            margin-bottom: 32px;
         }
 
-        .live-dot {
-            width: 10px;
-            height: 10px;
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
             background: var(--emerald);
             border-radius: 50%;
             animation: pulse 2s infinite;
-            box-shadow: 0 0 12px var(--emerald-glow);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
         }
 
         @keyframes pulse {
@@ -377,402 +261,238 @@
             0%,
             100% {
                 opacity: 1;
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+                transform: scale(1);
             }
 
             50% {
-                opacity: 0.7;
-                box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+                opacity: 0.5;
+                transform: scale(0.9);
             }
         }
 
         .hero-label {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-muted);
-            margin-bottom: 12px;
-            font-weight: 500;
+            margin-bottom: 16px;
         }
 
-        .hero-amount-wrapper {
+        .hero-amount {
+            font-size: 96px;
+            font-weight: 800;
+            background: var(--gradient-magic);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            letter-spacing: -4px;
+            margin-bottom: 8px;
             position: relative;
-            display: inline-block;
         }
 
-        .hero-amount-glow {
+        /* Glow behind the number */
+        .hero-glow {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 400px;
-            height: 150px;
-            background: var(--gradient-hero);
-            filter: blur(80px);
-            opacity: 0.3;
-            border-radius: 50%;
-        }
-
-        .hero-amount {
-            position: relative;
-            font-size: 88px;
-            font-weight: 800;
-            background: var(--gradient-hero);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            letter-spacing: -3px;
-            margin-bottom: 8px;
+            height: 120px;
+            background: var(--gradient-purple);
+            filter: blur(60px);
+            opacity: 0.5;
+            z-index: -1;
         }
 
         .hero-currency {
-            font-size: 24px;
+            font-size: 20px;
             color: var(--text-secondary);
-            font-weight: 600;
-            margin-bottom: 20px;
-        }
-
-        .hero-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 20px;
-            background: rgba(16, 185, 129, 0.12);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: var(--radius-full);
-            color: var(--emerald-light);
-            font-size: 15px;
-            font-weight: 600;
+            font-weight: 500;
         }
 
         /* ============================================
-           THREE LEVERS - GLASS CARDS
+           GLASS CARDS - 3 Levers
         ============================================ */
-        .levers-section {
-            margin-bottom: 48px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-        }
-
-        .section-subtitle {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        .levers-grid {
+        .levers {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            margin-bottom: 40px;
         }
 
         .lever-card {
-            position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-xl);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
             padding: 28px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Corner Glow Effect */
+        /* Subtle glow on corner */
         .lever-card::before {
             content: '';
             position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 180px;
-            height: 180px;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            filter: blur(50px);
-            opacity: 0.25;
+            opacity: 0.2;
+            filter: blur(30px);
             transition: all 0.4s ease;
         }
 
         .lever-card:hover {
-            transform: translateY(-6px);
-            border-color: var(--card-border-hover);
-            box-shadow: var(--shadow-card);
+            transform: translateY(-4px);
+            background: var(--glass-bg-hover);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
         .lever-card:hover::before {
             opacity: 0.4;
-            transform: scale(1.1);
         }
 
-        /* Card-specific glows */
-        .lever-card.price::before {
+        .lever-card.emerald::before {
             background: var(--emerald);
         }
 
-        .lever-card.times::before {
+        .lever-card.purple::before {
             background: var(--purple);
         }
 
-        .lever-card.people::before {
+        .lever-card.gold::before {
             background: var(--gold);
         }
 
-        .lever-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
         .lever-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: var(--radius-lg);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            flex-shrink: 0;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
-        .lever-card.price .lever-icon {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
-            border: 1px solid rgba(16, 185, 129, 0.25);
+        .lever-card.emerald .lever-icon {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.2);
         }
 
-        .lever-card.times .lever-icon {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
-            border: 1px solid rgba(139, 92, 246, 0.25);
+        .lever-card.purple .lever-icon {
+            background: rgba(139, 92, 246, 0.15);
+            border: 1px solid rgba(139, 92, 246, 0.2);
         }
 
-        .lever-card.people .lever-icon {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
-            border: 1px solid rgba(245, 158, 11, 0.25);
+        .lever-card.gold .lever-icon {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
         .lever-title {
-            font-size: 17px;
-            font-weight: 700;
-            margin-bottom: 3px;
-        }
-
-        .lever-subtitle {
-            font-size: 13px;
-            color: var(--text-muted);
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
         }
 
         .lever-amount {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 800;
-            margin-bottom: 6px;
             letter-spacing: -1px;
+            margin-bottom: 4px;
         }
 
-        .lever-card.price .lever-amount {
+        .lever-card.emerald .lever-amount {
             color: var(--emerald);
         }
 
-        .lever-card.times .lever-amount {
-            color: var(--purple);
+        .lever-card.purple .lever-amount {
+            color: var(--purple-light);
         }
 
-        .lever-card.people .lever-amount {
+        .lever-card.gold .lever-amount {
             color: var(--gold);
         }
 
         .lever-unit {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--text-muted);
         }
 
-        .lever-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 14px;
-        }
-
-        .lever-card.price .lever-change {
-            background: rgba(16, 185, 129, 0.12);
-            color: var(--emerald-light);
-        }
-
-        .lever-card.times .lever-change {
-            background: rgba(139, 92, 246, 0.12);
-            color: #A78BFA;
-        }
-
-        .lever-card.people .lever-change {
-            background: rgba(245, 158, 11, 0.12);
-            color: #FBBF24;
-        }
-
-        .lever-methods {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--card-border);
-        }
-
-        .lever-method {
-            padding: 6px 14px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-
-        .lever-method:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
         /* ============================================
-           LIVE ACTIVITY FEED - GLASS PANEL
+           ACTIVITY - Clean List
         ============================================ */
-        .activity-section {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-2xl);
-            overflow: hidden;
+        .activity {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
             backdrop-filter: blur(20px);
+            overflow: hidden;
         }
 
         .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             padding: 24px 28px;
-            border-bottom: 1px solid var(--card-border);
-        }
-
-        .activity-title {
+            border-bottom: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        .activity-title {
             font-size: 18px;
             font-weight: 700;
-        }
-
-        .activity-title-icon {
-            font-size: 22px;
-        }
-
-        .activity-filter {
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-
-        .filter-btn {
-            padding: 8px 18px;
-            background: transparent;
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: rgba(16, 185, 129, 0.25);
-            color: var(--emerald-light);
+            gap: 10px;
         }
 
         .activity-list {
-            padding: 8px 0;
-            max-height: 500px;
+            max-height: 400px;
             overflow-y: auto;
         }
 
-        /* Custom Scrollbar */
+        /* Clean scrollbar */
         .activity-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .activity-list::-webkit-scrollbar-track {
-            background: transparent;
+            width: 4px;
         }
 
         .activity-list::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
+            border-radius: 2px;
         }
 
         .activity-item {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 16px;
             padding: 20px 28px;
             transition: background 0.2s ease;
             cursor: pointer;
-            position: relative;
         }
 
         .activity-item:hover {
             background: rgba(255, 255, 255, 0.02);
         }
 
-        /* Animated entrance for new items */
-        .activity-item.new {
-            animation: slideIn 0.4s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .activity-status {
-            width: 12px;
-            height: 12px;
+        .activity-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
-            margin-top: 6px;
             flex-shrink: 0;
         }
 
-        .activity-status.success {
+        .activity-dot.success {
             background: var(--emerald);
-            box-shadow: 0 0 12px var(--emerald-glow);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
         }
 
-        .activity-status.pending {
+        .activity-dot.pending {
             background: var(--gold);
-            box-shadow: 0 0 12px var(--gold-glow);
             animation: pendingPulse 2s infinite;
-        }
-
-        .activity-status.info {
-            background: var(--blue);
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
         }
 
         @keyframes pendingPulse {
@@ -792,389 +512,156 @@
             min-width: 0;
         }
 
-        .activity-flow {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-
-        .activity-step {
+        .activity-text {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--text-primary);
+            margin-bottom: 4px;
         }
 
-        .activity-arrow {
-            color: var(--text-muted);
-            font-size: 14px;
-        }
-
-        .activity-step.highlight {
-            color: var(--emerald-light);
-            font-weight: 600;
-        }
-
-        .activity-step.amount {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
-            border: 1px solid rgba(16, 185, 129, 0.25);
-            padding: 4px 14px;
-            border-radius: var(--radius-sm);
-            color: var(--emerald-light);
+        .activity-text .amount {
+            color: var(--emerald);
             font-weight: 700;
         }
 
-        .activity-details {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .activity-meta {
             font-size: 13px;
             color: var(--text-muted);
-        }
-
-        .activity-customer {
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .activity-product {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         .activity-time {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-muted);
             white-space: nowrap;
-            margin-right: auto;
         }
 
         /* ============================================
            RESPONSIVE
         ============================================ */
-        @media (max-width: 1024px) {
-            .levers-grid {
+        @media (max-width: 900px) {
+            .levers {
                 grid-template-columns: 1fr;
             }
 
             .hero-amount {
                 font-size: 64px;
             }
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                padding: 14px 20px;
-            }
 
             .main {
                 padding: 20px;
             }
 
-            .hero-amount {
-                font-size: 52px;
-            }
-
-            .store-selector {
-                display: none;
-            }
-
-            .lever-card {
-                padding: 22px;
-            }
-
-            .activity-item {
+            .header {
                 padding: 16px 20px;
-            }
-
-            .activity-flow {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 6px;
-            }
-
-            .activity-arrow {
-                display: none;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Animated Background -->
-    <div class="bg-canvas">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <!-- Magical Background -->
+    <div class="magic-bg">
+        <div class="orb-purple"></div>
+        <div class="orb-emerald"></div>
     </div>
-    <div class="grid-pattern"></div>
 
     <div class="app">
-        <!-- Header -->
+        <!-- Header - Ultra Clean -->
         <header class="header">
-            <div class="header-left">
-                <div class="logo">
-                    <div class="logo-icon">💚</div>
-                    <span class="logo-text">رِبح</span>
-                </div>
-                <div class="store-selector">
-                    <span class="store-icon">🏪</span>
-                    <div class="store-info">
-                        <div class="store-name">متجر الأناقة</div>
-                        <div class="store-platform">سلة</div>
-                    </div>
-                    <span class="store-arrow">▼</span>
-                </div>
+            <div class="logo">
+                <div class="logo-icon">💚</div>
+                <span class="logo-text">رِبح</span>
             </div>
-            <div class="header-right">
-                <button class="header-btn has-notification" style="position: relative;">🔔</button>
-                <button class="header-btn">⚙️</button>
-                <button class="header-btn">👤</button>
-            </div>
+            <button class="settings-btn">⚙️</button>
         </header>
 
         <!-- Main Content -->
         <main class="main">
-            <!-- Hero Stats -->
-            <section class="hero-section">
-                <div class="live-badge">
-                    <span class="live-dot"></span>
-                    <span>المكينة شغالة • آخر حركة منذ 12 ثانية</span>
+            <!-- Hero - Big Money Number -->
+            <section class="hero">
+                <div class="live-pulse">
+                    <span class="pulse-dot"></span>
+                    <span>المكينة شغالة</span>
                 </div>
 
-                <div class="hero-label">إجمالي الأرباح المستردة هذا الشهر</div>
+                <div class="hero-label">الأرباح المستردة هذا الشهر</div>
 
-                <div class="hero-amount-wrapper">
-                    <div class="hero-amount-glow"></div>
+                <div style="position: relative; display: inline-block;">
+                    <div class="hero-glow"></div>
                     <div class="hero-amount" id="heroAmount">23,450</div>
                 </div>
 
                 <div class="hero-currency">ريال سعودي</div>
+            </section>
 
-                <div class="hero-change">
-                    <span>↑</span>
-                    <span>+43% مقارنة بالشهر الماضي</span>
+            <!-- Three Levers - Clean Glass Cards -->
+            <section class="levers">
+                <div class="lever-card emerald">
+                    <div class="lever-icon">💰</div>
+                    <div class="lever-title">سعر أكبر</div>
+                    <div class="lever-amount">8,200</div>
+                    <div class="lever-unit">ريال</div>
+                </div>
+
+                <div class="lever-card purple">
+                    <div class="lever-icon">🔄</div>
+                    <div class="lever-title">مرات أكثر</div>
+                    <div class="lever-amount">12,100</div>
+                    <div class="lever-unit">ريال</div>
+                </div>
+
+                <div class="lever-card gold">
+                    <div class="lever-icon">👥</div>
+                    <div class="lever-title">عملاء أكثر</div>
+                    <div class="lever-amount">3,150</div>
+                    <div class="lever-unit">ريال</div>
                 </div>
             </section>
 
-            <!-- Three Revenue Levers -->
-            <section class="levers-section">
-                <div class="section-header">
-                    <div>
-                        <div class="section-title">روافع الأرباح الثلاثة</div>
-                        <div class="section-subtitle">الإيرادات = السعر × المرات × العملاء</div>
-                    </div>
-                </div>
-
-                <div class="levers-grid">
-                    <!-- Price More - Emerald -->
-                    <div class="lever-card price">
-                        <div class="lever-header">
-                            <div class="lever-icon">💰</div>
-                            <div>
-                                <div class="lever-title">سعر أكبر</div>
-                                <div class="lever-subtitle">رفع قيمة الطلب</div>
-                            </div>
-                        </div>
-                        <div class="lever-amount">8,200</div>
-                        <div class="lever-unit">ريال مسترد</div>
-                        <div class="lever-change">
-                            <span>↑</span>
-                            <span>+24%</span>
-                        </div>
-                        <div class="lever-methods">
-                            <span class="lever-method">عروض ذكية</span>
-                            <span class="lever-method">حزم منتجات</span>
-                            <span class="lever-method">Upsell</span>
-                        </div>
-                    </div>
-
-                    <!-- More Times - Purple -->
-                    <div class="lever-card times">
-                        <div class="lever-header">
-                            <div class="lever-icon">🔄</div>
-                            <div>
-                                <div class="lever-title">مرات أكثر</div>
-                                <div class="lever-subtitle">تكرار الشراء</div>
-                            </div>
-                        </div>
-                        <div class="lever-amount">12,100</div>
-                        <div class="lever-unit">ريال مسترد</div>
-                        <div class="lever-change">
-                            <span>↑</span>
-                            <span>+67%</span>
-                        </div>
-                        <div class="lever-methods">
-                            <span class="lever-method">سلات متروكة</span>
-                            <span class="lever-method">إعادة تنشيط</span>
-                            <span class="lever-method">ولاء</span>
-                        </div>
-                    </div>
-
-                    <!-- More People - Gold -->
-                    <div class="lever-card people">
-                        <div class="lever-header">
-                            <div class="lever-icon">👥</div>
-                            <div>
-                                <div class="lever-title">عملاء أكثر</div>
-                                <div class="lever-subtitle">جذب مشترين جدد</div>
-                            </div>
-                        </div>
-                        <div class="lever-amount">3,150</div>
-                        <div class="lever-unit">ريال مسترد</div>
-                        <div class="lever-change">
-                            <span>↑</span>
-                            <span>+12%</span>
-                        </div>
-                        <div class="lever-methods">
-                            <span class="lever-method">التقاط الزوار</span>
-                            <span class="lever-method">إحالات</span>
-                            <span class="lever-method">عروض ترحيب</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Live Activity Feed -->
-            <section class="activity-section">
+            <!-- Activity Feed - Clean -->
+            <section class="activity">
                 <div class="activity-header">
-                    <div class="activity-title">
-                        <span class="activity-title-icon">⚡</span>
+                    <span class="activity-title">
+                        <span>⚡</span>
                         <span>النشاط المباشر</span>
-                    </div>
-                    <div class="activity-filter">
-                        <button class="filter-btn active">الكل</button>
-                        <button class="filter-btn">💰 مبيعات</button>
-                        <button class="filter-btn">📧 رسائل</button>
-                        <button class="filter-btn">👥 عملاء</button>
-                    </div>
+                    </span>
                 </div>
 
                 <div class="activity-list">
-                    <!-- Success: Cart Recovered -->
-                    <div class="activity-item new">
-                        <div class="activity-status success"></div>
+                    <div class="activity-item">
+                        <div class="activity-dot success"></div>
                         <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">سلة متروكة</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">SMS مُرسل</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step highlight">عاد العميل!</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step amount">+450 ر.س</span>
+                            <div class="activity-text">سلة متروكة ← عاد العميل! <span class="amount">+450 ر.س</span>
                             </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">سارة أحمد</span>
-                                <span>•</span>
-                                <span class="activity-product">حقيبة Kate Spade</span>
-                            </div>
+                            <div class="activity-meta">سارة أحمد • حقيبة Kate Spade</div>
                         </div>
                         <div class="activity-time">الآن</div>
                     </div>
 
-                    <!-- Success: Lead Captured -->
                     <div class="activity-item">
-                        <div class="activity-status success"></div>
+                        <div class="activity-dot success"></div>
                         <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">زائر جديد</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step highlight">تم التقاطه!</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">عرض ترحيب 15% مُرسل</span>
-                            </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">عبدالله محمد</span>
-                                <span>•</span>
-                                <span class="activity-product">مشترك جديد</span>
-                            </div>
-                        </div>
-                        <div class="activity-time">منذ 2 دقيقة</div>
-                    </div>
-
-                    <!-- Success: Reactivation -->
-                    <div class="activity-item">
-                        <div class="activity-status success"></div>
-                        <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">عميل غير نشط 30 يوم</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">رسالة إعادة تنشيط</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step highlight">شراء!</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step amount">+890 ر.س</span>
-                            </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">فاطمة علي</span>
-                                <span>•</span>
-                                <span class="activity-product">عرض VIP مقبول</span>
-                            </div>
+                            <div class="activity-text">عميل غير نشط ← شراء! <span class="amount">+890 ر.س</span></div>
+                            <div class="activity-meta">فاطمة علي • عرض VIP</div>
                         </div>
                         <div class="activity-time">منذ 5 دقائق</div>
                     </div>
 
-                    <!-- Pending: Payment Plan -->
                     <div class="activity-item">
-                        <div class="activity-status pending"></div>
+                        <div class="activity-dot pending"></div>
                         <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">سلة كبيرة 2,400 ر.س</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">عرض تقسيط تمارا</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">في الانتظار...</span>
-                            </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">أحمد خالد</span>
-                                <span>•</span>
-                                <span class="activity-product">4 دفعات بدون فوائد</span>
-                            </div>
+                            <div class="activity-text">سلة 2,400 ر.س ← عرض تقسيط مُرسل</div>
+                            <div class="activity-meta">أحمد خالد • في الانتظار</div>
                         </div>
                         <div class="activity-time">منذ 8 دقائق</div>
                     </div>
 
-                    <!-- Success: Upsell -->
                     <div class="activity-item">
-                        <div class="activity-status success"></div>
+                        <div class="activity-dot success"></div>
                         <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">عميل اشترى</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">عرض Upsell</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step highlight">قبل!</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step amount">+320 ر.س</span>
-                            </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">نورة سعد</span>
-                                <span>•</span>
-                                <span class="activity-product">أضافت منتج إضافي</span>
-                            </div>
+                            <div class="activity-text">Upsell ← قبل! <span class="amount">+320 ر.س</span></div>
+                            <div class="activity-meta">نورة سعد • منتج إضافي</div>
                         </div>
                         <div class="activity-time">منذ 12 دقيقة</div>
-                    </div>
-
-                    <!-- Info: WhatsApp Sent -->
-                    <div class="activity-item">
-                        <div class="activity-status info"></div>
-                        <div class="activity-content">
-                            <div class="activity-flow">
-                                <span class="activity-step">سلة متروكة</span>
-                                <span class="activity-arrow">→</span>
-                                <span class="activity-step">واتساب مُرسل</span>
-                            </div>
-                            <div class="activity-details">
-                                <span class="activity-customer">ريم عبدالرحمن</span>
-                                <span>•</span>
-                                <span class="activity-product">ساعة Apple Watch</span>
-                            </div>
-                        </div>
-                        <div class="activity-time">منذ 15 دقيقة</div>
                     </div>
                 </div>
             </section>
@@ -1182,48 +669,21 @@
     </div>
 
     <script>
-        // Simulate live updates - counter animation
+        // Simple counter animation
         function animateCounter() {
             const heroAmount = document.getElementById('heroAmount');
             let current = 23450;
 
             setInterval(() => {
-                // Random small increment
                 current += Math.floor(Math.random() * 50) + 10;
                 heroAmount.textContent = current.toLocaleString('en-US');
-            }, 12000); // Every 12 seconds
+            }, 12000);
         }
 
-        // Filter buttons interaction
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-
-        // Hover effects for lever cards
-        document.querySelectorAll('.lever-card').forEach(card => {
-            card.addEventListener('mouseenter', function () {
-                this.style.transform = 'translateY(-6px) scale(1.01)';
-            });
-            card.addEventListener('mouseleave', function () {
-                this.style.transform = '';
-            });
-        });
-
-        // Initialize
         animateCounter();
-
-        // Update live badge time
-        let lastActivity = 12;
-        setInterval(() => {
-            lastActivity++;
-            if (lastActivity > 60) lastActivity = 1;
-            document.querySelector('.live-badge span:last-child').textContent =
-                `المكينة شغالة • آخر حركة منذ ${lastActivity} ثانية`;
-        }, 1000);
     </script>
 </body>
 
 </html>
+</CodeContent>
+<parameter name="EmptyFile">false

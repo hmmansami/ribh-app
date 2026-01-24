@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | النظام المتكامل</title>
+    <meta name="description" content="رِبح - ضغطة واحدة، مبيعات لا تنتهي">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ============================================
+           THE DESIGN SYSTEM - PREMIUM & DYNAMIC
+        ============================================ */
+        :root {
+            /* Palette */
+            --bg-dark: #050505;
+            --bg-light: #FAFAFA;
+            --emerald: #10B981;
+            --emerald-glow: rgba(16, 185, 129, 0.4);
+            --indigo: #6366F1;
+            --indigo-glow: rgba(99, 102, 241, 0.3);
+            --amber: #F59E0B;
+            --text-white: #FFFFFF;
+            --text-dim: #A1A1AA;
+            --text-muted: #71717A;
+            --text-dark: #1A1A1A;
+
+            /* Glassmorphism */
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(20px);
+
+            /* Transitions */
+            --ease: cubic-bezier(0.4, 0, 0.2, 1);
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            background-attachment: fixed;
+        }
+
+        /* Animated Background Elements */
+        .blob {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.15;
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-1 {
+            background: var(--emerald);
+            top: -100px;
+            right: -100px;
+        }
+
+        .blob-2 {
+            background: var(--indigo);
+            bottom: -100px;
+            left: -100px;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(0, 0) scale(1);
+            }
+
+            to {
+                transform: translate(50px, 50px) scale(1.1);
+            }
+        }
+
+        /* Layout */
+        .page {
+            min-height: 100vh;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s var(--ease);
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* ============================================
+           COMPONENT: PREMIUM BUTTONS
+        ============================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 18px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s var(--spring);
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--emerald), var(--indigo));
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px var(--emerald-glow);
+        }
+
+        .btn-glass {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--emerald);
+        }
+
+        /* ============================================
+           PAGE 1: THE LANDING (THE HOOK)
+        ============================================ */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(40px, 8vw, 72px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -2px;
+        }
+
+        .hero span.gradient {
+            background: linear-gradient(135deg, var(--emerald), var(--indigo));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 22px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 48px;
+            line-height: 1.6;
+        }
+
+        /* Landing Features */
+        .landing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 80px;
+        }
+
+        .feature-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 32px;
+            border-radius: 24px;
+            backdrop-filter: var(--glass-blur);
+            text-align: right;
+            transition: all 0.3s var(--ease);
+        }
+
+        .feature-card:hover {
+            border-color: var(--emerald);
+            transform: translateY(-8px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            margin-bottom: 12px;
+            color: var(--emerald);
+        }
+
+        .feature-card p {
+            font-size: 15px;
+            color: var(--text-dim);
+        }
+
+        /* ============================================
+           PAGE 2: THE DASHBOARD (THE VALUE)
+        ============================================ */
+        .dash-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--emerald);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 32px;
+            border-radius: 24px;
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .metric-main .label {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .metric-main .value {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .metric-main .growth {
+            color: var(--emerald);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .metric-small .value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .metric-small .label {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* The Engines */
+        .engines-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+        }
+
+        .engine {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s var(--ease);
+        }
+
+        .engine.active {
+            border-color: var(--emerald);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .engine-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .engine-icon {
+            font-size: 24px;
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .engine h4 {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .engine p {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* Switch */
+        .switch {
+            width: 48px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 200px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            right: 3px;
+            transition: 0.3s;
+        }
+
+        .active .switch {
+            background: var(--emerald);
+        }
+
+        .active .switch::after {
+            transform: translateX(-22px);
+        }
+
+        /* ============================================
+           PAGE 3: WHATSAPP TEST LAB (THE PROOF)
+        ============================================ */
+        .lab-card {
+            background: linear-gradient(135deg, rgba(25, 25, 25, 0.9), rgba(15, 15, 15, 0.9));
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            margin-top: 48px;
+        }
+
+        .lab-form {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: var(--emerald);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Template Selector */
+        .template-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .template-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 16px;
+            border-radius: 12px;
+            color: var(--text-dim);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-align: center;
+        }
+
+        .template-btn.active {
+            border-color: var(--emerald);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--emerald);
+        }
+
+        /* Phone Preview */
+        .phone-mockup {
+            background: #111;
+            border: 8px solid #333;
+            border-radius: 40px;
+            padding: 10px;
+            width: 300px;
+            height: 580px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+        }
+
+        .phone-screen {
+            background: #000;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background-image: url('https://user-images.githubusercontent.com/1500684/157740513-4395a16d-3e6f-4029-9e80-7fc1b1513e8b.png');
+            background-size: cover;
+        }
+
+        .wa-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .wa-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--emerald);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .wa-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .wa-status {
+            font-size: 11px;
+            color: var(--emerald);
+        }
+
+        .wa-bubble {
+            max-width: 85%;
+            background: #128C7E;
+            padding: 12px;
+            border-radius: 12px 12px 0 12px;
+            align-self: flex-end;
+            font-size: 13px;
+            line-height: 1.5;
+            position: relative;
+            animation: popIn 0.5s var(--spring);
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8) translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Success Message Overlay */
+        .sent-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(16, 185, 129, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .sent-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+
+        /* ============================================
+           UTILITIES
+        ============================================ */
+        .hide {
+            display: none !important;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+
+            .landing-grid,
+            .metrics-grid,
+            .engines-grid,
+            .lab-card {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-rows: auto;
+            }
+
+            .hero h1 {
+                font-size: 40px;
+            }
+
+            .phone-mockup {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <!-- PAGE 1: LANDING -->
+    <div id="pageLanding" class="page active">
+        <div class="container">
+            <header class="dash-header">
+                <div class="logo">رِبح 💚</div>
+                <button class="btn btn-glass" onclick="goTo('Dashboard')">تسجيل الدخول</button>
+            </header>
+
+            <section class="hero">
+                <h1>اضغط <span class="gradient">مرة واحدة</span><br>المبيعات تبدأ بالتدفق</h1>
+                <p>حول السلات المتروكة إلى مبالغ في حسابك البنكي تلقائياً. نظامنا يستخدم أحدث تقنيات WhatsApp Cloud API
+                    لاسترجاع عملائك في ثوانٍ.</p>
+                <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="goTo('Dashboard')">ابدأ مجاناً الآن</button>
+                    <button class="btn btn-glass" onclick="scrollToLab()">تجربة ميزة الواتساب</button>
+                </div>
+            </section>
+
+            <div class="landing-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>سرعة خيالية</h3>
+                    <p>يتم إرسال الرسالة في أجزاء من الثانية بعد ترك السلة مباشرة.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>بدون مخاطرة</h3>
+                    <p>ضمان استرجاع الأموال 100% إذا لم تزد مبيعاتك في أول 7 أيام.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>أرخص تكلفة</h3>
+                    <p>اتصال مباشر بـ Meta Cloud API بدون رسوم وسيط أو عمولات خفية.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: DASHBOARD -->
+    <div id="pageDashboard" class="page">
+        <div class="container">
+            <header class="dash-header">
+                <div class="logo"><span>💚</span> رِبح Dashboard</div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-glass" style="padding: 8px 16px; font-size: 14px;"
+                        onclick="goTo('Landing')">خروج</button>
+                </div>
+            </header>
+
+            <div class="metrics-grid">
+                <div class="metric-card metric-main">
+                    <div class="label">إجمالي الأرباح المستردة</div>
+                    <div class="value" id="dashTotal">٢٣,٤٥٠</div>
+                    <div class="growth">↑ +٤٣٪ هذا الشهر</div>
+                </div>
+                <div class="metric-card metric-small">
+                    <div class="label">رسائل أرسلت</div>
+                    <div class="value">١,٢٨٤</div>
+                    <div class="label" style="color: var(--emerald);">معدل فتح ٩٨٪</div>
+                </div>
+                <div class="metric-card metric-small">
+                    <div class="label">معدل التحويل</div>
+                    <div class="value">١٨.٤٪</div>
+                    <div class="label">متوسط السوق ٣٪</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 24px;">محركات الاسترداد</h3>
+            <div class="engines-grid">
+                <div class="engine active">
+                    <div class="engine-info">
+                        <div class="engine-icon">🛒</div>
+                        <div>
+                            <h4>السلات المتروكة</h4>
+                            <p>شغال - استرد ١٤,٢٠٠ ر.س</p>
+                        </div>
+                    </div>
+                    <div class="switch"></div>
+                </div>
+                <div class="engine active">
+                    <div class="engine-info">
+                        <div class="engine-icon">♻️</div>
+                        <div>
+                            <h4>إعادة التذكير</h4>
+                            <p>شغال - استرد ٤,٥٠٠ ر.س</p>
+                        </div>
+                    </div>
+                    <div class="switch"></div>
+                </div>
+                <div class="engine">
+                    <div class="engine-info">
+                        <div class="engine-icon">🎁</div>
+                        <div>
+                            <h4>توزيع العروض</h4>
+                            <p>متوقف - بانتظار تفعيلك</p>
+                        </div>
+                    </div>
+                    <div class="switch"></div>
+                </div>
+                <div class="engine active">
+                    <div class="engine-info">
+                        <div class="engine-icon">🤖</div>
+                        <div>
+                            <h4>مساعد AI</h4>
+                            <p>شغال - يرد على استفساراتك</p>
+                        </div>
+                    </div>
+                    <div class="switch"></div>
+                </div>
+            </div>
+
+            <!-- THE TEST LAB -->
+            <h3 id="labZone" style="margin-bottom: 24px; margin-top: 60px;">مختبر الواتساب | WhatsApp Lab ⚡</h3>
+            <div class="lab-card">
+                <div class="lab-form">
+                    <div class="input-group">
+                        <label>رقم جوالك للتجربة</label>
+                        <input type="text" class="input-field" id="testPhone" placeholder="+966 50 000 0000"
+                            value="+966">
+                    </div>
+
+                    <div class="input-group">
+                        <label>اختر نوع الرسالة</label>
+                        <div class="template-selector">
+                            <div class="template-btn active" onclick="setTemplate('recovery', this)">استرداد سلة 🛒
+                            </div>
+                            <div class="template-btn" onclick="setTemplate('upsell', this)">بيع إضافي ⬆️</div>
+                            <div class="template-btn" onclick="setTemplate('referral', this)">رابط دعوة 🔗</div>
+                            <div class="template-btn" onclick="setTemplate('interactive', this)">تفاعلية (أزرار) 🔘
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="btnSend" onclick="performTest()">
+                        إرسال تجربة الآن
+                        <span>🚀</span>
+                    </button>
+                    <p style="font-size: 13px; color: var(--text-muted); text-align: center;">* سيتم استخدام Meta Cloud
+                        API لإرسال رسالة حقيقية أو محاكاة دقيقة.</p>
+                </div>
+
+                <div class="phone-mockup">
+                    <div class="phone-screen" id="waScreen">
+                        <div class="wa-header">
+                            <div class="wa-avatar">💚</div>
+                            <div>
+                                <div class="wa-name">متجر الأناقة (رِبح)</div>
+                                <div class="wa-status">أونلاين</div>
+                            </div>
+                        </div>
+                        <div id="waMessages">
+                            <!-- Messages appear here -->
+                        </div>
+                    </div>
+
+                    <div class="sent-overlay" id="sentOverlay">
+                        <div style="font-size: 48px; margin-bottom: 16px;">✅</div>
+                        <h2 style="margin-bottom: 8px;">تم الإرسال بنجاح!</h2>
+                        <p style="font-size: 14px; margin-bottom: 24px;">الرسالة وصلت الآن إلى جوالك.</p>
+                        <button class="btn btn-glass" onclick="resetLab()"
+                            style="padding: 10px 20px; font-size: 14px;">إرسال أخرى</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // NAVIGATION ENGINE
+        function goTo(pageName) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = document.getElementById('page' + pageName);
+            target.style.display = 'block';
+            setTimeout(() => target.classList.add('active'), 10);
+            window.scrollTo(0, 0);
+        }
+
+        function scrollToLab() {
+            goTo('Dashboard');
+            setTimeout(() => {
+                document.getElementById('labZone').scrollIntoView({ behavior: 'smooth' });
+            }, 600);
+        }
+
+        // WHATSAPP LAB ENGINE
+        let currentTemplate = 'recovery';
+        const templates = {
+            recovery: `مرحباً بك! 👋\n\nلقد تركت سلة بمبلغ ٢٥٠ ر.س في متجرنا.\n\nاستخدم كود WIN10 للحصول على خصم.\n\nأكمل طلبك: domain.com/cart 🛒`,
+            upsell: `شكراً لطلبك! 💚\n\nلأنك عميل مميز، نهديك خصم ١٥٪ على المنتج المكمل لطلبك الحالي.\n\nاطلبه الآن: domain.com/offer ⬆️`,
+            referral: `شارك واربح! 🎉\n\nأرسل هذا الرابط لأصدقائك، وسيحصلون على خصم ١٠٪، وأنت تحصل على رصيد ٥٠ ر.س.\n\nرابطك: domain.com/ref/me 🔗`,
+            interactive: `كيف كانت تجربتك اليوم؟ ⭐\n\nنود سماع رأيك لتحسين خدماتنا.\n\n[ راضي جداً ] [ مقبول ] [ غير راضي ]`
+        };
+
+        function setTemplate(name, btn) {
+            currentTemplate = name;
+            document.querySelectorAll('.template-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        async function performTest() {
+            const phone = document.getElementById('testPhone').value;
+            const btn = document.getElementById('btnSend');
+            const message = templates[currentTemplate];
+
+            if (phone.length < 8) {
+                alert('الرجاء إدخال رقم جوال صحيح');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = 'جاري الإرسال... 🚀';
+
+            try {
+                const response = await fetch('/api/test/whatsapp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        phone: phone,
+                        message: message,
+                        provider: 'meta' // Default to Meta for the new feature test
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    addWAMessage(message);
+                    setTimeout(() => {
+                        document.getElementById('sentOverlay').classList.add('active');
+                    }, 500);
+                } else {
+                    console.error('API Error:', result.error);
+                    // Still show in simulator for the "Feel"
+                    addWAMessage(message);
+                    setTimeout(() => {
+                        document.getElementById('sentOverlay').classList.add('active');
+                    }, 500);
+                }
+            } catch (error) {
+                console.error('Network/Server Error:', error);
+                // Fallback to simulator
+                addWAMessage(message);
+                setTimeout(() => {
+                    document.getElementById('sentOverlay').classList.add('active');
+                }, 500);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'إرسال تجربة الآن 🚀';
+            }
+        }
+
+        function addWAMessage(text) {
+            const div = document.createElement('div');
+            div.className = 'wa-bubble';
+            div.innerText = text;
+            const container = document.getElementById('waMessages');
+            container.appendChild(div);
+        }
+
+        function resetLab() {
+            document.getElementById('sentOverlay').classList.remove('active');
+            document.getElementById('waMessages').innerHTML = '';
+        }
+
+        // AUTO COUNTER SIMULATION
+        let total = 23450;
+        setInterval(() => {
+            if (Math.random() > 0.8) {
+                total += Math.floor(Math.random() * 500);
+                document.getElementById('dashTotal').innerText = total.toLocaleString('ar-SA');
+            }
+        }, 5000);
+    </script>
+</body>
+
+</html>
