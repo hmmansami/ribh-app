@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح 💰</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes celebrate { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #111827 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10B981, #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* MAIN MONEY CARD */
+        .money-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: glow 3s infinite;
+        }
+        
+        .money-label {
+            font-size: 0.9rem;
+            color: #10B981;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .money-amount {
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 700;
+            direction: ltr;
+            display: inline-flex;
+            align-items: baseline;
+        }
+        
+        .currency {
+            font-size: 0.4em;
+            opacity: 0.6;
+            margin-right: 0.3em;
+        }
+        
+        .money-subtitle {
+            font-size: 0.85rem;
+            color: #6B7280;
+            margin-top: 0.5rem;
+        }
+        
+        /* PROGRESS BAR */
+        .progress-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10B981, #34D399);
+            border-radius: 100px;
+            transition: width 1s ease;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            margin-top: 0.75rem;
+        }
+        
+        /* LIVE FEED */
+        .feed-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #9CA3AF;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        .feed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            animation: slideIn 0.5s ease;
+            border-right: 3px solid transparent;
+        }
+        
+        .feed-item.success {
+            border-right-color: #10B981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .feed-item.pending {
+            border-right-color: #F59E0B;
+        }
+        
+        .feed-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .feed-name {
+            font-weight: 500;
+        }
+        
+        .feed-status {
+            font-size: 0.75rem;
+            color: #6B7280;
+        }
+        
+        .feed-amount {
+            font-weight: 600;
+            color: #10B981;
+            font-size: 1.1rem;
+        }
+        
+        .feed-amount.pending {
+            color: #F59E0B;
+        }
+        
+        /* CONFETTI */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #10B981;
+            animation: confetti 3s linear forwards;
+            pointer-events: none;
+        }
+        
+        /* CELEBRATION POPUP */
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(16, 185, 129, 0.95);
+            color: #000;
+            padding: 2rem 3rem;
+            border-radius: 20px;
+            text-align: center;
+            animation: celebrate 0.5s ease;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .celebration-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .celebration-text {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِبح</div>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>واتساب متصل</span>
+            </div>
+        </div>
+        
+        <!-- Money Card -->
+        <div class="money-card">
+            <div class="money-label">💰 تم استرداده هذا الشهر</div>
+            <div class="money-amount">
+                <span class="currency">ر.س</span>
+                <span id="total">0</span>
+            </div>
+            <div class="money-subtitle">من <span id="carts">0</span> سلة متروكة</div>
+        </div>
+        
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span>🎯 الهدف الشهري</span>
+                <span id="progress-text">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <div class="level-badge" id="level">المستوى: مبتدئ</div>
+        </div>
+        
+        <!-- Live Feed -->
+        <div class="feed-section">
+            <div class="feed-header">
+                <div class="live-dot"></div>
+                <span>مباشر</span>
+            </div>
+            <div id="feed"></div>
+        </div>
+    </div>
+    
+    <!-- Celebration Popup -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-amount" id="celebration-amount">+850</div>
+        <div class="celebration-text">🎉 تم استرداد البيع!</div>
+    </div>
+
+    <script>
+        // Format numbers
+        const fmt = n => n.toLocaleString('en-US');
+        
+        // Animate counter
+        function animateTo(el, target) {
+            const start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 4);
+                el.textContent = fmt(Math.floor(start + (target - start) * eased));
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+        
+        // Create confetti
+        function confetti() {
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.background = ['#10B981', '#34D399', '#F59E0B', '#FBBF24', '#6366F1'][Math.floor(Math.random() * 5)];
+                c.style.animationDuration = (2 + Math.random() * 2) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 4000);
+            }
+        }
+        
+        // Show celebration
+        function celebrate(amount) {
+            const el = document.getElementById('celebration');
+            document.getElementById('celebration-amount').textContent = '+' + fmt(amount);
+            el.style.display = 'block';
+            confetti();
+            setTimeout(() => el.style.display = 'none', 2500);
+        }
+        
+        // Render feed
+        function renderFeed(items) {
+            document.getElementById('feed').innerHTML = items.map(item => `
+                <div class="feed-item ${item.status}">
+                    <div class="feed-info">
+                        <div class="feed-name">${item.name}</div>
+                        <div class="feed-status">${item.statusText}</div>
+                    </div>
+                    <div class="feed-amount ${item.status}">${item.status === 'success' ? '+' : ''}${fmt(item.amount)} ر.س</div>
+                </div>
+            `).join('');
+        }
+        
+        // Update level
+        function updateLevel(amount) {
+            const levels = [
+                { min: 0, name: 'مبتدئ 🌱', color: '#6B7280' },
+                { min: 10000, name: 'صاعد 🚀', color: '#10B981' },
+                { min: 50000, name: 'محترف 💪', color: '#6366F1' },
+                { min: 100000, name: 'نجم ⭐', color: '#F59E0B' },
+                { min: 500000, name: 'أسطورة 👑', color: '#EF4444' }
+            ];
+            const level = [...levels].reverse().find(l => amount >= l.min);
+            document.getElementById('level').textContent = 'المستوى: ' + level.name;
+            document.getElementById('level').style.background = `linear-gradient(135deg, ${level.color}, ${level.color}aa)`;
+        }
+        
+        // Demo data
+        const total = 47250;
+        const goal = 100000;
+        
+        animateTo(document.getElementById('total'), total);
+        document.getElementById('carts').textContent = '34';
+        document.getElementById('progress-text').textContent = Math.round(total/goal*100) + '%';
+        document.getElementById('progress-fill').style.width = (total/goal*100) + '%';
+        updateLevel(total);
+        
+        renderFeed([
+            { name: 'أحمد الشمري', amount: 850, status: 'success', statusText: '🎉 اشترى!' },
+            { name: 'سارة محمد', amount: 1200, status: 'pending', statusText: '⏳ عرض مرسل...' },
+            { name: 'خالد العتيبي', amount: 450, status: 'success', statusText: '🎉 اشترى!' },
+            { name: 'نورة الدوسري', amount: 2100, status: 'pending', statusText: '⏳ فتح الرسالة' }
+        ]);
+        
+        // Simulate new sale after 5 seconds
+        setTimeout(() => {
+            celebrate(1200);
+            animateTo(document.getElementById('total'), total + 1200);
+        }, 5000);
+    </script>
+</body>
+</html>
