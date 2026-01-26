@@ -15,6 +15,11 @@ if (process.env.FIREBASE_SERVICE_ACCOUNT && !process.env.GOOGLE_APPLICATION_CRED
 
 // Load the actual server from functions
 const { app } = require('./functions/server');
+const path = require('path');
+const express = require('express');
+
+// Serve static dashboard files from public/
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3000;
 
