@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "build": "echo 'No build step needed'"
+    "build": "cd functions && npm install"
   },
   "dependencies": {
     "express": "^4.18.2",
