@@ -196,9 +196,29 @@ async function initMerchantWhatsApp(merchantId) {
             // Save credentials when updated
             sock.ev.on('creds.update', saveCreds);
 
-            // Handle messages (optional - for future bot features)
+            // Handle incoming messages - AI ASSISTANT
             sock.ev.on('messages.upsert', async ({ messages }) => {
-                // Could add auto-reply or logging here
+                for (const msg of messages) {
+                    // Skip sent by us, notifications, and groups
+                    if (msg.key.fromMe || !msg.message || msg.key.remoteJid?.endsWith('@g.us')) continue;
+                    
+                    const text = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
+                    if (!text) continue;
+                    
+                    const from = msg.key.remoteJid.replace('@s.whatsapp.net', '');
+                    console.log(`📨 [${merchantId}] Message from ${from}: ${text.substring(0, 50)}...`);
+                    
+                    try {
+                        const { handleIncomingMessage } = require('./whatsappAssistant');
+                        const result = await handleIncomingMessage(from, text, merchantId);
+                        if (result.response) {
+                            await sock.sendMessage(msg.key.remoteJid, { text: result.response });
+                            console.log(`✅ [${merchantId}] AI replied (${result.intent})`);
+                        }
+                    } catch (e) {
+                        console.error(`❌ [${merchantId}] Assistant error:`, e.message);
+                    }
+                }
             });
 
         } catch (error) {
