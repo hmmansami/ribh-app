@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #22222e;
+            --border: rgba(255, 255, 255, 0.06);
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-muted: #6b6b6b;
+            --accent: #635bff;
+            --accent-glow: rgba(99, 91, 255, 0.2);
+            --success: #00d4aa;
+            --success-bg: rgba(0, 212, 170, 0.1);
+            --warning: #ffbb00;
+            --gradient-1: linear-gradient(135deg, #635bff 0%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Ambient Background */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% -10%, rgba(99, 91, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Header */
+        .header {
+            padding: 24px 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.8);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-badge {
+            padding: 6px 14px;
+            background: var(--success-bg);
+            border: 1px solid rgba(0, 212, 170, 0.2);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px;
+        }
+
+        /* Welcome Section */
+        .welcome {
+            margin-bottom: 48px;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card.featured {
+            background: linear-gradient(135deg, rgba(99, 91, 255, 0.15) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border-color: rgba(99, 91, 255, 0.3);
+        }
+
+        .stat-card.featured::before {
+            opacity: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-icon {
+            width: 20px;
+            height: 20px;
+            opacity: 0.7;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+        }
+
+        .stat-value.currency {
+            direction: ltr;
+            text-align: right;
+        }
+
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .stat-change.positive {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .stat-change.neutral {
+            background: rgba(255, 187, 0, 0.1);
+            color: var(--warning);
+        }
+
+        /* Chart Section */
+        .chart-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-period {
+            display: flex;
+            gap: 8px;
+        }
+
+        .period-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .period-btn:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .period-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            height: 220px;
+            padding: 0 20px;
+            gap: 16px;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bar-wrapper {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .bar {
+            width: 40px;
+            background: var(--gradient-1);
+            border-radius: 6px 6px 0 0;
+            min-height: 8px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bar:hover {
+            filter: brightness(1.2);
+            transform: scaleY(1.02);
+        }
+
+        .bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .bar:hover::after {
+            opacity: 1;
+        }
+
+        .bar-label {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Conversion Gauge */
+        .gauge-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .gauge {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .gauge svg {
+            transform: rotate(-90deg);
+        }
+
+        .gauge-bg {
+            fill: none;
+            stroke: var(--bg-secondary);
+            stroke-width: 12;
+        }
+
+        .gauge-fill {
+            fill: none;
+            stroke: url(#gaugeGradient);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            animation: gaugeAnim 1.5s ease-out forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes gaugeAnim {
+            to {
+                stroke-dashoffset: 167;
+            }
+        }
+
+        .gauge-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .gauge-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .gauge-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Recent Activity */
+        .activity-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .activity-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .view-all {
+            color: var(--accent);
+            font-size: 14px;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .view-all:hover {
+            opacity: 0.8;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .activity-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .activity-icon.success {
+            background: var(--success-bg);
+        }
+
+        .activity-icon.pending {
+            background: rgba(255, 187, 0, 0.1);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .activity-amount {
+            font-size: 16px;
+            font-weight: 600;
+            direction: ltr;
+        }
+
+        .activity-amount.recovered {
+            color: var(--success);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Counter Animation */
+        .animate-value {
+            display: inline-block;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .chart-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px;
+            }
+            .header {
+                padding: 16px 24px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+
+        /* Pulse Animation for Live */
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 212, 170, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(0, 212, 170, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-bg"></div>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">ر</div>
+            <span class="logo-text">رِبح</span>
+        </div>
+        <div class="header-badge">
+            <span class="live-dot"></span>
+            مباشر
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="welcome">
+            <h1>مرحباً بك 👋</h1>
+            <p>إليك ملخص أداء متجرك اليوم</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card featured">
+                <div class="stat-label">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    إجمالي المبالغ المستردة
+                </div>
+                <div class="stat-value currency">
+                    <span class="animate-value" data-target="47850">٤٧,٨٥٠</span> ر.س
+                </div>
+                <span class="stat-change positive">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                        <path d="M6 2L10 7H2L6 2Z"/>
+                    </svg>
+                    +٢٣٪ من الشهر الماضي
+                </span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 6v6l4 2"/>
+                    </svg>
+                    السلات المتروكة
+                </div>
+                <div class="stat-value">١٢٤</div>
+                <span class="stat-change neutral">آخر ٧ أيام</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    السلات المستردة
+                </div>
+                <div class="stat-value">٤١</div>
+                <span class="stat-change positive">+١٢ هذا الأسبوع</span>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    الرسائل المرسلة
+                </div>
+                <div class="stat-value">٣٨٦</div>
+                <span class="stat-change positive">٩٨٪ معدل التوصيل</span>
+            </div>
+        </div>
+
+        <div class="chart-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">المبالغ المستردة - آخر ٧ أيام</h3>
+                    <div class="chart-period">
+                        <button class="period-btn active">أسبوع</button>
+                        <button class="period-btn">شهر</button>
+                        <button class="period-btn">سنة</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bars">
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 45%;" data-value="٣,٢٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">السبت</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 65%;" data-value="٥,٨٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الأحد</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 35%;" data-value="٢,٤٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الإثنين</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 80%;" data-value="٨,٥٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الثلاثاء</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 55%;" data-value="٤,٣٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الأربعاء</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 90%;" data-value="٩,٢٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الخميس</span>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bar-wrapper">
+                                <div class="bar" style="height: 70%;" data-value="٧,١٠٠ ر.س"></div>
+                            </div>
+                            <span class="bar-label">الجمعة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">معدل الاسترداد</h3>
+                </div>
+                <div class="gauge-container">
+                    <div class="gauge">
+                        <svg width="200" height="200" viewBox="0 0 200 200">
+                            <defs>
+                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#635bff"/>
+                                    <stop offset="100%" stop-color="#00d4aa"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="gauge-bg" cx="100" cy="100" r="80"/>
+                            <circle class="gauge-fill" cx="100" cy="100" r="80"/>
+                        </svg>
+                        <div class="gauge-center">
+                            <div class="gauge-value">٣٣٪</div>
+                            <div class="gauge-label">نسبة التحويل</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity-section">
+            <div class="activity-header">
+                <h3 class="activity-title">آخر عمليات الاسترداد</h3>
+                <a href="#" class="view-all">عرض الكل ←</a>
+            </div>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-content">
+                        <div class="activity-text">تم استرداد سلة - متجر النخبة</div>
+                        <div class="activity-time">منذ ١٥ دقيقة</div>
+                    </div>
+                    <div class="activity-amount recovered">+٢,٣٤٠ ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-content">
+                        <div class="activity-text">تم استرداد سلة - أزياء الرياض</div>
+                        <div class="activity-time">منذ ساعة</div>
+                    </div>
+                    <div class="activity-amount recovered">+٨٩٠ ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon pending">⏳</div>
+                    <div class="activity-content">
+                        <div class="activity-text">في انتظار الرد - تقنية المستقبل</div>
+                        <div class="activity-time">منذ ٣ ساعات</div>
+                    </div>
+                    <div class="activity-amount">١,٥٦٠ ر.س</div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon success">💰</div>
+                    <div class="activity-content">
+                        <div class="activity-text">تم استرداد سلة - عطور الخليج</div>
+                        <div class="activity-time">منذ ٥ ساعات</div>
+                    </div>
+                    <div class="activity-amount recovered">+٤,٢٠٠ ر.س</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Animate bars on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach((bar, index) => {
+                const height = bar.style.height;
+                bar.style.height = '0';
+                setTimeout(() => {
+                    bar.style.height = height;
+                }, 100 + index * 100);
+            });
+        });
+
+        // Period button toggle
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

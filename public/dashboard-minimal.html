@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ربح</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* THE NUMBER */
+    .money {
+      font-size: clamp(4rem, 15vw, 12rem);
+      font-weight: 200;
+      letter-spacing: -0.02em;
+      text-align: center;
+      direction: ltr;
+    }
+    
+    .currency {
+      font-size: 0.3em;
+      opacity: 0.5;
+      margin-right: 0.2em;
+    }
+
+    /* STATUS DOT */
+    .status {
+      position: fixed;
+      top: 2rem;
+      left: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      opacity: 0.4;
+    }
+    
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: #25D366;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ACTIVITY */
+    .activity {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      right: 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      font-size: 0.7rem;
+      opacity: 0.3;
+    }
+    
+    .event {
+      text-align: center;
+    }
+    
+    .event-amount {
+      font-size: 1.2em;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STATUS -->
+  <div class="status">
+    <div class="dot"></div>
+    <span>واتساب</span>
+  </div>
+
+  <!-- THE NUMBER -->
+  <div class="money">
+    <span class="currency">ر.س</span><span id="amount">0</span>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="activity" id="activity"></div>
+
+  <script>
+    // Format number with commas
+    const fmt = n => n.toLocaleString('en-US');
+    
+    // Animate counter
+    function animateTo(target) {
+      const el = document.getElementById('amount');
+      const start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+      const duration = 1500;
+      const startTime = performance.now();
+      
+      function update(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = fmt(Math.floor(start + (target - start) * eased));
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Render activity
+    function renderActivity(events) {
+      const el = document.getElementById('activity');
+      el.innerHTML = events.slice(0, 3).map(e => `
+        <div class="event">
+          <div class="event-amount">+${fmt(e.amount)}</div>
+          <div>${e.time}</div>
+        </div>
+      `).join('');
+    }
+
+    // Demo data
+    animateTo(47250);
+    renderActivity([
+      { amount: 850, time: 'منذ ٣ د' },
+      { amount: 1200, time: 'منذ ١٧ د' },
+      { amount: 450, time: 'منذ ٤٢ د' }
+    ]);
+  </script>
+
+</body>
+</html>
