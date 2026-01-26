@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح — لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-hover: #222222;
+            --bg-selected: #2a2218;
+            --text-primary: #fafafa;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #ff9f43;
+            --accent-glow: rgba(255, 159, 67, 0.15);
+            --success: #00d26a;
+            --warning: #ffc107;
+            --danger: #ff4757;
+            --border: #222222;
+            --border-subtle: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Command Palette */
+        .command-palette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 15vh;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+        }
+
+        .command-palette.active {
+            display: flex;
+        }
+
+        .command-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 560px;
+            max-width: 90vw;
+            overflow: hidden;
+            box-shadow: 0 25px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .command-input {
+            width: 100%;
+            padding: 20px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-family: inherit;
+            outline: none;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .command-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .command-results {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .command-item {
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+
+        .command-item:hover, .command-item.selected {
+            background: var(--bg-hover);
+        }
+
+        .command-item .label {
+            font-weight: 500;
+        }
+
+        .command-item .shortcut {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Main Layout */
+        .app {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--bg-secondary);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-tab {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: var(--bg-selected);
+            color: var(--accent);
+        }
+
+        .nav-tab .num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            opacity: 0.5;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-hint {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 13px;
+            transition: all 0.15s;
+        }
+
+        .search-hint:hover {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+
+        .search-hint kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            overflow: hidden;
+        }
+
+        /* Left Panel - List */
+        .left-panel {
+            border-left: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .panel-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title .count {
+            background: var(--accent);
+            color: var(--bg-primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .stat-card:hover::before, .stat-card.active::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            background: var(--bg-hover);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            font-feature-settings: 'tnum';
+            direction: ltr;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.up { color: var(--success); }
+        .stat-change.down { color: var(--danger); }
+
+        /* List Items */
+        .items-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .list-item {
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.1s;
+            margin-bottom: 4px;
+            position: relative;
+        }
+
+        .list-item::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 0;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: height 0.15s;
+        }
+
+        .list-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .list-item.selected {
+            background: var(--bg-selected);
+        }
+
+        .list-item.selected::before {
+            height: 60%;
+        }
+
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .list-item-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .list-item-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--accent);
+            direction: ltr;
+        }
+
+        .list-item-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .list-item-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .list-item-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .badge-pending { background: rgba(255, 193, 7, 0.15); color: var(--warning); }
+        .badge-recovered { background: rgba(0, 210, 106, 0.15); color: var(--success); }
+        .badge-active { background: rgba(255, 159, 67, 0.15); color: var(--accent); }
+
+        /* Right Panel - Detail */
+        .right-panel {
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .detail-header {
+            padding: 32px 40px 24px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .detail-breadcrumb {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .detail-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .action-btn.primary {
+            background: var(--accent);
+            color: var(--bg-primary);
+        }
+
+        .action-btn.primary:hover {
+            background: #ffb066;
+            transform: translateY(-1px);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        .action-btn kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            opacity: 0.7;
+            margin-right: 4px;
+        }
+
+        /* Detail Content */
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 40px;
+        }
+
+        .detail-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stats Dashboard */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .dash-stat {
+            background: var(--bg-tertiary);
+            padding: 24px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dash-stat::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .dash-stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .dash-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            font-feature-settings: 'tnum';
+            direction: ltr;
+            text-align: right;
+        }
+
+        .dash-stat-change {
+            font-size: 13px;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Chart Placeholder */
+        .chart-container {
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 24px;
+            height: 280px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-weight: 600;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .chart-area {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-top: 20px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--accent), rgba(255, 159, 67, 0.3));
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            background: linear-gradient(to top, var(--accent), rgba(255, 159, 67, 0.5));
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .chart-bar:hover::after {
+            opacity: 1;
+        }
+
+        /* Templates Section */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .template-card {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .template-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .template-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .template-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .template-stats {
+            margin-top: 12px;
+            display: flex;
+            gap: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Settings Section */
+        .settings-group {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .setting-item {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background 0.15s;
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .setting-info h4 {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle {
+            width: 48px;
+            height: 28px;
+            background: var(--bg-primary);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle.active {
+            background: var(--accent);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: var(--text-primary);
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .toggle.active::after {
+            transform: translateX(-20px);
+        }
+
+        .input-field {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            width: 200px;
+            transition: border-color 0.15s;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Keyboard Hints */
+        .keyboard-hints {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 24px;
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+            z-index: 100;
+        }
+
+        .hint-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hint-item kbd {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            background: var(--bg-tertiary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: var(--text-secondary);
+        }
+
+        /* Loading States */
+        .loading-shimmer {
+            background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-hover) 50%, var(--bg-tertiary) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .instant-feedback {
+            transition: all 0.05s !important;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--success);
+            padding: 14px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            color: var(--success);
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .left-panel.mobile-active {
+                display: flex;
+                position: fixed;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                background: var(--bg-primary);
+                z-index: 500;
+            }
+
+            .keyboard-hints {
+                display: none;
+            }
+
+            .nav-tabs {
+                display: none;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-header {
+                padding: 24px;
+            }
+
+            .detail-content {
+                padding: 24px;
+            }
+
+            .detail-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Swipe hint on mobile */
+        .swipe-hint {
+            display: none;
+            text-align: center;
+            padding: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .swipe-hint {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Command Palette -->
+    <div class="command-palette" id="commandPalette">
+        <div class="command-box">
+            <input type="text" class="command-input" placeholder="أبحث عن أي شيء..." id="commandInput">
+            <div class="command-results">
+                <div class="command-item selected">
+                    <span class="label">عرض الإيرادات</span>
+                    <span class="shortcut">1</span>
+                </div>
+                <div class="command-item">
+                    <span class="label">السلات المتروكة</span>
+                    <span class="shortcut">2</span>
+                </div>
+                <div class="command-item">
+                    <span class="label">حملات الأبسيل</span>
+                    <span class="shortcut">3</span>
+                </div>
+                <div class="command-item">
+                    <span class="label">قوالب الرسائل</span>
+                    <span class="shortcut">4</span>
+                </div>
+                <div class="command-item">
+                    <span class="label">الإعدادات</span>
+                    <span class="shortcut">5</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span>تم الحفظ بنجاح</span>
+    </div>
+
+    <div class="app">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="logo">رِبح</div>
+            
+            <nav class="nav-tabs">
+                <div class="nav-tab active" data-tab="revenue">
+                    <span class="num">1</span>
+                    الإيرادات
+                </div>
+                <div class="nav-tab" data-tab="carts">
+                    <span class="num">2</span>
+                    السلات
+                </div>
+                <div class="nav-tab" data-tab="upsells">
+                    <span class="num">3</span>
+                    الأبسيل
+                </div>
+                <div class="nav-tab" data-tab="templates">
+                    <span class="num">4</span>
+                    القوالب
+                </div>
+                <div class="nav-tab" data-tab="settings">
+                    <span class="num">5</span>
+                    الإعدادات
+                </div>
+            </nav>
+
+            <div class="top-actions">
+                <div class="search-hint" onclick="openCommandPalette()">
+                    <span>أبحث...</span>
+                    <kbd>⌘</kbd><kbd>K</kbd>
+                </div>
+                <div class="status-indicator" title="متصل"></div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Left Panel -->
+            <aside class="left-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <span>السلات المتروكة</span>
+                        <span class="count">12</span>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card active">
+                            <div class="stat-label">اليوم</div>
+                            <div class="stat-value">٤,٢٣٠</div>
+                            <div class="stat-change up">↑ ١٢٪</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">الأسبوع</div>
+                            <div class="stat-value">٢٨,٤٥٠</div>
+                            <div class="stat-change up">↑ ٨٪</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">الشهر</div>
+                            <div class="stat-value">١٢٤,٨٠٠</div>
+                            <div class="stat-change down">↓ ٣٪</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swipe-hint">← اسحب للتفاصيل</div>
+
+                <div class="items-list">
+                    <div class="list-item selected" data-id="1">
+                        <div class="list-item-header">
+                            <span class="list-item-title">أحمد محمد</span>
+                            <span class="list-item-amount">٨٩٠ ر.س</span>
+                        </div>
+                        <div class="list-item-meta">
+                            <span>٣ منتجات</span>
+                            <span class="list-item-badge badge-pending">معلق</span>
+                        </div>
+                        <div class="list-item-time">منذ ٥ دقائق</div>
+                    </div>
+
+                    <div class="list-item" data-id="2">
+                        <div class="list-item-header">
+                            <span class="list-item-title">سارة العتيبي</span>
+                            <span class="list-item-amount">١,٢٤٠ ر.س</span>
+                        </div>
+                        <div class="list-item-meta">
+                            <span>٥ منتجات</span>
+                            <span class="list-item-badge badge-recovered">تم الاسترداد</span>
+                        </div>
+                        <div class="list-item-time">منذ ٢٣ دقيقة</div>
+                    </div>
+
+                    <div class="list-item" data-id="3">
+                        <div class="list-item-header">
+                            <span class="list-item-title">فهد الدوسري</span>
+                            <span class="list-item-amount">٤٥٦ ر.س</span>
+                        </div>
+                        <div class="list-item-meta">
+                            <span>٢ منتجات</span>
+                            <span class="list-item-badge badge-pending">معلق</span>
+                        </div>
+                        <div class="list-item-time">منذ ساعة</div>
+                    </div>
+
+                    <div class="list-item" data-id="4">
+                        <div class="list-item-header">
+                            <span class="list-item-title">نورة السبيعي</span>
+                            <span class="list-item-amount">٢,١٠٠ ر.س</span>
+                        </div>
+                        <div class="list-item-meta">
+                            <span>٨ منتجات</span>
+                            <span class="list-item-badge badge-active">قيد الإرسال</span>
+                        </div>
+                        <div class="list-item-time">منذ ساعتين</div>
+                    </div>
+
+                    <div class="list-item" data-id="5">
+                        <div class="list-item-header">
+                            <span class="list-item-title">عبدالله الشمري</span>
+                            <span class="list-item-amount">٦٧٥ ر.س</span>
+                        </div>
+                        <div class="list-item-meta">
+                            <span>٤ منتجات</span>
+                            <span class="list-item-badge badge-recovered">تم الاسترداد</span>
+                        </div>
+                        <div class="list-item-time">منذ ٣ ساعات</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Right Panel - Revenue Dashboard -->
+            <section class="right-panel" id="revenuePanel">
+                <div class="detail-header">
+                    <div class="detail-breadcrumb">
+                        <span>لوحة التحكم</span>
+                        <span>←</span>
+                        <span>الإيرادات</span>
+                    </div>
+                    <h1 class="detail-title">
+                        ١٢٤,٨٠٠ <span style="font-size: 18px; color: var(--text-muted);">ر.س</span>
+                    </h1>
+                    <p class="detail-subtitle">إجمالي إيرادات الشهر الحالي • ↑ ٢٣٪ عن الشهر الماضي</p>
+                    
+                    <div class="detail-actions">
+                        <button class="action-btn primary">
+                            <kbd>E</kbd>
+                            تصدير التقرير
+                        </button>
+                        <button class="action-btn secondary">
+                            <kbd>R</kbd>
+                            تحديث
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    <div class="dashboard-stats">
+                        <div class="dash-stat">
+                            <div class="dash-stat-label">السلات المستردة</div>
+                            <div class="dash-stat-value">٤٧</div>
+                            <div class="dash-stat-change" style="color: var(--success);">
+                                ↑ ٣٢٪ هذا الأسبوع
+                            </div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="dash-stat-label">معدل الاسترداد</div>
+                            <div class="dash-stat-value">٣٨٪</div>
+                            <div class="dash-stat-change" style="color: var(--success);">
+                                ↑ ٥٪ تحسن
+                            </div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="dash-stat-label">الأبسيل الناجح</div>
+                            <div class="dash-stat-value">٢٣</div>
+                            <div class="dash-stat-change" style="color: var(--accent);">
+                                ١٢,٤٥٠ ر.س إضافي
+                            </div>
+                        </div>
+                        <div class="dash-stat">
+                            <div class="dash-stat-label">رسائل مرسلة</div>
+                            <div class="dash-stat-value">٣٤٢</div>
+                            <div class="dash-stat-change" style="color: var(--text-muted);">
+                                ٩٢٪ تم تسليمها
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <span>📈</span>
+                            الإيرادات خلال ٧ أيام
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <span class="chart-title">تحليل الإيرادات</span>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <div class="legend-dot" style="background: var(--accent);"></div>
+                                        <span>الإيرادات</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-dot" style="background: var(--success);"></div>
+                                        <span>المسترد</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="chart-area">
+                                <div class="chart-bar" style="height: 45%;" data-value="١٢,٤٠٠"></div>
+                                <div class="chart-bar" style="height: 62%;" data-value="١٧,٨٠٠"></div>
+                                <div class="chart-bar" style="height: 38%;" data-value="١٠,٢٠٠"></div>
+                                <div class="chart-bar" style="height: 85%;" data-value="٢٤,٦٠٠"></div>
+                                <div class="chart-bar" style="height: 72%;" data-value="٢٠,٣٠٠"></div>
+                                <div class="chart-bar" style="height: 58%;" data-value="١٦,٥٠٠"></div>
+                                <div class="chart-bar" style="height: 95%;" data-value="٢٣,٠٠٠"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Templates Panel (hidden by default) -->
+            <section class="right-panel" id="templatesPanel" style="display: none;">
+                <div class="detail-header">
+                    <div class="detail-breadcrumb">
+                        <span>لوحة التحكم</span>
+                        <span>←</span>
+                        <span>القوالب</span>
+                    </div>
+                    <h1 class="detail-title">قوالب واتساب</h1>
+                    <p class="detail-subtitle">٨ قوالب جاهزة • ٣ قوالب مخصصة</p>
+                    
+                    <div class="detail-actions">
+                        <button class="action-btn primary">
+                            <kbd>N</kbd>
+                            قالب جديد
+                        </button>
+                    </div>
+                </div>
+
+                <div class="detail-content">
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <span>⚡</span>
+                            القوالب السريعة
+                        </div>
+                        <div class="templates-grid">
+                            <div class="template-card">
+                                <div class="template-icon">🛒</div>
+                                <div class="template-name">تذكير السلة</div>
+                                <div class="template-desc">رسالة تذكير ودية للعملاء بسلتهم المتروكة</div>
+                                <div class="template-stats">
+                                    <span>٨٩٪ فتح</span>
+                                    <span>٣٤٪ تحويل</span>
+                                </div>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-icon">🎁</div>
+                                <div class="template-name">عرض خاص</div>
+                                <div class="template-desc">خصم ١٠٪ لإتمام الطلب خلال ٢٤ ساعة</div>
+                                <div class="template-stats">
+                                    <span>٩٢٪ فتح</span>
+                                    <span>٤٨٪ تحويل</span>
+                                </div>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-icon">📦</div>
+                                <div class="template-name">تأكيد الشحن</div>
+                                <div class="template-desc">إشعار العميل بشحن طلبه مع رقم التتبع</div>
+                                <div class="template-stats">
+                                    <span>٩٨٪ فتح</span>
+                                    <span>—</span>
+                                </div>
+                            </div>
+                            <div class="template-card">
+                                <div class="template-icon">⭐</div>
+                                <div class="template-name">طلب التقييم</div>
+                                <div class="template-desc">طلب تقييم المنتج بعد التسليم</div>
+                                <div class="template-stats">
+                                    <span>٧٦٪ فتح</span>
+                                    <span>٢١٪ تقييم</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Panel (hidden by default) -->
+            <section class="right-panel" id="settingsPanel" style="display: none;">
+                <div class="detail-header">
+                    <div class="detail-breadcrumb">
+                        <span>لوحة التحكم</span>
+                        <span>←</span>
+                        <span>الإعدادات</span>
+                    </div>
+                    <h1 class="detail-title">الإعدادات</h1>
+                    <p class="detail-subtitle">إعدادات الحساب والتكاملات</p>
+                </div>
+
+                <div class="detail-content">
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <span>🔑</span>
+                            مفاتيح API
+                        </div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>مفتاح سلة</h4>
+                                    <p>للربط مع متجر سلة</p>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="password" class="input-field" value="sk_live_xxxxx" placeholder="أدخل المفتاح">
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>مفتاح واتساب</h4>
+                                    <p>WhatsApp Business API</p>
+                                </div>
+                                <div class="setting-control">
+                                    <input type="password" class="input-field" value="wh_xxxxx" placeholder="أدخل المفتاح">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <span>🔔</span>
+                            الإشعارات
+                        </div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>إشعارات السلات المتروكة</h4>
+                                    <p>تنبيه فوري عند ترك سلة</p>
+                                </div>
+                                <div class="setting-control">
+                                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>تقرير يومي</h4>
+                                    <p>ملخص الأداء كل صباح</p>
+                                </div>
+                                <div class="setting-control">
+                                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>تنبيهات الأبسيل</h4>
+                                    <p>إشعار عند نجاح عملية أبسيل</p>
+                                </div>
+                                <div class="setting-control">
+                                    <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="section-title">
+                            <span>⚙️</span>
+                            التفضيلات
+                        </div>
+                        <div class="settings-group">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>الإرسال التلقائي</h4>
+                                    <p>إرسال رسائل استرداد السلة تلقائياً</p>
+                                </div>
+                                <div class="setting-control">
+                                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <h4>وقت الانتظار</h4>
+                                    <p>المدة قبل إرسال أول رسالة</p>
+                                </div>
+                                <div class="setting-control">
+                                    <select class="input-field" style="width: 120px;">
+                                        <option>١٥ دقيقة</option>
+                                        <option selected>٣٠ دقيقة</option>
+                                        <option>ساعة</option>
+                                        <option>ساعتين</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Keyboard Hints -->
+    <div class="keyboard-hints">
+        <div class="hint-item">
+            <kbd>J</kbd><kbd>K</kbd>
+            <span>تنقل</span>
+        </div>
+        <div class="hint-item">
+            <kbd>E</kbd>
+            <span>تعديل</span>
+        </div>
+        <div class="hint-item">
+            <kbd>⌘</kbd><kbd>K</kbd>
+            <span>بحث</span>
+        </div>
+        <div class="hint-item">
+            <kbd>1-5</kbd>
+            <span>أقسام</span>
+        </div>
+        <div class="hint-item">
+            <kbd>?</kbd>
+            <span>مساعدة</span>
+        </div>
+    </div>
+
+    <script>
+        // Current state
+        let currentItemIndex = 0;
+        let currentTab = 'revenue';
+        const items = document.querySelectorAll('.list-item');
+        const tabs = document.querySelectorAll('.nav-tab');
+
+        // Command Palette
+        function openCommandPalette() {
+            document.getElementById('commandPalette').classList.add('active');
+            document.getElementById('commandInput').focus();
+        }
+
+        function closeCommandPalette() {
+            document.getElementById('commandPalette').classList.remove('active');
+        }
+
+        // Tab switching
+        function switchTab(tabName) {
+            tabs.forEach(tab => tab.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Hide all panels
+            document.getElementById('revenuePanel').style.display = 'none';
+            document.getElementById('templatesPanel').style.display = 'none';
+            document.getElementById('settingsPanel').style.display = 'none';
+            
+            // Show selected panel
+            if (tabName === 'revenue' || tabName === 'carts' || tabName === 'upsells') {
+                document.getElementById('revenuePanel').style.display = 'flex';
+            } else if (tabName === 'templates') {
+                document.getElementById('templatesPanel').style.display = 'flex';
+            } else if (tabName === 'settings') {
+                document.getElementById('settingsPanel').style.display = 'flex';
+            }
+            
+            currentTab = tabName;
+            showToast(`تم التبديل إلى ${document.querySelector(`[data-tab="${tabName}"]`).textContent.trim()}`);
+        }
+
+        // Item selection
+        function selectItem(index) {
+            items.forEach(item => item.classList.remove('selected'));
+            if (items[index]) {
+                items[index].classList.add('selected');
+                items[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                currentItemIndex = index;
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('span:last-child').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            // Command palette
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openCommandPalette();
+                return;
+            }
+
+            // Close command palette
+            if (e.key === 'Escape') {
+                closeCommandPalette();
+                return;
+            }
+
+            // Don't handle shortcuts when typing
+            if (document.activeElement.tagName === 'INPUT') return;
+
+            // Navigation
+            if (e.key === 'j' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectItem(Math.min(currentItemIndex + 1, items.length - 1));
+            }
+            
+            if (e.key === 'k' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectItem(Math.max(currentItemIndex - 1, 0));
+            }
+
+            // Tab shortcuts
+            if (e.key >= '1' && e.key <= '5') {
+                const tabNames = ['revenue', 'carts', 'upsells', 'templates', 'settings'];
+                switchTab(tabNames[parseInt(e.key) - 1]);
+            }
+
+            // Edit
+            if (e.key === 'e') {
+                showToast('جاري فتح المحرر...');
+            }
+
+            // Refresh
+            if (e.key === 'r') {
+                showToast('جاري التحديث...');
+            }
+        });
+
+        // Click handlers
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                switchTab(tab.dataset.tab);
+            });
+        });
+
+        items.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                selectItem(index);
+            });
+        });
+
+        // Command palette click outside
+        document.getElementById('commandPalette').addEventListener('click', (e) => {
+            if (e.target.id === 'commandPalette') {
+                closeCommandPalette();
+            }
+        });
+
+        // Command palette items
+        document.querySelectorAll('.command-item').forEach((item, index) => {
+            item.addEventListener('click', () => {
+                const tabNames = ['revenue', 'carts', 'upsells', 'templates', 'settings'];
+                switchTab(tabNames[index]);
+                closeCommandPalette();
+            });
+        });
+
+        // Mobile swipe support (basic)
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                    // Swipe left - next item
+                    selectItem(Math.min(currentItemIndex + 1, items.length - 1));
+                } else {
+                    // Swipe right - previous item
+                    selectItem(Math.max(currentItemIndex - 1, 0));
+                }
+            }
+        });
+
+        // Simulate instant loading
+        document.querySelectorAll('.stat-card, .list-item, .template-card, .action-btn').forEach(el => {
+            el.classList.add('instant-feedback');
+        });
+
+        // Initial selection
+        selectItem(0);
+
+        console.log('⚡ رِبح — سريع كالبرق');
+        console.log('اختصارات: J/K للتنقل، 1-5 للأقسام، ⌘K للبحث');
+    </script>
+</body>
+</html>

@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-canvas: #F5F5F5;
+            --card-bg: #FFFFFF;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.05);
+            --card-shadow-hover: 0 4px 16px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.08);
+            --border-light: #E5E5E5;
+            --text-primary: #1E1E1E;
+            --text-secondary: #6B6B6B;
+            --text-tertiary: #999999;
+            --accent-purple: #9747FF;
+            --accent-blue: #0D99FF;
+            --accent-green: #14AE5C;
+            --accent-orange: #FF8C00;
+            --accent-red: #F24822;
+            --accent-pink: #FF5CBF;
+            --gradient-purple: linear-gradient(135deg, #9747FF 0%, #6E40C9 100%);
+            --gradient-blue: linear-gradient(135deg, #0D99FF 0%, #0066CC 100%);
+            --gradient-green: linear-gradient(135deg, #14AE5C 0%, #0D8A47 100%);
+        }
+
+        body {
+            font-family: 'Tajawal', 'Inter', sans-serif;
+            background: var(--bg-canvas);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 48px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        .toolbar-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--accent-purple);
+        }
+
+        .logo-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-purple);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #F0F0F0;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .file-name svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: #F0F0F0;
+            color: var(--text-primary);
+        }
+
+        .toolbar-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Collaborators */
+        .collaborators {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--card-bg);
+            margin-right: -8px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .avatar.online::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            right: -1px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border: 2px solid var(--card-bg);
+            border-radius: 50%;
+        }
+
+        .avatar-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .avatar-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .avatar-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        .avatar-more {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #E5E5E5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: 0;
+        }
+
+        .share-btn {
+            padding: 6px 14px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 12px;
+            font-family: inherit;
+        }
+
+        .share-btn:hover {
+            background: #0088E6;
+        }
+
+        /* Canvas */
+        .canvas {
+            padding: 72px 24px 24px;
+            min-height: 100vh;
+        }
+
+        /* Cards Grid */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: var(--card-shadow-hover);
+            transform: translateY(-2px);
+        }
+
+        .card.dragging {
+            opacity: 0.8;
+            transform: rotate(2deg) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            padding: 16px 20px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .card-icon.purple { background: rgba(151, 71, 255, 0.1); color: var(--accent-purple); }
+        .card-icon.blue { background: rgba(13, 153, 255, 0.1); color: var(--accent-blue); }
+        .card-icon.green { background: rgba(20, 174, 92, 0.1); color: var(--accent-green); }
+        .card-icon.orange { background: rgba(255, 140, 0, 0.1); color: var(--accent-orange); }
+        .card-icon.red { background: rgba(242, 72, 34, 0.1); color: var(--accent-red); }
+        .card-icon.pink { background: rgba(255, 92, 191, 0.1); color: var(--accent-pink); }
+
+        .card-menu {
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-menu-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-tertiary);
+            transition: all 0.15s;
+        }
+
+        .card-menu-btn:hover {
+            background: #F0F0F0;
+            color: var(--text-secondary);
+        }
+
+        .card-menu-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .drag-handle {
+            cursor: grab;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Wide cards */
+        .card.wide {
+            grid-column: span 2;
+        }
+
+        @media (max-width: 900px) {
+            .card.wide {
+                grid-column: span 1;
+            }
+        }
+
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 16px 12px;
+            background: #FAFAFA;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 20%;
+            left: 20%;
+            height: 3px;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .stat-item.purple::before { background: var(--accent-purple); }
+        .stat-item.blue::before { background: var(--accent-blue); }
+        .stat-item.green::before { background: var(--accent-green); }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            direction: ltr;
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .stat-change.up { color: var(--accent-green); }
+        .stat-change.down { color: var(--accent-red); }
+
+        .stat-change svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Cart Recovery */
+        .recovery-stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .recovery-stat {
+            flex: 1;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.08) 0%, rgba(255, 140, 0, 0.02) 100%);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 140, 0, 0.15);
+        }
+
+        .recovery-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .recovery-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-orange);
+            direction: ltr;
+        }
+
+        .recovery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .recovery-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #FAFAFA;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+
+        .recovery-item:hover {
+            background: #F0F0F0;
+        }
+
+        .recovery-customer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recovery-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E8E8E8 0%, #D0D0D0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .recovery-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .recovery-info p {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            direction: ltr;
+            text-align: right;
+        }
+
+        .recovery-amount {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            direction: ltr;
+        }
+
+        .recovery-action {
+            padding: 6px 12px;
+            background: var(--accent-green);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+
+        .recovery-action:hover {
+            background: #0D9A4E;
+        }
+
+        /* Upsell Campaigns */
+        .campaign-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .campaign-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: #FAFAFA;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .campaign-item:hover {
+            border-color: var(--border-light);
+        }
+
+        .campaign-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .campaign-icon.gradient-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .campaign-icon.gradient-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .campaign-icon.gradient-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+
+        .campaign-details {
+            flex: 1;
+        }
+
+        .campaign-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .campaign-stats {
+            display: flex;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .campaign-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .campaign-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #E5E5E5;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            right: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .campaign-toggle input:checked + .toggle-slider {
+            background: var(--accent-green);
+        }
+
+        .campaign-toggle input:checked + .toggle-slider::before {
+            transform: translateX(-20px);
+        }
+
+        /* WhatsApp Templates */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .template-card {
+            padding: 14px;
+            background: #FAFAFA;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .template-card:hover {
+            border-color: var(--accent-green);
+            background: rgba(20, 174, 92, 0.04);
+        }
+
+        .template-card.active {
+            border-color: var(--accent-green);
+            background: rgba(20, 174, 92, 0.08);
+        }
+
+        .template-emoji {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .template-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .template-preview {
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .template-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .template-btn.primary {
+            background: #25D366;
+            color: white;
+        }
+
+        .template-btn.primary:hover {
+            background: #20BD5A;
+        }
+
+        .template-btn.secondary {
+            background: #E5E5E5;
+            color: var(--text-secondary);
+        }
+
+        .template-btn.secondary:hover {
+            background: #D8D8D8;
+        }
+
+        .template-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Analytics Chart */
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            background: #F0F0F0;
+            border-radius: 8px;
+            padding: 3px;
+        }
+
+        .chart-tab {
+            padding: 6px 14px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s;
+        }
+
+        .chart-tab.active {
+            background: white;
+            color: var(--text-primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .chart-container {
+            height: 200px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding: 20px 0;
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 40px;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.85;
+        }
+
+        .chart-bar.purple { background: var(--gradient-purple); }
+        .chart-bar.blue { background: var(--gradient-blue); }
+        .chart-bar.green { background: var(--gradient-green); }
+
+        .chart-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+        }
+
+        .chart-value {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s;
+            direction: ltr;
+        }
+
+        .chart-bar-wrapper:hover .chart-value {
+            opacity: 1;
+        }
+
+        /* Settings */
+        .settings-section {
+            margin-bottom: 20px;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .settings-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: #FAFAFA;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .settings-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: #E8E8E8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .settings-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .settings-text h4 {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .settings-text p {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+
+        .api-input {
+            display: flex;
+            gap: 8px;
+        }
+
+        .api-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            color: var(--text-primary);
+            background: white;
+            direction: ltr;
+        }
+
+        .api-input input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .api-input button {
+            padding: 8px 14px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        /* Activity Feed */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+        }
+
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .activity-avatar.a1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .activity-avatar.a2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .activity-avatar.a3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .activity-avatar.system { background: var(--accent-purple); display: flex; align-items: center; justify-content: center; color: white; }
+        .activity-avatar.system svg { width: 16px; height: 16px; }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .activity-text strong {
+            font-weight: 600;
+        }
+
+        .activity-text span {
+            color: var(--accent-purple);
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 56px;
+            height: 56px;
+            background: var(--gradient-purple);
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 4px 16px rgba(151, 71, 255, 0.4);
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(151, 71, 255, 0.5);
+        }
+
+        .fab svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            z-index: 100;
+        }
+
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.15s;
+        }
+
+        .zoom-btn:hover {
+            background: #F0F0F0;
+            color: var(--text-primary);
+        }
+
+        .zoom-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .zoom-value {
+            padding: 0 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+        }
+
+        /* Live indicator */
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(20, 174, 92, 0.1);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .canvas {
+                padding: 64px 12px 12px;
+            }
+
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .toolbar {
+                padding: 0 12px;
+            }
+
+            .file-name {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 150px;
+            }
+
+            .fab {
+                width: 48px;
+                height: 48px;
+                bottom: 16px;
+                left: 16px;
+                border-radius: 14px;
+            }
+
+            .zoom-controls {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+
+        /* Selection hint */
+        .selection-hint {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            left: -8px;
+            bottom: -8px;
+            border: 2px solid var(--accent-blue);
+            border-radius: 16px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .card:focus-within .selection-hint,
+        .card.selected .selection-hint {
+            opacity: 1;
+        }
+
+        /* Cursors for collaborative feel */
+        .cursor-other {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease-out;
+        }
+
+        .cursor-pointer {
+            width: 20px;
+            height: 20px;
+        }
+
+        .cursor-name {
+            position: absolute;
+            top: 20px;
+            right: 0;
+            background: #667eea;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Simulated other user cursor -->
+    <div class="cursor-other" id="otherCursor" style="top: 30%; left: 40%;">
+        <svg class="cursor-pointer" viewBox="0 0 24 24" fill="none">
+            <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" fill="#667eea"/>
+            <path d="M5.5 3.21V20.8c0 .45.54.67.85.35l4.86-4.86a.5.5 0 0 1 .35-.15h6.87c.48 0 .72-.58.38-.92L6.35 2.85a.5.5 0 0 0-.85.36Z" stroke="white" stroke-width="1.5"/>
+        </svg>
+        <span class="cursor-name">سارة</span>
+    </div>
+
+    <!-- Toolbar -->
+    <header class="toolbar">
+        <div class="toolbar-section">
+            <div class="logo">
+                <div class="logo-icon">ر</div>
+                RIBH
+            </div>
+            <div class="file-name">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                </svg>
+                لوحة التحكم الرئيسية
+            </div>
+        </div>
+        <div class="toolbar-section">
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                مباشر
+            </div>
+            <div class="collaborators">
+                <div class="avatar avatar-1 online"></div>
+                <div class="avatar avatar-2 online"></div>
+                <div class="avatar avatar-3"></div>
+                <div class="avatar-more">+3</div>
+            </div>
+            <button class="share-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                    <polyline points="16,6 12,2 8,6"/>
+                    <line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                مشاركة
+            </button>
+            <div class="toolbar-actions">
+                <button class="toolbar-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Canvas -->
+    <main class="canvas">
+        <div class="cards-container">
+            <!-- Revenue Stats Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon purple">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                        </div>
+                        إحصائيات الإيرادات
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="stats-grid">
+                        <div class="stat-item purple">
+                            <div class="stat-label">اليوم</div>
+                            <div class="stat-value">٤,٢٨٠ ر.س</div>
+                            <div class="stat-change up">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+                                </svg>
+                                +12%
+                            </div>
+                        </div>
+                        <div class="stat-item blue">
+                            <div class="stat-label">الأسبوع</div>
+                            <div class="stat-value">٢٨,٦٥٠ ر.س</div>
+                            <div class="stat-change up">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+                                </svg>
+                                +8%
+                            </div>
+                        </div>
+                        <div class="stat-item green">
+                            <div class="stat-label">الشهر</div>
+                            <div class="stat-value">١١٢,٤٠٠ ر.س</div>
+                            <div class="stat-change up">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+                                </svg>
+                                +23%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cart Recovery Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon orange">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                            </svg>
+                        </div>
+                        استرداد السلات المتروكة
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="recovery-stats">
+                        <div class="recovery-stat">
+                            <div class="recovery-stat-label">سلات متروكة</div>
+                            <div class="recovery-stat-value">23</div>
+                        </div>
+                        <div class="recovery-stat">
+                            <div class="recovery-stat-label">قيمة محتملة</div>
+                            <div class="recovery-stat-value">٨,٤٥٠ ر.س</div>
+                        </div>
+                    </div>
+                    <div class="recovery-list">
+                        <div class="recovery-item">
+                            <div class="recovery-customer">
+                                <div class="recovery-avatar">أ</div>
+                                <div class="recovery-info">
+                                    <h4>أحمد محمد</h4>
+                                    <p>منذ 2 ساعة</p>
+                                </div>
+                            </div>
+                            <div class="recovery-amount">٨٥٠ ر.س</div>
+                            <button class="recovery-action">إرسال تذكير</button>
+                        </div>
+                        <div class="recovery-item">
+                            <div class="recovery-customer">
+                                <div class="recovery-avatar">ن</div>
+                                <div class="recovery-info">
+                                    <h4>نورة علي</h4>
+                                    <p>منذ 5 ساعات</p>
+                                </div>
+                            </div>
+                            <div class="recovery-amount">١,٢٠٠ ر.س</div>
+                            <button class="recovery-action">إرسال تذكير</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Chart - Wide -->
+            <div class="card wide" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"/>
+                                <line x1="12" y1="20" x2="12" y2="4"/>
+                                <line x1="6" y1="20" x2="6" y2="14"/>
+                            </svg>
+                        </div>
+                        تحليلات المبيعات
+                    </div>
+                    <div class="card-menu">
+                        <div class="chart-tabs">
+                            <button class="chart-tab active">أسبوع</button>
+                            <button class="chart-tab">شهر</button>
+                            <button class="chart-tab">سنة</button>
+                        </div>
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar purple" style="height: 60%;">
+                                <span class="chart-value">٣,٢٠٠</span>
+                            </div>
+                            <span class="chart-label">سبت</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar blue" style="height: 80%;">
+                                <span class="chart-value">٤,٨٠٠</span>
+                            </div>
+                            <span class="chart-label">أحد</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar green" style="height: 45%;">
+                                <span class="chart-value">٢,٤٠٠</span>
+                            </div>
+                            <span class="chart-label">إثنين</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar purple" style="height: 90%;">
+                                <span class="chart-value">٥,٦٠٠</span>
+                            </div>
+                            <span class="chart-label">ثلاثاء</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar blue" style="height: 70%;">
+                                <span class="chart-value">٤,١٠٠</span>
+                            </div>
+                            <span class="chart-label">أربعاء</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar green" style="height: 55%;">
+                                <span class="chart-value">٣,٠٠٠</span>
+                            </div>
+                            <span class="chart-label">خميس</span>
+                        </div>
+                        <div class="chart-bar-wrapper">
+                            <div class="chart-bar purple" style="height: 100%;">
+                                <span class="chart-value">٦,٢٠٠</span>
+                            </div>
+                            <span class="chart-label">جمعة</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upsell Campaigns Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                        </div>
+                        حملات البيع الإضافي
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="campaign-list">
+                        <div class="campaign-item">
+                            <div class="campaign-icon gradient-1">🎁</div>
+                            <div class="campaign-details">
+                                <div class="campaign-name">اشترِ 2 واحصل على 1 مجاناً</div>
+                                <div class="campaign-stats">
+                                    <span>١٢٣ تحويل</span>
+                                    <span>٣٢% معدل</span>
+                                </div>
+                            </div>
+                            <label class="campaign-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="campaign-item">
+                            <div class="campaign-icon gradient-2">⚡</div>
+                            <div class="campaign-details">
+                                <div class="campaign-name">عرض الشحن المجاني</div>
+                                <div class="campaign-stats">
+                                    <span>٨٩ تحويل</span>
+                                    <span>٢٨% معدل</span>
+                                </div>
+                            </div>
+                            <label class="campaign-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="campaign-item">
+                            <div class="campaign-icon gradient-3">💎</div>
+                            <div class="campaign-details">
+                                <div class="campaign-name">خصم VIP للعملاء المميزين</div>
+                                <div class="campaign-stats">
+                                    <span>٤٥ تحويل</span>
+                                    <span>٤١% معدل</span>
+                                </div>
+                            </div>
+                            <label class="campaign-toggle">
+                                <input type="checkbox">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Templates Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon green">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                        </div>
+                        قوالب واتساب
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="templates-grid">
+                        <div class="template-card active">
+                            <div class="template-emoji">🛒</div>
+                            <div class="template-name">تذكير السلة</div>
+                            <div class="template-preview">مرحباً {name}! لاحظنا أنك تركت بعض المنتجات في سلتك...</div>
+                        </div>
+                        <div class="template-card">
+                            <div class="template-emoji">📦</div>
+                            <div class="template-name">تأكيد الطلب</div>
+                            <div class="template-preview">شكراً لطلبك! تم استلام طلبك رقم #{order_id}...</div>
+                        </div>
+                        <div class="template-card">
+                            <div class="template-emoji">🚚</div>
+                            <div class="template-name">تحديث الشحن</div>
+                            <div class="template-preview">طلبك في الطريق! يمكنك تتبع شحنتك من هنا...</div>
+                        </div>
+                        <div class="template-card">
+                            <div class="template-emoji">⭐</div>
+                            <div class="template-name">طلب تقييم</div>
+                            <div class="template-preview">نأمل أن تكون راضياً عن طلبك! شاركنا رأيك...</div>
+                        </div>
+                    </div>
+                    <div class="template-actions">
+                        <button class="template-btn secondary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                            </svg>
+                            تعديل
+                        </button>
+                        <button class="template-btn primary">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            إرسال اختباري
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon pink">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        النشاط الأخير
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-avatar system">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">تم <strong>استرداد سلة</strong> بقيمة <span>٨٥٠ ر.س</span></div>
+                                <div class="activity-time">منذ 5 دقائق</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar a1"></div>
+                            <div class="activity-content">
+                                <div class="activity-text"><strong>سارة</strong> عدّلت قالب <span>تذكير السلة</span></div>
+                                <div class="activity-time">منذ 23 دقيقة</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar a2"></div>
+                            <div class="activity-content">
+                                <div class="activity-text"><strong>محمد</strong> أنشأ حملة <span>عرض الجمعة</span></div>
+                                <div class="activity-time">منذ ساعة</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-avatar system">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">تم إرسال <strong>٤٥ رسالة</strong> واتساب</div>
+                                <div class="activity-time">منذ ساعتين</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Card -->
+            <div class="card" draggable="true">
+                <div class="selection-hint"></div>
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="card-icon red">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            </svg>
+                        </div>
+                        الإعدادات
+                    </div>
+                    <div class="card-menu">
+                        <button class="card-menu-btn drag-handle">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                                <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                                <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                            </svg>
+                        </button>
+                        <button class="card-menu-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section">
+                        <div class="settings-label">مفاتيح API</div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="m21 2-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0 3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>Salla API</h4>
+                                    <p>متصل ✓</p>
+                                </div>
+                            </div>
+                            <div class="api-input">
+                                <input type="password" value="sk_live_xxxxx" readonly>
+                                <button>تعديل</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <div class="settings-label">الإشعارات</div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>إشعارات المبيعات</h4>
+                                    <p>عند كل عملية بيع جديدة</p>
+                                </div>
+                            </div>
+                            <label class="campaign-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <div class="settings-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                </div>
+                                <div class="settings-text">
+                                    <h4>تنبيهات السلات المتروكة</h4>
+                                    <p>بعد 30 دقيقة من الترك</p>
+                                </div>
+                            </div>
+                            <label class="campaign-toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+    </button>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        </button>
+        <span class="zoom-value">100%</span>
+        <button class="zoom-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // Simulate cursor movement
+        const cursor = document.getElementById('otherCursor');
+        let targetX = window.innerWidth * 0.4;
+        let targetY = window.innerHeight * 0.3;
+        let currentX = targetX;
+        let currentY = targetY;
+
+        function moveCursor() {
+            // Random new target
+            targetX = Math.random() * (window.innerWidth * 0.6) + (window.innerWidth * 0.2);
+            targetY = Math.random() * (window.innerHeight * 0.5) + (window.innerHeight * 0.15);
+        }
+
+        function animateCursor() {
+            currentX += (targetX - currentX) * 0.02;
+            currentY += (targetY - currentY) * 0.02;
+            cursor.style.left = currentX + 'px';
+            cursor.style.top = currentY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+
+        setInterval(moveCursor, 3000);
+        animateCursor();
+
+        // Card drag functionality (visual only)
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('dragstart', (e) => {
+                card.classList.add('dragging');
+            });
+            
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+        });
+
+        // Chart tab switching
+        document.querySelectorAll('.chart-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Template selection
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

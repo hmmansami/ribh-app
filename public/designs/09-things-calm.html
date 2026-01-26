@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-cream: #FAFAF8;
+            --bg-white: #FFFFFF;
+            --text-primary: #1D1D1F;
+            --text-secondary: #6E6E73;
+            --text-tertiary: #AEAEB2;
+            --accent-blue: #5B9BD5;
+            --accent-blue-soft: #EBF3FA;
+            --border-light: #E8E8E8;
+            --success-soft: #E8F5E9;
+            --success-text: #4CAF50;
+            --warning-soft: #FFF8E1;
+            --warning-text: #F9A825;
+            --shadow-subtle: 0 1px 3px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-cream);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Container - Calm single column */
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 40px 24px 100px;
+        }
+
+        /* Header - Minimal */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+            padding-top: 20px;
+        }
+
+        .header-logo {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .header-date {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            margin-top: 8px;
+        }
+
+        /* Section Headers */
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding: 0 4px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-action {
+            font-size: 13px;
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Cards - Soft and clean */
+        .card {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-subtle);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--border-light);
+        }
+
+        .stat-item {
+            background: var(--bg-white);
+            padding: 24px 16px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-change {
+            font-size: 11px;
+            margin-top: 6px;
+            color: var(--success-text);
+        }
+
+        .stat-change.down {
+            color: var(--warning-text);
+        }
+
+        /* List Items - Things 3 style */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .list-item:hover {
+            background: var(--bg-cream);
+        }
+
+        .list-item:active {
+            background: var(--accent-blue-soft);
+        }
+
+        /* Checkbox - Things 3 style */
+        .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            margin-left: 14px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .checkbox:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .checkbox.checked {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .list-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .list-title {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+
+        .list-item.completed .list-title {
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+
+        .list-meta {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        .list-badge {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: var(--accent-blue-soft);
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .list-badge.success {
+            background: var(--success-soft);
+            color: var(--success-text);
+        }
+
+        .list-badge.warning {
+            background: var(--warning-soft);
+            color: var(--warning-text);
+        }
+
+        /* Expandable Sections */
+        .expandable {
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .expandable:last-child {
+            border-bottom: none;
+        }
+
+        .expandable-header {
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .expandable-header:hover {
+            background: var(--bg-cream);
+        }
+
+        .expandable-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 14px;
+            font-size: 16px;
+        }
+
+        .expandable-icon.blue { background: var(--accent-blue-soft); }
+        .expandable-icon.green { background: var(--success-soft); }
+        .expandable-icon.yellow { background: var(--warning-soft); }
+
+        .expandable-title {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .expandable-count {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-left: 8px;
+        }
+
+        .expandable-arrow {
+            color: var(--text-tertiary);
+            transition: transform 0.2s ease;
+        }
+
+        .expandable.open .expandable-arrow {
+            transform: rotate(90deg);
+        }
+
+        .expandable-content {
+            display: none;
+            padding: 0 20px 20px;
+        }
+
+        .expandable.open .expandable-content {
+            display: block;
+        }
+
+        /* Message Templates */
+        .template-card {
+            background: var(--bg-cream);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .template-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .template-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .template-preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4A8AC4;
+        }
+
+        .btn-secondary {
+            background: var(--bg-white);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-cream);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            padding: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-cream);
+            padding: 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .chart-tab {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .chart-tab.active {
+            background: var(--bg-white);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .chart-canvas {
+            height: 200px;
+        }
+
+        /* Settings */
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-label {
+            font-size: 15px;
+            font-weight: 400;
+        }
+
+        .setting-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            width: 50px;
+            height: 30px;
+            background: var(--border-light);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent-blue);
+        }
+
+        .toggle::after {
+            content: '';
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .toggle.active::after {
+            transform: translateX(-20px);
+        }
+
+        /* Input Fields */
+        .input-group {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .input-group:last-child {
+            border-bottom: none;
+        }
+
+        .input-label {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-cream);
+            color: var(--text-primary);
+            transition: border-color 0.15s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: var(--bg-white);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 14px;
+        }
+
+        /* Floating Action */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-blue);
+            color: white;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 12px rgba(91, 155, 213, 0.4);
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: none;
+        }
+
+        .fab:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 16px rgba(91, 155, 213, 0.5);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 4px;
+            background: var(--border-light);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 8px 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 24px 16px 100px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                text-align: right;
+            }
+
+            .stat-value {
+                font-size: 20px;
+            }
+
+            .chart-tabs {
+                display: none;
+            }
+        }
+
+        /* Scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent-blue-soft);
+            color: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-logo">رِبح</div>
+            <div class="header-date" id="currentDate"></div>
+        </header>
+
+        <!-- Revenue Stats -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">الإيرادات</span>
+                <a href="#" class="section-action">التفاصيل</a>
+            </div>
+            <div class="card">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">اليوم</div>
+                        <div class="stat-value">٢,٤٥٠</div>
+                        <div class="stat-change">+١٢٪ ↑</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">هذا الأسبوع</div>
+                        <div class="stat-value">١٨,٢٠٠</div>
+                        <div class="stat-change">+٨٪ ↑</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">هذا الشهر</div>
+                        <div class="stat-value">٧٤,٥٠٠</div>
+                        <div class="stat-change down">-٣٪ ↓</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart Recovery -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">استرداد السلات المتروكة</span>
+                <span class="section-action">٥ سلات</span>
+            </div>
+            <div class="card">
+                <div class="list-item" onclick="toggleComplete(this)">
+                    <div class="checkbox"></div>
+                    <div class="list-content">
+                        <div class="list-title">محمد العتيبي</div>
+                        <div class="list-meta">٣٥٠ ر.س • منذ ساعتين</div>
+                    </div>
+                    <span class="list-badge warning">في الانتظار</span>
+                </div>
+                <div class="list-item" onclick="toggleComplete(this)">
+                    <div class="checkbox"></div>
+                    <div class="list-content">
+                        <div class="list-title">سارة القحطاني</div>
+                        <div class="list-meta">٨٩٠ ر.س • منذ ٥ ساعات</div>
+                    </div>
+                    <span class="list-badge">تم الإرسال</span>
+                </div>
+                <div class="list-item completed" onclick="toggleComplete(this)">
+                    <div class="checkbox checked"></div>
+                    <div class="list-content">
+                        <div class="list-title">فهد الشمري</div>
+                        <div class="list-meta">٢٤٥ ر.س • منذ يوم</div>
+                    </div>
+                    <span class="list-badge success">تم الشراء</span>
+                </div>
+                <div class="list-item" onclick="toggleComplete(this)">
+                    <div class="checkbox"></div>
+                    <div class="list-content">
+                        <div class="list-title">نورة المالكي</div>
+                        <div class="list-meta">١,٢٠٠ ر.س • منذ يومين</div>
+                    </div>
+                    <span class="list-badge warning">في الانتظار</span>
+                </div>
+                <div class="list-item" onclick="toggleComplete(this)">
+                    <div class="checkbox"></div>
+                    <div class="list-content">
+                        <div class="list-title">عبدالله السبيعي</div>
+                        <div class="list-meta">٥٦٠ ر.س • منذ ٣ أيام</div>
+                    </div>
+                    <span class="list-badge">تم الإرسال</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upsell Campaigns -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">حملات البيع الإضافي</span>
+                <a href="#" class="section-action">+ جديد</a>
+            </div>
+            <div class="card">
+                <div class="expandable open">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon blue">🎯</div>
+                        <div class="expandable-title">عرض الشحن المجاني</div>
+                        <span class="expandable-count">٢٣ تحويل</span>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; color: var(--text-secondary);">نسبة التحويل</span>
+                                <span style="font-size: 15px; font-weight: 500; color: var(--success-text);">١٨٪</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 18%;"></div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">إيقاف</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon green">🎁</div>
+                        <div class="expandable-title">خصم ٢٠٪ للعملاء الجدد</div>
+                        <span class="expandable-count">١٥ تحويل</span>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; color: var(--text-secondary);">نسبة التحويل</span>
+                                <span style="font-size: 15px; font-weight: 500; color: var(--success-text);">١٢٪</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 12%;"></div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">إيقاف</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon yellow">⭐</div>
+                        <div class="expandable-title">منتجات مُقترحة</div>
+                        <span class="expandable-count">٨ تحويل</span>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 13px; color: var(--text-secondary);">نسبة التحويل</span>
+                                <span style="font-size: 15px; font-weight: 500; color: var(--warning-text);">٥٪</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 5%; background: var(--warning-text);"></div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">إيقاف</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WhatsApp Templates -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">قوالب واتساب</span>
+                <a href="#" class="section-action">+ قالب</a>
+            </div>
+            <div class="card">
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon blue">💬</div>
+                        <div class="expandable-title">تذكير السلة المتروكة</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div class="template-preview">
+                                مرحباً {الاسم} 👋
+
+نلاحظ أنك تركت بعض المنتجات في سلتك!
+
+🛒 لا تفوّت الفرصة - أكمل طلبك الآن واحصل على شحن مجاني.
+
+{رابط_السلة}
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">معاينة</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon green">✅</div>
+                        <div class="expandable-title">تأكيد الطلب</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div class="template-preview">
+                                شكراً {الاسم}! ✨
+
+تم استلام طلبك رقم #{رقم_الطلب} بنجاح.
+
+📦 سنوافيك بتحديثات الشحن قريباً.
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">معاينة</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon yellow">🚚</div>
+                        <div class="expandable-title">تحديث الشحن</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="template-card">
+                            <div class="template-preview">
+                                مرحباً {الاسم}!
+
+طلبك #{رقم_الطلب} في الطريق إليك 🚚
+
+📍 تتبع شحنتك: {رابط_التتبع}
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">معاينة</button>
+                            <button class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Chart -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">التحليلات</span>
+            </div>
+            <div class="card">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <span class="chart-title">الإيرادات</span>
+                        <div class="chart-tabs">
+                            <button class="chart-tab" onclick="setChartPeriod('week')">أسبوع</button>
+                            <button class="chart-tab active" onclick="setChartPeriod('month')">شهر</button>
+                            <button class="chart-tab" onclick="setChartPeriod('year')">سنة</button>
+                        </div>
+                    </div>
+                    <canvas id="revenueChart" class="chart-canvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-title">الإعدادات</span>
+            </div>
+            <div class="card">
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon blue">🔑</div>
+                        <div class="expandable-title">مفاتيح API</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="input-group" style="padding: 0; border: none;">
+                            <label class="input-label">مفتاح سلة API</label>
+                            <input type="password" class="input-field" placeholder="أدخل مفتاح API" value="sk-****-****-****">
+                        </div>
+                        <div class="input-group" style="padding: 0; padding-top: 16px; border: none;">
+                            <label class="input-label">مفتاح واتساب API</label>
+                            <input type="password" class="input-field" placeholder="أدخل مفتاح API" value="wa-****-****">
+                        </div>
+                        <div class="template-actions" style="margin-top: 16px;">
+                            <button class="btn btn-primary">حفظ التغييرات</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon green">🔔</div>
+                        <div class="expandable-title">الإشعارات</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="setting-item" style="padding: 12px 0; border-color: var(--bg-cream);">
+                            <div class="setting-info">
+                                <div class="setting-label">إشعارات السلات المتروكة</div>
+                                <div class="setting-desc">تنبيه عند ترك سلة جديدة</div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="setting-item" style="padding: 12px 0; border-color: var(--bg-cream);">
+                            <div class="setting-info">
+                                <div class="setting-label">إشعارات الطلبات</div>
+                                <div class="setting-desc">تنبيه عند استلام طلب جديد</div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="setting-item" style="padding: 12px 0; border: none;">
+                            <div class="setting-info">
+                                <div class="setting-label">الملخص اليومي</div>
+                                <div class="setting-desc">تقرير يومي عبر البريد</div>
+                            </div>
+                            <div class="toggle" onclick="toggleSwitch(this)"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="expandable">
+                    <div class="expandable-header" onclick="toggleExpand(this.parentElement)">
+                        <div class="expandable-icon yellow">⚙️</div>
+                        <div class="expandable-title">التفضيلات</div>
+                        <span class="expandable-arrow">›</span>
+                    </div>
+                    <div class="expandable-content">
+                        <div class="setting-item" style="padding: 12px 0; border-color: var(--bg-cream);">
+                            <div class="setting-info">
+                                <div class="setting-label">الإرسال التلقائي</div>
+                                <div class="setting-desc">إرسال رسائل استرداد السلة تلقائياً</div>
+                            </div>
+                            <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="setting-item" style="padding: 12px 0; border-color: var(--bg-cream);">
+                            <div class="setting-info">
+                                <div class="setting-label">وضع الاختبار</div>
+                                <div class="setting-desc">تجربة الرسائل قبل الإرسال</div>
+                            </div>
+                            <div class="toggle" onclick="toggleSwitch(this)"></div>
+                        </div>
+                        <div class="input-group" style="padding: 12px 0; border: none;">
+                            <label class="input-label">وقت انتظار الإرسال (بالدقائق)</label>
+                            <input type="number" class="input-field" value="30" style="width: 120px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Account Section -->
+        <section class="section">
+            <div class="card">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">متجر الأناقة</div>
+                        <div class="setting-desc">elegance-store.salla.sa</div>
+                    </div>
+                    <span class="list-badge success">متصل</span>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-label">الخطة الحالية</div>
+                        <div class="setting-desc">الخطة الاحترافية - ٩٩ ر.س/شهر</div>
+                    </div>
+                    <a href="#" class="section-action">ترقية</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spacer for FAB -->
+        <div style="height: 40px;"></div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="showQuickAction()">+</button>
+
+    <script>
+        // Set current date
+        const dateEl = document.getElementById('currentDate');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateEl.textContent = new Date().toLocaleDateString('ar-SA', options);
+
+        // Toggle checkbox completion
+        function toggleComplete(item) {
+            const checkbox = item.querySelector('.checkbox');
+            checkbox.classList.toggle('checked');
+            item.classList.toggle('completed');
+        }
+
+        // Toggle expandable sections
+        function toggleExpand(element) {
+            element.classList.toggle('open');
+        }
+
+        // Toggle switch
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+        }
+
+        // Chart period
+        function setChartPeriod(period) {
+            document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            // Update chart data based on period
+        }
+
+        // Quick action
+        function showQuickAction() {
+            alert('إضافة حملة جديدة');
+        }
+
+        // Initialize Chart
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['١', '٥', '١٠', '١٥', '٢٠', '٢٥', '٣٠'],
+                datasets: [{
+                    label: 'الإيرادات',
+                    data: [2100, 2800, 2400, 3200, 2900, 3500, 3800],
+                    borderColor: '#5B9BD5',
+                    backgroundColor: 'rgba(91, 155, 213, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 0,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#5B9BD5',
+                    pointHoverBorderColor: '#fff',
+                    pointHoverBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1D1D1F',
+                        titleFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        bodyFont: {
+                            family: 'IBM Plex Sans Arabic'
+                        },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('ar-SA') + ' ر.س';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic',
+                                size: 11
+                            },
+                            color: '#AEAEB2'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#E8E8E8',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: {
+                                family: 'IBM Plex Sans Arabic',
+                                size: 11
+                            },
+                            color: '#AEAEB2',
+                            callback: function(value) {
+                                return value.toLocaleString('ar-SA');
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+    </script>
+</body>
+</html>

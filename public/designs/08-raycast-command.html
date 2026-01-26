@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #141415;
+            --bg-tertiary: #1c1c1e;
+            --bg-hover: #252528;
+            --bg-active: #2d2d30;
+            --border: #2a2a2d;
+            --border-focus: #505055;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1a6;
+            --text-tertiary: #6e6e73;
+            --accent: #0a84ff;
+            --accent-hover: #409cff;
+            --success: #30d158;
+            --warning: #ffd60a;
+            --danger: #ff453a;
+            --purple: #bf5af2;
+            --pink: #ff375f;
+            --orange: #ff9f0a;
+            --teal: #64d2ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(ellipse at 0% 0%, rgba(10, 132, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 100% 100%, rgba(191, 90, 242, 0.06) 0%, transparent 50%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* Command Bar - Always Visible */
+        .command-bar-trigger {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(600px, calc(100% - 40px));
+            z-index: 100;
+        }
+
+        .trigger-button {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .trigger-button:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--border-focus);
+        }
+
+        .trigger-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .trigger-left svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .trigger-shortcut {
+            display: flex;
+            gap: 4px;
+        }
+
+        .key {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-secondary);
+        }
+
+        /* Command Palette Modal */
+        .command-palette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 80px;
+        }
+
+        .command-palette.active {
+            display: flex;
+        }
+
+        .command-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+
+        .command-modal {
+            position: relative;
+            width: min(680px, calc(100% - 32px));
+            max-height: calc(100vh - 160px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlide 0.15s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: scale(0.96) translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .command-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .command-input-wrapper svg {
+            width: 22px;
+            height: 22px;
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+
+        .command-input {
+            flex: 1;
+            background: none;
+            border: none;
+            font-size: 18px;
+            font-family: inherit;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .command-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .command-results {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .command-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .command-results::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .command-results::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .command-group {
+            margin-bottom: 8px;
+        }
+
+        .command-group-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-tertiary);
+            padding: 8px 12px 6px;
+        }
+
+        .command-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.12s ease;
+        }
+
+        .command-item:hover,
+        .command-item.selected {
+            background: var(--bg-hover);
+        }
+
+        .command-item.selected {
+            background: var(--bg-active);
+        }
+
+        .command-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .command-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .command-icon.blue { background: rgba(10, 132, 255, 0.15); color: var(--accent); }
+        .command-icon.green { background: rgba(48, 209, 88, 0.15); color: var(--success); }
+        .command-icon.purple { background: rgba(191, 90, 242, 0.15); color: var(--purple); }
+        .command-icon.orange { background: rgba(255, 159, 10, 0.15); color: var(--orange); }
+        .command-icon.pink { background: rgba(255, 55, 95, 0.15); color: var(--pink); }
+        .command-icon.teal { background: rgba(100, 210, 255, 0.15); color: var(--teal); }
+
+        .command-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .command-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .command-desc {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .command-shortcut {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .command-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-primary);
+        }
+
+        .footer-hints {
+            display: flex;
+            gap: 16px;
+        }
+
+        .footer-hint {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 100px 24px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .view-section {
+            display: none;
+        }
+
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dashboard View */
+        .welcome-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .welcome-header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-header p {
+            color: var(--text-tertiary);
+            font-size: 16px;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            border-color: var(--border-focus);
+            transform: translateY(-2px);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+
+        /* Action List */
+        .action-list {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .action-list-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .action-list-title {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .action-list-title .badge {
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .action-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.15s ease;
+            cursor: pointer;
+        }
+
+        .action-row:last-child {
+            border-bottom: none;
+        }
+
+        .action-row:hover {
+            background: var(--bg-hover);
+        }
+
+        .action-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .action-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .action-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .action-meta {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .action-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-tertiary);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .chart-tab {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .chart-tab.active {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        /* Templates View */
+        .template-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .template-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .template-card:hover {
+            border-color: var(--success);
+            background: rgba(48, 209, 88, 0.05);
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .template-name {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .template-preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            background: var(--bg-tertiary);
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        /* Settings View */
+        .settings-group {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .settings-group-title {
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .setting-info p {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        .setting-input {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            width: 280px;
+            transition: border-color 0.2s ease;
+        }
+
+        .setting-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .toggle.active {
+            background: var(--success);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .toggle.active::after {
+            transform: translateX(-20px);
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .section-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .section-action:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 640px) {
+            .command-bar-trigger {
+                top: 12px;
+                width: calc(100% - 24px);
+            }
+
+            .trigger-button {
+                padding: 12px 16px;
+            }
+
+            .trigger-shortcut {
+                display: none;
+            }
+
+            .main-content {
+                padding: 80px 16px 32px;
+            }
+
+            .welcome-header h1 {
+                font-size: 24px;
+            }
+
+            .stat-value {
+                font-size: 22px;
+            }
+
+            .command-modal {
+                margin-top: 0;
+                border-radius: 0 0 16px 16px;
+            }
+
+            .command-palette {
+                padding-top: 0;
+            }
+
+            .setting-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .setting-input {
+                width: 100%;
+            }
+
+            .footer-hints {
+                display: none;
+            }
+        }
+
+        /* Keyboard focus indicator */
+        .keyboard-focus {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--success);
+        }
+
+        .toast-message {
+            font-size: 14px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <!-- Command Bar Trigger -->
+    <div class="command-bar-trigger">
+        <button class="trigger-button" onclick="openCommandPalette()">
+            <div class="trigger-left">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <span>البحث عن أوامر...</span>
+            </div>
+            <div class="trigger-shortcut">
+                <span class="key">⌘</span>
+                <span class="key">K</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- Command Palette -->
+    <div class="command-palette" id="commandPalette">
+        <div class="command-backdrop" onclick="closeCommandPalette()"></div>
+        <div class="command-modal">
+            <div class="command-input-wrapper">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <input type="text" class="command-input" id="commandInput" placeholder="ابحث أو اكتب أمر..." autocomplete="off">
+            </div>
+            <div class="command-results" id="commandResults">
+                <!-- Results populated by JS -->
+            </div>
+            <div class="command-footer">
+                <div class="footer-hints">
+                    <div class="footer-hint">
+                        <span class="key">↑↓</span>
+                        <span>تنقل</span>
+                    </div>
+                    <div class="footer-hint">
+                        <span class="key">↵</span>
+                        <span>تنفيذ</span>
+                    </div>
+                    <div class="footer-hint">
+                        <span class="key">esc</span>
+                        <span>إغلاق</span>
+                    </div>
+                </div>
+                <div style="font-size: 11px; color: var(--text-tertiary);">رِبح v2.0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard View -->
+        <div class="view-section active" id="viewDashboard">
+            <div class="welcome-header">
+                <h1>أهلاً بك في رِبح ✨</h1>
+                <p>اضغط <span class="key" style="display: inline-block;">⌘K</span> للبدء</p>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-card" onclick="executeCommand('revenue')">
+                    <div class="stat-label">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        إيرادات اليوم
+                    </div>
+                    <div class="stat-value" style="color: var(--success);">٤٢,٨٥٠ ر.س</div>
+                    <div class="stat-change positive">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
+                        +23% من أمس
+                    </div>
+                </div>
+                <div class="stat-card" onclick="executeCommand('carts')">
+                    <div class="stat-label">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                        سلات متروكة
+                    </div>
+                    <div class="stat-value" style="color: var(--warning);">١٧</div>
+                    <div class="stat-change negative">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>
+                        -8% من أمس
+                    </div>
+                </div>
+                <div class="stat-card" onclick="executeCommand('upsell')">
+                    <div class="stat-label">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>
+                        Upsell اليوم
+                    </div>
+                    <div class="stat-value" style="color: var(--purple);">٨,٤٢٠ ر.س</div>
+                    <div class="stat-change positive">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
+                        +45% من أمس
+                    </div>
+                </div>
+                <div class="stat-card" onclick="executeCommand('messages')">
+                    <div class="stat-label">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                        رسائل مرسلة
+                    </div>
+                    <div class="stat-value" style="color: var(--teal);">٣٤٢</div>
+                    <div class="stat-change positive">
+                        <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
+                        +12% من أمس
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-list">
+                <div class="action-list-header">
+                    <div class="action-list-title">
+                        ⚡ إجراءات سريعة
+                        <span class="badge">٣ جديد</span>
+                    </div>
+                </div>
+                <div class="action-row" onclick="executeCommand('recover')">
+                    <div class="action-avatar" style="background: rgba(255, 214, 10, 0.15); color: var(--warning);">🛒</div>
+                    <div class="action-info">
+                        <div class="action-name">أحمد الشمري ترك سلة</div>
+                        <div class="action-meta">منذ 12 دقيقة • 3 منتجات</div>
+                    </div>
+                    <div class="action-amount">٢,٣٥٠ ر.س</div>
+                    <div class="command-shortcut">
+                        <span class="key">⌘</span>
+                        <span class="key">R</span>
+                    </div>
+                </div>
+                <div class="action-row" onclick="executeCommand('upsell')">
+                    <div class="action-avatar" style="background: rgba(191, 90, 242, 0.15); color: var(--purple);">📈</div>
+                    <div class="action-info">
+                        <div class="action-name">فرصة Upsell - نورة العتيبي</div>
+                        <div class="action-meta">اشترت مكياج • اقترح عطر</div>
+                    </div>
+                    <div class="action-amount">+٥٨٠ ر.س</div>
+                    <div class="command-shortcut">
+                        <span class="key">⌘</span>
+                        <span class="key">U</span>
+                    </div>
+                </div>
+                <div class="action-row" onclick="executeCommand('orders')">
+                    <div class="action-avatar" style="background: rgba(48, 209, 88, 0.15); color: var(--success);">✓</div>
+                    <div class="action-info">
+                        <div class="action-name">طلب جديد من سارة المالكي</div>
+                        <div class="action-meta">منذ 3 دقائق • تم الدفع</div>
+                    </div>
+                    <div class="action-amount">١,٨٩٠ ر.س</div>
+                    <div class="command-shortcut">
+                        <span class="key">⌘</span>
+                        <span class="key">O</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">📊 الإيرادات</div>
+                    <div class="chart-tabs">
+                        <div class="chart-tab active" onclick="updateChart('week')">أسبوع</div>
+                        <div class="chart-tab" onclick="updateChart('month')">شهر</div>
+                        <div class="chart-tab" onclick="updateChart('year')">سنة</div>
+                    </div>
+                </div>
+                <canvas id="revenueChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Cart Recovery View -->
+        <div class="view-section" id="viewCarts">
+            <div class="section-header">
+                <div class="section-title">🛒 السلات المتروكة</div>
+                <button class="section-action" onclick="showToast('تم إرسال التذكيرات!')">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                    إرسال تذكير للجميع
+                </button>
+            </div>
+            <div class="action-list">
+                <div class="action-row">
+                    <div class="action-avatar">أش</div>
+                    <div class="action-info">
+                        <div class="action-name">أحمد الشمري</div>
+                        <div class="action-meta">+966 55 XXX XXXX • منذ 12 دقيقة</div>
+                    </div>
+                    <div class="action-amount">٢,٣٥٠ ر.س</div>
+                    <button class="section-action" style="padding: 6px 10px; font-size: 12px;">استرداد</button>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar">مع</div>
+                    <div class="action-info">
+                        <div class="action-name">محمد العنزي</div>
+                        <div class="action-meta">+966 50 XXX XXXX • منذ 34 دقيقة</div>
+                    </div>
+                    <div class="action-amount">٨٩٠ ر.س</div>
+                    <button class="section-action" style="padding: 6px 10px; font-size: 12px;">استرداد</button>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar">فق</div>
+                    <div class="action-info">
+                        <div class="action-name">فاطمة القحطاني</div>
+                        <div class="action-meta">+966 54 XXX XXXX • منذ ساعة</div>
+                    </div>
+                    <div class="action-amount">٣,٢١٠ ر.س</div>
+                    <button class="section-action" style="padding: 6px 10px; font-size: 12px;">استرداد</button>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar">سم</div>
+                    <div class="action-info">
+                        <div class="action-name">سعود المطيري</div>
+                        <div class="action-meta">+966 56 XXX XXXX • منذ ساعتين</div>
+                    </div>
+                    <div class="action-amount">١,٤٥٠ ر.س</div>
+                    <button class="section-action" style="padding: 6px 10px; font-size: 12px;">استرداد</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upsell View -->
+        <div class="view-section" id="viewUpsell">
+            <div class="section-header">
+                <div class="section-title">📈 حملات Upsell</div>
+                <button class="section-action" onclick="showToast('تم إنشاء حملة جديدة!')">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    حملة جديدة
+                </button>
+            </div>
+            <div class="action-list" style="margin-bottom: 16px;">
+                <div class="action-list-header">
+                    <div class="action-list-title">🔥 حملات نشطة</div>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar" style="background: rgba(191, 90, 242, 0.15); color: var(--purple);">💄</div>
+                    <div class="action-info">
+                        <div class="action-name">عطر مجاني مع المكياج</div>
+                        <div class="action-meta">نسبة التحويل: 34% • 89 عميل</div>
+                    </div>
+                    <div class="action-amount" style="color: var(--purple);">+١٢,٤٥٠ ر.س</div>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar" style="background: rgba(255, 159, 10, 0.15); color: var(--orange);">👗</div>
+                    <div class="action-info">
+                        <div class="action-name">خصم 20% على الإكسسوارات</div>
+                        <div class="action-meta">نسبة التحويل: 28% • 156 عميل</div>
+                    </div>
+                    <div class="action-amount" style="color: var(--orange);">+٨,٩٢٠ ر.س</div>
+                </div>
+                <div class="action-row">
+                    <div class="action-avatar" style="background: rgba(100, 210, 255, 0.15); color: var(--teal);">🎁</div>
+                    <div class="action-info">
+                        <div class="action-name">هدية مع الطلبات فوق 500</div>
+                        <div class="action-meta">نسبة التحويل: 45% • 67 عميل</div>
+                    </div>
+                    <div class="action-amount" style="color: var(--teal);">+٥,٦٧٠ ر.س</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Templates View -->
+        <div class="view-section" id="viewTemplates">
+            <div class="section-header">
+                <div class="section-title">💬 قوالب الرسائل</div>
+                <button class="section-action" onclick="showToast('تم إنشاء قالب جديد!')">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    قالب جديد
+                </button>
+            </div>
+            <div class="template-grid">
+                <div class="template-card" onclick="showToast('تم نسخ القالب!')">
+                    <div class="template-header">
+                        <div class="template-name">
+                            <span style="color: var(--warning);">🛒</span>
+                            تذكير السلة المتروكة
+                        </div>
+                        <div class="command-shortcut">
+                            <span class="key">⌘</span>
+                            <span class="key">1</span>
+                        </div>
+                    </div>
+                    <div class="template-preview">
+                        مرحباً {الاسم}! 👋<br>
+                        لاحظنا إنك تركت بعض المنتجات في سلتك.<br>
+                        أكمل طلبك الآن واحصل على خصم 10%! 🎉<br>
+                        {رابط_السلة}
+                    </div>
+                </div>
+                <div class="template-card" onclick="showToast('تم نسخ القالب!')">
+                    <div class="template-header">
+                        <div class="template-name">
+                            <span style="color: var(--purple);">📈</span>
+                            عرض Upsell
+                        </div>
+                        <div class="command-shortcut">
+                            <span class="key">⌘</span>
+                            <span class="key">2</span>
+                        </div>
+                    </div>
+                    <div class="template-preview">
+                        {الاسم}، شكراً لطلبك! 🙏<br>
+                        عندنا عرض حصري لك:<br>
+                        احصل على {المنتج} بخصم 25%! 💫<br>
+                        العرض ساري لـ 24 ساعة فقط ⏰
+                    </div>
+                </div>
+                <div class="template-card" onclick="showToast('تم نسخ القالب!')">
+                    <div class="template-header">
+                        <div class="template-name">
+                            <span style="color: var(--success);">✅</span>
+                            تأكيد الطلب
+                        </div>
+                        <div class="command-shortcut">
+                            <span class="key">⌘</span>
+                            <span class="key">3</span>
+                        </div>
+                    </div>
+                    <div class="template-preview">
+                        تم استلام طلبك بنجاح! 🎉<br>
+                        رقم الطلب: {رقم_الطلب}<br>
+                        سيصلك خلال {أيام_التوصيل} أيام عمل.<br>
+                        شكراً لثقتك فينا! ❤️
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings View -->
+        <div class="view-section" id="viewSettings">
+            <div class="section-header">
+                <div class="section-title">⚙️ الإعدادات</div>
+            </div>
+            
+            <div class="settings-group">
+                <div class="settings-group-title">🔌 ربط المتجر</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Salla API Key</h4>
+                        <p>مفتاح الربط مع منصة سلة</p>
+                    </div>
+                    <input type="password" class="setting-input" value="sk_live_xxxxxxxxxx" placeholder="أدخل المفتاح">
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>Shopify Access Token</h4>
+                        <p>توكن الوصول لشوبيفاي</p>
+                    </div>
+                    <input type="password" class="setting-input" placeholder="shpat_xxxxxxxxxx">
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">📱 واتساب</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>رقم الواتساب</h4>
+                        <p>رقم الإرسال للرسائل</p>
+                    </div>
+                    <input type="text" class="setting-input" value="+966 55 XXX XXXX" placeholder="+966 5X XXX XXXX">
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>الإرسال التلقائي</h4>
+                        <p>إرسال رسائل استرداد السلة تلقائياً</p>
+                    </div>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">🔔 الإشعارات</div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>إشعار السلة المتروكة</h4>
+                        <p>تنبيه عند ترك عميل للسلة</p>
+                    </div>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>إشعار الطلب الجديد</h4>
+                        <p>تنبيه عند وصول طلب جديد</p>
+                    </div>
+                    <div class="toggle active" onclick="this.classList.toggle('active')"></div>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <h4>تقرير يومي</h4>
+                        <p>ملخص الأداء كل يوم</p>
+                    </div>
+                    <div class="toggle" onclick="this.classList.toggle('active')"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics View -->
+        <div class="view-section" id="viewAnalytics">
+            <div class="section-header">
+                <div class="section-title">📊 التحليلات</div>
+            </div>
+            
+            <div class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-label">إجمالي الإيرادات (شهر)</div>
+                    <div class="stat-value" style="color: var(--success);">١٢٨,٤٥٠ ر.س</div>
+                    <div class="stat-change positive">+18% من الشهر الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">معدل استرداد السلات</div>
+                    <div class="stat-value" style="color: var(--warning);">٣٤%</div>
+                    <div class="stat-change positive">+5% من الشهر الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">قيمة Upsell</div>
+                    <div class="stat-value" style="color: var(--purple);">٢٧,٨٩٠ ر.س</div>
+                    <div class="stat-change positive">+42% من الشهر الماضي</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">مقارنة الأداء</div>
+                </div>
+                <canvas id="analyticsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg class="toast-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        <span class="toast-message" id="toastMessage">تم بنجاح!</span>
+    </div>
+
+    <script>
+        // Commands Data
+        const commands = [
+            { id: 'dashboard', title: 'الرئيسية', desc: 'العودة للوحة التحكم', icon: '🏠', color: 'blue', shortcut: ['⌘', 'H'], view: 'viewDashboard' },
+            { id: 'revenue', title: 'الإيرادات', desc: 'عرض تقرير الإيرادات', icon: '💰', color: 'green', shortcut: ['⌘', 'E'], view: 'viewDashboard' },
+            { id: 'carts', title: 'السلات المتروكة', desc: 'عرض وإدارة السلات المتروكة', icon: '🛒', color: 'orange', shortcut: ['⌘', 'C'], view: 'viewCarts' },
+            { id: 'recover', title: 'استرداد سلة', desc: 'إرسال رسالة استرداد', icon: '📤', color: 'orange', shortcut: ['⌘', 'R'], action: () => showToast('تم إرسال رسالة الاسترداد!') },
+            { id: 'upsell', title: 'حملات Upsell', desc: 'إدارة حملات البيع الإضافي', icon: '📈', color: 'purple', shortcut: ['⌘', 'U'], view: 'viewUpsell' },
+            { id: 'templates', title: 'قوالب الرسائل', desc: 'قوالب WhatsApp الجاهزة', icon: '💬', color: 'teal', shortcut: ['⌘', 'T'], view: 'viewTemplates' },
+            { id: 'messages', title: 'إرسال رسالة', desc: 'إرسال رسالة WhatsApp', icon: '📱', color: 'green', shortcut: ['⌘', 'M'], action: () => showToast('اختر قالب للإرسال') },
+            { id: 'analytics', title: 'التحليلات', desc: 'تقارير وإحصائيات مفصلة', icon: '📊', color: 'blue', shortcut: ['⌘', 'A'], view: 'viewAnalytics' },
+            { id: 'settings', title: 'الإعدادات', desc: 'إعدادات التطبيق والربط', icon: '⚙️', color: 'pink', shortcut: ['⌘', ','], view: 'viewSettings' },
+            { id: 'orders', title: 'الطلبات', desc: 'عرض الطلبات الجديدة', icon: '📦', color: 'green', shortcut: ['⌘', 'O'], action: () => showToast('جاري تحميل الطلبات...') },
+        ];
+
+        let selectedIndex = 0;
+        let filteredCommands = [...commands];
+
+        // DOM Elements
+        const commandPalette = document.getElementById('commandPalette');
+        const commandInput = document.getElementById('commandInput');
+        const commandResults = document.getElementById('commandResults');
+
+        // Render Commands
+        function renderCommands(cmds) {
+            const grouped = {
+                'التنقل': cmds.filter(c => ['dashboard', 'carts', 'upsell', 'templates', 'analytics', 'settings'].includes(c.id)),
+                'الإجراءات': cmds.filter(c => ['recover', 'messages', 'orders', 'revenue'].includes(c.id))
+            };
+
+            let html = '';
+            for (const [group, items] of Object.entries(grouped)) {
+                if (items.length === 0) continue;
+                html += `<div class="command-group">
+                    <div class="command-group-title">${group}</div>`;
+                items.forEach((cmd, i) => {
+                    const globalIndex = cmds.indexOf(cmd);
+                    html += `
+                        <div class="command-item ${globalIndex === selectedIndex ? 'selected' : ''}" 
+                             data-index="${globalIndex}"
+                             onclick="executeCommand('${cmd.id}')">
+                            <div class="command-icon ${cmd.color}">${cmd.icon}</div>
+                            <div class="command-content">
+                                <div class="command-title">${cmd.title}</div>
+                                <div class="command-desc">${cmd.desc}</div>
+                            </div>
+                            <div class="command-shortcut">
+                                ${cmd.shortcut.map(k => `<span class="key">${k}</span>`).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            commandResults.innerHTML = html || '<div style="padding: 40px; text-align: center; color: var(--text-tertiary);">لا توجد نتائج</div>';
+        }
+
+        // Open/Close Palette
+        function openCommandPalette() {
+            commandPalette.classList.add('active');
+            commandInput.value = '';
+            selectedIndex = 0;
+            filteredCommands = [...commands];
+            renderCommands(filteredCommands);
+            setTimeout(() => commandInput.focus(), 50);
+        }
+
+        function closeCommandPalette() {
+            commandPalette.classList.remove('active');
+        }
+
+        // Execute Command
+        function executeCommand(id) {
+            const cmd = commands.find(c => c.id === id);
+            if (!cmd) return;
+
+            closeCommandPalette();
+
+            if (cmd.action) {
+                cmd.action();
+            } else if (cmd.view) {
+                showView(cmd.view);
+            }
+        }
+
+        // Show View
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId)?.classList.add('active');
+            
+            if (viewId === 'viewAnalytics') {
+                setTimeout(initAnalyticsChart, 100);
+            }
+        }
+
+        // Filter Commands
+        commandInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            filteredCommands = commands.filter(c => 
+                c.title.includes(query) || 
+                c.desc.includes(query) ||
+                c.id.includes(query)
+            );
+            selectedIndex = 0;
+            renderCommands(filteredCommands);
+        });
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            // Open palette
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                if (commandPalette.classList.contains('active')) {
+                    closeCommandPalette();
+                } else {
+                    openCommandPalette();
+                }
+                return;
+            }
+
+            // Shortcuts when palette is closed
+            if (!commandPalette.classList.contains('active')) {
+                if (e.metaKey || e.ctrlKey) {
+                    const cmd = commands.find(c => c.shortcut[1]?.toLowerCase() === e.key.toLowerCase());
+                    if (cmd) {
+                        e.preventDefault();
+                        executeCommand(cmd.id);
+                    }
+                }
+                return;
+            }
+
+            // Navigation in palette
+            if (e.key === 'Escape') {
+                closeCommandPalette();
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, filteredCommands.length - 1);
+                renderCommands(filteredCommands);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, 0);
+                renderCommands(filteredCommands);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (filteredCommands[selectedIndex]) {
+                    executeCommand(filteredCommands[selectedIndex].id);
+                }
+            }
+        });
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // Charts
+        function initRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                    datasets: [{
+                        label: 'الإيرادات',
+                        data: [32000, 28000, 45000, 38000, 42000, 52000, 48000],
+                        borderColor: '#0a84ff',
+                        backgroundColor: 'rgba(10, 132, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6,
+                        pointHoverBackgroundColor: '#0a84ff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#6e6e73' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#6e6e73',
+                                callback: v => v.toLocaleString('ar-SA') + ' ر.س'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initAnalyticsChart() {
+            const canvas = document.getElementById('analyticsChart');
+            if (!canvas || canvas.chart) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvas.chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+                    datasets: [
+                        {
+                            label: 'الإيرادات',
+                            data: [85000, 92000, 78000, 105000, 118000, 128000],
+                            backgroundColor: 'rgba(48, 209, 88, 0.8)',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Upsell',
+                            data: [12000, 15000, 18000, 22000, 25000, 28000],
+                            backgroundColor: 'rgba(191, 90, 242, 0.8)',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { color: '#a1a1a6', usePointStyle: true }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#6e6e73' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#6e6e73',
+                                callback: v => v.toLocaleString('ar-SA')
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCommands(commands);
+            setTimeout(initRevenueChart, 100);
+        });
+
+        // Hover on command items
+        document.addEventListener('mouseover', (e) => {
+            const item = e.target.closest('.command-item');
+            if (item) {
+                selectedIndex = parseInt(item.dataset.index);
+                renderCommands(filteredCommands);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | لوحة التحكم</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --gray-100: #fafafa;
+            --gray-200: #eaeaea;
+            --gray-300: #999;
+            --gray-400: #888;
+            --gray-500: #666;
+            --gray-600: #444;
+            --gray-700: #333;
+            --gray-800: #222;
+            --gray-900: #111;
+            --border: #333;
+            --green: #0070f3;
+            --success: #50e3c2;
+            --warning: #f5a623;
+            --error: #e00;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, monospace;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .nav {
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 100;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-brand span {
+            background: var(--fg);
+            color: var(--bg);
+            padding: 2px 6px;
+            font-size: 10px;
+            font-family: var(--font-mono);
+            border-radius: 3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.15s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--fg);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cmd-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gray-900);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--gray-400);
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .cmd-trigger:hover {
+            border-color: var(--gray-600);
+        }
+
+        .cmd-trigger kbd {
+            background: var(--gray-800);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            margin-right: 4px;
+        }
+
+        /* Command Palette Modal */
+        .cmd-palette {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 20vh;
+        }
+
+        .cmd-palette.open {
+            display: flex;
+        }
+
+        .cmd-box {
+            background: var(--gray-900);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            width: 560px;
+            max-width: 90vw;
+            overflow: hidden;
+        }
+
+        .cmd-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+            color: var(--fg);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .cmd-input::placeholder {
+            color: var(--gray-500);
+        }
+
+        .cmd-results {
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .cmd-group-title {
+            padding: 8px 20px;
+            color: var(--gray-500);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cmd-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .cmd-item:hover {
+            background: var(--gray-800);
+        }
+
+        .cmd-item-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gray-800);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Section Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 16px;
+            color: var(--gray-400);
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .tab:hover {
+            color: var(--fg);
+        }
+
+        .tab.active {
+            color: var(--fg);
+            border-bottom-color: var(--fg);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--bg);
+            padding: 24px;
+        }
+
+        .stat-label {
+            color: var(--gray-400);
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-value {
+            font-family: var(--font-mono);
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: -1px;
+        }
+
+        .stat-change {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .stat-change.up {
+            color: var(--success);
+        }
+
+        .stat-change.down {
+            color: var(--error);
+        }
+
+        /* Cards */
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: right;
+            padding: 12px 16px;
+            color: var(--gray-400);
+            font-weight: 400;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-900);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--gray-900);
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge-success {
+            background: rgba(80, 227, 194, 0.1);
+            color: var(--success);
+        }
+
+        .badge-success::before {
+            background: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 166, 35, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-warning::before {
+            background: var(--warning);
+        }
+
+        .badge-error {
+            background: rgba(238, 0, 0, 0.1);
+            color: var(--error);
+        }
+
+        .badge-error::before {
+            background: var(--error);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--fg);
+            transition: all 0.15s;
+        }
+
+        .btn:hover {
+            background: var(--gray-900);
+            border-color: var(--gray-600);
+        }
+
+        .btn-primary {
+            background: var(--fg);
+            color: var(--bg);
+            border-color: var(--fg);
+        }
+
+        .btn-primary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray-300);
+            font-size: 13px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 14px;
+            color: var(--fg);
+            font-size: 14px;
+            font-family: var(--font-mono);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--fg);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-600);
+        }
+
+        textarea.form-input {
+            min-height: 100px;
+            resize: vertical;
+            font-family: var(--font-sans);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray-900);
+        }
+
+        .toggle:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .toggle-info p {
+            color: var(--gray-500);
+            font-size: 13px;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--gray-700);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .toggle-switch.active {
+            background: var(--success);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: var(--fg);
+            border-radius: 50%;
+            top: 3px;
+            right: 3px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(-20px);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            padding: 20px 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: var(--gray-800);
+            border-radius: 2px 2px 0 0;
+            position: relative;
+            min-height: 20px;
+        }
+
+        .chart-bar:hover {
+            background: var(--gray-600);
+        }
+
+        .chart-bar::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--gray-500);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+
+        .chart-bar:hover::after {
+            opacity: 1;
+        }
+
+        .chart-labels {
+            display: flex;
+            gap: 4px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .chart-labels span {
+            flex: 1;
+            text-align: center;
+            font-size: 11px;
+            color: var(--gray-500);
+        }
+
+        /* Templates Grid */
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .template-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .template-card:hover {
+            border-color: var(--gray-600);
+        }
+
+        .template-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .template-name {
+            font-weight: 500;
+        }
+
+        .template-preview {
+            background: var(--gray-900);
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 13px;
+            color: var(--gray-300);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .template-var {
+            background: var(--gray-800);
+            color: var(--success);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Campaigns */
+        .campaign-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid var(--gray-900);
+        }
+
+        .campaign-item:last-child {
+            border-bottom: none;
+        }
+
+        .campaign-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .campaign-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gray-900);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .campaign-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .campaign-meta {
+            color: var(--gray-500);
+            font-size: 13px;
+        }
+
+        .campaign-stats {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .campaign-stat {
+            text-align: left;
+        }
+
+        .campaign-stat-value {
+            font-family: var(--font-mono);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .campaign-stat-label {
+            color: var(--gray-500);
+            font-size: 12px;
+        }
+
+        /* Settings Sections */
+        .settings-section {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .settings-desc {
+            color: var(--gray-500);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        /* API Key Display */
+        .api-key-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gray-900);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 16px;
+        }
+
+        .api-key-value {
+            flex: 1;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            color: var(--fg);
+            margin-bottom: 8px;
+        }
+
+        /* Mobile Nav */
+        .mobile-nav {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .campaign-stats {
+                display: none;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cmd-trigger span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gray-700);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gray-600);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-brand">
+                RIBH
+                <span>BETA</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-section="overview">نظرة عامة</a></li>
+                <li><a href="#" data-section="recovery">استرداد السلات</a></li>
+                <li><a href="#" data-section="upsell">حملات البيع</a></li>
+                <li><a href="#" data-section="templates">القوالب</a></li>
+                <li><a href="#" data-section="analytics">التحليلات</a></li>
+                <li><a href="#" data-section="settings">الإعدادات</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="cmd-trigger" onclick="toggleCmdPalette()">
+                    <span>بحث...</span>
+                    <kbd>⌘</kbd><kbd>K</kbd>
+                </button>
+                <button class="btn btn-sm mobile-nav" onclick="toggleCmdPalette()">☰</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Command Palette -->
+    <div class="cmd-palette" id="cmdPalette" onclick="closeCmdPalette(event)">
+        <div class="cmd-box" onclick="event.stopPropagation()">
+            <input type="text" class="cmd-input" placeholder="ابحث أو اكتب أمر..." id="cmdInput" onkeyup="filterCommands(this.value)">
+            <div class="cmd-results" id="cmdResults">
+                <div class="cmd-group-title">التنقل السريع</div>
+                <div class="cmd-item" onclick="goToSection('overview')">
+                    <div class="cmd-item-icon">📊</div>
+                    <div>نظرة عامة على الإيرادات</div>
+                </div>
+                <div class="cmd-item" onclick="goToSection('recovery')">
+                    <div class="cmd-item-icon">🛒</div>
+                    <div>السلات المتروكة</div>
+                </div>
+                <div class="cmd-item" onclick="goToSection('upsell')">
+                    <div class="cmd-item-icon">📈</div>
+                    <div>حملات البيع الإضافي</div>
+                </div>
+                <div class="cmd-item" onclick="goToSection('templates')">
+                    <div class="cmd-item-icon">💬</div>
+                    <div>قوالب الرسائل</div>
+                </div>
+                <div class="cmd-item" onclick="goToSection('analytics')">
+                    <div class="cmd-item-icon">📉</div>
+                    <div>التحليلات المتقدمة</div>
+                </div>
+                <div class="cmd-item" onclick="goToSection('settings')">
+                    <div class="cmd-item-icon">⚙️</div>
+                    <div>الإعدادات</div>
+                </div>
+                <div class="cmd-group-title">إجراءات سريعة</div>
+                <div class="cmd-item">
+                    <div class="cmd-item-icon">➕</div>
+                    <div>إنشاء حملة جديدة</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-item-icon">📤</div>
+                    <div>إرسال رسائل الاسترداد</div>
+                </div>
+                <div class="cmd-item">
+                    <div class="cmd-item-icon">🔄</div>
+                    <div>مزامنة البيانات</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Overview Section -->
+        <section class="section active" id="overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">
+                        <span>●</span> إيرادات اليوم
+                    </div>
+                    <div class="stat-value mono">٤,٢٨٠</div>
+                    <div class="stat-change up">↑ ١٢.٥٪ من أمس</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        <span>●</span> إيرادات الأسبوع
+                    </div>
+                    <div class="stat-value mono">٢٨,٤٥٠</div>
+                    <div class="stat-change up">↑ ٨.٣٪ من الأسبوع الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        <span>●</span> إيرادات الشهر
+                    </div>
+                    <div class="stat-value mono">١٢٤,٨٠٠</div>
+                    <div class="stat-change down">↓ ٢.١٪ من الشهر الماضي</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">
+                        <span>●</span> معدل التحويل
+                    </div>
+                    <div class="stat-value mono">٣.٨٪</div>
+                    <div class="stat-change up">↑ ٠.٤٪</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">أحدث الطلبات المستردة</h3>
+                    <button class="btn btn-sm">عرض الكل ←</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>العميل</th>
+                                <th>المبلغ</th>
+                                <th>الحالة</th>
+                                <th>الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>محمد أحمد</td>
+                                <td class="mono">٣٥٠ ر.س</td>
+                                <td><span class="badge badge-success">مكتمل</span></td>
+                                <td class="mono">منذ ٥ دقائق</td>
+                            </tr>
+                            <tr>
+                                <td>فاطمة علي</td>
+                                <td class="mono">٨٩٠ ر.س</td>
+                                <td><span class="badge badge-success">مكتمل</span></td>
+                                <td class="mono">منذ ١٢ دقيقة</td>
+                            </tr>
+                            <tr>
+                                <td>عبدالله خالد</td>
+                                <td class="mono">١,٢٤٠ ر.س</td>
+                                <td><span class="badge badge-warning">قيد الانتظار</span></td>
+                                <td class="mono">منذ ٢٥ دقيقة</td>
+                            </tr>
+                            <tr>
+                                <td>نورة سعد</td>
+                                <td class="mono">٤٢٠ ر.س</td>
+                                <td><span class="badge badge-error">ملغي</span></td>
+                                <td class="mono">منذ ٤٥ دقيقة</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">إيرادات آخر ٧ أيام</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <div class="chart-bar" style="height: 60%" data-value="٣,٢٠٠"></div>
+                        <div class="chart-bar" style="height: 45%" data-value="٢,٤٠٠"></div>
+                        <div class="chart-bar" style="height: 80%" data-value="٤,٨٠٠"></div>
+                        <div class="chart-bar" style="height: 55%" data-value="٣,١٠٠"></div>
+                        <div class="chart-bar" style="height: 90%" data-value="٥,٤٠٠"></div>
+                        <div class="chart-bar" style="height: 70%" data-value="٤,١٠٠"></div>
+                        <div class="chart-bar" style="height: 85%" data-value="٥,٠٠٠"></div>
+                    </div>
+                    <div class="chart-labels">
+                        <span>السبت</span>
+                        <span>الأحد</span>
+                        <span>الاثنين</span>
+                        <span>الثلاثاء</span>
+                        <span>الأربعاء</span>
+                        <span>الخميس</span>
+                        <span>الجمعة</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart Recovery Section -->
+        <section class="section" id="recovery">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">السلات المتروكة اليوم</div>
+                    <div class="stat-value mono">٤٧</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">تم الاسترداد</div>
+                    <div class="stat-value mono">١٢</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">معدل الاسترداد</div>
+                    <div class="stat-value mono">٢٥.٥٪</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">قيمة المستردة</div>
+                    <div class="stat-value mono">٨,٤٢٠</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">السلات المتروكة - بانتظار الإرسال</h3>
+                    <button class="btn btn-primary">إرسال الكل</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>العميل</th>
+                                <th>الجوال</th>
+                                <th>المنتجات</th>
+                                <th>القيمة</th>
+                                <th>الوقت</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>سارة محمد</td>
+                                <td class="mono">+966 50 XXX XXXX</td>
+                                <td>٣ منتجات</td>
+                                <td class="mono">٧٨٠ ر.س</td>
+                                <td class="mono">منذ ساعتين</td>
+                                <td><button class="btn btn-sm">إرسال ←</button></td>
+                            </tr>
+                            <tr>
+                                <td>أحمد عبدالله</td>
+                                <td class="mono">+966 55 XXX XXXX</td>
+                                <td>١ منتج</td>
+                                <td class="mono">٣٥٠ ر.س</td>
+                                <td class="mono">منذ ٣ ساعات</td>
+                                <td><button class="btn btn-sm">إرسال ←</button></td>
+                            </tr>
+                            <tr>
+                                <td>ريم خالد</td>
+                                <td class="mono">+966 54 XXX XXXX</td>
+                                <td>٥ منتجات</td>
+                                <td class="mono">١,٤٥٠ ر.س</td>
+                                <td class="mono">منذ ٤ ساعات</td>
+                                <td><button class="btn btn-sm">إرسال ←</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upsell Campaigns Section -->
+        <section class="section" id="upsell">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 18px; font-weight: 600;">حملات البيع الإضافي</h2>
+                <button class="btn btn-primary">+ إنشاء حملة</button>
+            </div>
+
+            <div class="card">
+                <div class="campaign-item">
+                    <div class="campaign-info">
+                        <div class="campaign-icon">🎁</div>
+                        <div>
+                            <div class="campaign-name">خصم ١٠٪ للعملاء الجدد</div>
+                            <div class="campaign-meta">نشطة منذ ٧ أيام · تنتهي بعد ٣ أيام</div>
+                        </div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٢,٤٥٠</div>
+                            <div class="campaign-stat-label">تم الإرسال</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">١٨.٣٪</div>
+                            <div class="campaign-stat-label">معدل الفتح</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٤.٢٪</div>
+                            <div class="campaign-stat-label">معدل التحويل</div>
+                        </div>
+                        <span class="badge badge-success">نشطة</span>
+                    </div>
+                </div>
+                <div class="campaign-item">
+                    <div class="campaign-info">
+                        <div class="campaign-icon">🔥</div>
+                        <div>
+                            <div class="campaign-name">تصفية نهاية الموسم</div>
+                            <div class="campaign-meta">نشطة منذ ١٤ يوم · مستمرة</div>
+                        </div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٨,١٢٠</div>
+                            <div class="campaign-stat-label">تم الإرسال</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٢٢.١٪</div>
+                            <div class="campaign-stat-label">معدل الفتح</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٦.٨٪</div>
+                            <div class="campaign-stat-label">معدل التحويل</div>
+                        </div>
+                        <span class="badge badge-success">نشطة</span>
+                    </div>
+                </div>
+                <div class="campaign-item">
+                    <div class="campaign-info">
+                        <div class="campaign-icon">💎</div>
+                        <div>
+                            <div class="campaign-name">عرض VIP - العملاء المميزين</div>
+                            <div class="campaign-meta">انتهت منذ ٢ يوم</div>
+                        </div>
+                    </div>
+                    <div class="campaign-stats">
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٥٤٠</div>
+                            <div class="campaign-stat-label">تم الإرسال</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">٣٥.٧٪</div>
+                            <div class="campaign-stat-label">معدل الفتح</div>
+                        </div>
+                        <div class="campaign-stat">
+                            <div class="campaign-stat-value mono">١٢.٤٪</div>
+                            <div class="campaign-stat-label">معدل التحويل</div>
+                        </div>
+                        <span class="badge badge-warning">منتهية</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Templates Section -->
+        <section class="section" id="templates">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="font-size: 18px; font-weight: 600;">قوالب رسائل واتساب</h2>
+                <button class="btn btn-primary">+ قالب جديد</button>
+            </div>
+
+            <div class="templates-grid">
+                <div class="template-card">
+                    <div class="template-header">
+                        <span class="template-name">تذكير سلة متروكة</span>
+                        <span class="badge badge-success">نشط</span>
+                    </div>
+                    <div class="template-preview">
+                        مرحباً <span class="template-var">{{name}}</span> 👋
+                        <br><br>
+                        لاحظنا إنك تركت منتجات في سلتك!
+                        <br><br>
+                        أكمل طلبك الآن واستفد من خصم ٥٪ 🎁
+                        <br><br>
+                        <span class="template-var">{{cart_link}}</span>
+                    </div>
+                    <div class="template-actions">
+                        <button class="btn btn-sm">تعديل</button>
+                        <button class="btn btn-sm">معاينة</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <div class="template-header">
+                        <span class="template-name">شكر بعد الشراء</span>
+                        <span class="badge badge-success">نشط</span>
+                    </div>
+                    <div class="template-preview">
+                        شكراً لك <span class="template-var">{{name}}</span> 🙏
+                        <br><br>
+                        تم استلام طلبك رقم <span class="template-var">{{order_id}}</span>
+                        <br><br>
+                        سيتم شحن طلبك خلال ٢٤-٤٨ ساعة ✨
+                        <br><br>
+                        تابع شحنتك: <span class="template-var">{{tracking_url}}</span>
+                    </div>
+                    <div class="template-actions">
+                        <button class="btn btn-sm">تعديل</button>
+                        <button class="btn btn-sm">معاينة</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <div class="template-header">
+                        <span class="template-name">عرض خاص VIP</span>
+                        <span class="badge badge-warning">مسودة</span>
+                    </div>
+                    <div class="template-preview">
+                        حصرياً لعملائنا المميزين 💎
+                        <br><br>
+                        <span class="template-var">{{name}}</span> أنت مؤهل لخصم <span class="template-var">{{discount}}</span>٪
+                        <br><br>
+                        استخدم الكود: <span class="template-var">{{code}}</span>
+                        <br><br>
+                        صالح حتى <span class="template-var">{{expiry}}</span>
+                    </div>
+                    <div class="template-actions">
+                        <button class="btn btn-sm">تعديل</button>
+                        <button class="btn btn-sm">تفعيل</button>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <div class="template-header">
+                        <span class="template-name">تقييم المنتج</span>
+                        <span class="badge badge-success">نشط</span>
+                    </div>
+                    <div class="template-preview">
+                        مرحباً <span class="template-var">{{name}}</span>
+                        <br><br>
+                        نتمنى إن طلبك وصل بأفضل حال!
+                        <br><br>
+                        رأيك يهمنا ⭐ شاركنا تقييمك:
+                        <br><br>
+                        <span class="template-var">{{review_link}}</span>
+                    </div>
+                    <div class="template-actions">
+                        <button class="btn btn-sm">تعديل</button>
+                        <button class="btn btn-sm">معاينة</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="section" id="analytics">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">إجمالي الرسائل المرسلة</div>
+                    <div class="stat-value mono">١٢,٤٥٠</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">معدل التسليم</div>
+                    <div class="stat-value mono">٩٧.٨٪</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">معدل الفتح</div>
+                    <div class="stat-value mono">٢٤.٣٪</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">معدل الرد</div>
+                    <div class="stat-value mono">٨.٧٪</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">أداء الرسائل - آخر ٣٠ يوم</h3>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="height: 250px;">
+                        <div class="chart-bar" style="height: 40%" data-value="٣٢٠"></div>
+                        <div class="chart-bar" style="height: 55%" data-value="٤٤٠"></div>
+                        <div class="chart-bar" style="height: 45%" data-value="٣٦٠"></div>
+                        <div class="chart-bar" style="height: 70%" data-value="٥٦٠"></div>
+                        <div class="chart-bar" style="height: 60%" data-value="٤٨٠"></div>
+                        <div class="chart-bar" style="height: 85%" data-value="٦٨٠"></div>
+                        <div class="chart-bar" style="height: 75%" data-value="٦٠٠"></div>
+                        <div class="chart-bar" style="height: 50%" data-value="٤٠٠"></div>
+                        <div class="chart-bar" style="height: 65%" data-value="٥٢٠"></div>
+                        <div class="chart-bar" style="height: 90%" data-value="٧٢٠"></div>
+                        <div class="chart-bar" style="height: 80%" data-value="٦٤٠"></div>
+                        <div class="chart-bar" style="height: 55%" data-value="٤٤٠"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">أفضل القوالب أداءً</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>القالب</th>
+                                    <th>التحويل</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>تذكير سلة متروكة</td>
+                                    <td class="mono">٥.٢٪</td>
+                                </tr>
+                                <tr>
+                                    <td>عرض VIP</td>
+                                    <td class="mono">٤.٨٪</td>
+                                </tr>
+                                <tr>
+                                    <td>تصفية موسمية</td>
+                                    <td class="mono">٣.٩٪</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">أوقات الذروة</h3>
+                    </div>
+                    <div class="card-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>الوقت</th>
+                                    <th>معدل الفتح</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>٩:٠٠ ص - ١١:٠٠ ص</td>
+                                    <td class="mono">٣٢.٥٪</td>
+                                </tr>
+                                <tr>
+                                    <td>٤:٠٠ م - ٦:٠٠ م</td>
+                                    <td class="mono">٢٨.٣٪</td>
+                                </tr>
+                                <tr>
+                                    <td>٩:٠٠ م - ١١:٠٠ م</td>
+                                    <td class="mono">٢٤.١٪</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="section" id="settings">
+            <div class="card">
+                <div class="card-body">
+                    <div class="settings-section">
+                        <h3 class="settings-title">مفاتيح API</h3>
+                        <p class="settings-desc">مفاتيح الاتصال بمنصات التجارة الإلكترونية</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">مفتاح Salla API</label>
+                            <div class="api-key-box">
+                                <span class="api-key-value">sk_live_••••••••••••••••••••••••</span>
+                                <button class="btn btn-sm">نسخ</button>
+                                <button class="btn btn-sm">تجديد</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Webhook URL</label>
+                            <div class="api-key-box">
+                                <span class="api-key-value">https://api.ribh.sa/webhook/xxxxxxxx</span>
+                                <button class="btn btn-sm">نسخ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">إعدادات واتساب</h3>
+                        <p class="settings-desc">إعدادات الاتصال والإرسال عبر واتساب</p>
+
+                        <div class="form-group">
+                            <label class="form-label">رقم واتساب الأعمال</label>
+                            <input type="text" class="form-input" value="+966 50 XXX XXXX" dir="ltr">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">الحد اليومي للرسائل</label>
+                            <input type="number" class="form-input" value="1000" dir="ltr">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">الإشعارات</h3>
+                        <p class="settings-desc">تحكم في الإشعارات التي تصلك</p>
+
+                        <div class="toggle">
+                            <div class="toggle-info">
+                                <h4>إشعارات السلات المتروكة</h4>
+                                <p>استلم إشعار عند ترك سلة جديدة</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+
+                        <div class="toggle">
+                            <div class="toggle-info">
+                                <h4>إشعارات الطلبات المستردة</h4>
+                                <p>استلم إشعار عند اكتمال استرداد طلب</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+
+                        <div class="toggle">
+                            <div class="toggle-info">
+                                <h4>التقارير الأسبوعية</h4>
+                                <p>استلم ملخص أسبوعي كل يوم أحد</p>
+                            </div>
+                            <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                        </div>
+
+                        <div class="toggle">
+                            <div class="toggle-info">
+                                <h4>تنبيهات الأخطاء</h4>
+                                <p>استلم إشعار عند حدوث خطأ في الإرسال</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 class="settings-title">التفضيلات</h3>
+                        <p class="settings-desc">إعدادات عامة للتطبيق</p>
+
+                        <div class="form-group">
+                            <label class="form-label">المنطقة الزمنية</label>
+                            <select class="form-input">
+                                <option>Asia/Riyadh (GMT+3)</option>
+                                <option>Asia/Dubai (GMT+4)</option>
+                                <option>Asia/Kuwait (GMT+3)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">العملة الافتراضية</label>
+                            <select class="form-input">
+                                <option>ريال سعودي (ر.س)</option>
+                                <option>درهم إماراتي (د.إ)</option>
+                                <option>دينار كويتي (د.ك)</option>
+                            </select>
+                        </div>
+
+                        <div class="toggle">
+                            <div class="toggle-info">
+                                <h4>الوضع الليلي</h4>
+                                <p>تفعيل المظهر الداكن (مفعل افتراضياً)</p>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+
+                    <div style="padding-top: 24px; display: flex; gap: 12px;">
+                        <button class="btn btn-primary">حفظ التغييرات</button>
+                        <button class="btn">إلغاء</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Tab Navigation
+        document.querySelectorAll('.nav-links a, .tab').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.dataset.section;
+                if (section) goToSection(section);
+            });
+        });
+
+        function goToSection(sectionId) {
+            // Update nav links
+            document.querySelectorAll('.nav-links a').forEach(a => {
+                a.classList.toggle('active', a.dataset.section === sectionId);
+            });
+            
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.section === sectionId);
+            });
+            
+            // Show section
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.toggle('active', s.id === sectionId);
+            });
+
+            // Close command palette
+            closeCmdPalette();
+        }
+
+        // Command Palette
+        function toggleCmdPalette() {
+            const palette = document.getElementById('cmdPalette');
+            palette.classList.toggle('open');
+            if (palette.classList.contains('open')) {
+                document.getElementById('cmdInput').focus();
+            }
+        }
+
+        function closeCmdPalette(e) {
+            if (!e || e.target === document.getElementById('cmdPalette')) {
+                document.getElementById('cmdPalette').classList.remove('open');
+                document.getElementById('cmdInput').value = '';
+            }
+        }
+
+        function filterCommands(query) {
+            const items = document.querySelectorAll('.cmd-item');
+            const q = query.toLowerCase();
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(q) ? 'flex' : 'none';
+            });
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + K for command palette
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleCmdPalette();
+            }
+            // Escape to close
+            if (e.key === 'Escape') {
+                closeCmdPalette();
+            }
+        });
+
+        // Quick number formatting for display
+        function formatArabicNumber(num) {
+            const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return num.toString().replace(/[0-9]/g, d => arabicNums[d]);
+        }
+    </script>
+</body>
+</html>

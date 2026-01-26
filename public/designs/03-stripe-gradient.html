@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | لوحة التحكم</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --bg-main: #f6f9fc;
+            --bg-card: #ffffff;
+            --text-primary: #1a1f36;
+            --text-secondary: #697386;
+            --text-muted: #8792a2;
+            --border-color: #e3e8ee;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+            --shadow-glow: 0 4px 20px rgba(102, 126, 234, 0.25);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 400px;
+            background: var(--gradient-hero);
+            z-index: -1;
+            opacity: 0.08;
+            filter: blur(100px);
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 72px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .brand-text {
+            font-size: 22px;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 18px;
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            color: var(--text-primary);
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        .nav-item.active {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 3px;
+            background: var(--gradient-1);
+            border-radius: 3px;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-icon-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 18px;
+            height: 18px;
+            background: var(--gradient-2);
+            border-radius: 50%;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Section Tabs */
+        .section-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .section-tab {
+            padding: 12px 24px;
+            border-radius: var(--radius-lg);
+            background: white;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-tab:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-tab.active {
+            background: var(--gradient-1);
+            color: white;
+            border-color: transparent;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .section-tab svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Revenue Hero Section */
+        .revenue-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: var(--radius-xl);
+            padding: 40px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .revenue-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: shimmer 15s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .revenue-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .revenue-hero h1 {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .revenue-hero .amount {
+            color: white;
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .revenue-hero .amount .currency {
+            font-size: 24px;
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .revenue-hero .trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .revenue-hero .trend svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            opacity: 0.1;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:nth-child(1)::before { background: var(--gradient-1); }
+        .stat-card:nth-child(2)::before { background: var(--gradient-2); }
+        .stat-card:nth-child(3)::before { background: var(--gradient-3); }
+        .stat-card:nth-child(4)::before { background: var(--gradient-4); }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: transparent;
+        }
+
+        .stat-card:hover::before {
+            transform: scale(1.5);
+            opacity: 0.15;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background: var(--gradient-1); }
+        .stat-card:nth-child(2) .stat-icon { background: var(--gradient-2); }
+        .stat-card:nth-child(3) .stat-icon { background: var(--gradient-3); }
+        .stat-card:nth-child(4) .stat-icon { background: var(--gradient-4); }
+
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+        }
+
+        .stat-change.positive {
+            color: #0d9488;
+            background: rgba(13, 148, 136, 0.1);
+        }
+
+        .stat-change.negative {
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.1);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .card-body {
+            padding: 28px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Time Filter Pills */
+        .time-pills {
+            display: flex;
+            gap: 4px;
+            background: var(--bg-main);
+            padding: 4px;
+            border-radius: var(--radius-md);
+        }
+
+        .time-pill {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .time-pill:hover {
+            color: var(--text-primary);
+        }
+
+        .time-pill.active {
+            background: white;
+            color: #667eea;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Donut Chart Stats */
+        .donut-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .donut-stat {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .donut-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .donut-stat-info {
+            flex: 1;
+        }
+
+        .donut-stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .donut-stat-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Cart Recovery Section */
+        .recovery-section {
+            margin-bottom: 32px;
+        }
+
+        .recovery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .recovery-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+
+        .recovery-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .recovery-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .recovery-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recovery-icon.abandoned {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+
+        .recovery-icon.recovered {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: white;
+        }
+
+        .recovery-icon.pending {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .recovery-status {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .recovery-status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+        }
+
+        .recovery-status.paused {
+            background: rgba(234, 179, 8, 0.1);
+            color: #ca8a04;
+        }
+
+        .recovery-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .recovery-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .recovery-meta {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .recovery-progress {
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-main);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-fill.green { background: var(--gradient-4); }
+        .progress-fill.blue { background: var(--gradient-3); }
+        .progress-fill.purple { background: var(--gradient-1); }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Campaigns Section */
+        .campaigns-section {
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(102, 126, 234, 0.35);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .campaign-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .campaign-table th {
+            text-align: right;
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .campaign-table td {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .campaign-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .campaign-table tr:hover {
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        .campaign-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .campaign-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .campaign-badge.upsell { background: rgba(102, 126, 234, 0.1); }
+        .campaign-badge.cross { background: rgba(240, 147, 251, 0.1); }
+        .campaign-badge.bundle { background: rgba(79, 172, 254, 0.1); }
+
+        .campaign-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .campaign-info span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .campaign-stat {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .campaign-stat span {
+            display: block;
+            font-size: 12px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            background: var(--border-color);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--gradient-1);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            right: 23px;
+        }
+
+        /* WhatsApp Templates */
+        .templates-section {
+            margin-bottom: 32px;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .template-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .template-header {
+            padding: 20px 24px;
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .template-type {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .template-type svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .template-stats {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .template-body {
+            padding: 24px;
+        }
+
+        .template-preview {
+            background: #e5ddd5;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .template-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+            border-radius: var(--radius-md);
+        }
+
+        .message-bubble {
+            background: white;
+            border-radius: 12px 12px 12px 0;
+            padding: 14px 18px;
+            max-width: 90%;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-bubble p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .message-bubble .time {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: left;
+            margin-top: 4px;
+        }
+
+        .template-metrics {
+            display: flex;
+            gap: 24px;
+        }
+
+        .template-metric {
+            flex: 1;
+        }
+
+        .template-metric-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .template-metric-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .template-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .template-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        /* Settings Section */
+        .settings-section {
+            margin-bottom: 32px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .settings-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .settings-card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .settings-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .settings-card-icon.api { background: var(--gradient-1); }
+        .settings-card-icon.notifications { background: var(--gradient-2); }
+        .settings-card-icon.preferences { background: var(--gradient-3); }
+        .settings-card-icon.billing { background: var(--gradient-4); }
+
+        .settings-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .settings-card-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .settings-card-body {
+            padding: 24px 28px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .setting-item:first-child {
+            padding-top: 0;
+        }
+
+        .setting-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .setting-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .api-key-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Connection Status */
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--bg-main);
+            border-radius: var(--radius-md);
+            margin-top: 16px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected { background: #22c55e; }
+        .status-dot.disconnected { background: #ef4444; }
+        .status-dot.pending { background: #eab308; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .revenue-hero {
+                padding: 28px;
+            }
+
+            .revenue-hero .amount {
+                font-size: 40px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+
+            .section-tabs {
+                overflow-x: auto;
+                padding-bottom: 8px;
+                flex-wrap: nowrap;
+            }
+
+            .section-tab {
+                white-space: nowrap;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .animate-in:nth-child(1) { animation-delay: 0.1s; }
+        .animate-in:nth-child(2) { animation-delay: 0.2s; }
+        .animate-in:nth-child(3) { animation-delay: 0.3s; }
+        .animate-in:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Section Visibility */
+        .section-content {
+            display: none;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="logo">ر</div>
+                <span class="brand-text">RIBH</span>
+            </div>
+
+            <div class="nav-menu">
+                <a href="#" class="nav-item active">نظرة عامة</a>
+                <a href="#" class="nav-item">التحليلات</a>
+                <a href="#" class="nav-item">العملاء</a>
+                <a href="#" class="nav-item">الرسائل</a>
+                <a href="#" class="nav-item">الإعدادات</a>
+            </div>
+
+            <div class="nav-actions">
+                <button class="nav-icon-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </button>
+                <button class="nav-icon-btn">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="avatar">م</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Section Tabs -->
+        <div class="section-tabs">
+            <button class="section-tab active" data-section="overview">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                نظرة عامة
+            </button>
+            <button class="section-tab" data-section="recovery">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                استرداد السلات
+            </button>
+            <button class="section-tab" data-section="campaigns">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                </svg>
+                حملات الارتقاء
+            </button>
+            <button class="section-tab" data-section="templates">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                قوالب واتساب
+            </button>
+            <button class="section-tab" data-section="settings">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                الإعدادات
+            </button>
+        </div>
+
+        <!-- Overview Section -->
+        <div class="section-content active" id="overview">
+            <!-- Revenue Hero -->
+            <div class="revenue-hero animate-in">
+                <div class="revenue-hero-content">
+                    <h1>إجمالي الإيرادات المستردة</h1>
+                    <div class="amount">
+                        <span>247,850</span>
+                        <span class="currency">ر.س</span>
+                    </div>
+                    <div class="trend">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                        </svg>
+                        +23.5% مقارنة بالشهر الماضي
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="stat-change positive">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            </svg>
+                            +18.2%
+                        </span>
+                    </div>
+                    <div class="stat-value">12,450 ر.س</div>
+                    <div class="stat-label">إيرادات اليوم</div>
+                </div>
+
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <span class="stat-change positive">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            </svg>
+                            +12.5%
+                        </span>
+                    </div>
+                    <div class="stat-value">78,320 ر.س</div>
+                    <div class="stat-label">إيرادات الأسبوع</div>
+                </div>
+
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <span class="stat-change negative">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
+                            </svg>
+                            -3.2%
+                        </span>
+                    </div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">سلات متروكة</div>
+                </div>
+
+                <div class="stat-card animate-in">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="stat-change positive">
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/>
+                            </svg>
+                            +8.7%
+                        </span>
+                    </div>
+                    <div class="stat-value">34.2%</div>
+                    <div class="stat-label">معدل الاسترداد</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">تحليل الإيرادات</div>
+                            <div class="card-subtitle">الإيرادات المستردة على مدار الوقت</div>
+                        </div>
+                        <div class="time-pills">
+                            <button class="time-pill">يوم</button>
+                            <button class="time-pill active">أسبوع</button>
+                            <button class="time-pill">شهر</button>
+                            <button class="time-pill">سنة</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">توزيع المصادر</div>
+                            <div class="card-subtitle">مصادر الإيرادات المستردة</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="sourceChart"></canvas>
+                        </div>
+                        <div class="donut-stats">
+                            <div class="donut-stat">
+                                <div class="donut-color" style="background: #667eea;"></div>
+                                <div class="donut-stat-info">
+                                    <div class="donut-stat-label">استرداد السلات</div>
+                                </div>
+                                <div class="donut-stat-value">45%</div>
+                            </div>
+                            <div class="donut-stat">
+                                <div class="donut-color" style="background: #f093fb;"></div>
+                                <div class="donut-stat-info">
+                                    <div class="donut-stat-label">ارتقاء البيع</div>
+                                </div>
+                                <div class="donut-stat-value">32%</div>
+                            </div>
+                            <div class="donut-stat">
+                                <div class="donut-color" style="background: #4facfe;"></div>
+                                <div class="donut-stat-info">
+                                    <div class="donut-stat-label">البيع المتقاطع</div>
+                                </div>
+                                <div class="donut-stat-value">23%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cart Recovery Section -->
+        <div class="section-content" id="recovery">
+            <div class="section-header">
+                <h2 class="section-title">استرداد السلات المتروكة</h2>
+                <button class="btn btn-primary">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    حملة جديدة
+                </button>
+            </div>
+
+            <div class="recovery-grid">
+                <div class="recovery-card">
+                    <div class="recovery-header">
+                        <div class="recovery-icon abandoned">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                        <span class="recovery-status active">نشط</span>
+                    </div>
+                    <div class="recovery-title">السلات المتروكة اليوم</div>
+                    <div class="recovery-value">45,890 ر.س</div>
+                    <div class="recovery-meta">156 سلة • متوسط 294 ر.س</div>
+                    <div class="recovery-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill purple" style="width: 65%;"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>تم إرسال 101 رسالة</span>
+                            <span>65%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recovery-card">
+                    <div class="recovery-header">
+                        <div class="recovery-icon recovered">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="recovery-status active">مكتمل</span>
+                    </div>
+                    <div class="recovery-title">تم الاسترداد هذا الأسبوع</div>
+                    <div class="recovery-value">78,320 ر.س</div>
+                    <div class="recovery-meta">89 طلب مسترد • 34.2% معدل نجاح</div>
+                    <div class="recovery-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill green" style="width: 89%;"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>89 من 260 سلة</span>
+                            <span>89%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recovery-card">
+                    <div class="recovery-header">
+                        <div class="recovery-icon pending">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="recovery-status paused">قيد الانتظار</span>
+                    </div>
+                    <div class="recovery-title">في انتظار المتابعة</div>
+                    <div class="recovery-value">67</div>
+                    <div class="recovery-meta">ستُرسل الرسالة الثانية خلال 4 ساعات</div>
+                    <div class="recovery-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill blue" style="width: 43%;"></div>
+                        </div>
+                        <div class="progress-label">
+                            <span>المرحلة الثانية</span>
+                            <span>43%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns Section -->
+        <div class="section-content" id="campaigns">
+            <div class="section-header">
+                <h2 class="section-title">حملات الارتقاء بالبيع</h2>
+                <button class="btn btn-primary">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    إنشاء حملة
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-body" style="padding: 0;">
+                    <table class="campaign-table">
+                        <thead>
+                            <tr>
+                                <th>الحملة</th>
+                                <th>النوع</th>
+                                <th>الإيرادات</th>
+                                <th>التحويلات</th>
+                                <th>ROI</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="campaign-name">
+                                        <div class="campaign-badge upsell">🎯</div>
+                                        <div class="campaign-info">
+                                            <h4>ترقية الباقة الذهبية</h4>
+                                            <span>بدأت منذ 14 يوم</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span style="color: #667eea; font-weight: 500;">ارتقاء</span></td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        32,450 ر.س
+                                        <span>+18% عن الهدف</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        156
+                                        <span>12.4% معدل تحويل</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat" style="color: #10b981;">
+                                        340%
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="campaign-name">
+                                        <div class="campaign-badge cross">🔄</div>
+                                        <div class="campaign-info">
+                                            <h4>منتجات مكملة</h4>
+                                            <span>بدأت منذ 7 أيام</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span style="color: #f093fb; font-weight: 500;">متقاطع</span></td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        18,920 ر.س
+                                        <span>+5% عن الهدف</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        89
+                                        <span>8.7% معدل تحويل</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat" style="color: #10b981;">
+                                        220%
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="campaign-name">
+                                        <div class="campaign-badge bundle">📦</div>
+                                        <div class="campaign-info">
+                                            <h4>باقة رمضان المميزة</h4>
+                                            <span>بدأت منذ 3 أيام</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span style="color: #4facfe; font-weight: 500;">حزمة</span></td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        8,750 ر.س
+                                        <span>-12% عن الهدف</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat">
+                                        34
+                                        <span>5.2% معدل تحويل</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="campaign-stat" style="color: #eab308;">
+                                        85%
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Templates Section -->
+        <div class="section-content" id="templates">
+            <div class="section-header">
+                <h2 class="section-title">قوالب رسائل واتساب</h2>
+                <button class="btn btn-primary">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                    </svg>
+                    قالب جديد
+                </button>
+            </div>
+
+            <div class="templates-grid">
+                <div class="template-card">
+                    <div class="template-header">
+                        <div class="template-type">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            </svg>
+                            تذكير السلة
+                        </div>
+                        <div class="template-stats">89% معدل فتح</div>
+                    </div>
+                    <div class="template-body">
+                        <div class="template-preview">
+                            <div class="message-bubble">
+                                <p>مرحباً {اسم_العميل} 👋</p>
+                                <p>لاحظنا أن سلتك لا تزال في انتظارك! 🛒</p>
+                                <p>أكمل طلبك الآن واحصل على خصم 10% 🎁</p>
+                                <p>الكود: COMEBACK10</p>
+                                <div class="time">10:30 ص ✓✓</div>
+                            </div>
+                        </div>
+                        <div class="template-metrics">
+                            <div class="template-metric">
+                                <div class="template-metric-value">1,245</div>
+                                <div class="template-metric-label">مرسلة</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">34.2%</div>
+                                <div class="template-metric-label">تحويل</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">42,560</div>
+                                <div class="template-metric-label">إيرادات</div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">تعديل</button>
+                            <button class="btn btn-primary">استخدام</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <div class="template-header">
+                        <div class="template-type">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            </svg>
+                            عرض ارتقاء
+                        </div>
+                        <div class="template-stats">76% معدل فتح</div>
+                    </div>
+                    <div class="template-body">
+                        <div class="template-preview">
+                            <div class="message-bubble">
+                                <p>شكراً لطلبك {اسم_العميل}! 🎉</p>
+                                <p>عملاء مثلك أحبوا أيضاً:</p>
+                                <p>✨ {اسم_المنتج} - بخصم 20%</p>
+                                <p>اطلب الآن وسيصلك مع طلبك!</p>
+                                <div class="time">2:45 م ✓✓</div>
+                            </div>
+                        </div>
+                        <div class="template-metrics">
+                            <div class="template-metric">
+                                <div class="template-metric-value">856</div>
+                                <div class="template-metric-label">مرسلة</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">18.5%</div>
+                                <div class="template-metric-label">تحويل</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">28,340</div>
+                                <div class="template-metric-label">إيرادات</div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">تعديل</button>
+                            <button class="btn btn-primary">استخدام</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="template-card">
+                    <div class="template-header">
+                        <div class="template-type">
+                            <svg fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            </svg>
+                            متابعة الطلب
+                        </div>
+                        <div class="template-stats">92% معدل فتح</div>
+                    </div>
+                    <div class="template-body">
+                        <div class="template-preview">
+                            <div class="message-bubble">
+                                <p>مرحباً {اسم_العميل} 📦</p>
+                                <p>طلبك #{رقم_الطلب} في الطريق!</p>
+                                <p>🚚 التوصيل المتوقع: {تاريخ_التوصيل}</p>
+                                <p>تتبع شحنتك: {رابط_التتبع}</p>
+                                <div class="time">5:12 م ✓✓</div>
+                            </div>
+                        </div>
+                        <div class="template-metrics">
+                            <div class="template-metric">
+                                <div class="template-metric-value">2,340</div>
+                                <div class="template-metric-label">مرسلة</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">4.8★</div>
+                                <div class="template-metric-label">تقييم</div>
+                            </div>
+                            <div class="template-metric">
+                                <div class="template-metric-value">12%</div>
+                                <div class="template-metric-label">إعادة طلب</div>
+                            </div>
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-secondary">تعديل</button>
+                            <button class="btn btn-primary">استخدام</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="section-content" id="settings">
+            <div class="section-header">
+                <h2 class="section-title">الإعدادات</h2>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div class="settings-card-icon api">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-card-title">مفاتيح API</div>
+                            <div class="settings-card-subtitle">ربط متجرك بالمنصة</div>
+                        </div>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">Salla API Key</div>
+                                <div class="setting-desc">مفتاح الوصول لمتجر سلة</div>
+                            </div>
+                        </div>
+                        <div class="api-key-input">
+                            <input type="password" class="input" value="sk_live_xxxxxxxxxxxxx" placeholder="أدخل مفتاح API">
+                            <button class="btn btn-secondary">نسخ</button>
+                        </div>
+                        <div class="connection-status">
+                            <div class="status-dot connected"></div>
+                            <span class="status-text">متصل • آخر مزامنة منذ 5 دقائق</span>
+                        </div>
+
+                        <div class="setting-item" style="margin-top: 24px;">
+                            <div>
+                                <div class="setting-label">WhatsApp Business API</div>
+                                <div class="setting-desc">مفتاح واتساب للأعمال</div>
+                            </div>
+                        </div>
+                        <div class="api-key-input">
+                            <input type="password" class="input" value="wa_xxxxxxxxxxxxx" placeholder="أدخل مفتاح واتساب">
+                            <button class="btn btn-secondary">نسخ</button>
+                        </div>
+                        <div class="connection-status">
+                            <div class="status-dot connected"></div>
+                            <span class="status-text">متصل • 1,245 رسالة اليوم</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div class="settings-card-icon notifications">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-card-title">الإشعارات</div>
+                            <div class="settings-card-subtitle">تنبيهات الأداء والتحديثات</div>
+                        </div>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">تنبيه السلات المتروكة</div>
+                                <div class="setting-desc">إشعار عند ترك سلة جديدة</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">تقرير يومي</div>
+                                <div class="setting-desc">ملخص الإيرادات والأداء</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">تنبيه الحملات</div>
+                                <div class="setting-desc">عند انتهاء أو توقف حملة</div>
+                            </div>
+                            <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">تحديثات المنتج</div>
+                                <div class="setting-desc">ميزات وتحسينات جديدة</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div class="settings-card-icon preferences">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-card-title">التفضيلات</div>
+                            <div class="settings-card-subtitle">إعدادات الحملات والرسائل</div>
+                        </div>
+                    </div>
+                    <div class="settings-card-body">
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">وقت انتظار السلة</div>
+                                <div class="setting-desc">المدة قبل إرسال التذكير الأول</div>
+                            </div>
+                            <select class="input" style="width: auto;">
+                                <option>30 دقيقة</option>
+                                <option selected>ساعة واحدة</option>
+                                <option>ساعتين</option>
+                                <option>4 ساعات</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">عدد المتابعات</div>
+                                <div class="setting-desc">رسائل المتابعة للسلة الواحدة</div>
+                            </div>
+                            <select class="input" style="width: auto;">
+                                <option>رسالة واحدة</option>
+                                <option selected>رسالتين</option>
+                                <option>3 رسائل</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">وضع الخصومات</div>
+                                <div class="setting-desc">تفعيل الخصومات التلقائية</div>
+                            </div>
+                            <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div class="settings-card-icon billing">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-card-title">الفواتير والاشتراك</div>
+                            <div class="settings-card-subtitle">إدارة باقتك والدفع</div>
+                        </div>
+                    </div>
+                    <div class="settings-card-body">
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: var(--radius-md); padding: 20px; color: white; margin-bottom: 20px;">
+                            <div style="font-size: 13px; opacity: 0.9; margin-bottom: 4px;">الباقة الحالية</div>
+                            <div style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">الباقة الاحترافية</div>
+                            <div style="font-size: 14px; opacity: 0.9;">499 ر.س / شهرياً • تجدد في 15 فبراير</div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">الرسائل المتبقية</div>
+                                <div class="setting-desc">من حد 5,000 رسالة شهرياً</div>
+                            </div>
+                            <div class="setting-label" style="color: #667eea; font-weight: 600;">3,755</div>
+                        </div>
+                        <div class="setting-item">
+                            <div>
+                                <div class="setting-label">طريقة الدفع</div>
+                                <div class="setting-desc">Visa تنتهي بـ 4242</div>
+                            </div>
+                            <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 13px;">تغيير</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Section Tab Navigation
+        document.querySelectorAll('.section-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.section-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const sectionId = tab.getAttribute('data-section');
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+
+        // Time Pills
+        document.querySelectorAll('.time-pill').forEach(pill => {
+            pill.addEventListener('click', () => {
+                document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+            });
+        });
+
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        const gradient = revenueCtx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+        gradient.addColorStop(1, 'rgba(102, 126, 234, 0)');
+
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                datasets: [{
+                    label: 'الإيرادات المستردة',
+                    data: [8500, 12400, 9800, 15600, 11200, 14800, 12450],
+                    borderColor: '#667eea',
+                    backgroundColor: gradient,
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1a1f36',
+                        titleFont: { family: 'IBM Plex Sans Arabic', size: 13 },
+                        bodyFont: { family: 'IBM Plex Sans Arabic', size: 14, weight: '600' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.y.toLocaleString('ar-SA') + ' ر.س';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: { family: 'IBM Plex Sans Arabic', size: 12 },
+                            color: '#8792a2'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: '#e3e8ee',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: { family: 'IBM Plex Sans Arabic', size: 12 },
+                            color: '#8792a2',
+                            callback: function(value) {
+                                return value.toLocaleString('ar-SA');
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+
+        // Source Donut Chart
+        const sourceCtx = document.getElementById('sourceChart').getContext('2d');
+        new Chart(sourceCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['استرداد السلات', 'ارتقاء البيع', 'البيع المتقاطع'],
+                datasets: [{
+                    data: [45, 32, 23],
+                    backgroundColor: ['#667eea', '#f093fb', '#4facfe'],
+                    borderWidth: 0,
+                    cutout: '75%'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: '#1a1f36',
+                        titleFont: { family: 'IBM Plex Sans Arabic', size: 13 },
+                        bodyFont: { family: 'IBM Plex Sans Arabic', size: 14, weight: '600' },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
