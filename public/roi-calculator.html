@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الأرباح | RIBH - اكتشف كم تخسر</title>
+    <meta name="description" content="احسب كم تخسر من السلات المتروكة كل شهر وكم يمكنك استرداده مع رِبح">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --danger: #EF4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
+            --warning: #F59E0B;
+            --bg: #0a0a0a;
+            --card: rgba(18, 18, 18, 0.95);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --text-muted: #71717A;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-effects {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(16, 185, 129, 0.1), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(239, 68, 68, 0.08), transparent 50%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+        
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 20px); }
+        }
+        
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 30px var(--primary-glow); } 50% { box-shadow: 0 0 60px var(--primary-glow), 0 0 90px var(--primary-glow); } }
+        @keyframes countUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes dangerPulse { 0%, 100% { background: rgba(239, 68, 68, 0.1); } 50% { background: rgba(239, 68, 68, 0.2); } }
+        @keyframes moneyRain { 0% { transform: translateY(-100%) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        
+        .header h1 {
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .header h1 span {
+            color: var(--danger);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        
+        /* Calculator Card */
+        .calc-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+        
+        .input-label .emoji { font-size: 1.25rem; }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            color: var(--text);
+            font-size: 1.25rem;
+            font-family: inherit;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+        }
+        
+        .input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        
+        .input-suffix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        
+        html[dir="rtl"] .input-suffix {
+            left: auto;
+            right: 1rem;
+        }
+        
+        /* Slider */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            cursor: pointer;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: grab;
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+        
+        .slider-value {
+            min-width: 60px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--danger);
+        }
+        
+        /* Calculate Button */
+        .calc-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border: none;
+            border-radius: 14px;
+            padding: 1.25rem;
+            color: #000;
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        
+        .calc-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px var(--primary-glow);
+        }
+        
+        .calc-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* Results Section */
+        .results {
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+            animation: countUp 0.6s ease;
+        }
+        
+        /* Loss Card - The Big Scary Number */
+        .loss-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(239, 68, 68, 0.05));
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: dangerPulse 3s infinite;
+        }
+        
+        .loss-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--danger);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .loss-amount {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            font-weight: 800;
+            color: var(--danger);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 40px var(--danger-glow);
+            animation: shake 0.5s ease;
+        }
+        
+        .loss-period {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+        
+        .loss-yearly {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 1.25rem;
+            color: var(--danger);
+        }
+        
+        .loss-yearly span {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        /* Recovery Card */
+        .recovery-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            border: 2px solid rgba(16, 185, 129, 0.3);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: glow 3s infinite;
+        }
+        
+        .recovery-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .recovery-amount {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 40px var(--primary-glow);
+        }
+        
+        .recovery-rate {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-value.warning { color: var(--warning); }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        /* Social Proof */
+        .social-proof {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .social-proof p {
+            font-size: 1rem;
+            color: #A5B4FC;
+        }
+        
+        .social-proof strong {
+            color: #818CF8;
+        }
+        
+        /* Urgency Banner */
+        .urgency-banner {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(245, 158, 11, 0.2));
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            animation: dangerPulse 2s infinite;
+        }
+        
+        .urgency-banner .icon { font-size: 1.5rem; }
+        
+        .urgency-banner p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--warning);
+            margin-top: 0.5rem;
+        }
+        
+        .urgency-banner span {
+            color: var(--danger);
+            font-weight: 700;
+        }
+        
+        /* Guarantee */
+        .guarantee {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .guarantee .icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .guarantee h3 {
+            font-size: 1.25rem;
+            color: #22C55E;
+            margin-bottom: 0.5rem;
+        }
+        
+        .guarantee p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+        
+        /* CTA Button */
+        .cta-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border: none;
+            border-radius: 16px;
+            padding: 1.5rem;
+            color: #000;
+            font-size: 1.35rem;
+            font-weight: 800;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            animation: glow 2s infinite;
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px var(--primary-glow);
+        }
+        
+        .cta-btn .small {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        /* Value Props Section */
+        .value-props {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .value-props h2 {
+            text-align: center;
+            font-size: 1.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .props-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+        }
+        
+        .prop-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .prop-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .prop-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .prop-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        .prop-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        /* Comparison Section */
+        .comparison {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+        }
+        
+        .comparison h3 {
+            text-align: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+        
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .comparison-row:last-child { margin-bottom: 0; }
+        
+        .comparison-row.loss {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .comparison-row.gain {
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .comparison-label {
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .comparison-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .comparison-value.loss { color: var(--danger); }
+        .comparison-value.gain { color: var(--primary); }
+        
+        /* Money Rain Effect */
+        .money-rain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+        
+        .money {
+            position: absolute;
+            font-size: 2rem;
+            animation: moneyRain 3s linear forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container { padding: 1.25rem; }
+            .calc-card { padding: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .loss-card, .recovery-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-effects"></div>
+    <div class="money-rain" id="moneyRain"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">💚 رِبح</div>
+            <h1>اكتشف كم <span>تخسر</span> كل شهر</h1>
+            <p>حاسبة الأرباح الضائعة من السلات المتروكة</p>
+        </header>
+        
+        <!-- Calculator -->
+        <div class="calc-card">
+            <div class="input-group">
+                <label class="input-label">
+                    <span class="emoji">📦</span>
+                    عدد الطلبات شهرياً
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" class="input" id="monthlyOrders" placeholder="500" value="500">
+                    <span class="input-suffix">طلب</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">
+                    <span class="emoji">💰</span>
+                    متوسط قيمة الطلب
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" class="input" id="avgOrderValue" placeholder="350" value="350">
+                    <span class="input-suffix">ر.س</span>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">
+                    <span class="emoji">🛒</span>
+                    نسبة السلات المتروكة
+                </label>
+                <div class="slider-container">
+                    <input type="range" class="slider" id="abandonmentRate" min="40" max="85" value="70">
+                    <div class="slider-value" id="abandonmentValue">70%</div>
+                </div>
+            </div>
+            
+            <button class="calc-btn" onclick="calculate()">
+                <span>🔥</span>
+                احسب خسارتك الآن
+            </button>
+        </div>
+        
+        <!-- Results -->
+        <div class="results" id="results">
+            <!-- Loss Card - The Big Scary Number -->
+            <div class="loss-card">
+                <div class="loss-label">
+                    <span>⚠️</span>
+                    أنت تخسر كل شهر
+                </div>
+                <div class="loss-amount" id="monthlyLoss">0 ر.س</div>
+                <div class="loss-period">من السلات المتروكة فقط!</div>
+                <div class="loss-yearly">
+                    خسارتك السنوية: <span id="yearlyLoss">0 ر.س</span>
+                </div>
+            </div>
+            
+            <!-- Recovery Card -->
+            <div class="recovery-card">
+                <div class="recovery-label">
+                    <span>✨</span>
+                    رِبح يسترد لك شهرياً
+                </div>
+                <div class="recovery-amount" id="monthlyRecovery">0 ر.س</div>
+                <div class="recovery-rate">متوسط استرداد 30% من السلات المتروكة</div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value warning" id="roiDays">0</div>
+                    <div class="stat-label">يوم للعائد على الاستثمار</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="yearlyValue">0</div>
+                    <div class="stat-label">قيمة السنة الأولى</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="roiMultiple">0x</div>
+                    <div class="stat-label">عائد على الاستثمار</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value warning" id="hourlyLoss">0</div>
+                    <div class="stat-label">خسارتك كل ساعة</div>
+                </div>
+            </div>
+            
+            <!-- Social Proof -->
+            <div class="social-proof">
+                <p>📊 المتاجر المشابهة لمتجرك تسترد <strong>32% في المتوسط</strong> من السلات المتروكة</p>
+            </div>
+            
+            <!-- Urgency -->
+            <div class="urgency-banner">
+                <div class="icon">⏰</div>
+                <p>كل ساعة بدون رِبح = <span id="urgencyAmount">0 ر.س</span> ضائعة</p>
+            </div>
+            
+            <!-- Guarantee -->
+            <div class="guarantee">
+                <div class="icon">🛡️</div>
+                <h3>ضمان 10x أو استرداد كامل</h3>
+                <p>إذا لم تسترد 10 أضعاف سعر الاشتراك، نعيد لك المبلغ كاملاً</p>
+            </div>
+            
+            <!-- Comparison -->
+            <div class="comparison">
+                <h3>المقارنة الواضحة</h3>
+                <div class="comparison-row loss">
+                    <div class="comparison-label">❌ بدون رِبح (خسارة سنوية)</div>
+                    <div class="comparison-value loss" id="compareWithout">-0 ر.س</div>
+                </div>
+                <div class="comparison-row gain">
+                    <div class="comparison-label">✅ مع رِبح (ربح سنوي)</div>
+                    <div class="comparison-value gain" id="compareWith">+0 ر.س</div>
+                </div>
+                <div class="comparison-row" style="background: rgba(99, 102, 241, 0.1);">
+                    <div class="comparison-label">💎 تكلفة رِبح (سنوياً)</div>
+                    <div class="comparison-value" style="color: #818CF8;">10,000 ر.س</div>
+                </div>
+            </div>
+            
+            <!-- CTA -->
+            <a href="https://apps.salla.sa/ar/app/3696429638" target="_blank" style="text-decoration: none;">
+                <button class="cta-btn">
+                    ابدأ الآن - مجاناً لأول 100 متجر
+                    <span class="small">تفعيل خلال 5 دقائق ← </span>
+                </button>
+            </a>
+        </div>
+        
+        <!-- Value Props -->
+        <div class="value-props">
+            <h2>لماذا رِبح؟</h2>
+            <div class="props-grid">
+                <div class="prop-card">
+                    <div class="prop-icon">💰</div>
+                    <div class="prop-title">استرداد 30%</div>
+                    <div class="prop-desc">من السلات المتروكة تلقائياً</div>
+                </div>
+                <div class="prop-card">
+                    <div class="prop-icon">🌙</div>
+                    <div class="prop-title">يعمل وأنت نايم</div>
+                    <div class="prop-desc">رسائل ذكية 24/7 بدون تدخل</div>
+                </div>
+                <div class="prop-card">
+                    <div class="prop-icon">⚡</div>
+                    <div class="prop-title">تفعيل 5 دقائق</div>
+                    <div class="prop-desc">بضغطة زر واحدة</div>
+                </div>
+                <div class="prop-card">
+                    <div class="prop-icon">🎁</div>
+                    <div class="prop-title">مجاناً 100 متجر</div>
+                    <div class="prop-desc">الأوائل يحصلون على وصول مبكر</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const $ = id => document.getElementById(id);
+        const fmt = n => n.toLocaleString('ar-SA');
+        const RIBH_PRICE = 10000; // Annual price
+        const RECOVERY_RATE = 0.30; // 30% recovery rate
+        
+        // Update slider value display
+        $('abandonmentRate').addEventListener('input', function() {
+            $('abandonmentValue').textContent = this.value + '%';
+        });
+        
+        // Auto-calculate on input change
+        ['monthlyOrders', 'avgOrderValue', 'abandonmentRate'].forEach(id => {
+            $(id).addEventListener('input', () => {
+                if ($('results').classList.contains('show')) {
+                    calculate();
+                }
+            });
+        });
+        
+        function calculate() {
+            const orders = parseInt($('monthlyOrders').value) || 500;
+            const avgValue = parseInt($('avgOrderValue').value) || 350;
+            const abandonRate = parseInt($('abandonmentRate').value) / 100 || 0.70;
+            
+            // Calculate potential orders (what could have been)
+            const completedOrders = orders;
+            const potentialOrders = completedOrders / (1 - abandonRate);
+            const abandonedOrders = potentialOrders - completedOrders;
+            
+            // Monthly loss
+            const monthlyLoss = abandonedOrders * avgValue;
+            const yearlyLoss = monthlyLoss * 12;
+            
+            // Recovery with RIBH
+            const monthlyRecovery = monthlyLoss * RECOVERY_RATE;
+            const yearlyRecovery = monthlyRecovery * 12;
+            
+            // ROI calculations
+            const roiDays = Math.ceil(RIBH_PRICE / (monthlyRecovery / 30));
+            const roiMultiple = Math.round(yearlyRecovery / RIBH_PRICE);
+            
+            // Hourly loss
+            const hourlyLoss = monthlyLoss / (30 * 24);
+            
+            // Update UI with animations
+            $('monthlyLoss').textContent = fmt(Math.round(monthlyLoss)) + ' ر.س';
+            $('yearlyLoss').textContent = fmt(Math.round(yearlyLoss)) + ' ر.س';
+            $('monthlyRecovery').textContent = '+' + fmt(Math.round(monthlyRecovery)) + ' ر.س';
+            $('roiDays').textContent = roiDays > 365 ? '365+' : roiDays;
+            $('yearlyValue').textContent = fmt(Math.round(yearlyRecovery)) + ' ر.س';
+            $('roiMultiple').textContent = roiMultiple + 'x';
+            $('hourlyLoss').textContent = fmt(Math.round(hourlyLoss)) + ' ر.س';
+            $('urgencyAmount').textContent = fmt(Math.round(hourlyLoss)) + ' ر.س';
+            
+            // Comparison
+            $('compareWithout').textContent = '-' + fmt(Math.round(yearlyLoss)) + ' ر.س';
+            $('compareWith').textContent = '+' + fmt(Math.round(yearlyRecovery - RIBH_PRICE)) + ' ر.س';
+            
+            // Show results with animation
+            $('results').classList.add('show');
+            
+            // Trigger money rain effect
+            triggerMoneyRain();
+            
+            // Scroll to results
+            $('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function triggerMoneyRain() {
+            const container = $('moneyRain');
+            container.innerHTML = '';
+            
+            const emojis = ['💰', '💵', '💴', '💶', '💷', '🤑', '💸'];
+            
+            for (let i = 0; i < 30; i++) {
+                const money = document.createElement('div');
+                money.className = 'money';
+                money.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                money.style.left = Math.random() * 100 + 'vw';
+                money.style.animationDelay = Math.random() * 2 + 's';
+                money.style.animationDuration = (2 + Math.random() * 2) + 's';
+                container.appendChild(money);
+                
+                setTimeout(() => money.remove(), 5000);
+            }
+        }
+        
+        // Initialize with default values visible
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add entrance animations
+            document.querySelectorAll('.calc-card, .value-props').forEach((el, i) => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.6s ease';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 100 + i * 150);
+            });
+        });
+    </script>
+</body>
+</html>

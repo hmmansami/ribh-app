@@ -797,6 +797,18 @@
 
         <!-- Main Content -->
         <main class="main">
+            <!-- Value Banner -->
+            <div class="value-banner animate-in" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(16, 185, 129, 0.15)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 16px 24px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 24px;">⚠️</span>
+                    <div>
+                        <div style="font-weight: 600; color: #EF4444;" data-ar="70% من السلات تُترك قبل الشراء" data-en="70% of carts are abandoned">70% من السلات تُترك قبل الشراء</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" data-ar="رِبح يسترد 30% منها تلقائياً" data-en="RIBH recovers 30% automatically">رِبح يسترد 30% منها تلقائياً</div>
+                    </div>
+                </div>
+                <a href="/roi-calculator.html" style="background: var(--gradient); color: #000; padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; text-decoration: none; white-space: nowrap;" data-ar="احسب خسارتك ←" data-en="Calculate Your Loss ←">احسب خسارتك ←</a>
+            </div>
+
             <!-- Header -->
             <header class="header animate-in">
                 <div class="header-left">
@@ -947,6 +959,41 @@
                         <span class="action-icon">🧪</span>
                         <span data-ar="اختبار الاسترداد" data-en="Test Recovery">اختبار الاسترداد</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Value Props Section -->
+            <div class="value-props-section animate-in delay-4" style="margin-top: 32px;">
+                <h3 style="font-size: 20px; font-weight: 700; margin-bottom: 20px; text-align: center;" data-ar="لماذا رِبح؟" data-en="Why RIBH?">لماذا رِبح؟</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+                    <div style="background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(16, 185, 129, 0.5)'; this.style.transform='translateY(-4px)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.transform='translateY(0)';">
+                        <div style="font-size: 32px; margin-bottom: 12px;">💰</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px;" data-ar="استرداد 30%" data-en="Recover 30%">استرداد 30%</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" data-ar="من السلات المتروكة" data-en="of abandoned carts">من السلات المتروكة</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(16, 185, 129, 0.5)'; this.style.transform='translateY(-4px)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.transform='translateY(0)';">
+                        <div style="font-size: 32px; margin-bottom: 12px;">🌙</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px;" data-ar="يعمل وأنت نايم" data-en="Works While You Sleep">يعمل وأنت نايم</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" data-ar="رسائل ذكية 24/7" data-en="Smart messages 24/7">رسائل ذكية 24/7</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(16, 185, 129, 0.5)'; this.style.transform='translateY(-4px)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.transform='translateY(0)';">
+                        <div style="font-size: 32px; margin-bottom: 12px;">⚡</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px;" data-ar="تفعيل 5 دقائق" data-en="5-Minute Setup">تفعيل 5 دقائق</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" data-ar="بضغطة زر واحدة" data-en="One-click activation">بضغطة زر واحدة</div>
+                    </div>
+                    <div style="background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='rgba(16, 185, 129, 0.5)'; this.style.transform='translateY(-4px)';" onmouseout="this.style.borderColor='var(--card-border)'; this.style.transform='translateY(0)';">
+                        <div style="font-size: 32px; margin-bottom: 12px;">🎁</div>
+                        <div style="font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px;" data-ar="مجاناً 100 متجر" data-en="Free for 100 Stores">مجاناً 100 متجر</div>
+                        <div style="font-size: 13px; color: var(--text-secondary);" data-ar="وصول مبكر حصري" data-en="Exclusive early access">وصول مبكر حصري</div>
+                    </div>
+                </div>
+                
+                <!-- ROI Calculator CTA -->
+                <div style="margin-top: 24px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 24px; text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">🧮</div>
+                    <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;" data-ar="اكتشف كم تخسر كل شهر" data-en="Discover How Much You're Losing">اكتشف كم تخسر كل شهر</h4>
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;" data-ar="حاسبة الأرباح الضائعة من السلات المتروكة" data-en="Calculate your lost revenue from abandoned carts">حاسبة الأرباح الضائعة من السلات المتروكة</p>
+                    <a href="/roi-calculator.html" style="display: inline-block; background: var(--gradient); color: #000; padding: 14px 32px; border-radius: 12px; font-weight: 700; font-size: 16px; text-decoration: none; transition: all 0.3s; box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 40px rgba(16, 185, 129, 0.4)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 0 30px rgba(16, 185, 129, 0.3)';" data-ar="احسب أرباحك الضائعة ←" data-en="Calculate Your Lost Revenue ←">احسب أرباحك الضائعة ←</a>
                 </div>
             </div>
         </main>
