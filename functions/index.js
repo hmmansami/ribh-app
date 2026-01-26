@@ -4,6 +4,18 @@ require('dotenv').config();
 const functions = require('firebase-functions');
 const { app } = require('./server');
 
+// =====================================================
+// LIFECYCLE ENGINE V2 - The Brain of RIBH
+// =====================================================
+let lifecycleEngineV2;
+try {
+    lifecycleEngineV2 = require('./lib/lifecycleEngineV2');
+    console.log('✅ LifecycleEngineV2 loaded - Full integration active!');
+} catch (e) {
+    console.log('⚠️ LifecycleEngineV2 not available:', e.message);
+    lifecycleEngineV2 = null;
+}
+
 // Main API - handles all HTTP requests
 exports.api = functions.https.onRequest(app);
 
@@ -26,6 +38,12 @@ exports.keepAlive = functions.pubsub
         const startTime = Date.now();
         console.log('🔄 Keep-alive triggered at', new Date().toISOString());
 
+        const results = {
+            health: false,
+            whatsapp: false,
+            sequences: { processed: 0 }
+        };
+
         try {
             // Get our own function URL
             const projectId = process.env.GCLOUD_PROJECT || process.env.FIREBASE_CONFIG
@@ -37,22 +55,38 @@ exports.keepAlive = functions.pubsub
             // Ping health endpoint
             const response = await fetch(`${baseUrl}/health`);
             const data = await response.json();
+            results.health = true;
 
             console.log(`✅ Health check passed in ${Date.now() - startTime}ms:`, data);
 
-            // Also ping WhatsApp status to keep Baileys sessions warm
+            // Ping WhatsApp status to keep Baileys sessions warm
             try {
                 await fetch(`${baseUrl}/api/whatsapp/connected`);
+                results.whatsapp = true;
                 console.log('✅ WhatsApp sessions pinged');
             } catch (e) {
                 // WhatsApp endpoint might not exist yet, that's OK
             }
 
-            return { success: true, latencyMs: Date.now() - startTime };
+            // ==========================================
+            // 🔥 PROCESS PENDING SEQUENCES! 
+            // This is the KEY integration - runs every 5 minutes
+            // ==========================================
+            if (lifecycleEngineV2) {
+                try {
+                    results.sequences = await lifecycleEngineV2.processPendingStepsWithWhatsApp();
+                    console.log(`📧 Sequences processed: ${results.sequences.processed}`);
+                } catch (e) {
+                    console.error('❌ Sequence processing error:', e.message);
+                    results.sequences = { error: e.message };
+                }
+            }
+
+            return { success: true, latencyMs: Date.now() - startTime, results };
 
         } catch (error) {
             console.error('❌ Keep-alive error:', error.message);
-            return { success: false, error: error.message };
+            return { success: false, error: error.message, results };
         }
     });
 

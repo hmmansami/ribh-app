@@ -1,7 +1,17 @@
 const admin = require('firebase-admin');
 // Initialize if not already initialized
 if (admin.apps.length === 0) {
-    admin.initializeApp();
+    // Check for service account in environment (for Render deployment)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('✅ Firebase initialized with service account from env');
+    } else {
+        // Default initialization (works in Firebase Functions)
+        admin.initializeApp();
+    }
 }
 
 const express = require('express');
@@ -10,14 +20,29 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// Lifecycle Engine - AI-powered revenue optimization
+// Lifecycle Engine V2 - FULLY INTEGRATED (AI + WhatsApp + Sequences)
 let lifecycleEngine;
 try {
-    lifecycleEngine = require('./lib/lifecycleEngine');
-    console.log('✅ Lifecycle Engine loaded');
+    lifecycleEngine = require('./lib/lifecycleEngineV2');
+    console.log('✅ Lifecycle Engine V2 loaded - Full WhatsApp + Sequence Integration!');
 } catch (e) {
-    console.log('⚠️ Lifecycle Engine not available:', e.message);
-    lifecycleEngine = null;
+    // Fallback to V1 if V2 not available
+    try {
+        lifecycleEngine = require('./lib/lifecycleEngine');
+        console.log('⚠️ Lifecycle Engine V2 not available, using V1');
+    } catch (e2) {
+        console.log('⚠️ Lifecycle Engine not available:', e.message);
+        lifecycleEngine = null;
+    }
+}
+
+// Sequence Engine (for manual sequence operations)
+let sequenceEngine;
+try {
+    sequenceEngine = require('./lib/sequenceEngine');
+    console.log('✅ Sequence Engine loaded');
+} catch (e) {
+    sequenceEngine = null;
 }
 
 // Referral System
@@ -48,6 +73,16 @@ try {
 } catch (e) {
     console.log('⚠️ WhatsApp Bridge not available:', e.message);
     whatsappBridge = null;
+}
+
+// Salla Webhooks - Complete event handler with phone normalization
+let sallaWebhooks;
+try {
+    sallaWebhooks = require('./lib/sallaWebhooks');
+    console.log('✅ Salla Webhooks loaded - Saudi phone normalization enabled!');
+} catch (e) {
+    console.log('⚠️ Salla Webhooks module not available:', e.message);
+    sallaWebhooks = null;
 }
 
 const app = express();
@@ -1611,6 +1646,12 @@ async function handleSallaWebhook(req, res) {
                 }
                 break;
 
+            case 'order.updated':
+            case 'order.update':
+            case 'order.status.updated':
+                handleOrderUpdated(event.data, event.merchant);
+                break;
+
             case 'customer.created':
             case 'customer.create':
                 handleCustomerCreated(event.data, event.merchant);
@@ -1923,13 +1964,24 @@ async function handleAbandonedCart(data, merchant) {
 
     const carts = await readDB(DB_FILE);
 
+    // 📱 Use enhanced phone extraction with Saudi normalization
+    const rawPhone = data.customer?.mobile || data.customer?.phone || 
+                     data.mobile || data.phone ||
+                     data.billing_address?.phone || data.shipping_address?.phone;
+    
+    const normalizedPhone = sallaWebhooks ? 
+        sallaWebhooks.normalizeSaudiPhone(rawPhone) : 
+        rawPhone;
+    
+    console.log(`📱 Phone: ${rawPhone} → ${normalizedPhone}`);
+
     const customer = {
-        name: data.customer?.name || 'عميل',
-        phone: data.customer?.mobile || data.customer?.phone,
-        email: data.customer?.email
+        name: data.customer?.name || data.customer?.first_name || 'عميل',
+        phone: normalizedPhone,
+        email: data.customer?.email || data.email
     };
 
-    const cartTotal = data.total || data.grand_total || 0;
+    const cartTotal = data.total || data.grand_total || data.sub_total || 0;
 
     // 🧠 SMART: Detect customer type
     const customerType = await detectCustomerType(customer, cartTotal, merchant);
@@ -1974,27 +2026,55 @@ async function handleOrderCreated(data, merchant) {
 
     const carts = await readDB(DB_FILE);
 
-    // Mark cart as recovered if matches
-    const cartIndex = carts.findIndex(c =>
-        (c.customer?.phone === data.customer?.mobile || c.customer?.email === data.customer?.email) &&
-        (c.status === 'sent' || c.status === 'pending')
-    );
+    // 📱 Normalize phone for matching
+    const rawPhone = data.customer?.mobile || data.customer?.phone || 
+                     data.mobile || data.phone;
+    const normalizedPhone = sallaWebhooks ? 
+        sallaWebhooks.normalizeSaudiPhone(rawPhone) : 
+        rawPhone;
+    const customerEmail = data.customer?.email || data.email;
+    
+    console.log(`🔍 Looking for cart to mark recovered: phone=${normalizedPhone}, email=${customerEmail}`);
+
+    // Mark cart as recovered if matches (try multiple matching strategies)
+    const cartIndex = carts.findIndex(c => {
+        // Must be pending or sent
+        if (c.status !== 'sent' && c.status !== 'pending') return false;
+        
+        // Match by cart_id if available
+        if (data.cart_id && c.id === data.cart_id) return true;
+        
+        // Match by email
+        if (customerEmail && c.customer?.email === customerEmail) return true;
+        
+        // Match by normalized phone
+        if (normalizedPhone && c.customer?.phone) {
+            const cartPhone = sallaWebhooks ? 
+                sallaWebhooks.normalizeSaudiPhone(c.customer.phone) : 
+                c.customer.phone;
+            if (cartPhone === normalizedPhone) return true;
+        }
+        
+        return false;
+    });
 
     let recoveredCart = null;
     if (cartIndex !== -1) {
         carts[cartIndex].status = 'recovered';
         carts[cartIndex].recoveredAt = new Date().toISOString();
-        carts[cartIndex].orderId = data.id;
-        carts[cartIndex].orderValue = data.total || data.grand_total || 0;
+        carts[cartIndex].orderId = data.id || data.order_id;
+        carts[cartIndex].orderValue = data.total || data.grand_total || data.amounts?.total?.amount || 0;
         recoveredCart = carts[cartIndex];
         await writeDB(DB_FILE, carts);
-        console.log(`✅ Cart recovered! Value: ${recoveredCart.orderValue} SAR`);
+        console.log(`✅ Cart recovered! Value: ${recoveredCart.orderValue} SAR (cart ID: ${recoveredCart.id})`);
+    } else {
+        console.log(`📝 No matching abandoned cart found (direct purchase)`);
     }
 
     // 🆕 LOG REVENUE for tracking
     await logRevenue(merchant, {
-        orderId: data.id,
-        orderValue: data.total || data.grand_total || 0,
+        orderId: data.id || data.order_id,
+        orderValue: data.total || data.grand_total || data.amounts?.total?.amount || 0,
         wasRecovered: !!recoveredCart,
         cartId: recoveredCart?.id || null,
         customerType: recoveredCart?.customerType || 'DIRECT',
@@ -2004,8 +2084,8 @@ async function handleOrderCreated(data, merchant) {
     // 🆕 SEND POST-PURCHASE UPSELL EMAIL (after 2 hours)
     const customer = {
         name: data.customer?.name || data.customer?.first_name || 'عميلنا',
-        email: data.customer?.email,
-        phone: data.customer?.mobile
+        email: customerEmail,
+        phone: normalizedPhone
     };
 
     if (customer.email) {
@@ -2136,17 +2216,85 @@ async function logRevenue(merchant, data) {
     }
 }
 
+// 🆕 Handle order.updated - Track fulfillment and update analytics
+async function handleOrderUpdated(data, merchant) {
+    const orderId = data.id || data.order_id;
+    const oldStatus = data.old_status?.name || data.old_status || 'unknown';
+    const newStatus = data.status?.name || data.status || 'unknown';
+    
+    console.log(`📦 Order ${orderId} updated: ${oldStatus} → ${newStatus}`);
+    
+    // Log status change for analytics
+    try {
+        await db.collection('order_updates').add({
+            orderId,
+            merchant: merchant?.id || merchant,
+            oldStatus,
+            newStatus,
+            timestamp: new Date().toISOString(),
+            customerEmail: data.customer?.email,
+            customerPhone: sallaWebhooks ? 
+                sallaWebhooks.normalizeSaudiPhone(data.customer?.mobile || data.customer?.phone) : 
+                data.customer?.mobile
+        });
+    } catch (e) {
+        console.error('Error logging order update:', e);
+    }
+    
+    // Handle specific status transitions
+    if (newStatus === 'delivered' || newStatus === 'completed') {
+        // Order delivered - could trigger review request
+        console.log(`✅ Order ${orderId} delivered to ${data.customer?.name || 'customer'}`);
+        
+        // TODO: Could trigger a review request email here
+        // scheduleReviewRequest(data, merchant);
+    }
+    
+    if (newStatus === 'cancelled' || newStatus === 'refunded') {
+        console.log(`❌ Order ${orderId} ${newStatus}`);
+        
+        // Update revenue log to mark as not recovered if it was
+        try {
+            const revenueLogs = await readDB('revenue_log') || [];
+            const logIndex = revenueLogs.findIndex(r => r.orderId === orderId);
+            if (logIndex !== -1) {
+                revenueLogs[logIndex].status = newStatus;
+                revenueLogs[logIndex].updatedAt = new Date().toISOString();
+                await writeDB('revenue_log', revenueLogs);
+            }
+        } catch (e) {
+            console.error('Error updating revenue log:', e);
+        }
+    }
+}
+
 // Handle new customer created - Send WELCOME OFFER (Attraction)
 async function handleCustomerCreated(data, merchant) {
-    console.log('👋 New customer created!', data?.email || data?.mobile);
-
-    const email = data?.email;
-    const name = data?.name || data?.first_name || 'عميلنا';
-    const phone = data?.mobile || data?.phone;
+    const email = data?.email || data?.customer?.email;
+    const name = data?.name || data?.first_name || data?.customer?.name || 'عميلنا';
+    const rawPhone = data?.mobile || data?.phone || data?.customer?.mobile || data?.customer?.phone;
+    const phone = sallaWebhooks ? sallaWebhooks.normalizeSaudiPhone(rawPhone) : rawPhone;
+    
+    console.log('👋 New customer created!', { email, phone, name });
 
     if (!email && !phone) {
         console.log('⚠️ Customer has no email or phone');
         return;
+    }
+    
+    // Store customer for future reference
+    try {
+        await db.collection('customers').doc(data?.id?.toString() || Date.now().toString()).set({
+            id: data?.id,
+            merchant: merchant?.id || merchant,
+            name,
+            email,
+            phone,
+            createdAt: new Date().toISOString(),
+            source: 'webhook'
+        }, { merge: true });
+    } catch (e) {
+        console.error('Error storing customer:', e);
     }
 
     // 🆕 SEND WELCOME EMAIL DIRECTLY (ATTRACTION OFFER)
@@ -4259,6 +4407,127 @@ app.get('/health', (req, res) => {
     res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
+// ==========================================
+// SEQUENCE PROCESSING API (Manual Trigger)
+// ==========================================
+
+/**
+ * Manually trigger sequence processing
+ * POST /api/sequences/process
+ * Useful for testing and debugging
+ */
+app.post('/api/sequences/process', async (req, res) => {
+    try {
+        if (!lifecycleEngine || !lifecycleEngine.processPendingSequenceSteps) {
+            return res.status(503).json({
+                success: false,
+                error: 'LifecycleEngineV2 not available'
+            });
+        }
+
+        const result = await lifecycleEngine.processPendingStepsWithWhatsApp();
+        
+        res.json({
+            success: true,
+            processed: result.processed,
+            message: `Processed ${result.processed} sequence steps`,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('❌ Sequence processing error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Get sequence stats for a store
+ * GET /api/sequences/stats?merchant=xxx
+ */
+app.get('/api/sequences/stats', async (req, res) => {
+    try {
+        const merchantId = req.query.merchant || req.storeId;
+        
+        if (!merchantId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Merchant ID required'
+            });
+        }
+
+        const stats = {
+            sequences: null,
+            lifecycle: null
+        };
+
+        if (sequenceEngine) {
+            stats.sequences = sequenceEngine.getSequenceStats(merchantId);
+        }
+
+        if (lifecycleEngine && lifecycleEngine.getStats) {
+            stats.lifecycle = lifecycleEngine.getStats(merchantId);
+        }
+
+        res.json({
+            success: true,
+            merchantId,
+            stats,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('❌ Stats error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+/**
+ * Cancel a sequence for a customer
+ * POST /api/sequences/cancel
+ * Body: { merchant, email, type }
+ */
+app.post('/api/sequences/cancel', async (req, res) => {
+    try {
+        const { merchant, email, type } = req.body;
+        const merchantId = merchant || req.storeId;
+
+        if (!merchantId || !email || !type) {
+            return res.status(400).json({
+                success: false,
+                error: 'merchant, email, and type are required'
+            });
+        }
+
+        if (!sequenceEngine) {
+            return res.status(503).json({
+                success: false,
+                error: 'Sequence engine not available'
+            });
+        }
+
+        sequenceEngine.cancelSequence(type, merchantId, email);
+
+        res.json({
+            success: true,
+            message: `Cancelled ${type} sequence for ${email}`,
+            timestamp: new Date().toISOString()
+        });
+
+    } catch (error) {
+        console.error('❌ Cancel error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 // Root serves the dashboard (index.html is served by express.static)
 // No need for explicit / route - express.static handles it
 
@@ -4375,10 +4644,12 @@ app.get('/api/analytics/summary', async (req, res) => {
 // ==========================================
 // SEQUENCE PROCESSOR (Multi-step emails)
 // ==========================================
-let sequenceEngine;
 let emailSender;
 try {
-    sequenceEngine = require('./lib/sequenceEngine');
+    // sequenceEngine already loaded at top of file
+    if (!sequenceEngine) {
+        sequenceEngine = require('./lib/sequenceEngine');
+    }
     emailSender = require('./lib/emailSender');
     console.log('✅ Sequence Engine loaded');
 } catch (e) {

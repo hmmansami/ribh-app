@@ -1,18 +1,30 @@
 /**
- * SEQUENCE ENGINE - Multi-Step Email/SMS Sequences
+ * SEQUENCE ENGINE V2 - Multi-Step Email + WhatsApp Sequences
  * 
- * Instead of 1 email, sends a smart sequence:
+ * Instead of 1 message, sends a smart sequence across channels:
  * 
  * ABANDONED CART:
- * - Email 1 (30 min): "You left something behind" (no discount)
- * - Email 2 (2 hours): "Still thinking? Here's 10% off"
- * - Email 3 (24 hours): "Final chance - 15% off + free shipping"
+ * - Step 1 (30 min): WhatsApp + Email - "You left something behind" (no discount)
+ * - Step 2 (2 hours): Email - "Still thinking? Here's 10% off"
+ * - Step 3 (24 hours): WhatsApp + Email - "Final chance - 15% off + free shipping"
  * 
- * Stops if customer completes purchase
+ * POST PURCHASE:
+ * - Step 1 (10 min): WhatsApp - Thank you!
+ * - Step 2 (3 days): Email - Review request + upsell
+ * 
+ * Stops if customer completes purchase (cancelSequence)
  */
 
 const fs = require('fs');
 const path = require('path');
+
+// WhatsApp Client for HTTP → Render Bridge
+let whatsappClient;
+try {
+    whatsappClient = require('./whatsappClient');
+} catch (e) {
+    whatsappClient = null;
+}
 
 // Store active sequences
 const SEQUENCES_FILE = path.join(__dirname, '..', 'data', 'sequences.json');
@@ -30,21 +42,22 @@ function writeJSON(file, data) {
     fs.writeFileSync(file, JSON.stringify(data, null, 2));
 }
 
-// Sequence templates
+// Sequence templates - Now with multi-channel support!
 const SEQUENCES = {
     cart_recovery: [
         {
             step: 1,
             delay: 30 * 60 * 1000, // 30 minutes
-            channel: 'email',
+            channels: ['whatsapp', 'email'], // WhatsApp first, email fallback
             subject: '🛒 نسيت شيئاً في سلتك!',
             body: 'مرحباً! لاحظنا أنك تركت بعض المنتجات في سلتك. هل تحتاج مساعدة في إكمال طلبك؟',
+            whatsappBody: 'مرحباً {name}! 👋\n\nلاحظنا أنك تركت سلتك 🛒\n\n💰 القيمة: {cartValue} ر.س\n\n👉 أكمل طلبك: {checkoutUrl}',
             discount: 0
         },
         {
             step: 2,
             delay: 2 * 60 * 60 * 1000, // 2 hours
-            channel: 'email',
+            channels: ['email'], // Email only (don't spam WhatsApp)
             subject: '⏰ سلتك لا تزال في انتظارك - خصم 10%!',
             body: 'لأنك مميز، جهزنا لك خصم 10% على سلتك. العرض صالح لمدة ساعتين!',
             discount: 10
@@ -52,9 +65,10 @@ const SEQUENCES = {
         {
             step: 3,
             delay: 24 * 60 * 60 * 1000, // 24 hours
-            channel: 'email',
+            channels: ['whatsapp', 'email'], // Final push - both channels
             subject: '🚨 فرصة أخيرة! خصم 15% + شحن مجاني',
             body: 'هذه آخر فرصة لإتمام طلبك! خصم 15% + شحن مجاني. العرض ينتهي خلال ساعات.',
+            whatsappBody: '🚨 آخر فرصة {name}!\n\n*خصم 15% + شحن مجاني* على سلتك!\n\n⏰ ينتهي خلال ساعات\n\n👉 {checkoutUrl}',
             discount: 15,
             bonus: 'شحن مجاني'
         }
@@ -64,17 +78,19 @@ const SEQUENCES = {
         {
             step: 1,
             delay: 10 * 60 * 1000, // 10 minutes
-            channel: 'email',
+            channels: ['whatsapp'], // WhatsApp thank you is more personal
             subject: '💚 شكراً لطلبك!',
-            body: 'شكراً لثقتك بنا! طلبك في الطريق. هل تريد إضافة منتجات قبل الشحن؟',
-            discount: 10
+            body: 'شكراً لثقتك بنا! طلبك في الطريق.',
+            whatsappBody: 'شكراً لطلبك {name}! 💚\n\nطلبك بقيمة {orderValue} ر.س في الطريق.\n\n🙏 نتمنى لك تجربة رائعة!',
+            discount: 0
         },
         {
             step: 2,
             delay: 3 * 24 * 60 * 60 * 1000, // 3 days
-            channel: 'email',
+            channels: ['email', 'whatsapp'], // Review request
             subject: '⭐ كيف كانت تجربتك؟',
             body: 'نتمنى أن يكون طلبك قد وصل بأمان! شاركنا رأيك واحصل على خصم 15% على طلبك القادم.',
+            whatsappBody: 'مرحباً {name}! ⭐\n\nهل وصل طلبك بأمان؟\n\nشاركنا رأيك واحصل على *خصم 15%* على طلبك القادم! 🎁',
             discount: 15
         }
     ]
@@ -131,12 +147,15 @@ function cancelSequence(type, storeId, customerEmail) {
 }
 
 /**
- * Process pending sequence steps (run every minute)
+ * Process pending sequence steps (run every 5 minutes via keep-alive)
+ * Now supports both Email AND WhatsApp!
  */
 async function processPendingSteps(emailSender) {
     const sequences = readJSON(SEQUENCES_FILE);
     const now = new Date();
     let processed = 0;
+    let whatsappSent = 0;
+    let emailsSent = 0;
 
     for (const sequence of sequences) {
         if (sequence.status !== 'active') continue;
@@ -147,32 +166,87 @@ async function processPendingSteps(emailSender) {
         const template = SEQUENCES[sequence.type];
         if (!template || sequence.currentStep >= template.length) {
             sequence.status = 'completed';
+            sequence.completedAt = new Date().toISOString();
             continue;
         }
 
         const step = template[sequence.currentStep];
+        const channels = step.channels || [step.channel || 'email'];
+        
+        const offer = {
+            headline: step.subject,
+            body: step.body,
+            discount: step.discount,
+            offer: step.discount > 0 ? `خصم ${step.discount}%` : null,
+            urgency: step.bonus || null
+        };
 
-        // Send the message
-        if (emailSender && step.channel === 'email') {
-            const offer = {
-                headline: step.subject,
-                body: step.body,
-                discount: step.discount,
-                offer: step.discount > 0 ? `خصم ${step.discount}%` : null,
-                urgency: step.bonus || null
-            };
+        const stepResult = {
+            step: sequence.currentStep + 1,
+            sentAt: new Date().toISOString(),
+            subject: step.subject,
+            channels: []
+        };
 
-            await emailSender.sendOfferEmail(sequence.customerEmail, offer, {
-                storeName: sequence.context.storeName || 'متجر رِبح',
-                checkoutUrl: sequence.context.checkoutUrl || '#'
-            });
+        // ==========================================
+        // SEND WHATSAPP (if channel includes whatsapp)
+        // ==========================================
+        if (channels.includes('whatsapp') && whatsappClient && sequence.context.phone) {
+            try {
+                const isConnected = await whatsappClient.isConnected(sequence.storeId);
+                
+                if (isConnected) {
+                    // Build personalized WhatsApp message
+                    let waMessage = step.whatsappBody || step.body;
+                    waMessage = waMessage
+                        .replace('{name}', sequence.context.customerName || 'عميلنا')
+                        .replace('{cartValue}', sequence.context.cartValue || '')
+                        .replace('{orderValue}', sequence.context.orderValue || '')
+                        .replace('{checkoutUrl}', sequence.context.checkoutUrl || '')
+                        .replace('{storeUrl}', sequence.context.storeUrl || '');
 
-            sequence.history.push({
-                step: sequence.currentStep + 1,
-                sentAt: new Date().toISOString(),
-                subject: step.subject
-            });
+                    if (step.discount > 0) {
+                        waMessage += `\n\n🎁 خصم ${step.discount}%`;
+                    }
 
+                    const result = await whatsappClient.sendMessage(
+                        sequence.storeId,
+                        sequence.context.phone,
+                        waMessage
+                    );
+
+                    if (result.success) {
+                        stepResult.channels.push('whatsapp');
+                        whatsappSent++;
+                        console.log(`📱 [Sequence] WhatsApp sent: ${sequence.type} step ${sequence.currentStep + 1}`);
+                    }
+                }
+            } catch (e) {
+                console.error(`❌ [Sequence] WhatsApp error:`, e.message);
+            }
+        }
+
+        // ==========================================
+        // SEND EMAIL (if channel includes email)
+        // ==========================================
+        if (channels.includes('email') && emailSender && sequence.customerEmail) {
+            try {
+                await emailSender.sendOfferEmail(sequence.customerEmail, offer, {
+                    storeName: sequence.context.storeName || 'متجر رِبح',
+                    checkoutUrl: sequence.context.checkoutUrl || '#'
+                });
+
+                stepResult.channels.push('email');
+                emailsSent++;
+                console.log(`📧 [Sequence] Email sent: ${sequence.type} step ${sequence.currentStep + 1}`);
+            } catch (e) {
+                console.error(`❌ [Sequence] Email error:`, e.message);
+            }
+        }
+
+        // Only count as processed if at least one channel succeeded
+        if (stepResult.channels.length > 0) {
+            sequence.history.push(stepResult);
             processed++;
         }
 
@@ -191,7 +265,7 @@ async function processPendingSteps(emailSender) {
     writeJSON(SEQUENCES_FILE, sequences);
 
     if (processed > 0) {
-        console.log(`📧 [Sequence] Processed ${processed} sequence steps`);
+        console.log(`✅ [Sequence] Processed ${processed} steps (📧 ${emailsSent} emails, 📱 ${whatsappSent} WhatsApp)`);
     }
 
     return processed;

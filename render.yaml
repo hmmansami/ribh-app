@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ribh-api
+    runtime: node
+    plan: free
+    buildCommand: cd functions && npm install
+    startCommand: cd functions && node server-standalone.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WHATSAPP_BRIDGE_URL
+        value: https://ribh-whatsapp.onrender.com
+      - key: WHATSAPP_API_KEY
+        value: ribh-secret-2026

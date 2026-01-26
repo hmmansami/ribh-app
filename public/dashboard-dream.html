@@ -3,15 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح | مالك يشتغل</title>
-    <meta name="description" content="رِبح - المكينة تشتغل، مالك يزيد">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | المكينة شغالة 💚</title>
+    <meta name="description" content="رِبح - نقرة واحدة، المال يتدفق">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
     <style>
         /* ============================================
-           THE DREAM DASHBOARD - Emotion First
-           "One Click → Money Flows"
+           THE DREAM DASHBOARD - ONE CLICK MAGIC
+           "Zero Effort → Money Flows"
         ============================================ */
 
         *,
@@ -41,6 +41,9 @@
             /* Gold - premium, reward */
             --gold: #FFB800;
             --gold-glow: rgba(255, 184, 0, 0.3);
+
+            /* WhatsApp Green */
+            --whatsapp: #25D366;
 
             /* Text with soul */
             --text-bright: #FFFFFF;
@@ -75,7 +78,6 @@
             overflow: hidden;
         }
 
-        /* Giant breathing orbs - like the universe is alive */
         .cosmos-orb {
             position: absolute;
             border-radius: 50%;
@@ -113,20 +115,11 @@
         }
 
         @keyframes cosmicPulse {
-
-            0%,
-            100% {
-                opacity: 0.4;
-                transform: scale(1) translateY(0);
-            }
-
-            50% {
-                opacity: 0.7;
-                transform: scale(1.1) translateY(-20px);
-            }
+            0%, 100% { opacity: 0.4; transform: scale(1) translateY(0); }
+            50% { opacity: 0.7; transform: scale(1.1) translateY(-20px); }
         }
 
-        /* Floating particles - money atoms in the air */
+        /* Floating particles */
         .particles {
             position: absolute;
             inset: 0;
@@ -143,23 +136,34 @@
         }
 
         @keyframes particleFloat {
-            0% {
-                opacity: 0;
-                transform: translateY(100vh) scale(0);
-            }
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { opacity: 0; transform: translateY(-100px) scale(0); }
+        }
 
-            10% {
-                opacity: 0.8;
-            }
+        /* ============================================
+           COIN RAIN EFFECT 🪙
+        ============================================ */
+        .coin-rain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
 
-            90% {
-                opacity: 0.8;
-            }
+        .coin {
+            position: absolute;
+            font-size: 32px;
+            opacity: 0;
+            animation: coinFall 2s ease-in forwards;
+        }
 
-            100% {
-                opacity: 0;
-                transform: translateY(-100px) scale(0);
-            }
+        @keyframes coinFall {
+            0% { opacity: 1; transform: translateY(-50px) rotate(0deg) scale(0); }
+            20% { opacity: 1; transform: translateY(20vh) rotate(180deg) scale(1.2); }
+            100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.5); }
         }
 
         /* ============================================
@@ -171,6 +175,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-bottom: 120px; /* Space for floating button */
         }
 
         /* ============================================
@@ -180,7 +185,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 24px 40px;
+            padding: 20px;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -190,36 +195,29 @@
         .brand {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
         .brand-mark {
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             background: var(--flow);
-            border-radius: 16px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            box-shadow: 0 0 40px var(--money-glow), 0 8px 32px rgba(0, 0, 0, 0.4);
+            font-size: 22px;
+            box-shadow: 0 0 40px var(--money-glow);
             animation: brandGlow 4s ease-in-out infinite;
         }
 
         @keyframes brandGlow {
-
-            0%,
-            100% {
-                box-shadow: 0 0 40px var(--money-glow), 0 8px 32px rgba(0, 0, 0, 0.4);
-            }
-
-            50% {
-                box-shadow: 0 0 60px var(--money-glow), 0 8px 48px rgba(0, 0, 0, 0.4);
-            }
+            0%, 100% { box-shadow: 0 0 40px var(--money-glow); }
+            50% { box-shadow: 0 0 60px var(--money-glow); }
         }
 
         .brand-name {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 800;
             background: var(--flow);
             -webkit-background-clip: text;
@@ -227,31 +225,58 @@
             background-clip: text;
         }
 
-        .header-actions {
+        /* ============================================
+           WHATSAPP STATUS INDICATOR
+        ============================================ */
+        .wa-status {
             display: flex;
             align-items: center;
-            gap: 12px;
-        }
-
-        .icon-btn {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--surface);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            color: var(--text-ghost);
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 18px;
         }
 
-        .icon-btn:hover {
-            background: var(--surface-hover);
-            color: var(--text-soft);
-            transform: translateY(-2px);
+        .wa-status.connected {
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            color: var(--whatsapp);
+        }
+
+        .wa-status.disconnected {
+            background: rgba(255, 59, 48, 0.15);
+            border: 1px solid rgba(255, 59, 48, 0.3);
+            color: #FF3B30;
+            animation: pulseWarning 2s infinite;
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .wa-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .wa-status.connected .wa-dot {
+            background: var(--whatsapp);
+            box-shadow: 0 0 10px var(--whatsapp);
+            animation: statusPulse 1.5s ease-in-out infinite;
+        }
+
+        .wa-status.disconnected .wa-dot {
+            background: #FF3B30;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
         }
 
         /* ============================================
@@ -259,19 +284,18 @@
         ============================================ */
         .main {
             flex: 1;
-            padding: 0 40px 80px;
-            max-width: 1100px;
+            padding: 0 20px 40px;
+            max-width: 600px;
             margin: 0 auto;
             width: 100%;
         }
 
         /* ============================================
            THE HERO - THE EMOTION CENTER
-           This is where they FEEL the money
         ============================================ */
         .hero {
             text-align: center;
-            padding: 40px 0 60px;
+            padding: 20px 0 40px;
             position: relative;
         }
 
@@ -287,7 +311,13 @@
             font-size: 14px;
             font-weight: 600;
             color: var(--money);
-            margin-bottom: 48px;
+            margin-bottom: 32px;
+        }
+
+        .status.offline {
+            background: rgba(255, 59, 48, 0.1);
+            border-color: rgba(255, 59, 48, 0.2);
+            color: #FF3B30;
         }
 
         .status-dot {
@@ -299,44 +329,34 @@
             box-shadow: 0 0 20px var(--money);
         }
 
-        @keyframes statusPulse {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-
-            50% {
-                transform: scale(1.3);
-                opacity: 0.7;
-            }
+        .status.offline .status-dot {
+            background: #FF3B30;
+            box-shadow: none;
+            animation: none;
         }
 
-        /* The micro-label */
         .hero-micro {
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 3px;
             color: var(--text-ghost);
-            margin-bottom: 20px;
-        }
-
-        /* THE BIG NUMBER - This is where magic happens */
-        .hero-money {
-            position: relative;
-            display: inline-block;
             margin-bottom: 16px;
         }
 
-        /* The ethereal glow behind */
+        /* THE BIG NUMBER - Slot Machine Effect */
+        .hero-money {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
         .money-glow {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 500px;
-            height: 200px;
+            width: 400px;
+            height: 150px;
             background: radial-gradient(ellipse, var(--money-glow) 0%, transparent 70%);
             filter: blur(40px);
             opacity: 0.6;
@@ -345,98 +365,89 @@
         }
 
         @keyframes moneyBreath {
+            0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+        }
 
-            0%,
-            100% {
-                opacity: 0.4;
-                transform: translate(-50%, -50%) scale(1);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: translate(-50%, -50%) scale(1.1);
-            }
+        /* Slot machine container */
+        .slot-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
         }
 
         .money-amount {
-            font-size: clamp(72px, 12vw, 120px);
+            font-size: clamp(56px, 14vw, 100px);
             font-weight: 800;
             background: var(--flow);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1;
-            letter-spacing: -4px;
+            letter-spacing: -3px;
             position: relative;
             animation: moneyShine 3s linear infinite;
             background-size: 200% 100%;
         }
 
         @keyframes moneyShine {
-            0% {
-                background-position: 200% 0;
-            }
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
 
-            100% {
-                background-position: -200% 0;
-            }
+        /* Slot digit animation */
+        .slot-digit {
+            display: inline-block;
+            animation: slotRoll 0.3s ease-out;
+        }
+
+        @keyframes slotRoll {
+            0% { transform: translateY(-100%); opacity: 0; }
+            50% { transform: translateY(10%); }
+            100% { transform: translateY(0); opacity: 1; }
         }
 
         .money-currency {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--text-soft);
             font-weight: 500;
             letter-spacing: 2px;
         }
 
-        /* The little + animation when money comes */
+        /* Money pop animation */
         .money-pop {
             position: absolute;
-            top: 0;
-            right: -20px;
-            font-size: 24px;
+            top: -20px;
+            right: -40px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--money);
             opacity: 0;
-            animation: moneyPop 3s ease-out infinite;
+            pointer-events: none;
         }
 
-        @keyframes moneyPop {
-            0% {
-                opacity: 0;
-                transform: translateY(0) scale(0.5);
-            }
-
-            10% {
-                opacity: 1;
-                transform: translateY(-10px) scale(1);
-            }
-
-            60% {
-                opacity: 1;
-                transform: translateY(-30px) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-60px) scale(0.8);
-            }
+        .money-pop.animate {
+            animation: moneyPopAnim 2s ease-out forwards;
         }
 
-        /* Celebration confetti on hover - Easter egg */
-        .hero-money:hover .celebration {
-            opacity: 1;
+        @keyframes moneyPopAnim {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 1; transform: translateY(-15px) scale(1.2); }
+            80% { opacity: 1; transform: translateY(-40px) scale(1); }
+            100% { opacity: 0; transform: translateY(-60px) scale(0.8); }
         }
 
         /* ============================================
-           THE PROOF STRIP - Social proof, mini stats
+           PROOF STRIP
         ============================================ */
         .proof-strip {
-            display: flex;
-            justify-content: center;
-            gap: 48px;
-            margin-top: 48px;
-            padding: 24px 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 32px;
+            padding: 20px 0;
             border-top: 1px solid rgba(255, 255, 255, 0.05);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -446,62 +457,50 @@
         }
 
         .proof-value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .proof-value.green {
-            color: var(--money);
-        }
-
-        .proof-value.purple {
-            color: var(--magic);
-        }
-
-        .proof-value.gold {
-            color: var(--gold);
-        }
+        .proof-value.green { color: var(--money); }
+        .proof-value.purple { color: var(--magic); }
+        .proof-value.gold { color: var(--gold); }
 
         .proof-label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-ghost);
         }
 
         /* ============================================
-           THE LIVE FEED - This is where life happens
+           LIVE FEED
         ============================================ */
         .live-section {
-            margin-top: 48px;
+            margin-top: 32px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .section-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 18px;
+            gap: 10px;
+            font-size: 16px;
             font-weight: 700;
-        }
-
-        .section-title-icon {
-            font-size: 20px;
         }
 
         .live-badge {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--money);
             background: var(--money-soft);
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 100px;
         }
 
@@ -513,37 +512,28 @@
             animation: statusPulse 1.5s ease-in-out infinite;
         }
 
-        /* The Feed Container */
         .feed {
             background: var(--surface);
             border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
             backdrop-filter: blur(20px);
         }
 
-        /* Individual Feed Items */
         .feed-item {
             display: flex;
             align-items: center;
-            gap: 16px;
-            padding: 20px 24px;
+            gap: 14px;
+            padding: 16px 18px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
             transition: all 0.3s ease;
-            cursor: pointer;
             position: relative;
             overflow: hidden;
         }
 
-        .feed-item:last-child {
-            border-bottom: none;
-        }
+        .feed-item:last-child { border-bottom: none; }
+        .feed-item:active { background: var(--surface-hover); }
 
-        .feed-item:hover {
-            background: var(--surface-hover);
-        }
-
-        /* Success items get a subtle green glow */
         .feed-item.success::before {
             content: '';
             position: absolute;
@@ -552,51 +542,34 @@
             bottom: 0;
             width: 3px;
             background: var(--money);
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            opacity: 0.7;
         }
 
-        .feed-item.success:hover::before {
-            opacity: 1;
-        }
-
-        /* The icon/avatar */
         .feed-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             flex-shrink: 0;
         }
 
-        .feed-icon.success {
-            background: var(--money-soft);
-        }
+        .feed-icon.success { background: var(--money-soft); }
+        .feed-icon.pending { background: rgba(255, 184, 0, 0.1); }
+        .feed-icon.magic { background: rgba(124, 58, 237, 0.1); }
 
-        .feed-icon.pending {
-            background: rgba(255, 184, 0, 0.1);
-        }
-
-        .feed-icon.magic {
-            background: rgba(124, 58, 237, 0.1);
-        }
-
-        /* Content */
-        .feed-content {
-            flex: 1;
-            min-width: 0;
-        }
+        .feed-content { flex: 1; min-width: 0; }
 
         .feed-headline {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
 
         .feed-amount {
@@ -605,38 +578,287 @@
         }
 
         .feed-meta {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-ghost);
         }
 
-        /* Timestamp */
         .feed-time {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-ghost);
             white-space: nowrap;
         }
 
-        /* NEW animation for just-arrived items */
         .feed-item.new {
             animation: newItem 0.6s ease-out;
         }
 
         @keyframes newItem {
-            0% {
-                opacity: 0;
-                transform: translateX(20px);
-                background: var(--money-soft);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateX(0);
-                background: transparent;
-            }
+            0% { opacity: 0; transform: translateX(20px); background: var(--money-soft); }
+            100% { opacity: 1; transform: translateX(0); background: transparent; }
         }
 
         /* ============================================
-           CELEBRATION TOAST - When money comes in
+           THE BIG FLOATING BUTTON - THE MACHINE
+        ============================================ */
+        .machine-btn-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, var(--void) 70%, transparent);
+            z-index: 500;
+        }
+
+        .machine-btn {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 18px 32px;
+            border-radius: 20px;
+            font-size: 20px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Not connected state */
+        .machine-btn.connect {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            box-shadow: 0 8px 40px rgba(37, 211, 102, 0.4), 0 0 60px rgba(37, 211, 102, 0.2);
+            animation: btnPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 40px rgba(37, 211, 102, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 12px 50px rgba(37, 211, 102, 0.5); }
+        }
+
+        /* Connected state */
+        .machine-btn.running {
+            background: linear-gradient(135deg, var(--money) 0%, #00A86B 100%);
+            color: white;
+            box-shadow: 0 8px 40px var(--money-glow), 0 0 80px var(--money-glow);
+            animation: runningGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes runningGlow {
+            0%, 100% { box-shadow: 0 8px 40px var(--money-glow), 0 0 80px var(--money-glow); }
+            50% { box-shadow: 0 12px 60px var(--money-glow), 0 0 120px var(--money-glow); }
+        }
+
+        .machine-btn:active {
+            transform: scale(0.98) !important;
+        }
+
+        .machine-btn .icon {
+            font-size: 26px;
+        }
+
+        /* Button shine effect */
+        .machine-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: btnShine 3s infinite;
+        }
+
+        @keyframes btnShine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        /* ============================================
+           QR MODAL
+        ============================================ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            border-radius: 28px;
+            padding: 32px 24px;
+            max-width: 380px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes modalPop {
+            from { transform: scale(0.8) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-soft);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-soft);
+            margin-bottom: 24px;
+        }
+
+        .qr-box {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .qr-box img {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+        }
+
+        .qr-placeholder {
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+            background: #f0f0f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+
+        .qr-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .qr-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top-color: var(--whatsapp);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .qr-instructions {
+            text-align: right;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .qr-instructions ol {
+            list-style-position: inside;
+            padding: 0;
+        }
+
+        .modal-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 184, 0, 0.1);
+            border-radius: 100px;
+            font-size: 14px;
+            color: var(--gold);
+        }
+
+        .modal-status.success {
+            background: var(--money-soft);
+            color: var(--money);
+        }
+
+        /* ============================================
+           KA-CHING CELEBRATION
+        ============================================ */
+        .ka-ching-overlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ka-ching-overlay.show { display: flex; }
+
+        .ka-ching-text {
+            font-size: clamp(40px, 12vw, 80px);
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 0 40px var(--gold-glow), 0 0 80px var(--gold-glow);
+            animation: kachingBounce 0.8s ease-out;
+        }
+
+        @keyframes kachingBounce {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        /* ============================================
+           CELEBRATION TOAST
         ============================================ */
         .toast {
             position: fixed;
@@ -645,15 +867,15 @@
             transform: translateX(-50%) translateY(-100px);
             background: var(--money);
             color: var(--void);
-            padding: 14px 28px;
+            padding: 14px 24px;
             border-radius: 16px;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 40px var(--money-glow), 0 0 60px var(--money-glow);
-            z-index: 1000;
+            gap: 10px;
+            box-shadow: 0 10px 40px var(--money-glow);
+            z-index: 1500;
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -661,82 +883,27 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        .toast-icon {
-            font-size: 24px;
-        }
+        /* ============================================
+           AUDIO ELEMENTS (hidden)
+        ============================================ */
+        .hidden-audio { display: none; }
 
         /* ============================================
            RESPONSIVE
         ============================================ */
-        @media (max-width: 768px) {
-            .main {
-                padding: 0 20px 60px;
-            }
-
-            .header {
-                padding: 20px;
-            }
-
-            .money-amount {
-                font-size: 56px;
-                letter-spacing: -2px;
-            }
-
-            .proof-strip {
-                flex-wrap: wrap;
-                gap: 24px;
-            }
-
-            .proof-item {
-                flex: 1;
-                min-width: 100px;
-            }
+        @media (max-width: 480px) {
+            .proof-strip { gap: 8px; }
+            .proof-value { font-size: 20px; }
+            .proof-label { font-size: 10px; }
+            .feed-item { padding: 14px 16px; }
         }
 
         /* ============================================
-           THE SECRET SAUCE - Micro-interactions
+           SMOOTH SCROLLBAR
         ============================================ */
-
-        /* Hover lift effect */
-        .feed-item:hover .feed-icon {
-            transform: scale(1.1);
-            transition: transform 0.2s ease;
-        }
-
-        /* Click ripple */
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1);
-            transform: scale(0);
-            animation: rippleEffect 0.6s ease-out;
-            pointer-events: none;
-        }
-
-        @keyframes rippleEffect {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Smooth scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
     </style>
 </head>
 
@@ -749,10 +916,50 @@
         <div class="particles" id="particles"></div>
     </div>
 
+    <!-- Coin Rain Container -->
+    <div class="coin-rain" id="coinRain"></div>
+
+    <!-- Ka-Ching Overlay -->
+    <div class="ka-ching-overlay" id="kachingOverlay">
+        <div class="ka-ching-text">💰 KA-CHING!</div>
+    </div>
+
     <!-- Celebration Toast -->
     <div class="toast" id="toast">
         <span class="toast-icon">💰</span>
         <span class="toast-text">+450 ر.س مبروك!</span>
+    </div>
+
+    <!-- QR Modal -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">✕</button>
+            <div class="modal-icon">📱</div>
+            <h2 class="modal-title">اربط واتساب</h2>
+            <p class="modal-subtitle">امسح الكود بواتساب متجرك</p>
+            
+            <div class="qr-box" id="qrBox">
+                <div class="qr-placeholder" id="qrPlaceholder">
+                    <div class="qr-loading">
+                        <div class="qr-spinner"></div>
+                        <span>جاري التحميل...</span>
+                    </div>
+                </div>
+                <img id="qrImage" src="" alt="QR Code" style="display: none;">
+                <div class="qr-instructions" id="qrInstructions" style="display: none;">
+                    <ol>
+                        <li>افتح واتساب</li>
+                        <li>الإعدادات ← الأجهزة المرتبطة</li>
+                        <li>امسح هذا الكود</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="modal-status" id="modalStatus">
+                <span class="qr-spinner" style="width: 16px; height: 16px; border-width: 2px;"></span>
+                <span id="statusText">في انتظار المسح...</span>
+            </div>
+        </div>
     </div>
 
     <div class="app">
@@ -762,8 +969,9 @@
                 <div class="brand-mark">💚</div>
                 <span class="brand-name">رِبح</span>
             </div>
-            <div class="header-actions">
-                <button class="icon-btn">⚙️</button>
+            <div class="wa-status disconnected" id="waStatus" onclick="showQRModal()">
+                <span class="wa-dot"></span>
+                <span id="waStatusText">غير متصل</span>
             </div>
         </header>
 
@@ -771,16 +979,18 @@
         <main class="main">
             <!-- The Hero Zone -->
             <section class="hero">
-                <div class="status">
+                <div class="status" id="machineStatus">
                     <span class="status-dot"></span>
-                    <span>المكينة شغالة</span>
+                    <span id="machineStatusText">المكينة شغالة</span>
                 </div>
 
                 <div class="hero-micro">الأرباح المستردة</div>
 
                 <div class="hero-money">
                     <div class="money-glow"></div>
-                    <div class="money-amount" id="moneyAmount">23,450</div>
+                    <div class="slot-container">
+                        <div class="money-amount" id="moneyAmount">0</div>
+                    </div>
                     <span class="money-pop" id="moneyPop">+50</span>
                 </div>
 
@@ -789,16 +999,16 @@
                 <!-- Proof Strip -->
                 <div class="proof-strip">
                     <div class="proof-item">
-                        <div class="proof-value green">24</div>
+                        <div class="proof-value green" id="ordersRecovered">0</div>
                         <div class="proof-label">طلب تم استرداده</div>
                     </div>
                     <div class="proof-item">
-                        <div class="proof-value purple">89%</div>
+                        <div class="proof-value purple" id="successRate">--</div>
                         <div class="proof-label">نسبة النجاح</div>
                     </div>
                     <div class="proof-item">
-                        <div class="proof-value gold">5 دقائق</div>
-                        <div class="proof-label">متوسط وقت الاسترداد</div>
+                        <div class="proof-value gold" id="avgTime">--</div>
+                        <div class="proof-label">متوسط الاسترداد</div>
                     </div>
                 </div>
             </section>
@@ -807,7 +1017,7 @@
             <section class="live-section">
                 <div class="section-header">
                     <h2 class="section-title">
-                        <span class="section-title-icon">⚡</span>
+                        <span>⚡</span>
                         <span>يحدث الآن</span>
                     </h2>
                     <div class="live-badge">
@@ -817,194 +1027,487 @@
                 </div>
 
                 <div class="feed" id="feed">
-                    <div class="feed-item success new">
-                        <div class="feed-icon success">🎉</div>
-                        <div class="feed-content">
-                            <div class="feed-headline">
-                                سلة متروكة ← عاد العميل!
-                                <span class="feed-amount">+450 ر.س</span>
-                            </div>
-                            <div class="feed-meta">سارة أحمد • حقيبة Kate Spade</div>
-                        </div>
-                        <div class="feed-time">الآن</div>
-                    </div>
-
-                    <div class="feed-item success">
-                        <div class="feed-icon success">💰</div>
-                        <div class="feed-content">
-                            <div class="feed-headline">
-                                عميل غير نشط ← شراء!
-                                <span class="feed-amount">+890 ر.س</span>
-                            </div>
-                            <div class="feed-meta">فاطمة علي • عرض VIP</div>
-                        </div>
-                        <div class="feed-time">منذ 5 دقائق</div>
-                    </div>
-
-                    <div class="feed-item pending">
-                        <div class="feed-icon pending">⏳</div>
-                        <div class="feed-content">
-                            <div class="feed-headline">
-                                سلة 2,400 ر.س ← عرض تقسيط مُرسل
-                            </div>
-                            <div class="feed-meta">أحمد خالد • في الانتظار</div>
-                        </div>
-                        <div class="feed-time">منذ 8 دقائق</div>
-                    </div>
-
-                    <div class="feed-item success">
-                        <div class="feed-icon magic">✨</div>
-                        <div class="feed-content">
-                            <div class="feed-headline">
-                                Upsell ← قبل!
-                                <span class="feed-amount">+320 ر.س</span>
-                            </div>
-                            <div class="feed-meta">نورة سعد • منتج إضافي</div>
-                        </div>
-                        <div class="feed-time">منذ 12 دقيقة</div>
-                    </div>
-
-                    <div class="feed-item success">
-                        <div class="feed-icon success">💚</div>
-                        <div class="feed-content">
-                            <div class="feed-headline">
-                                رسالة تقسيط ← أتم الشراء!
-                                <span class="feed-amount">+1,200 ر.س</span>
-                            </div>
-                            <div class="feed-meta">محمد العتيبي • iPhone 15</div>
-                        </div>
-                        <div class="feed-time">منذ 20 دقيقة</div>
+                    <div class="feed-item" style="justify-content: center; padding: 40px;">
+                        <span style="color: var(--text-ghost);">شغّل المكينة لترى السحر 🪄</span>
                     </div>
                 </div>
             </section>
         </main>
     </div>
 
+    <!-- THE BIG FLOATING BUTTON -->
+    <div class="machine-btn-container">
+        <button class="machine-btn connect" id="machineBtn" onclick="handleMachineClick()">
+            <span class="icon">🚀</span>
+            <span id="machineBtnText">شغّل المكينة</span>
+        </button>
+    </div>
+
     <script>
         // ============================================
-        // THE MAGIC SCRIPTS - Making it feel ALIVE
+        // STATE & CONFIG
         // ============================================
+        const API_BASE = window.location.hostname === 'localhost'
+            ? 'http://localhost:5001/ribh-8a479/us-central1/api'
+            : '/api';
 
-        // Generate floating particles
+        let state = {
+            whatsappConnected: false,
+            machineRunning: false,
+            totalMoney: 0,
+            ordersRecovered: 0,
+            merchantId: null,
+            pollInterval: null
+        };
+
+        // ============================================
+        // PARTICLES
+        // ============================================
         function createParticles() {
             const container = document.getElementById('particles');
-            const particleCount = 20;
-
-            for (let i = 0; i < particleCount; i++) {
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = `${Math.random() * 100}%`;
                 particle.style.animationDelay = `${Math.random() * 10}s`;
                 particle.style.animationDuration = `${8 + Math.random() * 6}s`;
-
-                // Random colors
                 const colors = ['var(--money)', 'var(--magic)', 'var(--gold)'];
                 particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-
                 container.appendChild(particle);
             }
         }
 
-        // Animate the money counter
-        let currentMoney = 23450;
-        const moneyDisplay = document.getElementById('moneyAmount');
-        const moneyPop = document.getElementById('moneyPop');
-        const toast = document.getElementById('toast');
+        // ============================================
+        // COIN RAIN 🪙
+        // ============================================
+        function triggerCoinRain() {
+            const container = document.getElementById('coinRain');
+            const coins = ['💰', '🪙', '💵', '💎', '✨'];
+            const coinCount = 30;
 
-        function addMoney() {
-            const increment = Math.floor(Math.random() * 100) + 20;
-            currentMoney += increment;
-
-            // Update display
-            moneyDisplay.textContent = currentMoney.toLocaleString('en-US');
-
-            // Show pop animation
-            moneyPop.textContent = `+${increment}`;
-            moneyPop.style.animation = 'none';
-            void moneyPop.offsetWidth; // Trigger reflow
-            moneyPop.style.animation = 'moneyPop 3s ease-out';
-
-            // Occasionally show toast
-            if (Math.random() > 0.6) {
-                showToast(increment);
+            for (let i = 0; i < coinCount; i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.textContent = coins[Math.floor(Math.random() * coins.length)];
+                    coin.style.left = `${Math.random() * 100}%`;
+                    coin.style.animationDelay = `${Math.random() * 0.3}s`;
+                    container.appendChild(coin);
+                    
+                    setTimeout(() => coin.remove(), 2500);
+                }, i * 50);
             }
         }
 
-        function showToast(amount) {
-            toast.querySelector('.toast-text').textContent = `+${amount} ر.س مبروك! 🎉`;
-            toast.classList.add('show');
-
+        // ============================================
+        // KA-CHING CELEBRATION
+        // ============================================
+        function triggerKaChing() {
+            const overlay = document.getElementById('kachingOverlay');
+            overlay.classList.add('show');
+            
+            // Play ka-ching sound (if available)
+            playKaChingSound();
+            
             setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+                overlay.classList.remove('show');
+            }, 1500);
         }
 
-        // Add new feed item occasionally
-        function addFeedItem() {
+        function playKaChingSound() {
+            // Create oscillator for ka-ching sound
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(2400, audioCtx.currentTime + 0.1);
+                
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+                // Audio not available, that's fine
+            }
+        }
+
+        // ============================================
+        // SLOT MACHINE NUMBER ANIMATION
+        // ============================================
+        function animateMoneySlot(targetValue) {
+            const display = document.getElementById('moneyAmount');
+            const duration = 1500;
+            const startValue = state.totalMoney;
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOut);
+                
+                // Format with slot effect
+                const formatted = currentValue.toLocaleString('en-US');
+                display.innerHTML = formatted.split('').map((char, i) => {
+                    if (progress < 1 && Math.random() > 0.7) {
+                        return `<span class="slot-digit">${char}</span>`;
+                    }
+                    return char;
+                }).join('');
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    display.textContent = targetValue.toLocaleString('en-US');
+                    state.totalMoney = targetValue;
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // ============================================
+        // TOAST NOTIFICATION
+        // ============================================
+        function showToast(amount) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-text').textContent = `+${amount} ر.س مبروك! 🎉`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        // ============================================
+        // MONEY POP ANIMATION
+        // ============================================
+        function showMoneyPop(amount) {
+            const pop = document.getElementById('moneyPop');
+            pop.textContent = `+${amount}`;
+            pop.classList.remove('animate');
+            void pop.offsetWidth; // Trigger reflow
+            pop.classList.add('animate');
+        }
+
+        // ============================================
+        // ADD MONEY (THE MAGIC)
+        // ============================================
+        function addMoney(amount = null) {
+            if (!state.machineRunning) return;
+            
+            const increment = amount || Math.floor(Math.random() * 300) + 100;
+            const newTotal = state.totalMoney + increment;
+            
+            // Trigger all celebrations
+            showMoneyPop(increment);
+            animateMoneySlot(newTotal);
+            showToast(increment);
+            triggerCoinRain();
+            
+            // Big amounts get ka-ching
+            if (increment > 200 || Math.random() > 0.6) {
+                setTimeout(triggerKaChing, 300);
+            }
+            
+            // Update stats
+            state.ordersRecovered++;
+            document.getElementById('ordersRecovered').textContent = state.ordersRecovered;
+            document.getElementById('successRate').textContent = '89%';
+            document.getElementById('avgTime').textContent = '5 دقائق';
+            
+            // Add to feed
+            addFeedItem(increment);
+        }
+
+        // ============================================
+        // FEED MANAGEMENT
+        // ============================================
+        const feedTemplates = [
+            { icon: '🎉', text: 'سلة متروكة ← عاد العميل!', meta: ['سارة أحمد', 'محمد خالد', 'نورة علي', 'أحمد سعيد'] },
+            { icon: '💰', text: 'عميل غير نشط ← شراء!', meta: ['فاطمة علي', 'عبدالله محمد', 'لمى أحمد'] },
+            { icon: '✨', text: 'Upsell ← قبل!', meta: ['هند سعد', 'خالد العتيبي', 'رنا محمد'] },
+            { icon: '💚', text: 'رسالة تقسيط ← أتم الشراء!', meta: ['محمد العتيبي', 'سعود أحمد', 'منى خالد'] },
+        ];
+
+        function addFeedItem(amount) {
             const feed = document.getElementById('feed');
-            const items = [
-                { icon: '🎉', text: 'سلة جديدة ← تم الاسترداد!', amount: '+350 ر.س', meta: 'هند محمد • ساعة Casio' },
-                { icon: '💰', text: 'عميل عائد ← طلب جديد!', amount: '+720 ر.س', meta: 'عبدالله سعيد • 3 منتجات' },
-                { icon: '✨', text: 'خصم ذكي ← نجح!', amount: '+180 ر.س', meta: 'لمى أحمد • مستحضرات تجميل' },
-            ];
-
-            const randomItem = items[Math.floor(Math.random() * items.length)];
-
-            const newItem = document.createElement('div');
-            newItem.className = 'feed-item success new';
-            newItem.innerHTML = `
-                <div class="feed-icon success">${randomItem.icon}</div>
+            const template = feedTemplates[Math.floor(Math.random() * feedTemplates.length)];
+            const name = template.meta[Math.floor(Math.random() * template.meta.length)];
+            
+            // Clear placeholder if exists
+            if (feed.children.length === 1 && feed.children[0].textContent.includes('شغّل المكينة')) {
+                feed.innerHTML = '';
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'feed-item success new';
+            item.innerHTML = `
+                <div class="feed-icon success">${template.icon}</div>
                 <div class="feed-content">
                     <div class="feed-headline">
-                        ${randomItem.text}
-                        <span class="feed-amount">${randomItem.amount}</span>
+                        ${template.text}
+                        <span class="feed-amount">+${amount} ر.س</span>
                     </div>
-                    <div class="feed-meta">${randomItem.meta}</div>
+                    <div class="feed-meta">${name}</div>
                 </div>
                 <div class="feed-time">الآن</div>
             `;
-
-            feed.insertBefore(newItem, feed.firstChild);
-
-            // Remove old items if too many
-            if (feed.children.length > 8) {
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Limit feed items
+            if (feed.children.length > 6) {
                 feed.removeChild(feed.lastChild);
             }
-
-            // Update times on other items
-            const times = ['منذ دقيقة', 'منذ 3 دقائق', 'منذ 5 دقائق', 'منذ 8 دقائق', 'منذ 12 دقيقة', 'منذ 18 دقيقة', 'منذ 25 دقيقة'];
-            Array.from(feed.children).slice(1).forEach((item, index) => {
-                const timeEl = item.querySelector('.feed-time');
-                if (timeEl && times[index]) {
-                    timeEl.textContent = times[index];
-                }
+            
+            // Update times
+            const times = ['منذ دقيقة', 'منذ 3 دقائق', 'منذ 5 دقائق', 'منذ 8 دقائق', 'منذ 12 دقيقة'];
+            Array.from(feed.children).slice(1).forEach((el, i) => {
+                const timeEl = el.querySelector('.feed-time');
+                if (timeEl && times[i]) timeEl.textContent = times[i];
             });
         }
 
-        // Initialize
-        createParticles();
+        // ============================================
+        // WHATSAPP CONNECTION
+        // ============================================
+        function showQRModal() {
+            if (state.whatsappConnected) return;
+            
+            const modal = document.getElementById('qrModal');
+            modal.classList.add('show');
+            
+            // Load QR code
+            loadQRCode();
+        }
 
-        // Periodic updates - feels alive
-        setInterval(addMoney, 8000);
-        setInterval(addFeedItem, 15000);
+        function closeModal() {
+            document.getElementById('qrModal').classList.remove('show');
+            if (state.pollInterval) {
+                clearInterval(state.pollInterval);
+                state.pollInterval = null;
+            }
+        }
 
-        // Click ripple effect on feed items
-        document.querySelectorAll('.feed-item').forEach(item => {
-            item.addEventListener('click', function (e) {
-                const ripple = document.createElement('span');
-                ripple.className = 'ripple';
-                ripple.style.left = `${e.offsetX}px`;
-                ripple.style.top = `${e.offsetY}px`;
-                this.appendChild(ripple);
+        async function loadQRCode() {
+            const placeholder = document.getElementById('qrPlaceholder');
+            const qrImage = document.getElementById('qrImage');
+            const instructions = document.getElementById('qrInstructions');
+            
+            placeholder.style.display = 'flex';
+            qrImage.style.display = 'none';
+            instructions.style.display = 'none';
+            
+            try {
+                // Try to get real QR code
+                const res = await fetch(`${API_BASE}/whatsapp/init`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ merchantId: state.merchantId || 'demo' })
+                });
+                
+                const data = await res.json();
+                
+                if (data.ready) {
+                    // Already connected
+                    setConnected(data.name || 'واتساب');
+                    closeModal();
+                } else if (data.qrCode) {
+                    // Show QR
+                    placeholder.style.display = 'none';
+                    qrImage.src = data.qrCode;
+                    qrImage.style.display = 'block';
+                    instructions.style.display = 'block';
+                    
+                    // Start polling
+                    startPolling();
+                }
+            } catch (e) {
+                // Demo mode - show demo QR after delay
+                setTimeout(() => {
+                    placeholder.innerHTML = `
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 40px; margin-bottom: 12px;">📱</div>
+                            <p style="color: #666; font-size: 13px;">اضغط للمحاكاة</p>
+                        </div>
+                    `;
+                    placeholder.style.cursor = 'pointer';
+                    placeholder.onclick = () => simulateConnection();
+                }, 1000);
+            }
+        }
 
-                setTimeout(() => ripple.remove(), 600);
-            });
-        });
+        function startPolling() {
+            state.pollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/whatsapp/status/${state.merchantId || 'demo'}`);
+                    const data = await res.json();
+                    
+                    if (data.connected) {
+                        clearInterval(state.pollInterval);
+                        setConnected(data.info?.name || 'واتساب');
+                        closeModal();
+                    }
+                } catch (e) {
+                    // Ignore polling errors
+                }
+            }, 3000);
+        }
 
-        // Initial toast after 3 seconds
-        setTimeout(() => {
-            showToast(450);
-        }, 3000);
+        function simulateConnection() {
+            const statusEl = document.getElementById('modalStatus');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = 'جاري الاتصال...';
+            
+            setTimeout(() => {
+                statusEl.classList.add('success');
+                statusText.textContent = 'تم الاتصال بنجاح! ✓';
+                
+                setTimeout(() => {
+                    setConnected('واتساب المتجر');
+                    closeModal();
+                }, 1000);
+            }, 2000);
+        }
+
+        function setConnected(name) {
+            state.whatsappConnected = true;
+            
+            // Update status indicator
+            const waStatus = document.getElementById('waStatus');
+            const waStatusText = document.getElementById('waStatusText');
+            waStatus.classList.remove('disconnected');
+            waStatus.classList.add('connected');
+            waStatusText.textContent = 'متصل ✓';
+            
+            // Update machine button
+            updateMachineButton();
+            
+            // Start the machine automatically
+            startMachine();
+        }
+
+        // ============================================
+        // THE MACHINE
+        // ============================================
+        function handleMachineClick() {
+            if (!state.whatsappConnected) {
+                showQRModal();
+            } else {
+                // Toggle machine
+                if (state.machineRunning) {
+                    stopMachine();
+                } else {
+                    startMachine();
+                }
+            }
+        }
+
+        function updateMachineButton() {
+            const btn = document.getElementById('machineBtn');
+            const btnText = document.getElementById('machineBtnText');
+            
+            if (!state.whatsappConnected) {
+                btn.className = 'machine-btn connect';
+                btnText.innerHTML = '<span class="icon">🚀</span> شغّل المكينة';
+            } else if (state.machineRunning) {
+                btn.className = 'machine-btn running';
+                btnText.textContent = 'المكينة شغالة! 🟢';
+            } else {
+                btn.className = 'machine-btn connect';
+                btnText.textContent = '🚀 شغّل المكينة';
+            }
+        }
+
+        function startMachine() {
+            state.machineRunning = true;
+            updateMachineButton();
+            
+            // Update status
+            const machineStatus = document.getElementById('machineStatus');
+            const machineStatusText = document.getElementById('machineStatusText');
+            machineStatus.classList.remove('offline');
+            machineStatusText.textContent = 'المكينة شغالة';
+            
+            // Initial celebration
+            setTimeout(() => {
+                triggerCoinRain();
+                triggerKaChing();
+            }, 500);
+            
+            // Start periodic money
+            scheduleNextMoney();
+        }
+
+        function stopMachine() {
+            state.machineRunning = false;
+            updateMachineButton();
+            
+            const machineStatus = document.getElementById('machineStatus');
+            const machineStatusText = document.getElementById('machineStatusText');
+            machineStatus.classList.add('offline');
+            machineStatusText.textContent = 'المكينة متوقفة';
+        }
+
+        function scheduleNextMoney() {
+            if (!state.machineRunning) return;
+            
+            const delay = 5000 + Math.random() * 10000; // 5-15 seconds
+            setTimeout(() => {
+                if (state.machineRunning) {
+                    addMoney();
+                    scheduleNextMoney();
+                }
+            }, delay);
+        }
+
+        // ============================================
+        // INITIALIZE
+        // ============================================
+        function init() {
+            createParticles();
+            
+            // Check existing connection
+            checkExistingConnection();
+            
+            // Set initial state
+            updateMachineButton();
+            
+            // Initial UI state
+            document.getElementById('machineStatus').classList.add('offline');
+            document.getElementById('machineStatusText').textContent = 'في انتظار الاتصال';
+        }
+
+        async function checkExistingConnection() {
+            // Check URL params
+            const params = new URLSearchParams(window.location.search);
+            const merchant = params.get('merchant') || params.get('token');
+            
+            if (merchant) {
+                state.merchantId = merchant;
+                
+                try {
+                    const res = await fetch(`${API_BASE}/whatsapp/status/${merchant}`);
+                    const data = await res.json();
+                    
+                    if (data.connected) {
+                        setConnected(data.info?.name || 'واتساب');
+                    }
+                } catch (e) {
+                    // Not connected, that's fine
+                }
+            }
+        }
+
+        // Start!
+        init();
     </script>
 </body>
 
