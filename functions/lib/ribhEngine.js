@@ -33,7 +33,7 @@ async function processAbandonedCart(cart) {
   const products = items.map(i => i.name).filter(Boolean);
   
   // 1. Generate AI offer (auto-fallback to template)
-  const offer = await generateOffer(customerName, totalAmount, products, 'cart_recovery');
+  const offer = await generateOffer({ name: customerName, value: totalAmount, products, type: 'cart_recovery' });
   const message = formatMessage(offer, checkoutUrl);
   
   // 2. Try WhatsApp first (best channel for Saudi)
