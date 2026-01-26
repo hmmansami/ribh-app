@@ -11,8 +11,14 @@ const { makeWASocket, useMultiFileAuthState, DisconnectReason, fetchLatestBailey
 const admin = require('firebase-admin');
 const qrcode = require('qrcode');
 const pino = require('pino');
+const fetch = require('node-fetch');
 const path = require('path');
 const fs = require('fs');
+
+// Render Service URL
+const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || 'https://ribh-whatsapp.onrender.com';
+// KEY MUST MATCH RENDER DEPLOYMENT
+const API_KEY = process.env.WHATSAPP_BRIDGE_KEY || 'ribh-secret-2026'; // Updated based on testing
 
 // Store active WhatsApp sessions per merchant
 const activeSessions = new Map();
@@ -96,8 +102,8 @@ async function initMerchantWhatsApp(merchantId) {
         let qrResolved = false;
 
         try {
-            // Use file-based auth for local, Firestore for production
-            const authPath = path.join(__dirname, '../data/whatsapp-sessions', merchantId);
+            // Use /tmp for Firebase Functions (only writable directory)
+            const authPath = `/tmp/whatsapp-sessions/${merchantId}`;
 
             // Ensure directory exists
             if (!fs.existsSync(authPath)) {
@@ -254,14 +260,73 @@ function getStatus(merchantId) {
     };
 }
 
+// ==========================================
+// ANTI-BAN SAFEGUARDS
+// ==========================================
+
+// Rate limiting per merchant
+const rateLimits = new Map(); // merchantId -> { count: number, resetTime: Date }
+const MAX_MESSAGES_PER_HOUR = 30; // Conservative limit
+const MESSAGE_QUEUE = new Map(); // merchantId -> queue[]
+
+/**
+ * Get random delay for humanized messaging (30-90 seconds)
+ */
+function getHumanizedDelay() {
+    return Math.floor(Math.random() * 60000) + 30000; // 30-90 seconds
+}
+
+/**
+ * Add small random variations to message to avoid detection
+ */
+function humanizeMessage(message, customerName) {
+    // Add subtle variations
+    const spaceVariations = ['', ' ', '  '];
+    const randomSpace = spaceVariations[Math.floor(Math.random() * spaceVariations.length)];
+
+    // Ensure customer name is included (WhatsApp likes personalized messages)
+    if (customerName && !message.includes(customerName)) {
+        message = message.replace('مرحباً', `مرحباً ${customerName}`);
+    }
+
+    // Add invisible variation (zero-width space) to make each message unique
+    const variation = '\u200B'.repeat(Math.floor(Math.random() * 3) + 1);
+
+    return message + randomSpace + variation;
+}
+
+/**
+ * Check rate limit for merchant
+ */
+function checkRateLimit(merchantId) {
+    const now = Date.now();
+    const limit = rateLimits.get(merchantId);
+
+    if (!limit || now > limit.resetTime) {
+        rateLimits.set(merchantId, { count: 1, resetTime: now + 3600000 }); // 1 hour
+        return true;
+    }
+
+    if (limit.count >= MAX_MESSAGES_PER_HOUR) {
+        console.log(`⚠️ Rate limit reached for merchant ${merchantId}`);
+        return false;
+    }
+
+    limit.count++;
+    return true;
+}
+
 /**
  * Send WhatsApp message using merchant's connected number
+ * WITH ANTI-BAN SAFEGUARDS
+ * 
  * @param {string} merchantId - Merchant identifier
  * @param {string} to - Recipient phone number (e.g., "+966501234567")
  * @param {string} message - Message text
+ * @param {object} options - Optional settings
  * @returns {Promise<{success: boolean, messageId?: string, error?: string}>}
  */
-async function sendMessage(merchantId, to, message) {
+async function sendMessage(merchantId, to, message, options = {}) {
     const sock = activeSessions.get(merchantId);
 
     if (!sock) {
@@ -270,6 +335,15 @@ async function sendMessage(merchantId, to, message) {
             success: false,
             error: 'not_connected',
             message: 'WhatsApp not connected. Please scan QR code first.'
+        };
+    }
+
+    // Check rate limit (anti-ban)
+    if (!checkRateLimit(merchantId)) {
+        return {
+            success: false,
+            error: 'rate_limited',
+            message: 'Too many messages. Try again later.'
         };
     }
 
@@ -285,19 +359,49 @@ async function sendMessage(merchantId, to, message) {
         // WhatsApp JID format
         const jid = phone + '@s.whatsapp.net';
 
-        // Check if number exists on WhatsApp (optional, can be slow)
+        // Check if number exists on WhatsApp
         try {
             const [result] = await sock.onWhatsApp(jid);
             if (!result?.exists) {
                 console.log(`⚠️ Number ${phone} may not be on WhatsApp`);
-                // Continue anyway - let WhatsApp handle it
+                // Don't send to non-WhatsApp numbers (saves reputation)
+                return {
+                    success: false,
+                    error: 'not_on_whatsapp',
+                    message: 'Number is not on WhatsApp'
+                };
             }
         } catch (e) {
-            // Ignore check errors, try to send anyway
+            // If check fails, continue anyway
         }
 
+        // ANTI-BAN: Add humanized delay for bulk messages
+        if (!options.immediate) {
+            const delay = getHumanizedDelay();
+            console.log(`⏳ Waiting ${Math.round(delay / 1000)}s before sending (anti-ban)...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+
+        // ANTI-BAN: Show typing indicator (makes it look human)
+        try {
+            await sock.sendPresenceUpdate('composing', jid);
+            // Wait 2-4 seconds while "typing"
+            await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 2000));
+        } catch (e) {
+            // Ignore presence errors
+        }
+
+        // ANTI-BAN: Humanize message with variations
+        const customerName = options.customerName || '';
+        const humanizedMessage = humanizeMessage(message, customerName);
+
         // Send the message
-        const result = await sock.sendMessage(jid, { text: message });
+        const result = await sock.sendMessage(jid, { text: humanizedMessage });
+
+        // Clear typing indicator
+        try {
+            await sock.sendPresenceUpdate('paused', jid);
+        } catch (e) { }
 
         console.log(`✅ WhatsApp sent via merchant ${merchantId} to ${phone}`);
 
@@ -345,7 +449,8 @@ async function sendCartRecovery(merchantId, { phone, customerName, cartValue, it
     message += `👉 أكمل طلبك الآن:\n${checkoutUrl}\n\n`;
     message += `---\n_رسالة آلية من رِبح_`;
 
-    return sendMessage(merchantId, phone, message);
+    // Pass customerName for humanization
+    return sendMessage(merchantId, phone, message, { customerName });
 }
 
 /**
