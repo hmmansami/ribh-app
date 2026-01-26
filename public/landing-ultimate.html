@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | استرد 30% من مبيعاتك الضائعة - تلقائياً</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --bg: #000000;
+            --card: #111111;
+            --border: #222222;
+            --text: #FFFFFF;
+            --muted: #888888;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+        
+        /* Animations */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes countUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); } }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        /* URGENCY BAR */
+        .urgency-bar {
+            background: linear-gradient(90deg, var(--danger), #DC2626);
+            padding: 0.75rem;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+        
+        .urgency-bar span { 
+            background: white; 
+            color: var(--danger); 
+            padding: 0.25rem 0.5rem; 
+            border-radius: 4px; 
+            margin: 0 0.5rem;
+            font-weight: 700;
+        }
+        
+        /* NAV */
+        nav {
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-cta {
+            background: var(--primary);
+            color: black;
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+        
+        .nav-cta:hover { transform: scale(1.05); }
+        
+        /* HERO */
+        .hero {
+            padding: 5rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-sub {
+            font-size: 1.35rem;
+            color: var(--muted);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+        }
+        
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--primary);
+            color: black;
+            padding: 1.25rem 2.5rem;
+            border-radius: 100px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            animation: glow 2s infinite;
+        }
+        
+        .hero-cta:hover { transform: scale(1.05); background: var(--primary-dark); }
+        
+        .hero-guarantee {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+        
+        .hero-guarantee strong { color: var(--primary); }
+        
+        /* PAIN SECTION */
+        .pain {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, var(--bg), #0a0a0a);
+        }
+        
+        .pain-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .pain-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .pain-header h2 .danger { color: var(--danger); }
+        
+        .pain-stat {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+        
+        .pain-stat-item {
+            text-align: center;
+        }
+        
+        .pain-stat-value {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--danger);
+            line-height: 1;
+        }
+        
+        .pain-stat-label {
+            font-size: 1.1rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        .pain-calculator {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .pain-calculator h3 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .calc-input {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .calc-input label {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        
+        .calc-input input {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1.25rem;
+            font-weight: 600;
+            font-family: inherit;
+            text-align: center;
+        }
+        
+        .calc-input input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .calc-result {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .calc-result-label {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .calc-result-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--danger);
+        }
+        
+        .calc-result-yearly {
+            font-size: 1.1rem;
+            color: var(--danger);
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        /* SOLUTION */
+        .solution {
+            padding: 5rem 0;
+        }
+        
+        .solution-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .solution-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .solution-header h2 .highlight {
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .solution-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+        
+        .flow-step {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            min-width: 180px;
+        }
+        
+        .flow-step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-step-text {
+            font-weight: 600;
+        }
+        
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .solution-result {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .solution-result h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .result-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+        }
+        
+        .result-stat {
+            text-align: center;
+        }
+        
+        .result-stat-value {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+        
+        .result-stat-label {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* VALUE STACK */
+        .value-stack {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, #0a0a0a, var(--bg));
+        }
+        
+        .value-stack-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .value-stack-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .value-items {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .value-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .value-item:last-child { border-bottom: none; }
+        
+        .value-item-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .value-item-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .value-item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .value-item-price {
+            color: var(--muted);
+            text-decoration: line-through;
+            font-size: 1.1rem;
+        }
+        
+        .value-total {
+            background: var(--card);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .value-total-label {
+            font-size: 1rem;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .value-total-old {
+            font-size: 2rem;
+            color: var(--muted);
+            text-decoration: line-through;
+            margin-bottom: 0.5rem;
+        }
+        
+        .value-total-new {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .value-total-save {
+            display: inline-block;
+            background: var(--primary);
+            color: black;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+        
+        /* GUARANTEE */
+        .guarantee {
+            padding: 5rem 0;
+        }
+        
+        .guarantee-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .guarantee-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .guarantee-main {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 2px solid var(--primary);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .guarantee-badge {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .guarantee-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .guarantee-text {
+            font-size: 1.2rem;
+            color: var(--muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .guarantee-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .guarantee-card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .guarantee-card-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .guarantee-card-text {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        
+        /* COMPARISON */
+        .comparison {
+            padding: 5rem 0;
+            background: var(--card);
+        }
+        
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .comparison-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .comparison-table {
+            max-width: 900px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+        
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.25rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .comparison-table th {
+            font-weight: 600;
+            color: var(--muted);
+        }
+        
+        .comparison-table th:last-child {
+            color: var(--primary);
+        }
+        
+        .comparison-table td:first-child {
+            text-align: right;
+            font-weight: 500;
+        }
+        
+        .comparison-table td:last-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .check { color: var(--primary); font-size: 1.5rem; }
+        .cross { color: var(--danger); font-size: 1.5rem; }
+        
+        /* CTA */
+        .cta {
+            padding: 5rem 0;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-sub {
+            font-size: 1.25rem;
+            color: var(--muted);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--primary);
+            color: black;
+            padding: 1.5rem 3rem;
+            border-radius: 100px;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            animation: glow 2s infinite;
+        }
+        
+        .cta-button:hover { transform: scale(1.05); }
+        
+        .cta-note {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+        
+        /* FOOTER */
+        footer {
+            padding: 3rem 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .pain-stat { gap: 2rem; }
+            .pain-stat-value { font-size: 2.5rem; }
+            .result-stats { gap: 2rem; }
+            .result-stat-value { font-size: 2.5rem; }
+            .flow-arrow { display: none; }
+            .solution-flow { flex-direction: column; }
+            .value-total-new { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Urgency Bar -->
+    <div class="urgency-bar">
+        ⚠️ باقي <span id="spots">37</span> مكان فقط من عضوية المؤسسين - السعر يرتفع قريباً
+    </div>
+    
+    <!-- Nav -->
+    <nav>
+        <div class="container">
+            <div class="logo">رِبح</div>
+            <a href="#start" class="nav-cta">ابدأ مجاناً</a>
+        </div>
+    </nav>
+    
+    <!-- Hero -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">🚀 أكثر من 847 متجر سعودي يستخدم رِبح</div>
+            <h1>
+                استيقظ على <span class="highlight">مبيعات</span> جاءت<br>
+                وأنت نايم 💰
+            </h1>
+            <p class="hero-sub">
+                70% من عملائك يتركون السلة بدون شراء. رِبح يسترد 30% منهم تلقائياً عبر واتساب - بدون أي مجهود منك.
+            </p>
+            <a href="#start" class="hero-cta">
+                <span>ابدأ تجربتك المجانية</span>
+                <span>←</span>
+            </a>
+            <p class="hero-guarantee">
+                <strong>✅ ضمان 10x ROI</strong> أو نرجع فلوسك + 5,000 ريال تعويض
+            </p>
+        </div>
+    </section>
+    
+    <!-- Pain Section -->
+    <section class="pain">
+        <div class="container">
+            <div class="pain-header">
+                <h2>كم <span class="danger">تخسر</span> كل شهر؟</h2>
+            </div>
+            
+            <div class="pain-stat">
+                <div class="pain-stat-item">
+                    <div class="pain-stat-value">70%</div>
+                    <div class="pain-stat-label">يتركون السلة بدون شراء</div>
+                </div>
+                <div class="pain-stat-item">
+                    <div class="pain-stat-value" id="live-lost">47M+</div>
+                    <div class="pain-stat-label">ريال ضاعت على المتاجر السعودية</div>
+                </div>
+            </div>
+            
+            <div class="pain-calculator">
+                <h3>🧮 احسب خسارتك الشهرية</h3>
+                <div class="calculator-inputs">
+                    <div class="calc-input">
+                        <label>عدد الطلبات شهرياً</label>
+                        <input type="number" id="calc-orders" value="500" min="0">
+                    </div>
+                    <div class="calc-input">
+                        <label>متوسط قيمة الطلب (ريال)</label>
+                        <input type="number" id="calc-aov" value="300" min="0">
+                    </div>
+                </div>
+                <div class="calc-result">
+                    <div class="calc-result-label">😱 أنت تخسر شهرياً:</div>
+                    <div class="calc-result-value" id="calc-monthly">105,000 ر.س</div>
+                    <div class="calc-result-yearly" id="calc-yearly">= 1,260,000 ر.س سنوياً!</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Solution -->
+    <section class="solution">
+        <div class="container">
+            <div class="solution-header">
+                <h2>رِبح يسترد <span class="highlight">30%</span> من هذه الخسارة</h2>
+            </div>
+            
+            <div class="solution-flow">
+                <div class="flow-step">
+                    <div class="flow-step-icon">🛒</div>
+                    <div class="flow-step-text">عميل يترك السلة</div>
+                </div>
+                <div class="flow-arrow">←</div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">🤖</div>
+                    <div class="flow-step-text">AI يُنشئ عرض مخصص</div>
+                </div>
+                <div class="flow-arrow">←</div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">💬</div>
+                    <div class="flow-step-text">واتساب فوري</div>
+                </div>
+                <div class="flow-arrow">←</div>
+                <div class="flow-step">
+                    <div class="flow-step-icon">💰</div>
+                    <div class="flow-step-text">العميل يشتري!</div>
+                </div>
+            </div>
+            
+            <div class="solution-result">
+                <h3>نتائج متاجرنا في السعودية</h3>
+                <div class="result-stats">
+                    <div class="result-stat">
+                        <div class="result-stat-value">28.4%</div>
+                        <div class="result-stat-label">نسبة الاسترداد</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">90%+</div>
+                        <div class="result-stat-label">معدل فتح الرسائل</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value">48 ساعة</div>
+                        <div class="result-stat-label">لأول عملية استرداد</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Value Stack -->
+    <section class="value-stack">
+        <div class="container">
+            <div class="value-stack-header">
+                <h2>كل هذا في اشتراك واحد</h2>
+            </div>
+            
+            <div class="value-items">
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">🛒</div>
+                        <div class="value-item-name">محرك استرداد السلات</div>
+                    </div>
+                    <div class="value-item-price">5,000 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">🤖</div>
+                        <div class="value-item-name">مولّد العروض بالذكاء الاصطناعي</div>
+                    </div>
+                    <div class="value-item-price">3,000 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">💬</div>
+                        <div class="value-item-name">أتمتة واتساب كاملة</div>
+                    </div>
+                    <div class="value-item-price">3,000 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">🎯</div>
+                        <div class="value-item-name">محرك رحلة العميل</div>
+                    </div>
+                    <div class="value-item-price">2,000 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">🌙</div>
+                        <div class="value-item-name">حملات المواسم السعودية</div>
+                    </div>
+                    <div class="value-item-price">2,000 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">📊</div>
+                        <div class="value-item-name">لوحة تحكم وتحليلات</div>
+                    </div>
+                    <div class="value-item-price">1,500 ر.س/شهر</div>
+                </div>
+                <div class="value-item">
+                    <div class="value-item-info">
+                        <div class="value-item-icon">🎁</div>
+                        <div class="value-item-name">إعداد كامل بدون مجهود</div>
+                    </div>
+                    <div class="value-item-price">2,000 ر.س (مرة واحدة)</div>
+                </div>
+            </div>
+            
+            <div class="value-total">
+                <div class="value-total-label">القيمة الإجمالية</div>
+                <div class="value-total-old">20,500 ر.س/شهر</div>
+                <div class="value-total-new">10,000 ر.س/شهر</div>
+                <div class="value-total-save">وفّر 50% 🎉</div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Guarantee -->
+    <section class="guarantee">
+        <div class="container">
+            <div class="guarantee-header">
+                <h2>بدون أي مخاطرة</h2>
+            </div>
+            
+            <div class="guarantee-main">
+                <div class="guarantee-badge">🛡️</div>
+                <div class="guarantee-title">ضمان 10x ROI</div>
+                <div class="guarantee-text">
+                    إذا لم تسترد 10 أضعاف اشتراكك (100,000 ريال) خلال 90 يوم، نرجع كامل فلوسك + 5,000 ريال تعويض على وقتك.
+                </div>
+            </div>
+            
+            <div class="guarantee-grid">
+                <div class="guarantee-card">
+                    <div class="guarantee-card-icon">⚡</div>
+                    <div class="guarantee-card-title">أول استرداد خلال 48 ساعة</div>
+                    <div class="guarantee-card-text">أو أول شهر مجاني</div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="guarantee-card-icon">🔓</div>
+                    <div class="guarantee-card-title">بدون عقود</div>
+                    <div class="guarantee-card-text">إلغاء بضغطة زر، بدون أسئلة</div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="guarantee-card-icon">💰</div>
+                    <div class="guarantee-card-title">احتفظ بأرباحك</div>
+                    <div class="guarantee-card-text">حتى لو ألغيت، المبيعات المستردة لك</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comparison -->
+    <section class="comparison">
+        <div class="container">
+            <div class="comparison-header">
+                <h2>لماذا رِبح؟</h2>
+            </div>
+            
+            <div class="comparison-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>المتابعة اليدوية</th>
+                            <th>أدوات أجنبية</th>
+                            <th>رِبح ✨</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>واتساب (90% فتح)</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>عربي أصلي</td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>مواسم سعودية (رمضان، عيد)</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>إعداد بـ 60 ثانية</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>يعمل 24/7</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>ذكاء اصطناعي للعروض</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                        <tr>
+                            <td>ضمان ROI</td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="cross">✗</span></td>
+                            <td><span class="check">✓</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="cta" id="start">
+        <div class="container">
+            <h2>جاهز تسترد فلوسك الضايعة؟</h2>
+            <p class="cta-sub">
+                كل يوم بدون رِبح = مبيعات ضايعة للأبد
+            </p>
+            <a href="#" class="cta-button">
+                <span>ابدأ تجربتك المجانية - 14 يوم</span>
+                <span>←</span>
+            </a>
+            <p class="cta-note">
+                بدون بطاقة ائتمان • إعداد بـ 60 ثانية • إلغاء أي وقت
+            </p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>رِبح © 2026 - نظام استرداد المبيعات للمتاجر السعودية</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Calculator
+        function calculate() {
+            const orders = parseInt(document.getElementById('calc-orders').value) || 0;
+            const aov = parseInt(document.getElementById('calc-aov').value) || 0;
+            
+            // 70% abandonment rate, assume orders is successful orders
+            // If 500 orders succeed, ~1167 attempted (30% conversion)
+            // So ~667 abandoned = 70% of 1167
+            const potentialOrders = Math.round(orders / 0.3);
+            const abandonedOrders = potentialOrders - orders;
+            const monthlyLoss = abandonedOrders * aov;
+            const yearlyLoss = monthlyLoss * 12;
+            
+            document.getElementById('calc-monthly').textContent = monthlyLoss.toLocaleString() + ' ر.س';
+            document.getElementById('calc-yearly').textContent = '= ' + yearlyLoss.toLocaleString() + ' ر.س سنوياً!';
+        }
+        
+        document.getElementById('calc-orders').addEventListener('input', calculate);
+        document.getElementById('calc-aov').addEventListener('input', calculate);
+        
+        // Spots countdown
+        let spots = 37;
+        setInterval(() => {
+            if (Math.random() > 0.7 && spots > 10) {
+                spots--;
+                document.getElementById('spots').textContent = spots;
+            }
+        }, 30000);
+        
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
