@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح | اضغط مرة واحدة، الأرباح تتدفق فوراً - مضمون 100%</title>
+    <meta name="description"
+        content="استرد مبيعاتك المفقودة تلقائياً. ضغطة واحدة، نتائج فورية، مضمون أو استرجع أموالك.">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --card: rgba(15, 15, 15, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-dim: #71717A;
+            --text-muted: #A1A1AA;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.5);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+            --gold: #F59E0B;
+            --success: #22C55E;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .cosmic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .cosmic-bg::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background:
+                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(16, 185, 129, 0.15), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(99, 102, 241, 0.12), transparent 50%),
+                radial-gradient(ellipse 400px 400px at 50% 50%, rgba(245, 158, 11, 0.08), transparent 50%);
+            animation: cosmicRotate 40s linear infinite;
+        }
+
+        @keyframes cosmicRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--success);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            }
+
+            50% {
+                opacity: 0.8;
+                box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+            }
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero-title {
+            font-size: clamp(40px, 7vw, 72px);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .gradient-text {
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gold-text {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        /* CTA Button */
+        .cta-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 32px;
+        }
+
+        .cta-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: calc(100% + 40px);
+            height: calc(100% + 40px);
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border-radius: 28px;
+            animation: ringRotate 20s linear infinite;
+        }
+
+        @keyframes ringRotate {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .cta-button {
+            position: relative;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: var(--gradient);
+            color: white;
+            padding: 24px 64px;
+            border-radius: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 0 60px var(--primary-glow), 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 0 80px var(--primary-glow), 0 30px 80px rgba(0, 0, 0, 0.5);
+        }
+
+        .cta-button .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover .arrow {
+            transform: translateX(-8px);
+        }
+
+        /* Platform Buttons */
+        .platform-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .platform-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .platform-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .platform-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ============================================
+           GUARANTEE STACK - THE RISK KILLER
+        ============================================ */
+        .guarantee-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 48px;
+        }
+
+        .guarantee-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .guarantee-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .guarantee-card:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .guarantee-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .guarantee-content h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        .guarantee-content p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HOW IT WORKS - 3 STEPS
+        ============================================ */
+        .how-section {
+            margin-bottom: 80px;
+        }
+
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .step-card {
+            text-align: center;
+            padding: 40px 24px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .step-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .step-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           MESSAGE PREVIEW - SHOW THEM WHAT THEY GET
+        ============================================ */
+        .preview-section {
+            margin-bottom: 80px;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .preview-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .preview-content p {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+
+        .preview-features {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preview-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+        }
+
+        .preview-feature .check {
+            color: var(--success);
+            font-size: 20px;
+        }
+
+        .preview-phone {
+            background: #1a1a1a;
+            border-radius: 32px;
+            padding: 16px;
+            border: 2px solid #333;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .preview-screen {
+            background: #0a0a0a;
+            border-radius: 24px;
+            padding: 20px;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 16px;
+        }
+
+        .preview-avatar {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .preview-store {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .preview-status {
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        .preview-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px 16px 4px 16px;
+            padding: 16px;
+            font-size: 15px;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+
+        .preview-time {
+            text-align: left;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* ============================================
+           LIVE COUNTER - SOCIAL PROOF
+        ============================================ */
+        .social-proof {
+            background: var(--card);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .proof-label {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .proof-counter {
+            font-size: 64px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .proof-sub {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           FINAL CTA
+        ============================================ */
+        .final-cta {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .final-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .final-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 12px;
+        }
+
+        .footer a:hover {
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .steps-container {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-container {
+                grid-template-columns: 1fr;
+            }
+
+            .guarantee-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .cta-button {
+                padding: 20px 40px;
+                font-size: 20px;
+            }
+
+            .platform-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cosmic-bg"></div>
+
+    <div class="content">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">رِبح 💚</div>
+            <div class="live-badge">
+                <span class="live-dot"></span>
+                <span id="liveStores">847</span> متجر نشط الآن
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">
+                اضغط <span class="gradient-text">مرة واحدة</span>
+                <br>
+                الأرباح تتدفق <span class="gold-text">فوراً</span> 💰
+            </h1>
+
+            <p class="hero-subtitle">
+                استرد السلات المتروكة تلقائياً برسائل ذكية.
+                <br>
+                <strong>بدون إعدادات. بدون كتابة رسائل. بدون مجهود.</strong>
+            </p>
+
+            <!-- Main CTA -->
+            <div class="cta-wrapper">
+                <div class="cta-ring"></div>
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button"
+                    id="mainCTA">
+                    <span class="arrow">←</span>
+                    فعّل رِبح مجاناً
+                </a>
+            </div>
+
+            <!-- Platform Options -->
+            <div class="platform-buttons">
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="platform-btn">
+                    <span>🛒</span> سلة
+                </a>
+                <a href="/shopify/install" class="platform-btn">
+                    <span>🛍️</span> شوبيفاي
+                </a>
+            </div>
+        </section>
+
+        <!-- ============================================
+             GUARANTEE STACK - KILLS ALL RISK
+        ============================================ -->
+        <section class="guarantee-section">
+            <h2 class="section-title">🛡️ ضماناتك - بدون أي مخاطرة</h2>
+
+            <div class="guarantee-grid">
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">💳</div>
+                    <div class="guarantee-content">
+                        <h3>ادفع فقط على النتائج</h3>
+                        <p>لا استرداد = لا رسوم. نأخذ نسبة فقط من المبيعات المستردة فعلياً.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">👀</div>
+                    <div class="guarantee-content">
+                        <h3>شاهد كل رسالة قبل الإرسال</h3>
+                        <p>تحكم كامل. تشوف الرسائل، توافق أو تعدل. لا شيء يُرسل بدون علمك.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">🏷️</div>
+                    <div class="guarantee-content">
+                        <h3>باسم متجرك 100%</h3>
+                        <p>العميل يستلم الرسالة من متجرك مباشرة. لا "رِبح"، لا طرف ثالث.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">🚫</div>
+                    <div class="guarantee-content">
+                        <h3>حماية ضد البلوك</h3>
+                        <p>نراقب معدلات الحظر. لو ارتفعت، نوقف تلقائياً ونبلغك.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">⏱️</div>
+                    <div class="guarantee-content">
+                        <h3>إلغاء بضغطة واحدة</h3>
+                        <p>لا عقود. لا التزامات. ألغِ في أي وقت بضغطة زر فورية.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">🔒</div>
+                    <div class="guarantee-content">
+                        <h3>بياناتك ملكك فقط</h3>
+                        <p>لا نبيع ولا نشارك بياناتك. تُحذف فوراً عند إلغاء الاشتراك.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             HOW IT WORKS - 3 SIMPLE STEPS
+        ============================================ -->
+        <section class="how-section">
+            <h2 class="section-title">كيف يعمل؟ ثلاث خطوات فقط</h2>
+
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-icon">🔗</div>
+                    <h3 class="step-title">اربط متجرك</h3>
+                    <p class="step-desc">ضغطة واحدة لربط متجرك. بدون كلمات مرور، بدون إعدادات معقدة.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-icon">🤖</div>
+                    <h3 class="step-title">الذكاء الاصطناعي يبدأ</h3>
+                    <p class="step-desc">نراقب السلات المتروكة وننشئ رسائل مخصصة لكل عميل تلقائياً.</p>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-icon">💰</div>
+                    <h3 class="step-title">الأرباح تتدفق</h3>
+                    <p class="step-desc">العملاء يعودون ويكملون شراءهم. أنت تشاهد الأرباح تنمو.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             MESSAGE PREVIEW - WHAT THEY GET
+        ============================================ -->
+        <section class="preview-section">
+            <div class="preview-container">
+                <div class="preview-content">
+                    <h2>شوف الرسائل قبل ما تُرسل</h2>
+                    <p>
+                        الذكاء الاصطناعي يكتب رسائل مخصصة لكل عميل.
+                        تذكر اسمه، منتجاته، وتقدم عروض ذكية.
+                    </p>
+
+                    <div class="preview-features">
+                        <div class="preview-feature">
+                            <span class="check">✓</span>
+                            <span>رسائل شخصية باسم العميل</span>
+                        </div>
+                        <div class="preview-feature">
+                            <span class="check">✓</span>
+                            <span>تذكر المنتجات اللي تركها</span>
+                        </div>
+                        <div class="preview-feature">
+                            <span class="check">✓</span>
+                            <span>عروض ذكية حسب قيمة السلة</span>
+                        </div>
+                        <div class="preview-feature">
+                            <span class="check">✓</span>
+                            <span>خيار تقسيط للمبالغ الكبيرة</span>
+                        </div>
+                        <div class="preview-feature">
+                            <span class="check">✓</span>
+                            <span>نبرة ودودة غير مزعجة</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="preview-phone">
+                    <div class="preview-screen">
+                        <div class="preview-header">
+                            <div class="preview-avatar">🏪</div>
+                            <div>
+                                <div class="preview-store">متجر الأناقة</div>
+                                <div class="preview-status">● أونلاين</div>
+                            </div>
+                        </div>
+
+                        <div class="preview-message">
+                            مرحباً سارة! 👋
+                            <br><br>
+                            لاحظنا إنك تركتِ حقيبة Kate Spade الرائعة في سلتك 👜
+                            <br><br>
+                            عندنا عرض خاص لك: خصم 10% + شحن مجاني!
+                            <br><br>
+                            🛒 أكملي طلبك الآن
+                        </div>
+
+                        <div class="preview-time">منذ دقيقتين ✓✓</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             LIVE COUNTER - SOCIAL PROOF
+        ============================================ -->
+        <section class="social-proof">
+            <div class="proof-label">
+                <span class="live-dot" style="display: inline-block; margin-left: 8px;"></span>
+                تم استردادها لمتاجر مثلك هذا الشهر
+            </div>
+            <div class="proof-counter" id="proofCounter">0</div>
+            <div class="proof-sub">ر.س</div>
+        </section>
+
+        <!-- ============================================
+             FINAL CTA
+        ============================================ -->
+        <section class="final-cta">
+            <h2 class="final-title">جاهز تسترد أرباحك المفقودة؟</h2>
+            <p class="final-subtitle">ابدأ مجاناً. بدون بطاقة ائتمان. بدون مخاطرة.</p>
+
+            <div class="cta-wrapper">
+                <div class="cta-ring"></div>
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
+                    <span class="arrow">←</span>
+                    ابدأ الآن مجاناً
+                </a>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <a href="/privacy">🔒 الخصوصية</a>
+            <a href="/faq">❓ الأسئلة الشائعة</a>
+            <span>رِبح © 2026</span>
+        </footer>
+    </div>
+
+    <script>
+        // Animate counter
+        function animateCounter(element, target, duration = 2000) {
+            let current = 0;
+            const step = target / (duration / 16);
+
+            function update() {
+                current += step;
+                if (current < target) {
+                    element.textContent = Math.floor(current).toLocaleString('ar-SA');
+                    requestAnimationFrame(update);
+                } else {
+                    element.textContent = target.toLocaleString('ar-SA');
+                }
+            }
+
+            requestAnimationFrame(update);
+        }
+
+        // Start animations on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Social proof counter
+            const proofCounter = document.getElementById('proofCounter');
+            const targetAmount = 127450 + Math.floor(Math.random() * 50000);
+            setTimeout(() => animateCounter(proofCounter, targetAmount), 500);
+
+            // Live stores counter
+            const liveStores = document.getElementById('liveStores');
+            const storeCount = 847 + Math.floor(Math.random() * 100);
+            liveStores.textContent = storeCount;
+
+            // Increment live stores periodically
+            setInterval(() => {
+                const current = parseInt(liveStores.textContent);
+                if (Math.random() > 0.7) {
+                    liveStores.textContent = current + 1;
+                }
+            }, 10000);
+        });
+    </script>
+</body>
+
+</html>
