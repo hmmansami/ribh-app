@@ -322,6 +322,15 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Shopify Routes (OAuth + Webhooks)
+try {
+    const shopifyRoutes = require('./routes/shopify');
+    app.use('/shopify', shopifyRoutes);
+    console.log('✅ Shopify routes loaded - /shopify/install, /shopify/callback, /shopify/webhooks');
+} catch (e) {
+    console.log('⚠️ Shopify routes not loaded:', e.message);
+}
+
 // Request logging middleware
 app.use((req, res, next) => {
     console.log(`📥 ${req.method} ${req.path}`, req.method === 'POST' ? JSON.stringify(req.body).substring(0, 200) : '');

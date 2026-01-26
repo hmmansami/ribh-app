@@ -1,0 +1,324 @@
+{
+  "shopify": {
+    "cart_abandon": {
+      "id": 5678901234,
+      "token": "abc123def456",
+      "shop_id": 12345,
+      "shop_domain": "my-saudi-store.myshopify.com",
+      "email": "ahmed@example.com",
+      "phone": "+966501234567",
+      "currency": "SAR",
+      "total_price": "450.00",
+      "subtotal_price": "450.00",
+      "total_tax": "0.00",
+      "customer": {
+        "id": 7890123456,
+        "email": "ahmed@example.com",
+        "first_name": "أحمد",
+        "last_name": "الشمري"
+      },
+      "billing_address": {
+        "first_name": "أحمد",
+        "last_name": "الشمري",
+        "phone": "+966501234567",
+        "city": "الرياض",
+        "country": "Saudi Arabia",
+        "country_code": "SA"
+      },
+      "shipping_address": {
+        "first_name": "أحمد",
+        "last_name": "الشمري",
+        "phone": "+966501234567",
+        "address1": "شارع الملك فهد",
+        "city": "الرياض",
+        "province": "منطقة الرياض",
+        "country": "Saudi Arabia",
+        "country_code": "SA",
+        "zip": "12345"
+      },
+      "line_items": [
+        {
+          "id": 111222333,
+          "title": "ساعة ذكية سامسونج",
+          "quantity": 1,
+          "price": "350.00",
+          "sku": "WATCH-001",
+          "product_id": 444555666
+        },
+        {
+          "id": 111222334,
+          "title": "سماعات بلوتوث",
+          "quantity": 1,
+          "price": "100.00",
+          "sku": "AUDIO-002",
+          "product_id": 444555667
+        }
+      ],
+      "abandoned_checkout_url": "https://my-saudi-store.myshopify.com/checkouts/abc123def456/recover",
+      "web_url": "https://my-saudi-store.myshopify.com/checkouts/abc123def456",
+      "created_at": "2025-01-26T12:00:00Z",
+      "updated_at": "2025-01-26T12:30:00Z"
+    },
+    "order_created": {
+      "id": 9876543210,
+      "order_number": 1001,
+      "name": "#1001",
+      "shop_id": 12345,
+      "email": "ahmed@example.com",
+      "phone": "+966501234567",
+      "total_price": "450.00",
+      "currency": "SAR",
+      "financial_status": "paid",
+      "fulfillment_status": null,
+      "checkout_id": 5678901234,
+      "checkout_token": "abc123def456",
+      "customer": {
+        "id": 7890123456,
+        "email": "ahmed@example.com",
+        "first_name": "أحمد",
+        "last_name": "الشمري"
+      },
+      "line_items": [
+        {
+          "id": 111222333,
+          "title": "ساعة ذكية سامسونج",
+          "quantity": 1,
+          "price": "350.00"
+        },
+        {
+          "id": 111222334,
+          "title": "سماعات بلوتوث",
+          "quantity": 1,
+          "price": "100.00"
+        }
+      ],
+      "created_at": "2025-01-26T13:00:00Z"
+    }
+  },
+  "salla": {
+    "cart_abandon": {
+      "event": "checkout.created",
+      "merchant": 987654321,
+      "created_at": "2025-01-26T12:00:00Z",
+      "data": {
+        "id": 1234567890,
+        "checkout_id": 1234567890,
+        "store_id": 987654321,
+        "status": "pending",
+        "currency": "SAR",
+        "total": {
+          "amount": 680,
+          "currency": "SAR"
+        },
+        "customer": {
+          "id": 555666777,
+          "name": "سارة العتيبي",
+          "first_name": "سارة",
+          "last_name": "العتيبي",
+          "email": "sara@example.com",
+          "mobile": "+966509876543"
+        },
+        "items": [
+          {
+            "id": 111,
+            "name": "عطر فاخر",
+            "quantity": 1,
+            "price": {
+              "amount": 480,
+              "currency": "SAR"
+            },
+            "product": {
+              "id": 222,
+              "name": "عطر فاخر"
+            }
+          },
+          {
+            "id": 112,
+            "name": "حقيبة يد جلدية",
+            "quantity": 1,
+            "price": {
+              "amount": 200,
+              "currency": "SAR"
+            },
+            "product": {
+              "id": 223,
+              "name": "حقيبة يد جلدية"
+            }
+          }
+        ],
+        "checkout_url": "https://my-store.salla.sa/checkout/1234567890",
+        "urls": {
+          "checkout": "https://my-store.salla.sa/checkout/1234567890",
+          "customer": "https://my-store.salla.sa/customer/555666777"
+        }
+      }
+    },
+    "order_created": {
+      "event": "order.created",
+      "merchant": 987654321,
+      "created_at": "2025-01-26T13:00:00Z",
+      "data": {
+        "id": 8888777766,
+        "reference_id": "ORD-1001",
+        "status": {
+          "id": 1,
+          "name": "قيد المعالجة",
+          "slug": "in_progress"
+        },
+        "currency": "SAR",
+        "total": {
+          "amount": 680,
+          "currency": "SAR"
+        },
+        "payment_method": "مدى",
+        "customer": {
+          "id": 555666777,
+          "name": "سارة العتيبي",
+          "email": "sara@example.com",
+          "mobile": "+966509876543"
+        },
+        "items": [
+          {
+            "id": 111,
+            "name": "عطر فاخر",
+            "quantity": 1,
+            "price": {
+              "amount": 480,
+              "currency": "SAR"
+            }
+          },
+          {
+            "id": 112,
+            "name": "حقيبة يد جلدية",
+            "quantity": 1,
+            "price": {
+              "amount": 200,
+              "currency": "SAR"
+            }
+          }
+        ],
+        "shipping": {
+          "city": "جدة",
+          "country": "SA"
+        }
+      }
+    },
+    "checkout_updated": {
+      "event": "checkout.updated",
+      "merchant": 987654321,
+      "created_at": "2025-01-26T12:15:00Z",
+      "data": {
+        "id": 1234567890,
+        "checkout_id": 1234567890,
+        "store_id": 987654321,
+        "status": "pending",
+        "total": {
+          "amount": 880,
+          "currency": "SAR"
+        },
+        "customer": {
+          "id": 555666777,
+          "name": "سارة العتيبي",
+          "email": "sara@example.com",
+          "mobile": "+966509876543"
+        },
+        "items": [
+          {
+            "id": 111,
+            "name": "عطر فاخر",
+            "quantity": 2,
+            "price": {
+              "amount": 480,
+              "currency": "SAR"
+            }
+          },
+          {
+            "id": 112,
+            "name": "حقيبة يد جلدية",
+            "quantity": 1,
+            "price": {
+              "amount": 200,
+              "currency": "SAR"
+            }
+          }
+        ],
+        "checkout_url": "https://my-store.salla.sa/checkout/1234567890"
+      }
+    }
+  },
+  "test_scenarios": {
+    "high_value_cart": {
+      "platform": "shopify",
+      "total": 5000,
+      "description": "High value cart - should get premium treatment"
+    },
+    "no_phone_only_email": {
+      "platform": "salla",
+      "data": {
+        "id": 999888777,
+        "store_id": 987654321,
+        "total": { "amount": 300, "currency": "SAR" },
+        "customer": {
+          "id": 111222333,
+          "name": "مها الدوسري",
+          "email": "maha@example.com",
+          "mobile": null
+        },
+        "items": [{ "name": "كريم مرطب", "quantity": 1, "price": { "amount": 300 } }],
+        "checkout_url": "https://store.salla.sa/checkout/999888777"
+      }
+    },
+    "no_contact_info": {
+      "platform": "shopify",
+      "data": {
+        "id": 777666555,
+        "total_price": "200.00",
+        "email": null,
+        "phone": null,
+        "line_items": [{ "title": "منتج تجريبي", "price": "200.00" }]
+      },
+      "description": "Should be skipped - no contact info"
+    },
+    "ramadan_seasonal": {
+      "platform": "salla",
+      "season": "ramadan",
+      "data": {
+        "id": 444555666,
+        "store_id": 987654321,
+        "total": { "amount": 1200, "currency": "SAR" },
+        "customer": {
+          "id": 999000111,
+          "name": "فيصل المطيري",
+          "email": "faisal@example.com",
+          "mobile": "+966505551234"
+        },
+        "items": [
+          { "name": "تمر سكري", "quantity": 5, "price": { "amount": 150 } },
+          { "name": "قهوة عربية", "quantity": 2, "price": { "amount": 200 } },
+          { "name": "بخور عود", "quantity": 1, "price": { "amount": 350 } }
+        ],
+        "checkout_url": "https://store.salla.sa/checkout/444555666"
+      }
+    },
+    "eid_seasonal": {
+      "platform": "shopify",
+      "season": "eid",
+      "data": {
+        "id": 333222111,
+        "shop_id": 12345,
+        "total_price": "2500.00",
+        "email": "noor@example.com",
+        "phone": "+966501112233",
+        "customer": {
+          "first_name": "نور"
+        },
+        "line_items": [
+          { "title": "ثوب رجالي فاخر", "price": "1500.00" },
+          { "title": "عطر العيد", "price": "500.00" },
+          { "title": "هدايا أطفال", "price": "500.00" }
+        ],
+        "abandoned_checkout_url": "https://store.myshopify.com/checkout/333222111"
+      }
+    }
+  }
+}

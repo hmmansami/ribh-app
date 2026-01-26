@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 RIBH Test Flow</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        h1 span { color: #25D366; }
+        .subtitle { color: #888; font-size: 1.1rem; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            background: rgba(255,255,255,0.08);
+            transform: translateY(-2px);
+        }
+        .card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card p {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #fff;
+        }
+        .btn-primary:hover:not(:disabled) {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255,255,255,0.15);
+        }
+        .btn-run-all {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+        }
+        
+        .results-panel {
+            background: #0d1117;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .results-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        #results {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .log-test { color: #58a6ff; font-weight: bold; }
+        .log-step { color: #8b949e; }
+        .log-success { color: #3fb950; }
+        .log-fail { color: #f85149; }
+        .log-info { color: #d29922; }
+        .log-data { color: #a371f7; }
+        
+        .status-bar {
+            display: flex;
+            gap: 20px;
+            padding: 16px 24px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .status-dot.green { background: #3fb950; }
+        .status-dot.yellow { background: #d29922; }
+        .status-dot.red { background: #f85149; }
+        
+        .summary {
+            display: flex;
+            gap: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+        .summary-stat {
+            text-align: center;
+        }
+        .summary-stat .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .summary-stat .label {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .summary-stat.passed .number { color: #3fb950; }
+        .summary-stat.failed .number { color: #f85149; }
+        .summary-stat.total .number { color: #58a6ff; }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .config-panel {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .config-panel h3 {
+            margin-bottom: 16px;
+            font-size: 1rem;
+        }
+        .config-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .config-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .config-item label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle input:checked + .toggle-slider {
+            background: #25D366;
+        }
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 <span>RIBH</span> Test Flow</h1>
+            <p class="subtitle">اختبار شامل لمحرك استرداد السلات المتروكة</p>
+        </header>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot yellow"></span>
+                <span>Mode: Mock (No API calls)</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot green"></span>
+                <span>Firebase: Mocked</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot green"></span>
+                <span>WhatsApp: Mocked</span>
+            </div>
+        </div>
+        
+        <div class="config-panel">
+            <h3>⚙️ Test Configuration</h3>
+            <div class="config-row">
+                <div class="config-item">
+                    <label class="toggle">
+                        <input type="checkbox" id="mockWaFail">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="mockWaFail">Fail WhatsApp</label>
+                </div>
+                <div class="config-item">
+                    <label class="toggle">
+                        <input type="checkbox" id="mockSmsFail" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="mockSmsFail">Fail SMS (disabled by default)</label>
+                </div>
+                <div class="config-item">
+                    <label class="toggle">
+                        <input type="checkbox" id="mockEmailFail">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="mockEmailFail">Fail Email</label>
+                </div>
+                <div class="config-item">
+                    <label class="toggle">
+                        <input type="checkbox" id="mockRamadan">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="mockRamadan">Ramadan Mode</label>
+                </div>
+                <div class="config-item">
+                    <label class="toggle">
+                        <input type="checkbox" id="mockEid">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="mockEid">Eid Mode</label>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn btn-run-all" onclick="runAllTests()">
+                🚀 Run All Tests
+            </button>
+        </div>
+        
+        <div class="grid">
+            <div class="card">
+                <h3>🛒 Shopify Cart Abandon</h3>
+                <p>Simulate a Shopify checkout webhook → Generate offer → Send WhatsApp message</p>
+                <button class="btn btn-primary" onclick="runTest('shopify')">
+                    ▶️ Run Test
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>🏪 Salla Cart Abandon</h3>
+                <p>Simulate a Salla checkout webhook → Generate offer → Send WhatsApp message</p>
+                <button class="btn btn-primary" onclick="runTest('salla')">
+                    ▶️ Run Test
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>✅ Conversion Tracking</h3>
+                <p>Simulate order webhook → Mark cart as recovered → Track revenue</p>
+                <button class="btn btn-primary" onclick="runTest('conversion')">
+                    ▶️ Run Test
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>🔄 Channel Fallback</h3>
+                <p>Test fallback: WhatsApp → SMS (disabled) → Email</p>
+                <button class="btn btn-primary" onclick="runTest('fallback')">
+                    ▶️ Run Test
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>🌙 Seasonal Offers</h3>
+                <p>Test Ramadan mode and Eid mode offer generation</p>
+                <button class="btn btn-primary" onclick="runTest('seasonal')">
+                    ▶️ Run Test
+                </button>
+            </div>
+            
+            <div class="card">
+                <h3>🤖 AI Offer Generation</h3>
+                <p>Test AI-powered personalized offer creation (using fallback templates)</p>
+                <button class="btn btn-primary" onclick="runTest('ai')">
+                    ▶️ Run Test
+                </button>
+            </div>
+        </div>
+        
+        <div class="results-panel">
+            <div class="results-header">
+                <h2>📋 Test Results</h2>
+                <button class="btn btn-secondary" onclick="clearResults()">🗑️ Clear</button>
+            </div>
+            <div id="results">Click a test button to start...</div>
+        </div>
+        
+        <div class="summary" id="summary" style="display: none;">
+            <div class="summary-stat passed">
+                <div class="number" id="passedCount">0</div>
+                <div class="label">Passed</div>
+            </div>
+            <div class="summary-stat failed">
+                <div class="number" id="failedCount">0</div>
+                <div class="label">Failed</div>
+            </div>
+            <div class="summary-stat total">
+                <div class="number" id="totalCount">0</div>
+                <div class="label">Total</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════════════════════════
+        // MOCK DATA & STATE
+        // ══════════════════════════════════════════════════════════════
+        
+        const mockFirestoreData = new Map();
+        const sentMessages = [];
+        let testResults = [];
+        
+        // Sample webhooks (embedded)
+        const WEBHOOKS = {
+            shopify: {
+                cart_abandon: {
+                    id: 5678901234,
+                    shop_id: 12345,
+                    email: "ahmed@example.com",
+                    phone: "+966501234567",
+                    total_price: "450.00",
+                    currency: "SAR",
+                    customer: { first_name: "أحمد" },
+                    line_items: [
+                        { title: "ساعة ذكية سامسونج", price: "350.00", quantity: 1 },
+                        { title: "سماعات بلوتوث", price: "100.00", quantity: 1 }
+                    ],
+                    abandoned_checkout_url: "https://store.myshopify.com/checkout/abc123"
+                }
+            },
+            salla: {
+                cart_abandon: {
+                    event: "checkout.created",
+                    merchant: 987654321,
+                    data: {
+                        id: 1234567890,
+                        store_id: 987654321,
+                        total: { amount: 680, currency: "SAR" },
+                        customer: {
+                            id: 555666777,
+                            name: "سارة العتيبي",
+                            email: "sara@example.com",
+                            mobile: "+966509876543"
+                        },
+                        items: [
+                            { name: "عطر فاخر", quantity: 1, price: { amount: 480 } },
+                            { name: "حقيبة يد جلدية", quantity: 1, price: { amount: 200 } }
+                        ],
+                        checkout_url: "https://my-store.salla.sa/checkout/1234567890"
+                    }
+                }
+            }
+        };
+        
+        // Fallback templates
+        const FALLBACK = {
+            cart_recovery: {
+                headline: 'سلتك تنتظرك! 🛒',
+                body: 'مرحباً {name}، منتجاتك بقيمة {value} ريال لا زالت محفوظة لك',
+                urgency: '⏰ العرض ينتهي خلال 24 ساعة',
+                cta: 'أكمل طلبك الآن واحصل على خصم 10%'
+            },
+            seasonal_ramadan: {
+                headline: 'عروض رمضان المباركة! 🌙',
+                body: 'مرحباً {name}، استعد لشهر الخير مع تخفيضات خاصة',
+                urgency: '⭐ عروض رمضان لفترة محدودة',
+                cta: 'تسوق عروض رمضان الآن'
+            },
+            seasonal_eid: {
+                headline: 'عيدكم مبارك! 🎉✨',
+                body: 'مرحباً {name}، احتفل بالعيد مع هدايا مميزة بقيمة {value} ريال',
+                urgency: '🎁 خصم العيد 20% على كل شيء',
+                cta: 'تسوق هدايا العيد'
+            }
+        };
+        
+        // ══════════════════════════════════════════════════════════════
+        // LOGGING
+        // ══════════════════════════════════════════════════════════════
+        
+        const resultsEl = document.getElementById('results');
+        
+        function log(type, msg) {
+            const classes = {
+                test: 'log-test',
+                step: 'log-step',
+                success: 'log-success',
+                fail: 'log-fail',
+                info: 'log-info',
+                data: 'log-data'
+            };
+            const icons = {
+                test: '🧪',
+                step: '📍',
+                success: '✅',
+                fail: '❌',
+                info: 'ℹ️',
+                data: '📦'
+            };
+            
+            const line = document.createElement('div');
+            line.className = classes[type] || '';
+            line.textContent = `${icons[type] || ''} ${msg}`;
+            resultsEl.appendChild(line);
+            resultsEl.scrollTop = resultsEl.scrollHeight;
+        }
+        
+        function logData(label, obj) {
+            log('data', `${label}: ${JSON.stringify(obj, null, 2)}`);
+        }
+        
+        function clearResults() {
+            resultsEl.innerHTML = 'Click a test button to start...';
+            testResults = [];
+            document.getElementById('summary').style.display = 'none';
+        }
+        
+        // ══════════════════════════════════════════════════════════════
+        // MOCK IMPLEMENTATIONS
+        // ══════════════════════════════════════════════════════════════
+        
+        function getConfig() {
+            return {
+                waFail: document.getElementById('mockWaFail').checked,
+                smsFail: document.getElementById('mockSmsFail').checked,
+                emailFail: document.getElementById('mockEmailFail').checked,
+                ramadan: document.getElementById('mockRamadan').checked,
+                eid: document.getElementById('mockEid').checked
+            };
+        }
+        
+        async function mockSendWhatsApp(phone, message) {
+            await sleep(300);
+            if (getConfig().waFail) {
+                return { success: false, error: 'Mock WhatsApp failure' };
+            }
+            const result = { success: true, messageId: `wa_${Date.now()}` };
+            sentMessages.push({ channel: 'whatsapp', phone, message, result });
+            return result;
+        }
+        
+        async function mockSendSMS(phone, message) {
+            await sleep(200);
+            if (getConfig().smsFail) {
+                return { success: false, error: 'SMS disabled to save costs' };
+            }
+            const result = { success: true, sid: `sms_${Date.now()}` };
+            sentMessages.push({ channel: 'sms', phone, message, result });
+            return result;
+        }
+        
+        async function mockSendEmail(email, subject, body) {
+            await sleep(200);
+            if (getConfig().emailFail) {
+                return { success: false, error: 'Mock Email failure' };
+            }
+            const result = { success: true, provider: 'mock' };
+            sentMessages.push({ channel: 'email', email, subject, body, result });
+            return result;
+        }
+        
+        async function mockGenerateOffer(name, value, products, type = 'cart_recovery') {
+            await sleep(100);
+            const config = getConfig();
+            
+            if (config.ramadan && type === 'seasonal') {
+                const t = FALLBACK.seasonal_ramadan;
+                return { ...t, body: t.body.replace('{name}', name).replace('{value}', value) };
+            }
+            if (config.eid && type === 'seasonal') {
+                const t = FALLBACK.seasonal_eid;
+                return { ...t, body: t.body.replace('{name}', name).replace('{value}', value) };
+            }
+            
+            const t = FALLBACK[type] || FALLBACK.cart_recovery;
+            return { ...t, body: t.body.replace('{name}', name).replace('{value}', value) };
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // ══════════════════════════════════════════════════════════════
+        // CART PROCESSING
+        // ══════════════════════════════════════════════════════════════
+        
+        function normalizeCart(platform, payload) {
+            if (platform === 'salla') {
+                const d = payload.data || payload;
+                return {
+                    cartId: String(d.id || d.checkout_id),
+                    storeId: String(payload.merchant || d.store_id || 'test'),
+                    customerName: d.customer?.name || d.customer?.first_name || 'عميلنا العزيز',
+                    email: d.customer?.email || d.email || null,
+                    phone: d.customer?.mobile || d.mobile || d.phone || null,
+                    totalAmount: parseFloat(d.total?.amount || d.total || 0),
+                    items: (d.items || []).map(i => ({
+                        name: i.name || i.product?.name,
+                        qty: i.quantity || 1,
+                        price: parseFloat(i.price?.amount || i.price || 0)
+                    })),
+                    checkoutUrl: d.checkout_url || d.urls?.checkout || null
+                };
+            }
+            // Shopify
+            const c = payload;
+            return {
+                cartId: String(c.id || c.token),
+                storeId: String(c.shop_id || 'test'),
+                customerName: c.customer?.first_name || 'عميلنا العزيز',
+                email: c.email || c.customer?.email || null,
+                phone: c.phone || c.billing_address?.phone || null,
+                totalAmount: parseFloat(c.total_price || 0),
+                items: (c.line_items || []).map(i => ({
+                    name: i.title || i.name,
+                    qty: i.quantity || 1,
+                    price: parseFloat(i.price || 0)
+                })),
+                checkoutUrl: c.abandoned_checkout_url || null
+            };
+        }
+        
+        function formatMessage(offer, checkoutUrl) {
+            return `${offer.headline}\n\n${offer.body}\n\n${offer.urgency}\n\n${offer.cta}${checkoutUrl ? `\n\n🔗 ${checkoutUrl}` : ''}`;
+        }
+        
+        async function processAbandonedCart(cart) {
+            const { key, phone, email, items = [], totalAmount, checkoutUrl, customerName } = cart;
+            const products = items.map(i => i.name).filter(Boolean);
+            
+            log('step', `Processing cart: ${key}`);
+            log('info', `Customer: ${customerName}, Value: ${totalAmount} SAR`);
+            
+            // Generate offer
+            const offer = await mockGenerateOffer(customerName, totalAmount, products, 'cart_recovery');
+            const message = formatMessage(offer, checkoutUrl);
+            log('success', 'Generated offer');
+            logData('Offer', offer);
+            
+            // Try WhatsApp
+            if (phone) {
+                log('step', 'Trying WhatsApp...');
+                const wa = await mockSendWhatsApp(phone, message);
+                if (wa.success) {
+                    log('success', `WhatsApp sent: ${wa.messageId}`);
+                    return { success: true, channel: 'whatsapp', messageId: wa.messageId, offer };
+                }
+                log('fail', `WhatsApp failed: ${wa.error}`);
+            }
+            
+            // Fallback to SMS
+            if (phone) {
+                log('step', 'Trying SMS fallback...');
+                const sms = await mockSendSMS(phone, message.slice(0, 160));
+                if (sms.success) {
+                    log('success', `SMS sent: ${sms.sid}`);
+                    return { success: true, channel: 'sms', sid: sms.sid, offer };
+                }
+                log('fail', `SMS failed: ${sms.error}`);
+            }
+            
+            // Fallback to Email
+            if (email) {
+                log('step', 'Trying Email fallback...');
+                const mail = await mockSendEmail(email, offer.headline, message);
+                if (mail.success) {
+                    log('success', 'Email sent');
+                    return { success: true, channel: 'email', offer };
+                }
+                log('fail', `Email failed: ${mail.error}`);
+            }
+            
+            log('fail', 'All channels failed');
+            return { success: false, error: 'No channel available', offer };
+        }
+        
+        // ══════════════════════════════════════════════════════════════
+        // TEST FUNCTIONS
+        // ══════════════════════════════════════════════════════════════
+        
+        async function runTest(testName) {
+            resultsEl.innerHTML = '';
+            
+            switch(testName) {
+                case 'shopify': await testShopifyCartAbandon(); break;
+                case 'salla': await testSallaCartAbandon(); break;
+                case 'conversion': await testConversionTracking(); break;
+                case 'fallback': await testChannelFallback(); break;
+                case 'seasonal': await testSeasonalOffers(); break;
+                case 'ai': await testAIOfferGeneration(); break;
+            }
+            
+            updateSummary();
+        }
+        
+        async function testShopifyCartAbandon() {
+            log('test', 'SHOPIFY CART ABANDON');
+            
+            sentMessages.length = 0;
+            const cart = normalizeCart('shopify', WEBHOOKS.shopify.cart_abandon);
+            cart.key = `shopify:${cart.storeId}:${cart.cartId}`;
+            
+            logData('Normalized Cart', cart);
+            
+            const result = await processAbandonedCart(cart);
+            
+            const passed = result.success && sentMessages.length > 0;
+            testResults.push({ name: 'Shopify Cart Abandon', passed });
+            
+            log(passed ? 'success' : 'fail', passed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function testSallaCartAbandon() {
+            log('test', 'SALLA CART ABANDON');
+            
+            sentMessages.length = 0;
+            const cart = normalizeCart('salla', WEBHOOKS.salla.cart_abandon);
+            cart.key = `salla:${cart.storeId}:${cart.cartId}`;
+            
+            logData('Normalized Cart', cart);
+            
+            const result = await processAbandonedCart(cart);
+            
+            const passed = result.success && sentMessages.length > 0;
+            testResults.push({ name: 'Salla Cart Abandon', passed });
+            
+            log(passed ? 'success' : 'fail', passed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function testConversionTracking() {
+            log('test', 'CONVERSION TRACKING');
+            
+            const cartKey = 'shopify:test_store:conv_123';
+            
+            // Simulate cart
+            mockFirestoreData.set(cartKey, { status: 'abandoned', totalAmount: 450 });
+            log('step', 'Created abandoned cart in mock Firestore');
+            
+            // Mark converted
+            await sleep(200);
+            mockFirestoreData.set(cartKey, { ...mockFirestoreData.get(cartKey), status: 'recovered', orderValue: 450 });
+            log('success', 'Marked as converted: 450 SAR');
+            
+            const data = mockFirestoreData.get(cartKey);
+            const passed = data.status === 'recovered' && data.orderValue === 450;
+            testResults.push({ name: 'Conversion Tracking', passed });
+            
+            log(passed ? 'success' : 'fail', passed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function testChannelFallback() {
+            log('test', 'CHANNEL FALLBACK (WhatsApp → SMS → Email)');
+            
+            const cart = {
+                key: 'test:fallback:1',
+                phone: '+966501234567',
+                email: 'test@example.com',
+                totalAmount: 300,
+                customerName: 'محمد',
+                items: [{ name: 'منتج تجريبي' }],
+                checkoutUrl: 'https://store.com/checkout'
+            };
+            
+            // Scenario 1: WhatsApp works
+            log('info', 'Scenario 1: WhatsApp works');
+            document.getElementById('mockWaFail').checked = false;
+            sentMessages.length = 0;
+            const r1 = await processAbandonedCart({ ...cart, key: 'test:fallback:1' });
+            const s1 = r1.channel === 'whatsapp';
+            log('info', `Result: ${r1.channel} - ${s1 ? 'PASS' : 'FAIL'}`);
+            
+            // Scenario 2: WhatsApp fails → Email (SMS disabled)
+            log('info', 'Scenario 2: WhatsApp fails → Email');
+            document.getElementById('mockWaFail').checked = true;
+            sentMessages.length = 0;
+            const r2 = await processAbandonedCart({ ...cart, key: 'test:fallback:2' });
+            const s2 = r2.channel === 'email';
+            log('info', `Result: ${r2.channel} - ${s2 ? 'PASS' : 'FAIL'}`);
+            
+            // Scenario 3: All fail
+            log('info', 'Scenario 3: All channels fail');
+            document.getElementById('mockEmailFail').checked = true;
+            sentMessages.length = 0;
+            const r3 = await processAbandonedCart({ ...cart, key: 'test:fallback:3' });
+            const s3 = r3.success === false;
+            log('info', `Result: ${r3.success ? 'Success' : 'Failed as expected'} - ${s3 ? 'PASS' : 'FAIL'}`);
+            
+            // Reset
+            document.getElementById('mockWaFail').checked = false;
+            document.getElementById('mockEmailFail').checked = false;
+            
+            const passed = s1 && s2 && s3;
+            testResults.push({ name: 'Channel Fallback', passed });
+            
+            log(passed ? 'success' : 'fail', passed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function testSeasonalOffers() {
+            log('test', 'SEASONAL OFFERS (Ramadan & Eid)');
+            
+            // Ramadan
+            log('info', 'Testing Ramadan mode...');
+            document.getElementById('mockRamadan').checked = true;
+            document.getElementById('mockEid').checked = false;
+            const ramadanOffer = await mockGenerateOffer('أحمد', 500, ['تمر'], 'seasonal');
+            const ramadanPass = ramadanOffer.headline.includes('رمضان');
+            logData('Ramadan Offer', ramadanOffer);
+            log('info', `Ramadan mode: ${ramadanPass ? 'PASS' : 'FAIL'}`);
+            
+            // Eid
+            log('info', 'Testing Eid mode...');
+            document.getElementById('mockRamadan').checked = false;
+            document.getElementById('mockEid').checked = true;
+            const eidOffer = await mockGenerateOffer('محمد', 1000, ['عطر'], 'seasonal');
+            const eidPass = eidOffer.headline.includes('عيد');
+            logData('Eid Offer', eidOffer);
+            log('info', `Eid mode: ${eidPass ? 'PASS' : 'FAIL'}`);
+            
+            // Reset
+            document.getElementById('mockRamadan').checked = false;
+            document.getElementById('mockEid').checked = false;
+            
+            const passed = ramadanPass && eidPass;
+            testResults.push({ name: 'Seasonal Offers', passed });
+            
+            log(passed ? 'success' : 'fail', passed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function testAIOfferGeneration() {
+            log('test', 'AI OFFER GENERATION');
+            
+            const testCases = [
+                { name: 'سارة', value: 250, products: ['حقيبة يد', 'عطر'] },
+                { name: 'خالد', value: 1500, products: ['ساعة ذكية', 'سماعات'] }
+            ];
+            
+            let allPassed = true;
+            
+            for (const tc of testCases) {
+                log('info', `Testing: ${tc.name} - ${tc.value} SAR`);
+                const offer = await mockGenerateOffer(tc.name, tc.value, tc.products, 'cart_recovery');
+                
+                const hasAllFields = offer.headline && offer.body && offer.urgency && offer.cta;
+                const containsName = offer.body.includes(tc.name);
+                const containsValue = offer.body.includes(String(tc.value));
+                
+                const passed = hasAllFields && containsName && containsValue;
+                
+                logData('Generated Offer', offer);
+                log('info', `Fields: ${hasAllFields ? '✓' : '✗'}, Name: ${containsName ? '✓' : '✗'}, Value: ${containsValue ? '✓' : '✗'}`);
+                
+                if (!passed) allPassed = false;
+            }
+            
+            testResults.push({ name: 'AI Offer Generation', passed: allPassed });
+            
+            log(allPassed ? 'success' : 'fail', allPassed ? 'TEST PASSED ✓' : 'TEST FAILED ✗');
+        }
+        
+        async function runAllTests() {
+            resultsEl.innerHTML = '';
+            testResults = [];
+            
+            log('test', '🚀 RUNNING ALL TESTS');
+            log('info', `Date: ${new Date().toISOString()}`);
+            log('info', 'Mode: MOCK (no real API calls)\n');
+            
+            await testShopifyCartAbandon();
+            await testSallaCartAbandon();
+            await testConversionTracking();
+            await testChannelFallback();
+            await testSeasonalOffers();
+            await testAIOfferGeneration();
+            
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const passed = testResults.filter(t => t.passed).length;
+            const failed = testResults.length - passed;
+            
+            document.getElementById('passedCount').textContent = passed;
+            document.getElementById('failedCount').textContent = failed;
+            document.getElementById('totalCount').textContent = testResults.length;
+            document.getElementById('summary').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

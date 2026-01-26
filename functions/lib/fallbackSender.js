@@ -1,12 +1,12 @@
 /**
- * FALLBACK SENDER - Email only (SMS removed to save $$)
+ * FALLBACK SENDER - Email + SNS SMS (cheap!)
  * 
- * Strategy: WhatsApp (QR Bridge) is PRIMARY → Email is FALLBACK
- * SMS removed entirely - costs money, lower open rates
+ * Strategy: WhatsApp (QR Bridge) is PRIMARY → SNS SMS → Email FALLBACK
+ * Amazon SNS: ~$0.01/SMS vs Twilio $0.05 = 80% savings!
  * 
- * Cost: $0/month 🎉
+ * Cost: Email $0 | SNS ~$0.01/SMS 🎉
  */
-const { SENDGRID_KEY, EMAIL_FROM, RESEND_KEY } = process.env;
+const { SENDGRID_KEY, EMAIL_FROM, RESEND_KEY, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION } = process.env;
 
 /**
  * Send Email via SendGrid (FREE tier: 100/day)
@@ -79,29 +79,68 @@ async function sendViaResend(email, subject, body) {
 }
 
 /**
- * Send SMS - DEPRECATED (removed to save costs)
- * Use WhatsApp QR Bridge instead!
+ * Format Saudi phone to E.164 (+966...)
+ */
+function formatSaudiPhone(phone) {
+  const digits = phone.replace(/\D/g, '');
+  if (digits.startsWith('966')) return '+' + digits;
+  if (digits.startsWith('0')) return '+966' + digits.slice(1);
+  if (digits.startsWith('5')) return '+966' + digits;
+  return '+' + digits; // assume already formatted
+}
+
+/**
+ * Send SMS via Amazon SNS (~$0.01/msg to Saudi)
+ */
+async function sendSMS_SNS(phone, message) {
+  if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+    return { success: false, error: 'AWS credentials not configured' };
+  }
+  try {
+    const { SNSClient, PublishCommand } = require('@aws-sdk/client-sns');
+    const client = new SNSClient({ region: AWS_REGION || 'me-south-1' });
+    const result = await client.send(new PublishCommand({
+      PhoneNumber: formatSaudiPhone(phone),
+      Message: message,
+      MessageAttributes: {
+        'AWS.SNS.SMS.SMSType': { DataType: 'String', StringValue: 'Transactional' }
+      }
+    }));
+    return { success: true, provider: 'sns', messageId: result.MessageId };
+  } catch (e) {
+    return { success: false, error: e.message, provider: 'sns' };
+  }
+}
+
+/**
+ * Send SMS - Uses Amazon SNS if configured (80% cheaper than Twilio!)
  */
 async function sendSMS(phone, message) {
-  console.warn('⚠️ SMS is disabled to save costs. Use WhatsApp instead.');
+  // Try SNS if AWS creds exist
+  if (AWS_ACCESS_KEY_ID && AWS_SECRET_ACCESS_KEY) {
+    return await sendSMS_SNS(phone, message);
+  }
+  console.warn('⚠️ SMS requires AWS credentials. Use WhatsApp as free alternative.');
   return { 
     success: false, 
-    error: 'SMS disabled - use WhatsApp QR Bridge for FREE unlimited messaging',
-    suggestion: 'Call WhatsApp bridge at /ribh-whatsapp/'
+    error: 'No SMS provider - set AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY for SNS',
+    suggestion: 'Use WhatsApp QR Bridge for FREE unlimited messaging'
   };
 }
 
 /**
- * Send with fallback - Email only (WhatsApp should be tried first elsewhere)
+ * Send with fallback - WhatsApp → SNS SMS → Email
  * 
  * Recommended flow in your app:
  * 1. Try WhatsApp QR Bridge (FREE, 98% open rate)
- * 2. If WhatsApp fails, call this for email fallback
+ * 2. If WhatsApp fails, this tries SNS SMS (cheap!) then email
  */
 async function sendWithFallback({ phone, email, message, subject, emailBody }) {
-  // SMS intentionally skipped - costs money, use WhatsApp instead
-  if (phone) {
-    console.log('📱 Phone provided but SMS disabled. Use WhatsApp QR Bridge instead.');
+  // Try SNS SMS if phone provided and AWS configured
+  if (phone && AWS_ACCESS_KEY_ID) {
+    const sms = await sendSMS_SNS(phone, message);
+    if (sms.success) return { channel: 'sms', success: true, provider: 'sns', messageId: sms.messageId };
+    console.log('📱 SNS SMS failed:', sms.error, '- trying email...');
   }
   
   if (email) {
@@ -113,19 +152,23 @@ async function sendWithFallback({ phone, email, message, subject, emailBody }) {
   return { 
     channel: 'none', 
     success: false, 
-    error: 'No email provided. For phone, use WhatsApp QR Bridge.' 
+    error: 'No contact method available. Set AWS creds for SMS or provide email.' 
   };
 }
 
-module.exports = { sendSMS, sendEmail, sendWithFallback };
+module.exports = { sendSMS, sendSMS_SNS, sendEmail, sendWithFallback };
 
 /*
- * 💡 COST SAVINGS:
+ * 💡 COST COMPARISON:
  * 
- * OLD: Twilio SMS at $0.05/msg × 1000 msgs = $50/month
- * NEW: WhatsApp QR Bridge = $0/month
+ * Twilio SMS:  $0.05/msg × 1000 = $50/month
+ * Amazon SNS:  $0.01/msg × 1000 = $10/month  ← 80% savings!
+ * WhatsApp:    FREE (QR Bridge)
  * 
- * SAVINGS: $50+/month
+ * Strategy: WhatsApp first → SNS SMS fallback → Email last
  * 
- * Plus WhatsApp has 98% open rate vs SMS 20%!
+ * ENV vars needed for SNS:
+ * - AWS_ACCESS_KEY_ID
+ * - AWS_SECRET_ACCESS_KEY
+ * - AWS_REGION=me-south-1 (Bahrain, closest to Saudi)
  */
