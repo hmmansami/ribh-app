@@ -3470,6 +3470,32 @@ app.get('/api/stores', async (req, res) => {
 });
 
 // ==========================================
+// ANALYTICS V2 ENDPOINT (Comprehensive)
+// ==========================================
+app.get('/api/analytics/v2', async (req, res) => {
+    try {
+        const { getAnalytics } = require('./lib/analyticsEngine');
+        const cookies = parseCookies(req);
+        const token = req.query.token || cookies.ribhToken;
+        const days = parseInt(req.query.days) || 30;
+        
+        // Get storeId from token or default
+        let storeId = 'default';
+        if (token) {
+            const stores = await readDB(STORES_FILE);
+            const store = stores.find(s => s.accessToken === token);
+            if (store) storeId = store.id || store.salla?.merchant?.id || 'default';
+        }
+        
+        const analytics = await getAnalytics(storeId, days);
+        res.json({ success: true, data: analytics });
+    } catch (error) {
+        console.error('Analytics v2 error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ==========================================
 // ACTIVITY FEED ENDPOINT
 // ==========================================
 

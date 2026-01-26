@@ -18,12 +18,18 @@ const dayOf = (ts) => new Date(ts).getDay();
 async function getAnalytics(storeId, days = 30) {
   const cutoff = daysAgo(days).toISOString();
   
-  // Fetch all events in parallel
-  const [events, carts, messages] = await Promise.all([
-    db().collection('analytics_events').where('data.storeId', '==', storeId).where('timestamp', '>=', cutoff).get(),
-    db().collection('stores').doc(storeId).collection('abandoned_carts').where('createdAt', '>=', cutoff).get(),
-    db().collection('stores').doc(storeId).collection('messages').where('sentAt', '>=', cutoff).get()
-  ]);
+  // Fetch all events in parallel with error handling
+  let events, carts, messages;
+  try {
+    [events, carts, messages] = await Promise.all([
+      db().collection('analytics_events').where('data.storeId', '==', storeId).where('timestamp', '>=', cutoff).get(),
+      db().collection('stores').doc(storeId).collection('abandoned_carts').where('createdAt', '>=', cutoff).get(),
+      db().collection('stores').doc(storeId).collection('messages').where('sentAt', '>=', cutoff).get()
+    ]);
+  } catch (e) {
+    console.warn('⚠️ Analytics fetch error:', e.message);
+    events = { docs: [] }; carts = { docs: [] }; messages = { docs: [] };
+  }
 
   const evts = events.docs.map(d => d.data());
   const cartDocs = carts.docs.map(d => ({ id: d.id, ...d.data() }));
