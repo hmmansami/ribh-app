@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>رِبح</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.3);
+            --bg: #0a0a0a;
+            --card: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #ffffff;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }
+        @keyframes glow { 0%, 100% { box-shadow: 0 0 20px var(--primary-glow); } 50% { box-shadow: 0 0 40px var(--primary-glow), 0 0 60px var(--primary-glow); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes celebrate { 0% { transform: scale(0) rotate(-10deg); } 50% { transform: scale(1.1) rotate(5deg); } 100% { transform: scale(1) rotate(0); } }
+        @keyframes confetti { 0% { transform: translateY(0) rotate(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+        
+        /* PAGES */
+        .page {
+            display: none;
+            animation: slideUp 0.4s ease;
+        }
+        .page.active { display: block; }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+        }
+        
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        /* CARDS */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .card:active {
+            transform: scale(0.98);
+        }
+        
+        .card-glow {
+            animation: glow 3s infinite;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        /* HERO MONEY CARD */
+        .money-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+        }
+        
+        .money-label {
+            font-size: 0.85rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .money-amount {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            font-weight: 700;
+            direction: ltr;
+            display: inline-flex;
+            align-items: baseline;
+            animation: float 3s ease infinite;
+        }
+        
+        .currency {
+            font-size: 0.4em;
+            opacity: 0.6;
+            margin-right: 0.25em;
+        }
+        
+        .money-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+        
+        /* PROGRESS */
+        .progress-card {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #34D399);
+            border-radius: 100px;
+            transition: width 1s ease;
+            position: relative;
+        }
+        
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        .level-badge {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #F59E0B, #FBBF24);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+        }
+        
+        /* FEED */
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        
+        .feed-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 14px;
+            margin-bottom: 0.5rem;
+            border-right: 3px solid transparent;
+            animation: slideIn 0.4s ease;
+        }
+        
+        .feed-item.success { 
+            border-right-color: var(--success);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .feed-item.pending { border-right-color: var(--warning); }
+        .feed-item.sent { border-right-color: #6366F1; }
+        
+        .feed-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .feed-content {
+            flex: 1;
+            margin: 0 0.75rem;
+        }
+        
+        .feed-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .feed-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .feed-amount {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .feed-amount.success { color: var(--success); }
+        .feed-amount.pending { color: var(--warning); }
+        
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.75rem 0;
+            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .nav-label {
+            font-size: 0.65rem;
+            font-weight: 500;
+        }
+        
+        /* AI OFFER PAGE */
+        .offer-preview {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .offer-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: 1rem;
+        }
+        
+        .offer-headline {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .offer-body {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .offer-urgency {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 1rem;
+        }
+        
+        .offer-cta {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #34D399);
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        
+        .offer-cta:active {
+            transform: scale(0.98);
+        }
+        
+        .generate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        /* SETTINGS */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .settings-title {
+            font-weight: 500;
+        }
+        
+        .settings-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .toggle {
+            width: 50px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 100px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .toggle.active {
+            background: var(--primary);
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+        
+        .toggle.active::after {
+            transform: translateX(22px);
+        }
+        
+        /* INPUT */
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        
+        .input-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .input {
+            width: 100%;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        /* CELEBRATION */
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--primary);
+            color: #000;
+            padding: 2rem 3rem;
+            border-radius: 24px;
+            text-align: center;
+            animation: celebrate 0.5s ease;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .celebration-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+        
+        .celebration-text {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear forwards;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        /* PAGE TITLE */
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* MESSAGES PAGE */
+        .message-card {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .message-user {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+        
+        .message-bubble {
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 14px 14px 4px 14px;
+            padding: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        .message-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        .message-status.delivered { color: var(--primary); }
+        .message-status.read { color: #3B82F6; }
+        
+        /* QUICK ACTIONS */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .quick-action {
+            flex-shrink: 0;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-action:active {
+            background: var(--primary);
+            color: #000;
+        }
+        
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- HOME PAGE -->
+    <div class="page active" id="page-home">
+        <div class="container">
+            <div class="header">
+                <div class="logo">رِبح</div>
+                <div class="status-badge">
+                    <div class="status-dot"></div>
+                    <span>متصل</span>
+                </div>
+            </div>
+            
+            <div class="card card-glow money-card">
+                <div class="money-label">💰 تم استرداده</div>
+                <div class="money-amount">
+                    <span class="currency">ر.س</span>
+                    <span id="total">0</span>
+                </div>
+                <div class="money-subtitle">من <span id="carts">0</span> سلة متروكة</div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-rate">0%</div>
+                    <div class="stat-label">نسبة الاسترداد</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-sent">0</div>
+                    <div class="stat-label">رسائل مرسلة</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-avg">0</div>
+                    <div class="stat-label">متوسط الطلب</div>
+                </div>
+            </div>
+            
+            <div class="card progress-card">
+                <div class="progress-header">
+                    <span>🎯 الهدف الشهري</span>
+                    <span id="progress-text">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="level-badge" id="level">المستوى: مبتدئ 🌱</div>
+            </div>
+            
+            <div class="card">
+                <div class="feed-header">
+                    <div class="live-dot"></div>
+                    <span>النشاط المباشر</span>
+                </div>
+                <div id="feed"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- OFFERS PAGE -->
+    <div class="page" id="page-offers">
+        <div class="container">
+            <div class="page-title">🤖 مولّد العروض</div>
+            
+            <div class="quick-actions">
+                <div class="quick-action" data-type="cart">🛒 سلة متروكة</div>
+                <div class="quick-action" data-type="upsell">⬆️ ترقية</div>
+                <div class="quick-action" data-type="reactivate">💤 إعادة تنشيط</div>
+                <div class="quick-action" data-type="seasonal">🎉 موسمي</div>
+            </div>
+            
+            <div class="offer-preview" id="offer-preview">
+                <div class="offer-badge">✨ عرض ذكي</div>
+                <div class="offer-headline" id="offer-headline">سلتك تنتظرك! 🛒</div>
+                <div class="offer-body" id="offer-body">
+                    مرحباً! لاحظنا أنك تركت بعض المنتجات الرائعة في سلتك.
+                    لا تفوّت الفرصة - أكمل طلبك الآن واحصل على شحن مجاني!
+                </div>
+                <div class="offer-urgency" id="offer-urgency">
+                    ⏰ ينتهي خلال ساعتين
+                </div>
+                <button class="offer-cta" id="offer-cta">أكمل الطلب الآن ←</button>
+            </div>
+            
+            <div class="card">
+                <div class="input-group">
+                    <label class="input-label">اسم العميل (اختياري)</label>
+                    <input type="text" class="input" id="customer-name" placeholder="أحمد">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">قيمة السلة</label>
+                    <input type="number" class="input" id="cart-value" placeholder="500">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">المنتج الرئيسي</label>
+                    <input type="text" class="input" id="product-name" placeholder="حقيبة جلد فاخرة">
+                </div>
+            </div>
+            
+            <button class="generate-btn" id="generate-btn">
+                <span>🪄</span>
+                <span>توليد عرض جديد</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- MESSAGES PAGE -->
+    <div class="page" id="page-messages">
+        <div class="container">
+            <div class="page-title">💬 الرسائل</div>
+            
+            <div class="quick-actions">
+                <div class="quick-action active">الكل</div>
+                <div class="quick-action">✅ تم الشراء</div>
+                <div class="quick-action">⏳ منتظر</div>
+                <div class="quick-action">👀 مقروء</div>
+            </div>
+            
+            <div id="messages-list">
+                <!-- Messages will be rendered here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- SETTINGS PAGE -->
+    <div class="page" id="page-settings">
+        <div class="container">
+            <div class="page-title">⚙️ الإعدادات</div>
+            
+            <div class="card">
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">واتساب</div>
+                        <div class="settings-desc">إرسال عبر واتساب</div>
+                    </div>
+                    <div class="toggle active" data-setting="whatsapp"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">SMS</div>
+                        <div class="settings-desc">إرسال عبر رسائل نصية</div>
+                    </div>
+                    <div class="toggle" data-setting="sms"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">بريد إلكتروني</div>
+                        <div class="settings-desc">إرسال عبر الإيميل</div>
+                    </div>
+                    <div class="toggle active" data-setting="email"></div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">الإرسال التلقائي</div>
+                        <div class="settings-desc">إرسال العروض تلقائياً</div>
+                    </div>
+                    <div class="toggle active" data-setting="auto"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">وقت الانتظار</div>
+                        <div class="settings-desc">دقائق قبل إرسال العرض</div>
+                    </div>
+                    <input type="number" class="input" value="30" style="width: 80px; padding: 0.5rem; text-align: center;">
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="settings-item">
+                    <div class="settings-label">
+                        <div class="settings-title">الهدف الشهري</div>
+                        <div class="settings-desc">ريال سعودي</div>
+                    </div>
+                    <input type="number" class="input" id="monthly-goal" value="100000" style="width: 100px; padding: 0.5rem; text-align: center;">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-page="home">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9,22 9,12 15,12 15,22"/>
+            </svg>
+            <span class="nav-label">الرئيسية</span>
+        </div>
+        <div class="nav-item" data-page="offers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+            </svg>
+            <span class="nav-label">العروض</span>
+        </div>
+        <div class="nav-item" data-page="messages">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            <span class="nav-label">الرسائل</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+            <span class="nav-label">الإعدادات</span>
+        </div>
+    </nav>
+    
+    <!-- CELEBRATION -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-amount" id="celebration-amount">+850</div>
+        <div class="celebration-text">🎉 تم استرداد البيع!</div>
+    </div>
+
+    <script>
+        // Utils
+        const $ = id => document.getElementById(id);
+        const fmt = n => n.toLocaleString('en-US');
+        
+        // Animate counter
+        function animateTo(el, target) {
+            const start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+            const duration = 1500;
+            const startTime = performance.now();
+            
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 4);
+                el.textContent = fmt(Math.floor(start + (target - start) * eased));
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+        
+        // Confetti
+        function confetti() {
+            const colors = ['#10B981', '#34D399', '#F59E0B', '#FBBF24', '#6366F1', '#EC4899'];
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                c.style.width = (5 + Math.random() * 10) + 'px';
+                c.style.height = c.style.width;
+                c.style.animationDuration = (2 + Math.random() * 2) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 4000);
+            }
+        }
+        
+        // Celebrate
+        function celebrate(amount) {
+            $('celebration-amount').textContent = '+' + fmt(amount);
+            $('celebration').style.display = 'block';
+            confetti();
+            setTimeout(() => $('celebration').style.display = 'none', 2500);
+        }
+        
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                item.classList.add('active');
+                $('page-' + item.dataset.page).classList.add('active');
+            });
+        });
+        
+        // Toggles
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => toggle.classList.toggle('active'));
+        });
+        
+        // Render feed
+        function renderFeed(items) {
+            $('feed').innerHTML = items.map((item, i) => `
+                <div class="feed-item ${item.status}" style="animation-delay: ${i * 0.1}s">
+                    <div class="feed-avatar">${item.name.charAt(0)}</div>
+                    <div class="feed-content">
+                        <div class="feed-name">${item.name}</div>
+                        <div class="feed-status">${item.statusText}</div>
+                    </div>
+                    <div class="feed-amount ${item.status}">${item.status === 'success' ? '+' : ''}${fmt(item.amount)} ر.س</div>
+                </div>
+            `).join('');
+        }
+        
+        // Render messages
+        function renderMessages(items) {
+            $('messages-list').innerHTML = items.map((item, i) => `
+                <div class="card message-card" style="animation: slideUp 0.4s ease ${i * 0.1}s both">
+                    <div class="message-header">
+                        <div class="message-user">
+                            <div class="feed-avatar">${item.name.charAt(0)}</div>
+                            <div>
+                                <div class="feed-name">${item.name}</div>
+                                <div class="feed-status">${item.phone}</div>
+                            </div>
+                        </div>
+                        <div class="message-time">${item.time}</div>
+                    </div>
+                    <div class="message-bubble">${item.message}</div>
+                    <div class="message-status ${item.msgStatus}">
+                        ${item.msgStatus === 'read' ? '👀 مقروء' : item.msgStatus === 'delivered' ? '✓✓ تم التسليم' : '✓ مرسل'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Update level
+        function updateLevel(amount) {
+            const levels = [
+                { min: 0, name: 'مبتدئ 🌱', color: '#6B7280' },
+                { min: 10000, name: 'صاعد 🚀', color: '#10B981' },
+                { min: 50000, name: 'محترف 💪', color: '#6366F1' },
+                { min: 100000, name: 'نجم ⭐', color: '#F59E0B' },
+                { min: 500000, name: 'أسطورة 👑', color: '#EF4444' }
+            ];
+            const level = [...levels].reverse().find(l => amount >= l.min);
+            $('level').textContent = 'المستوى: ' + level.name;
+            $('level').style.background = `linear-gradient(135deg, ${level.color}, ${level.color}99)`;
+        }
+        
+        // Offer templates
+        const offers = {
+            cart: {
+                headline: 'سلتك تنتظرك! 🛒',
+                body: 'مرحباً! لاحظنا أنك تركت بعض المنتجات الرائعة في سلتك.\nلا تفوّت الفرصة - أكمل طلبك الآن واحصل على شحن مجاني!',
+                urgency: '⏰ ينتهي خلال ساعتين',
+                cta: 'أكمل الطلب الآن ←'
+            },
+            upsell: {
+                headline: 'عرض حصري لك! 🎁',
+                body: 'بما أنك من عملائنا المميزين، احصل على خصم 20% على طلبك القادم!\nأضف المزيد لسلتك واستفد من العرض.',
+                urgency: '🔥 متبقي 5 قطع فقط',
+                cta: 'احصل على الخصم ←'
+            },
+            reactivate: {
+                headline: 'اشتقنالك! 💚',
+                body: 'مرّ وقت من آخر زيارة لك. جهزنا لك عرض خاص - خصم 30% على كل شي!\nعروضنا الجديدة بتعجبك.',
+                urgency: '🎉 عرض خاص لمدة 48 ساعة',
+                cta: 'تصفح العروض ←'
+            },
+            seasonal: {
+                headline: 'عروض نهاية الأسبوع! 🎊',
+                body: 'استمتع بأقوى التخفيضات - خصومات تصل إلى 50%!\nالعرض محدود والكميات تنفد بسرعة.',
+                urgency: '⚡ ينتهي الأحد منتصف الليل',
+                cta: 'تسوق الآن ←'
+            }
+        };
+        
+        // Quick actions
+        document.querySelectorAll('.quick-action[data-type]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.type;
+                const offer = offers[type];
+                $('offer-headline').textContent = offer.headline;
+                $('offer-body').textContent = offer.body;
+                $('offer-urgency').textContent = offer.urgency;
+                $('offer-cta').textContent = offer.cta;
+                
+                document.querySelectorAll('.quick-action[data-type]').forEach(b => b.style.background = '');
+                btn.style.background = 'var(--primary)';
+                btn.style.color = '#000';
+            });
+        });
+        
+        // Generate offer
+        $('generate-btn').addEventListener('click', function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span><span>جاري التوليد...</span>';
+            
+            // Simulate AI generation
+            setTimeout(() => {
+                const name = $('customer-name').value || 'عميلنا';
+                const value = $('cart-value').value || '500';
+                const product = $('product-name').value || 'منتجاتك';
+                
+                const headlines = [
+                    `${name}، سلتك جاهزة! 🛒`,
+                    `لا تفوّت ${product}! 🎁`,
+                    `${name}، عرض خاص لك! 💚`,
+                    `${product} بانتظارك! ⭐`
+                ];
+                
+                const bodies = [
+                    `أهلاً ${name}! ${product} اللي اخترتها بقيمة ${value} ر.س لسه في سلتك.\nأكمل الطلب اليوم واحصل على توصيل مجاني! 🚚`,
+                    `مرحباً ${name}! نلاحظ اهتمامك بـ ${product}.\nخلّص طلبك الآن وخذ خصم 10% إضافي! الكود: RIBH10`,
+                    `${name}، ما تفوّت ${product}! السعر ${value} ر.س فقط.\nالكمية محدودة والطلب عليها عالي 🔥`
+                ];
+                
+                $('offer-headline').textContent = headlines[Math.floor(Math.random() * headlines.length)];
+                $('offer-body').textContent = bodies[Math.floor(Math.random() * bodies.length)];
+                
+                btn.disabled = false;
+                btn.innerHTML = '<span>🪄</span><span>توليد عرض جديد</span>';
+                
+                // Celebration effect
+                confetti();
+            }, 1500);
+        });
+        
+        // DEMO DATA
+        const total = 47250;
+        const goal = 100000;
+        const sentMessages = 156;
+        const recoveryRate = 32;
+        const avgOrder = 1390;
+        
+        // Initialize home
+        animateTo($('total'), total);
+        $('carts').textContent = '34';
+        $('stat-rate').textContent = recoveryRate + '%';
+        $('stat-sent').textContent = sentMessages;
+        $('stat-avg').textContent = fmt(avgOrder);
+        $('progress-text').textContent = Math.round(total/goal*100) + '%';
+        $('progress-fill').style.width = (total/goal*100) + '%';
+        updateLevel(total);
+        
+        renderFeed([
+            { name: 'أحمد الشمري', amount: 850, status: 'success', statusText: '🎉 اشترى!' },
+            { name: 'سارة محمد', amount: 1200, status: 'pending', statusText: '⏳ عرض مرسل...' },
+            { name: 'خالد العتيبي', amount: 450, status: 'success', statusText: '🎉 اشترى!' },
+            { name: 'نورة الدوسري', amount: 2100, status: 'pending', statusText: '👀 فتح الرسالة' }
+        ]);
+        
+        renderMessages([
+            { name: 'سارة محمد', phone: '+966 55 *** **12', time: 'الآن', message: 'أهلاً سارة! سلتك بقيمة 1,200 ر.س جاهزة 🛒\nأكملي الطلب الآن واحصلي على شحن مجاني! 🚚', msgStatus: 'read' },
+            { name: 'نورة الدوسري', phone: '+966 50 *** **87', time: 'منذ 5 د', message: 'مرحباً نورة! عرض خاص لك 💚\nخصم 15% على طلبك - الكود: VIP15\nينتهي خلال ساعتين ⏰', msgStatus: 'delivered' },
+            { name: 'محمد العنزي', phone: '+966 54 *** **33', time: 'منذ 15 د', message: 'أهلاً محمد! المنتج اللي كنت تتصفحه عليه خصم اليوم 🔥\nاطلب الآن قبل ما ينتهي!', msgStatus: 'sent' }
+        ]);
+        
+        // Simulate sale after 8 seconds
+        setTimeout(() => {
+            celebrate(1200);
+            animateTo($('total'), total + 1200);
+            
+            // Update feed
+            const newFeed = [
+                { name: 'سارة محمد', amount: 1200, status: 'success', statusText: '🎉 اشترت الآن!' },
+                { name: 'أحمد الشمري', amount: 850, status: 'success', statusText: '🎉 اشترى!' },
+                { name: 'خالد العتيبي', amount: 450, status: 'success', statusText: '🎉 اشترى!' },
+                { name: 'نورة الدوسري', amount: 2100, status: 'pending', statusText: '👀 فتح الرسالة' }
+            ];
+            renderFeed(newFeed);
+        }, 8000);
+    </script>
+</body>
+</html>
