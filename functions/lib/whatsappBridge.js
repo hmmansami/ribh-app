@@ -16,7 +16,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Render Service URL
-const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || 'https://ribh-whatsapp.onrender.com';
+const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || 'https://ribh-whatsapp-1.onrender.com';
 // KEY MUST MATCH RENDER DEPLOYMENT
 const API_KEY = process.env.WHATSAPP_BRIDGE_KEY || 'ribh-secret-2026'; // Updated based on testing
 
