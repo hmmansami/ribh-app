@@ -1573,6 +1573,15 @@ app.get('/oauth/callback', async (req, res) => {
             });
             await writeDB(STORES_FILE, stores);
             console.log(`🚀 ONE-CLICK ACTIVATION: ${merchantName} installed with ALL features enabled!`);
+            
+            // Send merchant welcome email
+            try {
+                const { sendMerchantWelcomeEmail } = require('./lib/emailSender');
+                await sendMerchantWelcomeEmail(merchantEmail, merchantName);
+                console.log(`📧 Welcome email sent to ${merchantEmail}`);
+            } catch (emailErr) {
+                console.error('⚠️ Failed to send welcome email:', emailErr.message);
+            }
         } else {
             // Update existing store with new tokens
             existingStore.accessToken = tokenData.access_token;

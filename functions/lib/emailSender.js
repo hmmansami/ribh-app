@@ -98,4 +98,93 @@ async function sendWelcomeEmail({ to, merchantName, storeName, merchantId, dashb
   return sendEmail({ to, subject, html, text });
 }
 
-module.exports = { sendEmail, sendWelcomeEmail };
+/**
+ * Send merchant welcome email on OAuth install
+ */
+async function sendMerchantWelcomeEmail(merchantEmail, storeName) {
+  if (!merchantEmail) {
+    console.log('⚠️ No email provided for merchant welcome');
+    return { success: false, error: 'No email provided' };
+  }
+
+  const subject = 'مرحباً في رِبح! 🎉 تم تفعيل حسابك';
+  const baseUrl = process.env.APP_URL || 'https://ribh.click';
+  
+  const html = `
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f5; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    
+    <div style="text-align: center; margin-bottom: 30px;">
+      <h1 style="color: #10B981; margin: 0; font-size: 32px;">🎉 مرحباً في رِبح!</h1>
+      <p style="font-size: 18px; color: #333; margin-top: 10px;">تم تفعيل حسابك بنجاح</p>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); border-radius: 12px; padding: 25px; color: white; margin-bottom: 25px;">
+      <h2 style="margin: 0 0 10px 0; font-size: 20px;">🏪 متجرك: ${storeName || 'متجرك'}</h2>
+      <p style="margin: 0; opacity: 0.9;">أصبح متصلاً بنظام رِبح لاسترداد السلات المتروكة</p>
+    </div>
+    
+    <h2 style="color: #333; font-size: 20px; margin-bottom: 15px;">📋 الخطوات القادمة:</h2>
+    
+    <div style="background: #F0FDF4; border-radius: 8px; padding: 20px; margin-bottom: 15px; border-right: 4px solid #10B981;">
+      <h3 style="color: #10B981; margin: 0 0 8px 0;">1️⃣ ربط واتساب (مهم!)</h3>
+      <p style="margin: 0; color: #666; font-size: 14px;">اربط رقم واتساب متجرك لإرسال رسائل استرداد تلقائية للعملاء</p>
+    </div>
+    
+    <div style="background: #FEF3C7; border-radius: 8px; padding: 20px; margin-bottom: 15px; border-right: 4px solid #F59E0B;">
+      <h3 style="color: #D97706; margin: 0 0 8px 0;">2️⃣ تخصيص الرسائل</h3>
+      <p style="margin: 0; color: #666; font-size: 14px;">عدّل قوالب الرسائل لتناسب أسلوب متجرك وعملائك</p>
+    </div>
+    
+    <div style="background: #EBF5FF; border-radius: 8px; padding: 20px; margin-bottom: 25px; border-right: 4px solid #3B82F6;">
+      <h3 style="color: #2563EB; margin: 0 0 8px 0;">3️⃣ راقب النتائج</h3>
+      <p style="margin: 0; color: #666; font-size: 14px;">تابع إحصائيات السلات المستردة والأرباح من لوحة التحكم</p>
+    </div>
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${baseUrl}" 
+         style="display: inline-block; background: #10B981; color: white; padding: 15px 40px; 
+                border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold;">
+        🚀 ابدأ الآن
+      </a>
+    </div>
+    
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center;">
+      <h3 style="color: #333; margin: 0 0 10px 0;">💬 تحتاج مساعدة؟</h3>
+      <p style="margin: 0; color: #666;">
+        تواصل معنا عبر واتساب: 
+        <a href="https://wa.me/966579353338" style="color: #10B981; font-weight: bold;">966579353338</a>
+      </p>
+    </div>
+    
+    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+    
+    <p style="color: #888; font-size: 12px; text-align: center; margin: 0;">
+      © رِبح - نظام استرداد السلات المتروكة الذكي
+    </p>
+  </div>
+</body>
+</html>`;
+
+  const text = `مرحباً في رِبح! 🎉
+
+تم تفعيل حسابك بنجاح!
+
+متجرك: ${storeName || 'متجرك'}
+
+الخطوات القادمة:
+1. ربط واتساب - اربط رقم متجرك لإرسال رسائل استرداد تلقائية
+2. تخصيص الرسائل - عدّل القوالب لتناسب أسلوب متجرك
+3. راقب النتائج - تابع الإحصائيات من لوحة التحكم
+
+ابدأ الآن: ${baseUrl}
+
+تحتاج مساعدة؟ واتساب: 966579353338`;
+
+  return sendEmail({ to: merchantEmail, subject, html, text });
+}
+
+module.exports = { sendEmail, sendWelcomeEmail, sendMerchantWelcomeEmail };
