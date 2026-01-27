@@ -638,7 +638,7 @@
         </div>
 
         <!-- CTA Button -->
-        <a href="/" class="cta-button" id="dashboardBtn">
+        <a href="/index.html" class="cta-button" id="dashboardBtn">
             <span class="cta-arrow" id="ctaArrow">←</span>
             <span data-ar="الذهاب إلى لوحة التحكم" data-en="Go to Dashboard">الذهاب إلى لوحة التحكم</span>
         </a>
@@ -704,7 +704,7 @@
 
         // Update dashboard link with token
         if (token) {
-            document.getElementById('dashboardBtn').href = `/?token=${token}`;
+            document.getElementById('dashboardBtn').href = `/index.html?token=${token}`;
         }
 
         // Apply language on load

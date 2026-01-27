@@ -894,7 +894,7 @@
         </div>
 
         <!-- Dashboard Button -->
-        <a href="/" class="dashboard-btn" id="dashboardBtn">
+        <a href="/index.html" class="dashboard-btn" id="dashboardBtn">
             <span>←</span>
             الذهاب إلى لوحة التحكم
         </a>
@@ -972,7 +972,7 @@
 
             // Update dashboard link with token
             if (token) {
-                document.getElementById('dashboardBtn').href = `/?token=${token}`;
+                document.getElementById('dashboardBtn').href = `/index.html?token=${token}`;
             }
 
             // Launch confetti celebration
