@@ -145,7 +145,7 @@ const config = {
     // Salla
     SALLA_WEBHOOK_SECRET: process.env.SALLA_WEBHOOK_SECRET || '',
     SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '476e7ed1-796c-4731-b145-73a13d0019de',
-    SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || 'c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe',
+    SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || 'ca8e6de4265c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe',
 
     // Shopify - Set via: firebase functions:config:set shopify.key="xxx" shopify.secret="xxx"
     SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY || '',
