@@ -788,14 +788,35 @@
         }
         
         // Step 2: Load WhatsApp QR
+        let qrRefreshInterval;
         async function loadWhatsAppQR() {
             const placeholder = document.getElementById('qrPlaceholder');
             const qrImage = document.getElementById('qrImage');
+            const qrFrame = document.getElementById('qrFrame');
             
             if (!storeId) {
                 console.error('No storeId available');
+                showQRError('لم يتم العثور على معرف المتجر');
                 return;
             }
+            
+            // Show loading state
+            placeholder.style.display = 'flex';
+            placeholder.classList.add('loading');
+            placeholder.innerHTML = `
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="3" height="3"/>
+                    <rect x="18" y="14" width="3" height="3"/>
+                    <rect x="14" y="18" width="3" height="3"/>
+                    <rect x="18" y="18" width="3" height="3"/>
+                </svg>
+                <p style="margin-top: 12px; font-size: 14px;">جاري تحميل الباركود...</p>
+            `;
+            qrImage.style.display = 'none';
+            qrFrame.style.display = 'none';
             
             try {
                 // Check status first
@@ -808,25 +829,79 @@
                     return;
                 }
                 
-                // Load QR in iframe (bridge returns HTML)
-                const qrFrame = document.getElementById('qrFrame');
-                qrFrame.src = `${WHATSAPP_API_BASE}/qr/${storeId}`;
-                qrFrame.style.display = 'block';
-                placeholder.style.display = 'none';
-                qrImage.style.display = 'none';
+                if (!statusData.hasQR) {
+                    // No QR available yet, show loading and wait
+                    setTimeout(loadWhatsAppQR, 2000);
+                    return;
+                }
+                
+                // Load QR as image directly from the /image endpoint
+                const qrUrl = `${WHATSAPP_API_BASE}/qr/${storeId}/image?t=${Date.now()}`;
+                
+                qrImage.onload = function() {
+                    placeholder.style.display = 'none';
+                    qrImage.style.display = 'block';
+                    
+                    // QR codes expire - refresh every 20 seconds
+                    clearInterval(qrRefreshInterval);
+                    qrRefreshInterval = setInterval(refreshQRCode, 20000);
+                };
+                
+                qrImage.onerror = function() {
+                    console.error('QR image failed to load');
+                    showQRError('فشل تحميل الباركود');
+                };
+                
+                qrImage.src = qrUrl;
                 
                 // Start polling for connection status
                 pollWhatsAppStatus();
                 
             } catch (error) {
                 console.error('Failed to load QR:', error);
-                placeholder.classList.remove('loading');
-                placeholder.innerHTML = `
-                    <p style="color: #EF4444; font-size: 14px;">فشل تحميل الباركود</p>
-                    <p style="color: #888; font-size: 12px; margin-top: 8px;">${error.message}</p>
-                    <button onclick="loadWhatsAppQR()" style="margin-top: 12px; padding: 8px 16px; background: var(--green); color: white; border: none; border-radius: 8px; cursor: pointer;">إعادة المحاولة</button>
-                `;
+                showQRError('فشل الاتصال بالخادم');
             }
+        }
+        
+        // Refresh QR code (they expire)
+        async function refreshQRCode() {
+            const qrImage = document.getElementById('qrImage');
+            if (!storeId || qrImage.style.display === 'none') return;
+            
+            try {
+                const statusRes = await fetch(`${WHATSAPP_API_BASE}/status/${storeId}`);
+                const statusData = await statusRes.json();
+                
+                if (statusData.connected) {
+                    onWhatsAppConnected();
+                    return;
+                }
+                
+                if (statusData.hasQR) {
+                    qrImage.src = `${WHATSAPP_API_BASE}/qr/${storeId}/image?t=${Date.now()}`;
+                }
+            } catch (e) {
+                console.error('Failed to refresh QR:', e);
+            }
+        }
+        
+        // Show QR error with retry
+        function showQRError(message) {
+            const placeholder = document.getElementById('qrPlaceholder');
+            placeholder.classList.remove('loading');
+            placeholder.style.display = 'flex';
+            placeholder.innerHTML = `
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <p style="color: #EF4444; font-size: 14px; margin-top: 12px;">${message}</p>
+                <button onclick="loadWhatsAppQR()" style="margin-top: 12px; padding: 10px 20px; background: #10B981; color: white; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px;">
+                    🔄 إعادة المحاولة
+                </button>
+            `;
+            document.getElementById('qrImage').style.display = 'none';
         }
         
         // Poll WhatsApp connection status
@@ -852,6 +927,10 @@
         
         // WhatsApp connected callback
         function onWhatsAppConnected() {
+            // Clear all intervals
+            clearInterval(pollInterval);
+            clearInterval(qrRefreshInterval);
+            
             const status = document.getElementById('whatsappStatus');
             status.innerHTML = `
                 <span class="status-dot connected"></span>
@@ -878,6 +957,7 @@
         // Cleanup on page unload
         window.addEventListener('beforeunload', () => {
             if (pollInterval) clearInterval(pollInterval);
+            if (qrRefreshInterval) clearInterval(qrRefreshInterval);
         });
     </script>
 </body>
