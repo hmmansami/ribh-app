@@ -5,6 +5,12 @@ const functions = require('firebase-functions');
 const { app } = require('./server');
 
 // =====================================================
+// REGION CONFIGURATION - Saudi Arabia (europe-west1)
+// =====================================================
+const REGION = 'europe-west1';
+const regionalFunctions = functions.region(REGION);
+
+// =====================================================
 // LIFECYCLE ENGINE V2 - The Brain of RIBH
 // =====================================================
 let lifecycleEngineV2;
@@ -16,8 +22,8 @@ try {
     lifecycleEngineV2 = null;
 }
 
-// Main API - handles all HTTP requests
-exports.api = functions.https.onRequest(app);
+// Main API - handles all HTTP requests (deployed to europe-west1)
+exports.api = regionalFunctions.https.onRequest(app);
 
 // =====================================================
 // KEEP-ALIVE SCHEDULER (Self-ping every 5 minutes)
@@ -32,7 +38,7 @@ exports.api = functions.https.onRequest(app);
  * 
  * Cloud Scheduler: First 3 jobs FREE per Google account
  */
-exports.keepAlive = functions.pubsub
+exports.keepAlive = regionalFunctions.pubsub
     .schedule('every 5 minutes')
     .onRun(async (context) => {
         const startTime = Date.now();
@@ -50,7 +56,7 @@ exports.keepAlive = functions.pubsub
                 ? JSON.parse(process.env.FIREBASE_CONFIG).projectId
                 : 'ribh-8a479';
 
-            const baseUrl = `https://us-central1-${projectId}.cloudfunctions.net/api`;
+            const baseUrl = `https://${REGION}-${projectId}.cloudfunctions.net/api`;
 
             // Ping health endpoint
             const response = await fetch(`${baseUrl}/health`);
@@ -94,11 +100,11 @@ exports.keepAlive = functions.pubsub
  * Manual keep-alive trigger (for testing)
  * POST /api/keepalive/trigger
  */
-exports.triggerKeepAlive = functions.https.onRequest(async (req, res) => {
+exports.triggerKeepAlive = regionalFunctions.https.onRequest(async (req, res) => {
     console.log('🔄 Manual keep-alive triggered');
 
     // Same logic as scheduled
-    const baseUrl = `https://us-central1-ribh-8a479.cloudfunctions.net/api`;
+    const baseUrl = `https://${REGION}-ribh-8a479.cloudfunctions.net/api`;
 
     try {
         const healthRes = await fetch(`${baseUrl}/health`);

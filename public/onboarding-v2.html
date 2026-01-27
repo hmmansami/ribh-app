@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH - ربط متجرك</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #10B981;
+            --green-dark: #059669;
+            --green-glow: rgba(16, 185, 129, 0.3);
+            --bg-primary: #0A0A0B;
+            --bg-secondary: #141416;
+            --bg-tertiary: #1C1C1F;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-muted: #71717A;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Animated gradient background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(16, 185, 129, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 100%, rgba(16, 185, 129, 0.08), transparent);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 440px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0 32px;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--green);
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+        }
+
+        .tagline {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            padding: 0 8px;
+            margin-bottom: 40px;
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 16px;
+            left: 40px;
+            right: 40px;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-line-fill {
+            height: 100%;
+            background: var(--green);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        .step-indicator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active .step-circle {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+            box-shadow: 0 0 20px var(--green-glow);
+        }
+
+        .step-indicator.completed .step-circle {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .step-indicator.active .step-label,
+        .step-indicator.completed .step-label {
+            color: var(--text-secondary);
+        }
+
+        /* Content area */
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-content.active {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 28px 24px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .card-description {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px var(--green-glow);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #252528;
+            border-color: var(--text-muted);
+        }
+
+        .btn-icon {
+            font-size: 20px;
+        }
+
+        /* QR Code container */
+        .qr-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 24px auto;
+            width: fit-content;
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--bg-primary);
+        }
+
+        .qr-placeholder.loading {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            display: none;
+        }
+
+        .qr-instructions {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .qr-instructions p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .qr-instructions small {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Status indicator */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .status-dot.waiting {
+            background: #FBBF24;
+            animation: blink 1.5s infinite;
+        }
+
+        .status-dot.connected {
+            background: var(--green);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Success screen */
+        .success-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 36px;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-title {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .success-description {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        /* Feature list */
+        .features {
+            margin-top: auto;
+            padding: 20px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        .footer p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Check icon SVG */
+        .check-icon {
+            display: none;
+        }
+
+        .step-indicator.completed .step-number {
+            display: none;
+        }
+
+        .step-indicator.completed .check-icon {
+            display: block;
+        }
+
+        /* Responsive */
+        @media (max-width: 380px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .card {
+                padding: 24px 20px;
+            }
+            
+            .card-title {
+                font-size: 20px;
+            }
+            
+            .qr-placeholder,
+            .qr-image {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        /* Salla brand colors */
+        .salla-btn {
+            background: #5541D7;
+        }
+
+        .salla-btn:hover {
+            background: #4432B8;
+        }
+
+        /* WhatsApp brand */
+        .whatsapp-icon {
+            color: #25D366;
+        }
+
+        /* Shimmer loading effect */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="logo">RIBH</div>
+            <p class="tagline">اربط متجرك في دقيقتين</p>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-line">
+                    <div class="progress-line-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="step-indicator active" data-step="1">
+                    <div class="step-circle">
+                        <span class="step-number">١</span>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="step-label">ربط سلة</span>
+                </div>
+                
+                <div class="step-indicator" data-step="2">
+                    <div class="step-circle">
+                        <span class="step-number">٢</span>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="step-label">واتساب</span>
+                </div>
+                
+                <div class="step-indicator" data-step="3">
+                    <div class="step-circle">
+                        <span class="step-number">٣</span>
+                        <svg class="check-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="step-label">جاهز!</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Step 1: Connect Salla -->
+            <div class="step-content active" id="step1">
+                <div class="card">
+                    <div class="card-icon">🏪</div>
+                    <h2 class="card-title">اربط متجرك بسلة</h2>
+                    <p class="card-description">
+                        اضغط الزر وسجّل دخولك بحساب سلة.
+                        نحتاج صلاحية لقراءة الطلبات ومعلومات العملاء فقط.
+                    </p>
+                    <a href="#" class="btn btn-primary salla-btn" id="connectSallaBtn">
+                        <span class="btn-icon">🔗</span>
+                        <span>ربط حساب سلة</span>
+                    </a>
+                </div>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🔒</div>
+                        <span class="feature-text">بياناتك آمنة ومشفرة بالكامل</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <span class="feature-text">ربط مباشر بدون أي إعدادات إضافية</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔄</div>
+                        <span class="feature-text">تحديث تلقائي لكل الطلبات الجديدة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: WhatsApp QR -->
+            <div class="step-content" id="step2">
+                <div class="card">
+                    <div class="card-icon whatsapp-icon">💬</div>
+                    <h2 class="card-title">ربط الواتساب</h2>
+                    <p class="card-description">
+                        افتح واتساب على جوالك واختر "الأجهزة المرتبطة" ثم امسح الباركود
+                    </p>
+                    
+                    <div class="qr-container">
+                        <div class="qr-placeholder loading" id="qrPlaceholder">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                                <rect x="14" y="14" width="3" height="3"/>
+                                <rect x="18" y="14" width="3" height="3"/>
+                                <rect x="14" y="18" width="3" height="3"/>
+                                <rect x="18" y="18" width="3" height="3"/>
+                            </svg>
+                            <p style="margin-top: 12px; font-size: 14px;">جاري تحميل الباركود...</p>
+                        </div>
+                        <img class="qr-image" id="qrImage" alt="WhatsApp QR Code">
+                    </div>
+
+                    <div class="qr-instructions">
+                        <div class="status-badge" id="whatsappStatus">
+                            <span class="status-dot waiting"></span>
+                            <span>في انتظار المسح</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="simulateWhatsAppConnect()" style="margin-top: auto;">
+                    <span>⏭️</span>
+                    <span>تخطي (للتجربة)</span>
+                </button>
+            </div>
+
+            <!-- Step 3: Success -->
+            <div class="step-content" id="step3">
+                <div class="success-container">
+                    <div class="success-icon">✓</div>
+                    <h2 class="success-title">تم الربط بنجاح! 🎉</h2>
+                    <p class="success-description">
+                        متجرك جاهز الآن. سيتم إرسال رسالة واتساب تلقائياً لكل عميل يترك سلة مهجورة.
+                    </p>
+                </div>
+
+                <div class="card" style="text-align: center;">
+                    <p style="font-size: 48px; margin-bottom: 16px;">📊</p>
+                    <h3 style="font-size: 18px; margin-bottom: 8px;">لوحة التحكم</h3>
+                    <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
+                        تابع الرسائل المرسلة والسلات المستردة
+                    </p>
+                    <a href="/dashboard" class="btn btn-primary">
+                        <span>فتح لوحة التحكم</span>
+                        <span style="margin-right: 4px;">←</span>
+                    </a>
+                </div>
+
+                <div class="features">
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <span class="feature-text">رسائل واتساب شخصية لكل عميل</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <span class="feature-text">نسبة استرداد تصل إلى 15%</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💰</div>
+                        <span class="feature-text">زيادة المبيعات بدون تكلفة إضافية</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2025 RIBH - استرداد السلات المهجورة</p>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let currentStep = 1;
+        const SALLA_CLIENT_ID = 'YOUR_SALLA_CLIENT_ID'; // Replace with actual
+        const CALLBACK_URL = 'https://europe-west1-ribh-484706.cloudfunctions.net/api/salla/callback';
+        
+        // Check URL params for OAuth callback
+        function checkOAuthCallback() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('salla_connected') === 'true') {
+                goToStep(2);
+                // Clear the URL params
+                window.history.replaceState({}, '', window.location.pathname);
+            }
+        }
+        
+        // Update UI for current step
+        function updateUI() {
+            // Update progress indicators
+            document.querySelectorAll('.step-indicator').forEach((el, index) => {
+                const step = index + 1;
+                el.classList.remove('active', 'completed');
+                if (step === currentStep) {
+                    el.classList.add('active');
+                } else if (step < currentStep) {
+                    el.classList.add('completed');
+                }
+            });
+            
+            // Update progress line
+            const progress = ((currentStep - 1) / 2) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // Show/hide step content
+            document.querySelectorAll('.step-content').forEach((el, index) => {
+                el.classList.toggle('active', index + 1 === currentStep);
+            });
+        }
+        
+        // Go to specific step
+        function goToStep(step) {
+            currentStep = step;
+            updateUI();
+            
+            if (step === 2) {
+                loadWhatsAppQR();
+            }
+        }
+        
+        // Step 1: Salla OAuth
+        document.getElementById('connectSallaBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Build OAuth URL
+            const state = generateRandomState();
+            sessionStorage.setItem('salla_oauth_state', state);
+            
+            const authUrl = new URL('https://accounts.salla.sa/oauth2/auth');
+            authUrl.searchParams.set('client_id', SALLA_CLIENT_ID);
+            authUrl.searchParams.set('redirect_uri', CALLBACK_URL);
+            authUrl.searchParams.set('response_type', 'code');
+            authUrl.searchParams.set('scope', 'offline_access');
+            authUrl.searchParams.set('state', state);
+            
+            // For demo, just go to step 2
+            // In production: window.location.href = authUrl.toString();
+            goToStep(2);
+        });
+        
+        // Generate random state for OAuth
+        function generateRandomState() {
+            return Math.random().toString(36).substring(2, 15);
+        }
+        
+        // Step 2: Load WhatsApp QR
+        async function loadWhatsAppQR() {
+            const placeholder = document.getElementById('qrPlaceholder');
+            const qrImage = document.getElementById('qrImage');
+            
+            try {
+                // In production, fetch from your WhatsApp bridge service
+                // const response = await fetch('/api/whatsapp/qr');
+                // const data = await response.json();
+                // qrImage.src = data.qr;
+                
+                // Demo: Show placeholder then simulate QR after delay
+                setTimeout(() => {
+                    // For demo, we'll show a placeholder QR
+                    placeholder.innerHTML = `
+                        <svg width="180" height="180" viewBox="0 0 180 180">
+                            <rect fill="white" width="180" height="180"/>
+                            <g fill="black">
+                                <!-- Simplified QR pattern for demo -->
+                                <rect x="10" y="10" width="50" height="50"/>
+                                <rect x="20" y="20" width="30" height="30" fill="white"/>
+                                <rect x="25" y="25" width="20" height="20"/>
+                                
+                                <rect x="120" y="10" width="50" height="50"/>
+                                <rect x="130" y="20" width="30" height="30" fill="white"/>
+                                <rect x="135" y="25" width="20" height="20"/>
+                                
+                                <rect x="10" y="120" width="50" height="50"/>
+                                <rect x="20" y="130" width="30" height="30" fill="white"/>
+                                <rect x="25" y="135" width="20" height="20"/>
+                                
+                                <!-- Random pattern -->
+                                <rect x="70" y="10" width="10" height="10"/>
+                                <rect x="90" y="10" width="10" height="10"/>
+                                <rect x="70" y="30" width="10" height="10"/>
+                                <rect x="80" y="40" width="10" height="10"/>
+                                <rect x="100" y="30" width="10" height="10"/>
+                                
+                                <rect x="10" y="70" width="10" height="10"/>
+                                <rect x="30" y="80" width="10" height="10"/>
+                                <rect x="40" y="70" width="10" height="10"/>
+                                
+                                <rect x="70" y="70" width="40" height="40"/>
+                                <rect x="80" y="80" width="20" height="20" fill="white"/>
+                                <rect x="85" y="85" width="10" height="10"/>
+                                
+                                <rect x="120" y="70" width="10" height="10"/>
+                                <rect x="140" y="80" width="10" height="10"/>
+                                <rect x="160" y="70" width="10" height="10"/>
+                                
+                                <rect x="70" y="120" width="10" height="10"/>
+                                <rect x="90" y="130" width="10" height="10"/>
+                                <rect x="80" y="150" width="10" height="10"/>
+                                <rect x="100" y="140" width="10" height="10"/>
+                                
+                                <rect x="120" y="120" width="20" height="20"/>
+                                <rect x="150" y="130" width="10" height="10"/>
+                                <rect x="140" y="150" width="20" height="20"/>
+                                <rect x="160" y="160" width="10" height="10"/>
+                            </g>
+                        </svg>
+                    `;
+                    placeholder.classList.remove('loading');
+                }, 1500);
+                
+                // Start polling for connection status
+                pollWhatsAppStatus();
+                
+            } catch (error) {
+                console.error('Failed to load QR:', error);
+                placeholder.innerHTML = `
+                    <p style="color: #EF4444;">فشل تحميل الباركود</p>
+                    <button onclick="loadWhatsAppQR()" style="margin-top: 12px; padding: 8px 16px; background: var(--green); color: white; border: none; border-radius: 8px; cursor: pointer;">إعادة المحاولة</button>
+                `;
+            }
+        }
+        
+        // Poll WhatsApp connection status
+        let pollInterval;
+        function pollWhatsAppStatus() {
+            // In production: poll your backend for connection status
+            // clearInterval(pollInterval);
+            // pollInterval = setInterval(async () => {
+            //     const response = await fetch('/api/whatsapp/status');
+            //     const data = await response.json();
+            //     if (data.connected) {
+            //         clearInterval(pollInterval);
+            //         onWhatsAppConnected();
+            //     }
+            // }, 2000);
+        }
+        
+        // WhatsApp connected callback
+        function onWhatsAppConnected() {
+            const status = document.getElementById('whatsappStatus');
+            status.innerHTML = `
+                <span class="status-dot connected"></span>
+                <span>تم الربط بنجاح!</span>
+            `;
+            
+            setTimeout(() => {
+                goToStep(3);
+            }, 1000);
+        }
+        
+        // Demo: Simulate WhatsApp connection
+        function simulateWhatsAppConnect() {
+            onWhatsAppConnected();
+        }
+        
+        // Initialize
+        checkOAuthCallback();
+        updateUI();
+    </script>
+</body>
+</html>

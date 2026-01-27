@@ -19,23 +19,28 @@
         "rewrites": [
             {
                 "source": "/api/**",
-                "function": "api"
+                "function": "api",
+                "region": "europe-west1"
             },
             {
                 "source": "/oauth/**",
-                "function": "api"
+                "function": "api",
+                "region": "europe-west1"
             },
             {
                 "source": "/shopify/**",
-                "function": "api"
+                "function": "api",
+                "region": "europe-west1"
             },
             {
                 "source": "/app",
-                "function": "api"
+                "function": "api",
+                "region": "europe-west1"
             },
             {
                 "source": "/salla/**",
-                "function": "api"
+                "function": "api",
+                "region": "europe-west1"
             }
         ]
     },
@@ -43,6 +48,7 @@
         {
             "source": "functions",
             "codebase": "default",
+            "runtime": "nodejs20",
             "ignore": [
                 "node_modules",
                 ".git",

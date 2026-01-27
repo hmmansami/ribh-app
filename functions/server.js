@@ -2062,6 +2062,17 @@ app.post('/webhooks/salla', handleSallaWebhook);
 app.post('/api/webhooks/salla', handleSallaWebhook);
 app.post('/webhook', handleSallaWebhook); // Alternative path
 
+// ==== DEDICATED SALLA ABANDONED CART WEBHOOK ====
+// Specialized handler for abandoned.cart events - saves to Firestore
+try {
+    const sallaCartWebhook = require('./webhooks/sallaCart');
+    app.use('/webhooks/salla/cart', sallaCartWebhook);
+    app.use('/api/webhooks/salla/cart', sallaCartWebhook);
+    console.log('✅ Salla Cart Webhook loaded at /webhooks/salla/cart');
+} catch (e) {
+    console.log('⚠️ Salla Cart Webhook not available:', e.message);
+}
+
 // ==== TELEGRAM BOT WEBHOOK ====
 // ONE-CLICK SIGNUP: Customer clicks link with phone embedded -> opens Telegram -> done!
 // Link format: https://t.me/RibhCartBot?start=966501234567
