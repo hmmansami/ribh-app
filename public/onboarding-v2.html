@@ -621,6 +621,7 @@
                             <p style="margin-top: 12px; font-size: 14px;">جاري تحميل الباركود...</p>
                         </div>
                         <img class="qr-image" id="qrImage" alt="WhatsApp QR Code">
+                        <iframe id="qrFrame" style="display:none; width:280px; height:320px; border:none; border-radius:12px; background:white;"></iframe>
                     </div>
 
                     <div class="qr-instructions">
@@ -797,22 +798,22 @@
             }
             
             try {
-                // Fetch QR from WhatsApp bridge service with storeId (use /init for JSON response)
-                const response = await fetch(`${WHATSAPP_API_BASE}/init/${storeId}?key=ribh-secret-2026`);
-                const data = await response.json();
+                // Check status first
+                const statusRes = await fetch(`${WHATSAPP_API_BASE}/status/${storeId}`);
+                const statusData = await statusRes.json();
                 
-                if (data.qr || data.qrCode) {
-                    // Show the real QR code
-                    qrImage.src = data.qr || data.qrCode;
-                    qrImage.style.display = 'block';
-                    placeholder.style.display = 'none';
-                } else if (data.status === 'connected') {
+                if (statusData.connected) {
                     // Already connected
                     onWhatsAppConnected();
                     return;
-                } else {
-                    throw new Error(data.message || 'QR not available');
                 }
+                
+                // Load QR in iframe (bridge returns HTML)
+                const qrFrame = document.getElementById('qrFrame');
+                qrFrame.src = `${WHATSAPP_API_BASE}/qr/${storeId}`;
+                qrFrame.style.display = 'block';
+                placeholder.style.display = 'none';
+                qrImage.style.display = 'none';
                 
                 // Start polling for connection status
                 pollWhatsAppStatus();
