@@ -65,8 +65,12 @@ ca8e6de4265c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe
 
 **WhatsApp QR not showing?**
 ```
-Go to: https://ribh-whatsapp-1.onrender.com/qr/demo
-Wait for QR to generate.
+Sessions expire. Reset it:
+1. POST https://ribh-whatsapp-1.onrender.com/logout/demo
+2. Then visit: https://ribh-whatsapp-1.onrender.com/qr/demo
+3. Wait 5-10 seconds for QR to generate
+
+Or use a fresh storeId (e.g., /qr/meeting-demo)
 ```
 
 ---
