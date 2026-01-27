@@ -797,8 +797,8 @@
             }
             
             try {
-                // Fetch QR from WhatsApp bridge service with storeId
-                const response = await fetch(`${WHATSAPP_API_BASE}/qr/${storeId}`);
+                // Fetch QR from WhatsApp bridge service with storeId (use /init for JSON response)
+                const response = await fetch(`${WHATSAPP_API_BASE}/init/${storeId}?key=ribh-secret-2026`);
                 const data = await response.json();
                 
                 if (data.qr || data.qrCode) {
