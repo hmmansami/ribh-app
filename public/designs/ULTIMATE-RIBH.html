@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RIBH - أرباحك</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg: #121212;
+            --card: #1E1E1E;
+            --card-border: #2A2A2A;
+            --green: #00C853;
+            --green-glow: rgba(0, 200, 83, 0.4);
+            --gold: #FFD700;
+            --gold-glow: rgba(255, 215, 0, 0.3);
+            --white: #FFFFFF;
+            --gray: #888888;
+            --gray-light: #B0B0B0;
+            --red: #FF5252;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Glow Background */
+        .glow-bg {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--green-glow) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.7; transform: translateX(-50%) scale(1.1); }
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px 16px 100px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 40px 0 30px;
+        }
+
+        .streak {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes badgePop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .money-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .money-counter {
+            font-size: 56px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .money-counter.flash {
+            animation: moneyFlash 0.3s ease;
+        }
+
+        @keyframes moneyFlash {
+            0%, 100% { color: var(--white); }
+            50% { color: var(--green); text-shadow: 0 0 30px var(--green-glow); }
+        }
+
+        .currency {
+            font-size: 24px;
+            font-weight: 500;
+            color: var(--gray);
+            margin-right: 8px;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--green);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: livePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 var(--green-glow); }
+            50% { opacity: 0.7; box-shadow: 0 0 0 8px transparent; }
+        }
+
+        /* Goal Progress (for new stores) */
+        .goal-section {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .goal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .goal-label {
+            color: var(--gold);
+            font-size: 14px;
+        }
+
+        .goal-amount {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .goal-bar {
+            height: 8px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .goal-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), #FFA000);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Action Button */
+        .action-section {
+            padding: 20px 0;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, var(--green) 0%, #00A844 100%);
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-family: inherit;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px var(--green-glow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+            box-shadow: 0 2px 10px var(--green-glow);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .action-btn .emoji {
+            font-size: 22px;
+        }
+
+        .action-count {
+            display: block;
+            font-size: 13px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        /* Cards */
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.expanded {
+            border-color: var(--green);
+            box-shadow: 0 0 20px rgba(0, 200, 83, 0.1);
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-header:active {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .card-icon {
+            font-size: 20px;
+        }
+
+        .card-badge {
+            background: var(--green);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-right: auto;
+            margin-left: 12px;
+        }
+
+        .card-arrow {
+            color: var(--gray);
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+
+        .card.expanded .card-arrow {
+            transform: rotate(180deg);
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.expanded .card-content {
+            max-height: 600px;
+        }
+
+        .card-inner {
+            padding: 0 20px 20px;
+        }
+
+        /* Cart Items */
+        .cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .cart-item:active {
+            background: rgba(0, 200, 83, 0.1);
+            transform: scale(0.98);
+        }
+
+        .cart-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .cart-name {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .cart-time {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .cart-amount {
+            font-weight: 600;
+            color: var(--green);
+            font-size: 16px;
+        }
+
+        /* Campaign Toggles */
+        .campaign-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .campaign-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+        }
+
+        .campaign-info h4 {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .campaign-info p {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .toggle {
+            width: 52px;
+            height: 30px;
+            background: #3A3A3A;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--green);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .toggle.active::after {
+            transform: translateX(-22px);
+        }
+
+        /* Templates */
+        .template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .template-item {
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .template-item:active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .template-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .template-preview {
+            font-size: 13px;
+            color: var(--gray);
+            line-height: 1.5;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-box {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 4px;
+        }
+
+        .stat-value.gold {
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        /* Settings */
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .setting-item:active {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-icon {
+            font-size: 18px;
+        }
+
+        .setting-label {
+            font-size: 15px;
+        }
+
+        .setting-arrow {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Live Feed */
+        .live-feed {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, var(--bg) 60%, transparent);
+            padding: 20px 0 16px;
+            z-index: 100;
+        }
+
+        .feed-container {
+            overflow: hidden;
+            mask-image: linear-gradient(to left, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to left, transparent, black 10%, black 90%, transparent);
+        }
+
+        .feed-track {
+            display: flex;
+            gap: 24px;
+            animation: feedScroll 20s linear infinite;
+            width: max-content;
+        }
+
+        @keyframes feedScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .feed-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 14px;
+            color: var(--gray-light);
+        }
+
+        .feed-item .emoji {
+            font-size: 16px;
+        }
+
+        .feed-amount {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--green);
+            animation: confettiFall 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes confettiFall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg) scale(1); }
+            100% { opacity: 0; transform: translateY(100px) rotate(720deg) scale(0); }
+        }
+
+        /* Money Particle */
+        .money-particle {
+            position: fixed;
+            font-size: 24px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: moneyFly 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes moneyFly {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5) translateY(-200px); }
+        }
+
+        /* Pull to Refresh */
+        .ptr-indicator {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-60px);
+            width: 40px;
+            height: 40px;
+            background: var(--card);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .ptr-indicator.visible {
+            transform: translateX(-50%) translateY(20px);
+        }
+
+        .ptr-indicator.loading .ptr-icon {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .container {
+                padding-top: 60px;
+            }
+
+            .money-counter {
+                font-size: 72px;
+            }
+
+            .currency {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-bg"></div>
+    <div class="ptr-indicator" id="ptrIndicator">
+        <span class="ptr-icon">↻</span>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="streak">
+                <span>🔥</span>
+                <span>٥ أيام متتالية</span>
+            </div>
+
+            <div class="money-label">إجمالي أرباحك</div>
+            <div class="money-counter" id="moneyCounter" data-target="48750">
+                <span class="amount">٠</span>
+                <span class="currency">ر.س</span>
+            </div>
+
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span>↑ ١,٢٠٠ ر.س آخر ساعة</span>
+            </div>
+
+            <div class="goal-section" id="goalSection" style="display: none;">
+                <div class="goal-header">
+                    <span class="goal-label">🎯 هدفك</span>
+                    <span class="goal-amount">١٠٠,٠٠٠ ر.س</span>
+                </div>
+                <div class="goal-bar">
+                    <div class="goal-progress" id="goalProgress"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Action Button -->
+        <section class="action-section">
+            <button class="action-btn" id="actionBtn" data-sound="send">
+                <span class="emoji">🚀</span>
+                <div>
+                    <span>أرسل رسائل الاسترداد</span>
+                    <span class="action-count">١٢ سلة متروكة جاهزة</span>
+                </div>
+            </button>
+        </section>
+
+        <!-- Cards -->
+        <section class="cards">
+            <!-- Abandoned Carts -->
+            <div class="card" data-card="carts">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">🛒</span>
+                        <span>السلات المتروكة</span>
+                    </div>
+                    <span class="card-badge">١٢</span>
+                    <span class="card-arrow">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-inner">
+                        <div class="cart-list">
+                            <div class="cart-item" data-customer="ahmed">
+                                <div class="cart-info">
+                                    <span class="cart-name">أحمد محمد</span>
+                                    <span class="cart-time">منذ ٣٠ دقيقة</span>
+                                </div>
+                                <span class="cart-amount">٣٤٠ ر.س</span>
+                            </div>
+                            <div class="cart-item" data-customer="sara">
+                                <div class="cart-info">
+                                    <span class="cart-name">سارة العتيبي</span>
+                                    <span class="cart-time">منذ ساعة</span>
+                                </div>
+                                <span class="cart-amount">٥٦٠ ر.س</span>
+                            </div>
+                            <div class="cart-item" data-customer="khalid">
+                                <div class="cart-info">
+                                    <span class="cart-name">خالد القحطاني</span>
+                                    <span class="cart-time">منذ ساعتين</span>
+                                </div>
+                                <span class="cart-amount">٨٩٠ ر.س</span>
+                            </div>
+                            <div class="cart-item" data-customer="noura">
+                                <div class="cart-info">
+                                    <span class="cart-name">نورة الشمري</span>
+                                    <span class="cart-time">منذ ٣ ساعات</span>
+                                </div>
+                                <span class="cart-amount">٢٢٠ ر.س</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Campaigns -->
+            <div class="card" data-card="campaigns">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">📈</span>
+                        <span>حملات البيع</span>
+                    </div>
+                    <span class="card-arrow">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-inner">
+                        <div class="campaign-list">
+                            <div class="campaign-item">
+                                <div class="campaign-info">
+                                    <h4>استرداد السلات</h4>
+                                    <p>رسالة بعد ١ ساعة من الترك</p>
+                                </div>
+                                <div class="toggle active" data-campaign="cart-recovery"></div>
+                            </div>
+                            <div class="campaign-item">
+                                <div class="campaign-info">
+                                    <h4>متابعة الطلبات</h4>
+                                    <p>رسالة بعد التوصيل</p>
+                                </div>
+                                <div class="toggle active" data-campaign="order-followup"></div>
+                            </div>
+                            <div class="campaign-item">
+                                <div class="campaign-info">
+                                    <h4>عروض نهاية الأسبوع</h4>
+                                    <p>كل خميس الساعة ٤ مساءً</p>
+                                </div>
+                                <div class="toggle" data-campaign="weekend-offers"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Templates -->
+            <div class="card" data-card="templates">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">💬</span>
+                        <span>قوالب الرسائل</span>
+                    </div>
+                    <span class="card-arrow">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-inner">
+                        <div class="template-list">
+                            <div class="template-item" data-template="recovery">
+                                <div class="template-name">
+                                    <span>🛒</span>
+                                    <span>رسالة الاسترداد</span>
+                                </div>
+                                <p class="template-preview">مرحباً {الاسم}! لاحظنا أن سلتك بانتظارك 🛍️ أكمل طلبك الآن واستخدم كود...</p>
+                            </div>
+                            <div class="template-item" data-template="thankyou">
+                                <div class="template-name">
+                                    <span>💚</span>
+                                    <span>شكراً على طلبك</span>
+                                </div>
+                                <p class="template-preview">شكراً {الاسم}! 🎉 تم استلام طلبك وجاري التجهيز. رقم الطلب: {رقم_الطلب}</p>
+                            </div>
+                            <div class="template-item" data-template="offer">
+                                <div class="template-name">
+                                    <span>🎁</span>
+                                    <span>عرض خاص</span>
+                                </div>
+                                <p class="template-preview">مرحباً {الاسم}! 🌟 عرض حصري لك: خصم ٢٠٪ على كل المنتجات لمدة ٢٤ ساعة!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="card" data-card="stats">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">📊</span>
+                        <span>الإحصائيات</span>
+                    </div>
+                    <span class="card-arrow">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-inner">
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <div class="stat-value">٨٧٪</div>
+                                <div class="stat-label">معدل التوصيل</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">٣٢٪</div>
+                                <div class="stat-label">معدل الاسترداد</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value gold">١٥,٢٠٠</div>
+                                <div class="stat-label">مسترد هذا الشهر</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value">٢٤٨</div>
+                                <div class="stat-label">رسائل مرسلة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="card" data-card="settings">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span class="card-icon">⚙️</span>
+                        <span>الإعدادات</span>
+                    </div>
+                    <span class="card-arrow">▼</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-inner">
+                        <div class="settings-list">
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-icon">🏪</span>
+                                    <span class="setting-label">ربط المتجر</span>
+                                </div>
+                                <span class="setting-arrow">←</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-icon">📱</span>
+                                    <span class="setting-label">رقم الواتساب</span>
+                                </div>
+                                <span class="setting-arrow">←</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-icon">🔔</span>
+                                    <span class="setting-label">الإشعارات</span>
+                                </div>
+                                <span class="setting-arrow">←</span>
+                            </div>
+                            <div class="setting-item">
+                                <div class="setting-info">
+                                    <span class="setting-icon">💳</span>
+                                    <span class="setting-label">الاشتراك</span>
+                                </div>
+                                <span class="setting-arrow">←</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Live Feed -->
+    <div class="live-feed">
+        <div class="feed-container">
+            <div class="feed-track" id="feedTrack">
+                <div class="feed-item"><span class="emoji">✅</span> أحمد دفع <span class="feed-amount">٣٤٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">📤</span> رسالة أُرسلت لسارة</div>
+                <div class="feed-item"><span class="emoji">🛒</span> سلة جديدة <span class="feed-amount">٥٦٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">✅</span> نورة دفعت <span class="feed-amount">٢٢٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">🎯</span> هدف اليوم: ٧٥٪</div>
+                <div class="feed-item"><span class="emoji">📤</span> رسالة أُرسلت لخالد</div>
+                <!-- Duplicate for seamless loop -->
+                <div class="feed-item"><span class="emoji">✅</span> أحمد دفع <span class="feed-amount">٣٤٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">📤</span> رسالة أُرسلت لسارة</div>
+                <div class="feed-item"><span class="emoji">🛒</span> سلة جديدة <span class="feed-amount">٥٦٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">✅</span> نورة دفعت <span class="feed-amount">٢٢٠ ر.س</span></div>
+                <div class="feed-item"><span class="emoji">🎯</span> هدف اليوم: ٧٥٪</div>
+                <div class="feed-item"><span class="emoji">📤</span> رسالة أُرسلت لخالد</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Arabic number formatter
+        const arabicNums = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+        const toArabic = (num) => {
+            return num.toString().replace(/\d/g, d => arabicNums[d]).replace(/,/g, '٬');
+        };
+
+        const formatMoney = (num) => {
+            return toArabic(num.toLocaleString('en-US'));
+        };
+
+        // Animated counter
+        const animateCounter = (element, target, duration = 2000) => {
+            const start = 0;
+            const startTime = performance.now();
+            
+            const update = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(start + (target - start) * easeOut);
+                
+                element.querySelector('.amount').textContent = formatMoney(current);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            };
+            
+            requestAnimationFrame(update);
+        };
+
+        // Money flash effect
+        const flashMoney = (element, addAmount) => {
+            element.classList.add('flash');
+            setTimeout(() => element.classList.remove('flash'), 300);
+            
+            // Update the counter
+            const currentTarget = parseInt(element.dataset.target);
+            element.dataset.target = currentTarget + addAmount;
+            animateCounter(element, currentTarget + addAmount, 500);
+        };
+
+        // Confetti explosion
+        const createConfetti = (x, y) => {
+            const colors = ['#00C853', '#FFD700', '#FFFFFF', '#00E676'];
+            for (let i = 0; i < 20; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti-piece';
+                confetti.style.left = x + 'px';
+                confetti.style.top = y + 'px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animation = `confettiFall ${0.8 + Math.random() * 0.4}s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+                confetti.style.setProperty('--x', (Math.random() - 0.5) * 200 + 'px');
+                document.body.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 1200);
+            }
+        };
+
+        // Money particles flying to counter
+        const createMoneyParticle = (startX, startY) => {
+            const particle = document.createElement('div');
+            particle.className = 'money-particle';
+            particle.textContent = '💰';
+            particle.style.left = startX + 'px';
+            particle.style.top = startY + 'px';
+            document.body.appendChild(particle);
+            
+            const counter = document.getElementById('moneyCounter');
+            const counterRect = counter.getBoundingClientRect();
+            const targetX = counterRect.left + counterRect.width / 2;
+            const targetY = counterRect.top + counterRect.height / 2;
+            
+            particle.animate([
+                { transform: 'scale(1)', opacity: 1, left: startX + 'px', top: startY + 'px' },
+                { transform: 'scale(0.5)', opacity: 0, left: targetX + 'px', top: targetY + 'px' }
+            ], {
+                duration: 800,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            }).onfinish = () => {
+                particle.remove();
+                flashMoney(counter, Math.floor(Math.random() * 500) + 100);
+            };
+        };
+
+        // Card accordion
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const header = card.querySelector('.card-header');
+            header.addEventListener('click', () => {
+                const wasExpanded = card.classList.contains('expanded');
+                
+                // Collapse all
+                cards.forEach(c => c.classList.remove('expanded'));
+                
+                // Expand clicked if it wasn't expanded
+                if (!wasExpanded) {
+                    card.classList.add('expanded');
+                }
+            });
+        });
+
+        // Toggle switches
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+            });
+        });
+
+        // Action button
+        const actionBtn = document.getElementById('actionBtn');
+        let isSending = false;
+        
+        actionBtn.addEventListener('click', (e) => {
+            if (isSending) return;
+            isSending = true;
+            
+            const rect = actionBtn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // Create confetti
+            createConfetti(centerX, centerY);
+            
+            // Create money particles
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createMoneyParticle(
+                        centerX + (Math.random() - 0.5) * 100,
+                        centerY + (Math.random() - 0.5) * 50
+                    );
+                }, i * 150);
+            }
+            
+            // Button feedback
+            actionBtn.disabled = true;
+            actionBtn.querySelector('span:not(.emoji)').textContent = 'جاري الإرسال...';
+            
+            setTimeout(() => {
+                actionBtn.disabled = false;
+                actionBtn.innerHTML = `
+                    <span class="emoji">✅</span>
+                    <div>
+                        <span>تم إرسال ١٢ رسالة!</span>
+                        <span class="action-count">انتظر السلات الجديدة</span>
+                    </div>
+                `;
+                isSending = false;
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    actionBtn.innerHTML = `
+                        <span class="emoji">🚀</span>
+                        <div>
+                            <span>أرسل رسائل الاسترداد</span>
+                            <span class="action-count">١٢ سلة متروكة جاهزة</span>
+                        </div>
+                    `;
+                }, 3000);
+            }, 1500);
+        });
+
+        // Cart item click (quick send)
+        document.querySelectorAll('.cart-item').forEach(item => {
+            let pressTimer;
+            
+            item.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(() => {
+                    const rect = item.getBoundingClientRect();
+                    createMoneyParticle(rect.left + rect.width / 2, rect.top);
+                    item.style.opacity = '0.5';
+                    setTimeout(() => item.style.opacity = '1', 300);
+                }, 500);
+            });
+            
+            item.addEventListener('touchend', () => {
+                clearTimeout(pressTimer);
+            });
+            
+            item.addEventListener('click', () => {
+                const rect = item.getBoundingClientRect();
+                createMoneyParticle(rect.left + rect.width / 2, rect.top);
+            });
+        });
+
+        // Pull to refresh
+        let startY = 0;
+        let isPulling = false;
+        const ptr = document.getElementById('ptrIndicator');
+        const container = document.getElementById('mainContainer');
+        
+        container.addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0) {
+                startY = e.touches[0].pageY;
+                isPulling = true;
+            }
+        });
+        
+        container.addEventListener('touchmove', (e) => {
+            if (!isPulling) return;
+            const diff = e.touches[0].pageY - startY;
+            if (diff > 50 && diff < 150) {
+                ptr.classList.add('visible');
+            }
+        });
+        
+        container.addEventListener('touchend', () => {
+            if (ptr.classList.contains('visible')) {
+                ptr.classList.add('loading');
+                setTimeout(() => {
+                    ptr.classList.remove('visible', 'loading');
+                    // Trigger refresh animation
+                    const counter = document.getElementById('moneyCounter');
+                    animateCounter(counter, parseInt(counter.dataset.target), 1000);
+                }, 1000);
+            }
+            isPulling = false;
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const counter = document.getElementById('moneyCounter');
+            const target = parseInt(counter.dataset.target);
+            animateCounter(counter, target);
+            
+            // Show goal for new stores (demo: toggle with URL param ?new=1)
+            if (new URLSearchParams(window.location.search).get('new') === '1') {
+                document.getElementById('goalSection').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('goalProgress').style.width = '48%';
+                }, 500);
+            }
+        });
+
+        // Simulate live updates
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                const counter = document.getElementById('moneyCounter');
+                const amount = Math.floor(Math.random() * 200) + 50;
+                flashMoney(counter, amount);
+            }
+        }, 8000);
+    </script>
+</body>
+</html>
