@@ -85,6 +85,46 @@ try {
     sallaWebhooks = null;
 }
 
+// Predictive Analytics - CLV, churn prediction, next order
+let predictiveAnalytics;
+try {
+    predictiveAnalytics = require('./lib/predictiveAnalytics');
+    console.log('✅ Predictive Analytics loaded - CLV, churn & next order predictions!');
+} catch (e) {
+    console.log('⚠️ Predictive Analytics not available:', e.message);
+    predictiveAnalytics = null;
+}
+
+// RFM Segmentation - Customer segmentation by Recency, Frequency, Monetary
+let rfmSegmentation;
+try {
+    rfmSegmentation = require('./lib/rfmSegmentation');
+    console.log('✅ RFM Segmentation loaded - Smart customer segments!');
+} catch (e) {
+    console.log('⚠️ RFM Segmentation not available:', e.message);
+    rfmSegmentation = null;
+}
+
+// AI Learning - Continuous learning from customer behavior
+let aiLearning;
+try {
+    aiLearning = require('./lib/aiLearning');
+    console.log('✅ AI Learning loaded - Self-improving intelligence!');
+} catch (e) {
+    console.log('⚠️ AI Learning not available:', e.message);
+    aiLearning = null;
+}
+
+// Event Tracker - Track customer events for analytics
+let eventTracker;
+try {
+    eventTracker = require('./lib/eventTracker');
+    console.log('✅ Event Tracker loaded - Customer event tracking enabled!');
+} catch (e) {
+    console.log('⚠️ Event Tracker not available:', e.message);
+    eventTracker = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -800,6 +840,294 @@ app.post('/api/ai/generate-cart-offer', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'حدث خطأ في إنشاء العرض'
+        });
+    }
+});
+
+// ==========================================
+// 🔮 PREDICTIVE ANALYTICS API
+// CLV, Churn Risk, Next Order Predictions
+// ==========================================
+
+/**
+ * Get customer predictions (CLV, churn risk, next order)
+ * GET /api/customers/:id/predictions
+ * 
+ * Response: { success, predictions: { clv, churnRisk, nextOrderDate, recommendations } }
+ */
+app.get('/api/customers/:id/predictions', async (req, res) => {
+    try {
+        if (!predictiveAnalytics) {
+            return res.status(503).json({
+                success: false,
+                error: 'Predictive Analytics not available'
+            });
+        }
+
+        const customerId = req.params.id;
+        const merchantId = req.query.merchant || req.storeId;
+
+        if (!customerId) {
+            return res.status(400).json({
+                success: false,
+                error: 'Customer ID is required'
+            });
+        }
+
+        console.log(`🔮 Getting predictions for customer: ${customerId}`);
+
+        const predictions = await predictiveAnalytics.getCustomerPredictions(customerId, merchantId);
+
+        res.json({
+            success: true,
+            customerId,
+            predictions
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting customer predictions:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get customer predictions'
+        });
+    }
+});
+
+// ==========================================
+// 📊 RFM SEGMENTATION API
+// Customer Segments by Recency, Frequency, Monetary
+// ==========================================
+
+/**
+ * Get RFM segment dashboard
+ * GET /api/segments/dashboard
+ * 
+ * Response: { success, dashboard: { segments, totalCustomers, segmentDistribution } }
+ */
+app.get('/api/segments/dashboard', async (req, res) => {
+    try {
+        if (!rfmSegmentation) {
+            return res.status(503).json({
+                success: false,
+                error: 'RFM Segmentation not available'
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+
+        console.log(`📊 Getting RFM dashboard for merchant: ${merchantId || 'all'}`);
+
+        const dashboard = await rfmSegmentation.getDashboard(merchantId);
+
+        res.json({
+            success: true,
+            dashboard
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting segment dashboard:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get segment dashboard'
+        });
+    }
+});
+
+/**
+ * Get customers in a specific segment
+ * GET /api/segments/:segment/customers
+ * 
+ * Query params: ?limit=50&offset=0&merchant=xxx
+ * Response: { success, segment, customers, total }
+ */
+app.get('/api/segments/:segment/customers', async (req, res) => {
+    try {
+        if (!rfmSegmentation) {
+            return res.status(503).json({
+                success: false,
+                error: 'RFM Segmentation not available'
+            });
+        }
+
+        const segment = req.params.segment;
+        const merchantId = req.query.merchant || req.storeId;
+        const limit = parseInt(req.query.limit) || 50;
+        const offset = parseInt(req.query.offset) || 0;
+
+        if (!segment) {
+            return res.status(400).json({
+                success: false,
+                error: 'Segment name is required'
+            });
+        }
+
+        console.log(`📊 Getting customers in segment: ${segment}`);
+
+        const result = await rfmSegmentation.getCustomersInSegment(segment, {
+            merchantId,
+            limit,
+            offset
+        });
+
+        res.json({
+            success: true,
+            segment,
+            customers: result.customers,
+            total: result.total,
+            limit,
+            offset
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting segment customers:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get segment customers'
+        });
+    }
+});
+
+// ==========================================
+// 🧠 AI LEARNING API
+// Self-Improving Intelligence & Insights
+// ==========================================
+
+/**
+ * Get AI learning insights
+ * GET /api/ai/insights
+ * 
+ * Query params: ?merchant=xxx&type=all|conversion|timing|offers
+ * Response: { success, insights: { ... } }
+ */
+app.get('/api/ai/insights', async (req, res) => {
+    try {
+        if (!aiLearning) {
+            return res.status(503).json({
+                success: false,
+                error: 'AI Learning not available'
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+        const insightType = req.query.type || 'all';
+
+        console.log(`🧠 Getting AI insights for merchant: ${merchantId || 'all'}, type: ${insightType}`);
+
+        const insights = await aiLearning.getInsights(merchantId, insightType);
+
+        res.json({
+            success: true,
+            merchantId,
+            type: insightType,
+            insights
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting AI insights:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get AI insights'
+        });
+    }
+});
+
+/**
+ * Get best pricing strategy recommendation
+ * GET /api/ai/pricing-strategy
+ * 
+ * Query params: ?merchant=xxx&productType=xxx&cartValue=xxx
+ * Response: { success, strategy: { discountPercent, timing, channel, confidence } }
+ */
+app.get('/api/ai/pricing-strategy', async (req, res) => {
+    try {
+        if (!aiLearning) {
+            return res.status(503).json({
+                success: false,
+                error: 'AI Learning not available'
+            });
+        }
+
+        const merchantId = req.query.merchant || req.storeId;
+        const productType = req.query.productType;
+        const cartValue = parseFloat(req.query.cartValue) || 0;
+
+        console.log(`💰 Getting pricing strategy for merchant: ${merchantId || 'all'}`);
+
+        const strategy = await aiLearning.getBestPricingStrategy({
+            merchantId,
+            productType,
+            cartValue
+        });
+
+        res.json({
+            success: true,
+            strategy
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting pricing strategy:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to get pricing strategy'
+        });
+    }
+});
+
+// ==========================================
+// 📈 EVENT TRACKING API
+// Track Customer Events for Analytics
+// ==========================================
+
+/**
+ * Track a customer event
+ * POST /api/events/track
+ * 
+ * Body: { eventType, customerId, merchantId, data }
+ * Event types: page_view, add_to_cart, checkout_started, checkout_completed, 
+ *              message_sent, message_opened, link_clicked, cart_recovered
+ * Response: { success, eventId }
+ */
+app.post('/api/events/track', async (req, res) => {
+    try {
+        if (!eventTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Event Tracker not available'
+            });
+        }
+
+        const { eventType, customerId, data } = req.body;
+        const merchantId = req.body.merchantId || req.body.merchant || req.storeId;
+
+        if (!eventType) {
+            return res.status(400).json({
+                success: false,
+                error: 'eventType is required'
+            });
+        }
+
+        console.log(`📈 Tracking event: ${eventType} for customer: ${customerId || 'anonymous'}`);
+
+        const result = await eventTracker.track({
+            eventType,
+            customerId,
+            merchantId,
+            data: data || {},
+            timestamp: new Date().toISOString(),
+            userAgent: req.headers['user-agent'],
+            ip: req.ip || req.headers['x-forwarded-for']
+        });
+
+        res.json({
+            success: true,
+            eventId: result.eventId
+        });
+
+    } catch (error) {
+        console.error('❌ Error tracking event:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to track event'
         });
     }
 });

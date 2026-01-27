@@ -1,9 +1,12 @@
 /**
  * PRICING ENGINE - Competitor Monitoring & Dynamic Pricing
  * Scrapes competitor prices, analyzes, auto-adjusts for max profit
+ * 
+ * 🧠 AI Learning Integration: Pricing strategies feed into learning loop
  */
 const admin = require('firebase-admin');
 const { sallaApi } = require('./sallaApp');
+const { recordPricingResult, getBestPricingStrategy } = require('./aiLearning');
 const getDb = () => admin.firestore();
 
 const PRICE_PATTERNS = [
@@ -86,10 +89,25 @@ async function analyzePricing(storeId, productId, myPrice, myCost = 0) {
   return analysis;
 }
 
-/** Auto-adjust price based on strategy */
-async function autoAdjustPrice(storeId, productId, strategy = 'match_lowest', opts = {}) {
+/** Auto-adjust price based on strategy 
+ * 🧠 Uses AI-recommended strategy if none specified
+ */
+async function autoAdjustPrice(storeId, productId, strategy = null, opts = {}) {
   const store = (await getDb().collection('stores').doc(storeId).get()).data();
   if (!store) throw new Error('Store not found');
+  
+  // 🧠 Get AI-recommended strategy if none provided
+  let aiRecommendation = null;
+  if (!strategy) {
+    try {
+      aiRecommendation = await getBestPricingStrategy(storeId);
+      strategy = aiRecommendation.recommendation;
+      console.log(`[Pricing] 🧠 Using AI strategy: ${strategy} (confidence: ${aiRecommendation.confidence})`);
+    } catch (e) {
+      strategy = 'match_lowest'; // fallback
+      console.log('[Pricing] No AI recommendation, using match_lowest');
+    }
+  }
   
   let currentPrice;
   if (store.platform === 'salla') {
@@ -107,6 +125,8 @@ async function autoAdjustPrice(storeId, productId, strategy = 'match_lowest', op
   if (cost && newPrice < cost * 1.1) newPrice = cost * 1.1;
   newPrice = Math.round(newPrice * 100) / 100;
   
+  const changeId = `${productId}_${Date.now()}`;
+  
   if (Math.abs(newPrice - currentPrice) > 0.01) {
     if (store.platform === 'salla') {
       await sallaApi(store.merchantId, `/products/${productId}`, {
@@ -114,12 +134,18 @@ async function autoAdjustPrice(storeId, productId, strategy = 'match_lowest', op
       });
     }
     await getDb().collection('stores').doc(storeId).collection('priceChanges').add({
-      productId, oldPrice: currentPrice, newPrice, strategy,
-      timestamp: admin.firestore.FieldValue.serverTimestamp()
+      changeId, productId, oldPrice: currentPrice, newPrice, strategy,
+      aiRecommended: !!aiRecommendation,
+      aiConfidence: aiRecommendation?.confidence || 'manual',
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      // 🧠 Track for later AI learning evaluation
+      pendingEvaluation: true,
+      evaluateAfter: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
     });
     console.log(`[Pricing] 💰 ${productId}: ${currentPrice} → ${newPrice} (${strategy})`);
   }
-  return { productId, oldPrice: currentPrice, newPrice, strategy, changed: newPrice !== currentPrice };
+  return { productId, oldPrice: currentPrice, newPrice, strategy, changed: newPrice !== currentPrice, 
+    changeId, aiRecommended: !!aiRecommendation };
 }
 
 /** Get pricing report for dashboard */
@@ -158,5 +184,104 @@ async function dailyScrapeAll(storeId) {
   return results;
 }
 
+/**
+ * 🧠 Evaluate pending pricing changes and record results to AI learning
+ * Run this periodically (e.g., daily cron) to feed learning loop
+ */
+async function evaluatePricingResults(storeId) {
+  const now = new Date();
+  const pendingSnap = await getDb()
+    .collection('stores').doc(storeId)
+    .collection('priceChanges')
+    .where('pendingEvaluation', '==', true)
+    .where('evaluateAfter', '<=', now)
+    .get();
+  
+  if (pendingSnap.empty) {
+    console.log('[Pricing] 🧠 No pending evaluations');
+    return { evaluated: 0 };
+  }
+  
+  const results = [];
+  
+  for (const doc of pendingSnap.docs) {
+    const change = doc.data();
+    const { productId, oldPrice, newPrice, strategy, timestamp } = change;
+    
+    try {
+      // Get sales data for the period
+      const changeDate = timestamp.toDate();
+      const durationDays = Math.round((now - changeDate) / (1000 * 60 * 60 * 24));
+      
+      // Get sales before and after (from orders collection)
+      const beforeStart = new Date(changeDate.getTime() - durationDays * 24 * 60 * 60 * 1000);
+      
+      const [beforeSnap, afterSnap] = await Promise.all([
+        getDb().collection('stores').doc(storeId).collection('orders')
+          .where('createdAt', '>=', beforeStart)
+          .where('createdAt', '<', changeDate)
+          .get(),
+        getDb().collection('stores').doc(storeId).collection('orders')
+          .where('createdAt', '>=', changeDate)
+          .where('createdAt', '<=', now)
+          .get()
+      ]);
+      
+      // Calculate metrics (filter to this product)
+      const beforeOrders = beforeSnap.docs.filter(d => 
+        d.data().items?.some(i => i.productId === productId));
+      const afterOrders = afterSnap.docs.filter(d => 
+        d.data().items?.some(i => i.productId === productId));
+      
+      const salesBefore = beforeOrders.length;
+      const salesAfter = afterOrders.length;
+      const revenueBefore = beforeOrders.reduce((sum, d) => 
+        sum + (d.data().items?.find(i => i.productId === productId)?.total || 0), 0);
+      const revenueAfter = afterOrders.reduce((sum, d) => 
+        sum + (d.data().items?.find(i => i.productId === productId)?.total || 0), 0);
+      
+      // Record to AI learning
+      await recordPricingResult(storeId, {
+        productId,
+        oldPrice,
+        newPrice,
+        strategy,
+        durationDays,
+        salesBefore,
+        salesAfter,
+        revenueBefore,
+        revenueAfter
+      });
+      
+      // Mark as evaluated
+      await doc.ref.update({
+        pendingEvaluation: false,
+        evaluatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        evaluationResult: {
+          salesBefore, salesAfter, revenueBefore, revenueAfter,
+          success: revenueAfter > revenueBefore
+        }
+      });
+      
+      results.push({ productId, strategy, success: revenueAfter > revenueBefore });
+      console.log(`[Pricing] 🧠 Evaluated ${productId}: ${revenueAfter > revenueBefore ? '✅' : '❌'}`);
+      
+    } catch (e) {
+      console.error(`[Pricing] Failed to evaluate ${productId}:`, e.message);
+    }
+  }
+  
+  console.log(`[Pricing] 🧠 Evaluated ${results.length} pricing changes`);
+  return { evaluated: results.length, results };
+}
+
+/**
+ * 🧠 Get AI-recommended strategy for a product (convenience wrapper)
+ */
+async function getRecommendedStrategy(storeId) {
+  return getBestPricingStrategy(storeId);
+}
+
 module.exports = { addCompetitor, removeCompetitor, scrapePrice, scrapeCompetitors,
-  analyzePricing, autoAdjustPrice, getPricingReport, dailyScrapeAll };
+  analyzePricing, autoAdjustPrice, getPricingReport, dailyScrapeAll,
+  evaluatePricingResults, getRecommendedStrategy };

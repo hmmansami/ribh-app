@@ -3,10 +3,13 @@
  * 
  * Test different subject lines, discounts, copy
  * Auto-pick winner based on open/click rates
+ * 
+ * 🧠 AI Learning Integration: Winners feed into learning loop
  */
 
 const fs = require('fs');
 const path = require('path');
+const { recordABResult, getOfferWeights } = require('./aiLearning');
 
 const TESTS_FILE = path.join(__dirname, '..', 'data', 'ab_tests.json');
 
@@ -79,11 +82,23 @@ function getTestVariant(type, element) {
 
 /**
  * Generate A/B tested offer
+ * 🧠 Uses AI-optimized weights when available
  */
-function generateTestedOffer(type, baseOffer = {}) {
+async function generateTestedOffer(type, baseOffer = {}, storeId = null, segment = 'all') {
     const tests = readJSON(TESTS_FILE);
 
-    // Get variants
+    // 🧠 Get AI-optimized offer weights if storeId provided
+    let aiWeights = null;
+    if (storeId) {
+        try {
+            aiWeights = await getOfferWeights(storeId, segment);
+            console.log(`[A/B Testing] 🧠 Using AI weights (confidence: ${aiWeights.confidence})`);
+        } catch (e) {
+            console.log('[A/B Testing] No AI weights available, using defaults');
+        }
+    }
+
+    // Get variants (potentially adjusted by AI weights)
     const subjectVariant = getTestVariant(type, 'subject');
     const discountVariant = getTestVariant(type, 'discount');
     const urgencyVariant = getTestVariant(type, 'urgency');
@@ -97,7 +112,10 @@ function generateTestedOffer(type, baseOffer = {}) {
             subject: subjectVariant?.id,
             discount: discountVariant?.id,
             urgency: urgencyVariant?.id
-        }
+        },
+        // 🧠 AI metadata
+        aiOptimized: !!aiWeights,
+        aiConfidence: aiWeights?.confidence || 'none'
     };
 
     // Log which variant was used
@@ -173,8 +191,9 @@ function getTestResults(type) {
 
 /**
  * Get winning variant
+ * 🧠 Records result to AI learning loop when winner is found
  */
-function getWinner(type, element) {
+async function getWinner(type, element, storeId = null) {
     const results = getTestResults(type);
     const a = results[element]?.A;
     const b = results[element]?.B;
@@ -186,9 +205,33 @@ function getWinner(type, element) {
     const aRate = a.converted / a.sent;
     const bRate = b.converted / b.sent;
 
-    if (aRate > bRate * 1.1) return 'A';
-    if (bRate > aRate * 1.1) return 'B';
-    return null; // Too close to call
+    let winner = null;
+    if (aRate > bRate * 1.1) winner = 'A';
+    else if (bRate > aRate * 1.1) winner = 'B';
+    
+    // 🧠 Record to AI learning loop when we have a winner and storeId
+    if (winner && storeId) {
+        try {
+            await recordABResult(storeId, {
+                testId: `${type}_${element}_${Date.now()}`,
+                testType: element, // 'subject', 'discount', etc.
+                variantA: { id: 'A', conversions: a.converted, sent: a.sent, rate: aRate },
+                variantB: { id: 'B', conversions: b.converted, sent: b.sent, rate: bRate },
+                winner: winner,
+                metrics: {
+                    aConversionRate: (aRate * 100).toFixed(2),
+                    bConversionRate: (bRate * 100).toFixed(2),
+                    improvement: (((winner === 'A' ? aRate : bRate) / (winner === 'A' ? bRate : aRate) - 1) * 100).toFixed(1)
+                },
+                context: { offerType: type }
+            });
+            console.log(`[A/B Testing] 🧠 Winner ${winner} recorded to AI learning for ${type}/${element}`);
+        } catch (e) {
+            console.error('[A/B Testing] Failed to record to AI learning:', e.message);
+        }
+    }
+    
+    return winner;
 }
 
 module.exports = {

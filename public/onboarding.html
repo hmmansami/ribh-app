@@ -3,795 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIBH - ابدأ الآن</title>
+    <title>RIBH - ✨ ابدأ رحلتك</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { arabic: ['Tajawal', 'sans-serif'] },
+                    colors: {
+                        magic: { 
+                            green: '#30d158', 
+                            purple: '#bf5af2', 
+                            blue: '#0a84ff',
+                            pink: '#ff375f',
+                            gold: '#ffd60a'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'sparkle': 'sparkle 1.5s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        'draw-check': 'drawCheck 0.6s ease-out forwards',
+                        'gradient-x': 'gradient-x 3s ease infinite',
+                        'bounce-subtle': 'bounceSubtle 2s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { font-family: 'Tajawal', sans-serif; }
         
-        :root {
-            --bg: #000000;
-            --card: #0d0d0d;
-            --card-border: rgba(255,255,255,0.08);
-            --card-hover: rgba(255,255,255,0.04);
-            --green: #30d158;
-            --green-soft: rgba(48, 209, 88, 0.15);
-            --green-glow: rgba(48, 209, 88, 0.4);
-            --blue: #0a84ff;
-            --purple: #bf5af2;
-            --text: #f5f5f7;
-            --text-secondary: #86868b;
-            --text-tertiary: #6e6e73;
-            --error: #ff453a;
-            --error-soft: rgba(255, 69, 58, 0.15);
-            --warning: #ff9f0a;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
+        /* Magical Background */
+        .magic-bg {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #0a1a2e 100%);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 24px;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        /* Logo */
-        .logo {
-            font-size: 2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--green) 0%, #63e6be 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin: 24px 0 8px;
-            letter-spacing: 3px;
-        }
-        
-        .tagline {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-            font-weight: 400;
-        }
-        
-        /* Trust Bar */
-        .trust-bar {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .trust-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        
-        .trust-badge svg {
-            width: 14px;
-            height: 14px;
-            fill: var(--green);
-        }
-        
-        /* Time Badge */
-        .time-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 32px;
-        }
-        
-        .time-badge {
-            background: var(--green-soft);
-            color: var(--green);
-            padding: 10px 24px;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(48, 209, 88, 0.2);
-        }
-        
-        .time-elapsed {
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-            display: none;
-        }
-        
-        .time-elapsed.visible { display: block; }
-        
-        /* Progress Bar (Apple-style thin) */
-        .progress-bar-container {
-            width: 100%;
-            max-width: 280px;
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 2px;
-            margin-bottom: 16px;
-            overflow: hidden;
-        }
-        
-        .progress-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--green) 0%, #63e6be 100%);
-            border-radius: 2px;
-            width: 0%;
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        /* Step Indicators */
-        .progress-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            margin-bottom: 32px;
-            width: 100%;
-            max-width: 320px;
-        }
-        
-        .step-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--card);
-            border: 2px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            z-index: 2;
-            color: var(--text-tertiary);
-        }
-        
-        .step-circle.active {
-            border-color: var(--green);
-            background: var(--green);
-            color: #000;
-            box-shadow: 0 0 0 4px var(--green-soft), 0 0 20px var(--green-glow);
-            transform: scale(1.1);
-        }
-        
-        .step-circle.done {
-            border-color: var(--green);
-            background: var(--green);
-            color: #000;
-        }
-        
-        .step-circle .checkmark {
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .step-circle.done .checkmark {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .step-circle.done .step-num { display: none; }
-        
-        .step-line {
-            width: 48px;
-            height: 2px;
-            background: rgba(255,255,255,0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
         
-        .step-line::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 0%;
-            background: var(--green);
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .step-line.done::after { width: 100%; }
-        
-        /* Cards */
-        .wizard-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 40px 32px;
-            width: 100%;
-            max-width: 440px;
-            text-align: center;
-            display: none;
-            opacity: 0;
-            transform: translateY(24px) scale(0.98);
-            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .wizard-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        }
-        
-        .wizard-card.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .step-icon {
-            font-size: 3.5rem;
-            margin-bottom: 16px;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        
-        .step-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
-        }
-        
-        .step-desc {
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        
-        /* Security Badge in Card */
-        .security-inline {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-tertiary);
-            font-size: 0.75rem;
-            margin-bottom: 20px;
-            background: rgba(255,255,255,0.03);
-            padding: 8px 16px;
-            border-radius: 100px;
-        }
-        
-        .security-inline svg {
-            width: 12px;
-            height: 12px;
-            fill: var(--green);
-        }
-        
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 16px 32px;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border: none;
-            width: 100%;
-            max-width: 300px;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn::after {
+        .magic-bg::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(rgba(255,255,255,0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.2s;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(191, 90, 242, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(48, 209, 88, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(10, 132, 255, 0.08) 0%, transparent 60%);
+            pointer-events: none;
         }
         
-        .btn:hover::after { opacity: 1; }
-        
-        .btn:active { transform: scale(0.98); }
-        
-        .btn-primary {
-            background: var(--green);
-            color: #000;
-            font-weight: 600;
-        }
-        
-        .btn-primary:hover {
-            box-shadow: 0 8px 32px var(--green-glow);
-        }
-        
-        .btn-primary:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .btn-primary:disabled:hover {
-            box-shadow: none;
-        }
-        
-        .btn-secondary {
-            background: rgba(255,255,255,0.08);
-            color: var(--text);
-            margin-top: 12px;
-        }
-        
-        .btn-secondary:hover {
-            background: rgba(255,255,255,0.12);
-        }
-        
-        /* Platform buttons */
-        .platform-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-        }
-        
-        .btn-salla {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-        }
-        
-        .btn-salla:hover {
-            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.4);
-        }
-        
-        .btn-shopify {
-            background: linear-gradient(135deg, #95bf47, #7ab55c);
-            color: #000;
-        }
-        
-        .btn-shopify:hover {
-            box-shadow: 0 8px 32px rgba(149, 191, 71, 0.4);
-        }
-        
-        /* Data access preview */
-        .data-preview {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 12px;
-            padding: 16px;
-            margin: 20px 0;
-            text-align: right;
-        }
-        
-        .data-preview-title {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .data-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 0.85rem;
-        }
-        
-        .data-item:last-child { border-bottom: none; }
-        
-        .data-item-icon {
-            width: 28px;
-            height: 28px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-        
-        .data-item-icon.green { background: var(--green-soft); }
-        .data-item-icon.red { background: var(--error-soft); }
-        
-        .data-item-text { flex: 1; }
-        .data-item-status { color: var(--text-tertiary); font-size: 0.75rem; }
-        
-        /* QR Section */
-        .qr-container {
-            background: #fff;
-            padding: 16px;
-            border-radius: 20px;
-            display: inline-block;
-            margin: 16px 0;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            position: relative;
-        }
-        
-        .qr-placeholder {
-            width: 180px;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            color: #333;
-        }
-        
-        .qr-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid #eee;
-            border-top-color: var(--green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* QR Timer */
-        .qr-timer {
+        /* Floating Orbs */
+        .orb {
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            padding: 6px 16px;
-            border-radius: 100px;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-        
-        .qr-timer.warning { color: var(--warning); }
-        .qr-timer.expired { color: var(--error); }
-        
-        /* Platform Instructions */
-        .platform-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 16px 0;
-        }
-        
-        .platform-tab {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            background: rgba(255,255,255,0.05);
-            color: var(--text-tertiary);
-            border: none;
-            transition: all 0.2s;
-        }
-        
-        .platform-tab.active {
-            background: rgba(255,255,255,0.1);
-            color: var(--text);
-        }
-        
-        .instructions-text {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            margin-bottom: 20px;
-            min-height: 40px;
-        }
-        
-        /* Toggle */
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin: 24px 0;
-        }
-        
-        .toggle {
-            width: 64px;
-            height: 36px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 18px;
-            position: relative;
-            cursor: pointer;
-            transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .toggle.active { background: var(--green); }
-        
-        .toggle::after {
-            content: "";
-            position: absolute;
-            width: 28px;
-            height: 28px;
-            background: white;
             border-radius: 50%;
-            top: 4px;
-            right: 4px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            filter: blur(60px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
         }
         
-        .toggle.active::after { right: 32px; }
+        .orb-1 { width: 300px; height: 300px; background: rgba(48, 209, 88, 0.3); top: -100px; right: -100px; animation-delay: 0s; }
+        .orb-2 { width: 200px; height: 200px; background: rgba(191, 90, 242, 0.3); bottom: 20%; left: -50px; animation-delay: 2s; }
+        .orb-3 { width: 150px; height: 150px; background: rgba(10, 132, 255, 0.3); top: 50%; right: 10%; animation-delay: 4s; }
         
-        .toggle-label {
-            font-size: 1rem;
-            font-weight: 500;
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.05); }
         }
         
-        /* What happens next */
-        .next-info {
-            background: linear-gradient(135deg, rgba(48, 209, 88, 0.08), rgba(48, 209, 88, 0.04));
-            border: 1px solid rgba(48, 209, 88, 0.15);
-            border-radius: 16px;
-            padding: 16px 20px;
-            margin-top: 24px;
-            text-align: right;
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(48, 209, 88, 0.4), 0 0 60px rgba(48, 209, 88, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(48, 209, 88, 0.6), 0 0 80px rgba(48, 209, 88, 0.3); }
         }
         
-        .next-info-title {
-            color: var(--green);
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
         }
         
-        .next-info-text {
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            line-height: 1.6;
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Error State */
-        .error-state {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            padding: 24px;
-            background: var(--error-soft);
-            border: 1px solid rgba(255, 69, 58, 0.2);
-            border-radius: 16px;
-            margin: 16px 0;
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
         
-        .error-state.visible { display: flex; }
-        
-        .error-icon { font-size: 2.5rem; }
-        
-        .error-title {
-            font-weight: 600;
-            color: var(--error);
+        @keyframes drawCheck {
+            0% { stroke-dashoffset: 50; }
+            100% { stroke-dashoffset: 0; }
         }
         
-        .error-message {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            text-align: center;
-            line-height: 1.5;
+        @keyframes gradient-x {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
         }
         
-        .btn-retry {
-            background: var(--error);
-            color: white;
-            padding: 12px 24px;
-            font-size: 0.9rem;
+        @keyframes bounceSubtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         
-        /* Success State */
-        .success-icon {
-            font-size: 4rem;
-            margin-bottom: 8px;
+        @keyframes shimmer {
+            from { background-position: -200% 0; }
+            to { background-position: 200% 0; }
         }
         
-        .success-checkmark {
-            width: 100px;
-            height: 100px;
-            margin: 0 auto 24px;
-            position: relative;
-        }
-        
-        .checkmark-circle {
-            stroke: var(--green);
-            stroke-width: 2;
-            fill: none;
-            stroke-dasharray: 314;
-            stroke-dashoffset: 314;
-            animation: drawCircle 0.6s ease forwards;
+        @keyframes confettiFall {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) translateX(var(--drift, 0)) rotate(var(--rotation, 720deg)); opacity: 0; }
         }
         
         @keyframes drawCircle {
             to { stroke-dashoffset: 0; }
         }
         
-        .checkmark-check {
-            stroke: var(--green);
-            stroke-width: 4;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            stroke-dasharray: 50;
-            stroke-dashoffset: 50;
-            animation: drawCheck 0.4s ease forwards 0.4s;
-        }
-        
-        @keyframes drawCheck {
-            to { stroke-dashoffset: 0; }
-        }
-        
-        .stats-preview {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 24px 0;
-        }
-        
-        .stat-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--green);
-            margin-bottom: 4px;
-        }
-        
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-        
-        .waiting-status {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .pulse-ring {
-            width: 16px;
-            height: 16px;
+        /* Magical Button */
+        .magic-btn {
+            background: linear-gradient(135deg, #30d158 0%, #20c997 50%, #30d158 100%);
+            background-size: 200% 200%;
+            animation: gradient-x 3s ease infinite;
             position: relative;
+            overflow: hidden;
         }
         
-        .pulse-ring::before,
-        .pulse-ring::after {
+        .magic-btn::before {
             content: '';
             position: absolute;
             inset: 0;
-            border-radius: 50%;
-            background: var(--green);
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
         }
         
-        .pulse-ring::before {
-            animation: pulse-ring 2s ease infinite;
+        .magic-btn:hover::before {
+            transform: translateX(100%);
         }
         
-        .pulse-ring::after {
-            width: 8px;
-            height: 8px;
-            top: 4px;
-            left: 4px;
+        .magic-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(48, 209, 88, 0.4);
         }
         
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(2.5); opacity: 0; }
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
         
-        /* Confetti */
-        .confetti-container {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: 1000;
+        /* Animated Step Indicator */
+        .step-dot {
+            position: relative;
         }
         
-        .confetti {
+        .step-dot.active::after {
+            content: '';
             position: absolute;
-            width: 10px;
-            height: 10px;
-            top: -20px;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid #30d158;
+            animation: pulse-glow 2s ease-in-out infinite;
         }
         
-        /* Back Button */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.05);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+        /* Shimmer Text */
+        .shimmer-text {
+            background: linear-gradient(90deg, #fff 0%, #30d158 50%, #fff 100%);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        /* Success Checkmark Animation */
+        .checkmark-circle {
+            stroke-dasharray: 314;
+            stroke-dashoffset: 314;
+            animation: drawCircle 0.8s ease forwards;
+        }
+        
+        .checkmark-check {
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+            animation: drawCheck 0.5s ease forwards 0.5s;
+        }
+        
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 0; background: transparent; }
+        
+        /* Step transitions */
+        .step-content {
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .step-content.hidden {
             opacity: 0;
+            transform: translateY(20px) scale(0.95);
             pointer-events: none;
+            position: absolute;
         }
         
-        .back-btn.visible {
+        .step-content.active {
             opacity: 1;
-            pointer-events: auto;
+            transform: translateY(0) scale(1);
         }
         
-        .back-btn:hover { background: rgba(255,255,255,0.1); }
-        
-        .back-btn svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--text-secondary);
-            transform: rotate(180deg);
+        /* Platform buttons hover effect */
+        .platform-btn {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
-        /* Help Link */
-        .help-link {
-            margin-top: 24px;
-            font-size: 0.8rem;
-            color: var(--text-tertiary);
+        .platform-btn:hover {
+            transform: translateY(-4px) scale(1.02);
         }
         
-        .help-link a {
-            color: var(--blue);
-            text-decoration: none;
+        /* Counting animation for stats */
+        .count-up {
+            display: inline-block;
         }
         
-        .help-link a:hover { text-decoration: underline; }
+        /* Dashboard preview animation */
+        .dashboard-preview {
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+        }
         
-        /* Mobile */
-        @media (max-width: 480px) {
-            body { padding: 16px; }
-            .wizard-card { padding: 32px 20px; }
-            .step-icon { font-size: 3rem; }
-            .step-title { font-size: 1.3rem; }
-            .btn { padding: 14px 24px; font-size: 0.95rem; }
-            .qr-placeholder { width: 160px; height: 160px; }
-            .trust-bar { gap: 12px; }
-            .progress-container { max-width: 280px; }
-            .step-line { width: 36px; }
+        .dashboard-item {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
         }
         
         /* Reduced motion */
@@ -803,406 +248,484 @@
         }
     </style>
 </head>
-<body>
-    <div class="logo">RIBH</div>
-    <p class="tagline">استرجع السلات المتروكة تلقائياً</p>
+<body class="magic-bg text-white overflow-x-hidden">
+    <!-- Floating Orbs Background -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
     
-    <!-- Trust Bar -->
-    <div class="trust-bar">
-        <div class="trust-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-            <span>تشفير 256-bit</span>
-        </div>
-        <div class="trust-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-            <span>500+ متجر يثقون بنا</span>
-        </div>
-    </div>
+    <!-- Sparkle Particles -->
+    <div id="sparkles" class="fixed inset-0 pointer-events-none z-0"></div>
     
-    <div class="time-container">
-        <div class="time-badge">
-            <span>⚡</span>
-            <span>الإعداد في دقائق معدودة</span>
-        </div>
-        <div class="time-elapsed" id="timeElapsed"></div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="progress-bar-container">
-        <div class="progress-bar-fill" id="progressBar"></div>
-    </div>
-    
-    <!-- Step Indicators -->
-    <div class="progress-container">
-        <div class="step-circle active" id="circle1">
-            <span class="step-num">1</span>
-            <svg class="checkmark" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        </div>
-        <div class="step-line" id="line1"></div>
-        <div class="step-circle" id="circle2">
-            <span class="step-num">2</span>
-            <svg class="checkmark" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        </div>
-        <div class="step-line" id="line2"></div>
-        <div class="step-circle" id="circle3">
-            <span class="step-num">3</span>
-            <svg class="checkmark" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        </div>
-    </div>
-    
-    <!-- Step 1: Connect Store -->
-    <div class="wizard-card active" id="step1">
-        <div class="step-icon">🏪</div>
-        <h2 class="step-title">ربط متجرك</h2>
-        <p class="step-desc">اختر منصة متجرك. ستنتقل لتسجيل الدخول الآمن ثم تعود تلقائياً.</p>
+    <div class="relative z-10 min-h-screen flex flex-col items-center px-4 py-8">
         
-        <div class="security-inline">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            <span>اتصال مشفر وآمن</span>
+        <!-- Logo with Glow -->
+        <div class="text-center mb-6 animate-[slideUp_0.6s_ease-out]">
+            <h1 class="text-4xl font-extrabold tracking-wider mb-2">
+                <span class="bg-gradient-to-l from-magic-green via-emerald-400 to-magic-green bg-clip-text text-transparent">RIBH</span>
+            </h1>
+            <p class="text-gray-400 text-sm">✨ استرجع أرباحك المفقودة</p>
         </div>
         
-        <!-- Data Access Preview -->
-        <div class="data-preview">
-            <div class="data-preview-title">ما نصل إليه فقط:</div>
-            <div class="data-item">
-                <div class="data-item-icon green">🛒</div>
-                <div class="data-item-text">السلات المتروكة</div>
-                <div class="data-item-status">✓ مطلوب</div>
+        <!-- Animated Trust Banner -->
+        <div class="flex items-center gap-4 mb-6 animate-[slideUp_0.6s_ease-out_0.1s_both]">
+            <div class="glass-card rounded-full px-4 py-2 flex items-center gap-2">
+                <div class="w-2 h-2 bg-magic-green rounded-full animate-pulse"></div>
+                <span class="text-sm text-gray-300">
+                    <span class="count-up text-magic-green font-bold" data-target="537">0</span>+ متجر يثقون بنا
+                </span>
             </div>
-            <div class="data-item">
-                <div class="data-item-icon green">📦</div>
-                <div class="data-item-text">الطلبات (للمتابعة)</div>
-                <div class="data-item-status">✓ مطلوب</div>
-            </div>
-            <div class="data-item">
-                <div class="data-item-icon red">💳</div>
-                <div class="data-item-text">بيانات الدفع</div>
-                <div class="data-item-status" style="color: var(--error);">✗ لا نصل</div>
+            <div class="glass-card rounded-full px-4 py-2 flex items-center gap-2">
+                <span class="text-lg">🔒</span>
+                <span class="text-sm text-gray-300">آمن 100%</span>
             </div>
         </div>
         
-        <div class="platform-btns">
-            <button class="btn btn-salla" onclick="connectStore('salla')">
-                <span>ربط مع سلة</span>
-            </button>
-            <button class="btn btn-shopify" onclick="connectStore('shopify')">
-                <span>ربط مع Shopify</span>
-            </button>
+        <!-- Magic Progress Indicator -->
+        <div class="flex items-center gap-0 mb-8 animate-[slideUp_0.6s_ease-out_0.2s_both]" id="progressSteps">
+            <div class="step-dot active w-12 h-12 rounded-full bg-magic-green flex items-center justify-center text-black font-bold text-lg transition-all duration-500" id="step1Dot">
+                <span class="step-num">1</span>
+                <svg class="step-check hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-full bg-magic-green transition-all duration-700 ease-out" id="progress1" style="width: 0%"></div>
+            </div>
+            <div class="step-dot w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 font-bold text-lg transition-all duration-500" id="step2Dot">
+                <span class="step-num">2</span>
+                <svg class="step-check hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="w-16 h-1 bg-gray-700 rounded-full overflow-hidden">
+                <div class="h-full bg-magic-green transition-all duration-700 ease-out" id="progress2" style="width: 0%"></div>
+            </div>
+            <div class="step-dot w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 font-bold text-lg transition-all duration-500" id="step3Dot">
+                <span class="step-num">3</span>
+                <svg class="step-check hidden w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
         </div>
         
-        <!-- Error State -->
-        <div class="error-state" id="step1Error">
-            <div class="error-icon">⚠️</div>
-            <div class="error-title">فشل الاتصال</div>
-            <div class="error-message" id="step1ErrorMsg">حدث خطأ أثناء الاتصال بالمتجر. تأكد من صلاحياتك وحاول مرة أخرى.</div>
-            <button class="btn btn-retry" onclick="retryStep1()">إعادة المحاولة</button>
+        <!-- Time Badge -->
+        <div class="glass-card rounded-full px-6 py-3 mb-8 animate-[slideUp_0.6s_ease-out_0.3s_both] flex items-center gap-3">
+            <span class="text-2xl animate-[bounceSubtle_2s_ease-in-out_infinite]">⚡</span>
+            <span class="shimmer-text font-semibold">دقيقة واحدة فقط</span>
         </div>
         
-        <div class="help-link">
-            <a href="/help/connect" target="_blank">هل تحتاج مساعدة في الربط؟</a>
-        </div>
-    </div>
-    
-    <!-- Step 2: WhatsApp -->
-    <div class="wizard-card" id="step2">
-        <button class="back-btn visible" onclick="goBack()" aria-label="رجوع">
-            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </button>
-        
-        <div class="step-icon">📱</div>
-        <h2 class="step-title">ربط واتساب</h2>
-        <p class="step-desc">امسح الكود بتطبيق واتساب لإرسال الرسائل من رقمك التجاري.</p>
-        
-        <div class="qr-container">
-            <div class="qr-placeholder" id="qrArea">
-                <div class="qr-loading">
-                    <div class="spinner"></div>
-                    <span style="color: #666;">جاري تحميل الكود...</span>
+        <!-- Steps Container -->
+        <div class="relative w-full max-w-md">
+            
+            <!-- STEP 1: Connect Store -->
+            <div class="step-content active" id="step1Content">
+                <div class="glass-card rounded-3xl p-8 text-center animate-[scaleIn_0.5s_ease-out]">
+                    
+                    <!-- Floating Icon -->
+                    <div class="text-7xl mb-4 animate-[float_4s_ease-in-out_infinite]">🏪</div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">اربط متجرك</h2>
+                    <p class="text-gray-400 mb-6">اختر منصتك وسيتم الربط تلقائياً</p>
+                    
+                    <!-- One-Click Platform Buttons -->
+                    <div class="space-y-4">
+                        <button onclick="connectStore('salla')" class="platform-btn w-full py-4 px-6 rounded-2xl bg-gradient-to-l from-indigo-600 to-purple-600 flex items-center justify-center gap-4 font-bold text-lg hover:shadow-[0_10px_40px_rgba(99,102,241,0.4)]">
+                            <span class="text-2xl">🟣</span>
+                            <span>ابدأ مع سلة</span>
+                            <span class="mr-auto text-xl">←</span>
+                        </button>
+                        
+                        <button onclick="connectStore('shopify')" class="platform-btn w-full py-4 px-6 rounded-2xl bg-gradient-to-l from-green-600 to-lime-500 flex items-center justify-center gap-4 font-bold text-lg text-black hover:shadow-[0_10px_40px_rgba(149,191,71,0.4)]">
+                            <span class="text-2xl">🟢</span>
+                            <span>ابدأ مع Shopify</span>
+                            <span class="mr-auto text-xl">←</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Trust Micro-info -->
+                    <div class="mt-8 flex justify-center gap-6 text-xs text-gray-500">
+                        <div class="flex items-center gap-1">
+                            <span class="text-magic-green">✓</span> بدون كلمة سر
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-magic-green">✓</span> تفويض رسمي
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-magic-green">✓</span> قابل للإلغاء
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Social Proof Toast -->
+                <div class="mt-6 glass-card rounded-2xl p-4 flex items-center gap-3 animate-[slideUp_0.6s_ease-out_0.5s_both]">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-magic-green to-emerald-400 flex items-center justify-center">
+                        <span>👤</span>
+                    </div>
+                    <div class="flex-1 text-right">
+                        <p class="text-sm text-white">محمد من جدة ربط متجره</p>
+                        <p class="text-xs text-gray-400">منذ 3 دقائق</p>
+                    </div>
+                    <span class="text-magic-green text-xl">✓</span>
                 </div>
             </div>
-            <div class="qr-timer" id="qrTimer">صالح لمدة 60 ثانية</div>
-        </div>
-        
-        <!-- Platform-specific instructions -->
-        <div class="platform-tabs">
-            <button class="platform-tab active" onclick="showInstructions('android')">Android</button>
-            <button class="platform-tab" onclick="showInstructions('ios')">iPhone</button>
-        </div>
-        
-        <p class="instructions-text" id="instructionsText">
-            واتساب ← النقاط الثلاث (⋮) ← الأجهزة المرتبطة ← ربط جهاز
-        </p>
-        
-        <button class="btn btn-primary" id="step2Btn" onclick="confirmWhatsAppConnect()">
-            تم المسح ✓
-        </button>
-        
-        <button class="btn btn-secondary" onclick="skipWhatsApp()">
-            تخطي الآن (يمكنك الربط لاحقاً)
-        </button>
-        
-        <!-- Error State -->
-        <div class="error-state" id="step2Error">
-            <div class="error-icon">📵</div>
-            <div class="error-title">انتهت صلاحية الكود</div>
-            <div class="error-message" id="step2ErrorMsg">الكود صالح لمدة 60 ثانية فقط. اضغط لتحديثه.</div>
-            <button class="btn btn-retry" onclick="refreshQR()">تحديث الكود</button>
-        </div>
-        
-        <div class="next-info">
-            <div class="next-info-title">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-                خصوصيتك محمية
+            
+            <!-- STEP 2: WhatsApp -->
+            <div class="step-content hidden" id="step2Content">
+                <div class="glass-card rounded-3xl p-8 text-center animate-[scaleIn_0.5s_ease-out]">
+                    
+                    <div class="text-7xl mb-4 animate-[float_4s_ease-in-out_infinite]">📱</div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">واتساب</h2>
+                    <p class="text-gray-400 mb-6">امسح الكود بواتساب لترسل رسائل من رقمك</p>
+                    
+                    <!-- QR Code Container -->
+                    <div class="relative inline-block">
+                        <div class="bg-white p-4 rounded-2xl shadow-[0_0_60px_rgba(48,209,88,0.2)]" id="qrContainer">
+                            <div id="qrArea" class="w-44 h-44 flex items-center justify-center">
+                                <div class="text-center">
+                                    <div class="w-8 h-8 border-4 border-gray-200 border-t-magic-green rounded-full animate-spin mx-auto mb-2"></div>
+                                    <span class="text-gray-500 text-sm">جاري التحميل...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Timer Ring -->
+                        <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gray-900 border border-gray-700 rounded-full px-4 py-1 flex items-center gap-2">
+                            <div class="w-2 h-2 bg-magic-green rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-300" id="qrTimer">60 ثانية</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Instructions -->
+                    <div class="mt-8 glass-card rounded-xl p-4 text-right">
+                        <p class="text-sm text-gray-400 flex items-center gap-2">
+                            <span class="text-magic-green">1</span>
+                            افتح واتساب
+                        </p>
+                        <p class="text-sm text-gray-400 flex items-center gap-2 mt-2">
+                            <span class="text-magic-green">2</span>
+                            الإعدادات ← الأجهزة المرتبطة
+                        </p>
+                        <p class="text-sm text-gray-400 flex items-center gap-2 mt-2">
+                            <span class="text-magic-green">3</span>
+                            امسح هذا الكود
+                        </p>
+                    </div>
+                    
+                    <button onclick="confirmWhatsApp()" class="magic-btn w-full py-4 px-8 rounded-2xl text-black font-bold text-lg mt-6 animate-[pulse-glow_2s_ease-in-out_infinite]">
+                        تم المسح ✓
+                    </button>
+                    
+                    <button onclick="skipWhatsApp()" class="w-full py-3 text-gray-400 text-sm mt-3 hover:text-white transition-colors">
+                        تخطي الآن ← (يمكنك الربط لاحقاً)
+                    </button>
+                    
+                </div>
+                
+                <!-- Privacy Note -->
+                <div class="mt-4 text-center text-xs text-gray-500 flex items-center justify-center gap-2">
+                    <span>🔒</span>
+                    <span>رسائلك خاصة - لا نقرأها ولا نخزنها</span>
+                </div>
             </div>
-            <div class="next-info-text">الرسائل تُرسل من رقمك أنت. نحن لا نقرأ محادثاتك ولا نخزنها.</div>
-        </div>
-    </div>
-    
-    <!-- Step 3: Activate -->
-    <div class="wizard-card" id="step3">
-        <button class="back-btn visible" onclick="goBack()" aria-label="رجوع">
-            <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/></svg>
-        </button>
-        
-        <div class="step-icon">🚀</div>
-        <h2 class="step-title">تفعيل الاسترجاع</h2>
-        <p class="step-desc">الخطوة الأخيرة! فعّل الاسترجاع التلقائي للسلات المتروكة.</p>
-        
-        <div class="toggle-container">
-            <span class="toggle-label">استرجاع تلقائي</span>
-            <div class="toggle" id="activateToggle" onclick="toggleActivate()" role="switch" aria-checked="false" tabindex="0"></div>
-        </div>
-        
-        <div class="data-preview" style="margin-top: 16px;">
-            <div class="data-preview-title">عند التفعيل:</div>
-            <div class="data-item">
-                <div class="data-item-icon green">⏰</div>
-                <div class="data-item-text">مراقبة متجرك 24/7</div>
+            
+            <!-- STEP 3: Activate (Pre-selected!) -->
+            <div class="step-content hidden" id="step3Content">
+                <div class="glass-card rounded-3xl p-8 text-center animate-[scaleIn_0.5s_ease-out]">
+                    
+                    <div class="text-7xl mb-4 animate-[float_4s_ease-in-out_infinite]">🚀</div>
+                    
+                    <h2 class="text-2xl font-bold mb-2">جاهز للانطلاق!</h2>
+                    <p class="text-gray-400 mb-6">الإعدادات الذكية مفعلة تلقائياً</p>
+                    
+                    <!-- Pre-enabled Features (Smart Defaults!) -->
+                    <div class="space-y-3 text-right mb-8">
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-magic-green/30">
+                            <div class="w-6 h-6 rounded-full bg-magic-green flex items-center justify-center text-black">✓</div>
+                            <span class="flex-1">استرجاع تلقائي للسلات</span>
+                            <span class="text-magic-green text-sm">مفعل</span>
+                        </div>
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-magic-green/30">
+                            <div class="w-6 h-6 rounded-full bg-magic-green flex items-center justify-center text-black">✓</div>
+                            <span class="flex-1">رسائل واتساب ذكية</span>
+                            <span class="text-magic-green text-sm">مفعل</span>
+                        </div>
+                        <div class="glass-card rounded-xl p-4 flex items-center gap-4 border border-magic-green/30">
+                            <div class="w-6 h-6 rounded-full bg-magic-green flex items-center justify-center text-black">✓</div>
+                            <span class="flex-1">تقارير يومية</span>
+                            <span class="text-magic-green text-sm">مفعل</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Launch Button with Magic Animation -->
+                    <button onclick="launchRIBH()" id="launchBtn" class="magic-btn w-full py-5 px-8 rounded-2xl text-black font-bold text-xl relative overflow-hidden">
+                        <span class="relative z-10 flex items-center justify-center gap-3">
+                            <span>🎉</span>
+                            <span>أطلق RIBH الآن</span>
+                        </span>
+                    </button>
+                    
+                    <!-- What happens next -->
+                    <div class="mt-6 text-center text-sm text-gray-400">
+                        <p>سنبدأ مراقبة متجرك فوراً</p>
+                        <p class="text-magic-green mt-1">أول نتائج خلال 24-48 ساعة 🎯</p>
+                    </div>
+                    
+                </div>
             </div>
-            <div class="data-item">
-                <div class="data-item-icon green">💬</div>
-                <div class="data-item-text">رسالة واتساب تلقائية للعميل</div>
+            
+            <!-- SUCCESS: Dashboard Preview -->
+            <div class="step-content hidden" id="successContent">
+                <div class="glass-card rounded-3xl p-8 text-center">
+                    
+                    <!-- Animated Success Checkmark -->
+                    <div class="w-24 h-24 mx-auto mb-6">
+                        <svg viewBox="0 0 100 100" class="w-full h-full">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="#30d158" stroke-width="3" class="checkmark-circle"/>
+                            <path d="M30 50 L45 65 L70 35" fill="none" stroke="#30d158" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="checkmark-check"/>
+                        </svg>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold mb-2 shimmer-text">تهانينا! 🎉</h2>
+                    <p class="text-gray-400 mb-8">RIBH يعمل الآن على متجرك</p>
+                    
+                    <!-- Live Dashboard Preview -->
+                    <div class="dashboard-preview glass-card rounded-2xl p-4 border border-magic-green/20 text-right">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs text-gray-500">لوحة التحكم</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-magic-green rounded-full animate-pulse"></div>
+                                <span class="text-xs text-magic-green">مباشر</span>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="dashboard-item bg-black/30 rounded-xl p-4" style="animation-delay: 0.4s">
+                                <div class="text-2xl font-bold text-magic-green">0</div>
+                                <div class="text-xs text-gray-400">سلات متروكة</div>
+                            </div>
+                            <div class="dashboard-item bg-black/30 rounded-xl p-4" style="animation-delay: 0.5s">
+                                <div class="text-2xl font-bold text-magic-purple">0</div>
+                                <div class="text-xs text-gray-400">رسائل مرسلة</div>
+                            </div>
+                            <div class="dashboard-item bg-black/30 rounded-xl p-4" style="animation-delay: 0.6s">
+                                <div class="text-2xl font-bold text-magic-blue">0%</div>
+                                <div class="text-xs text-gray-400">معدل الاسترجاع</div>
+                            </div>
+                            <div class="dashboard-item bg-black/30 rounded-xl p-4" style="animation-delay: 0.7s">
+                                <div class="text-2xl font-bold text-magic-gold">0 ر.س</div>
+                                <div class="text-xs text-gray-400">أرباح مستردة</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Animated waiting indicator -->
+                        <div class="mt-4 flex items-center justify-center gap-3 py-3 bg-black/20 rounded-xl">
+                            <div class="relative">
+                                <div class="w-3 h-3 bg-magic-green rounded-full"></div>
+                                <div class="absolute inset-0 bg-magic-green rounded-full animate-ping"></div>
+                            </div>
+                            <span class="text-sm text-gray-300">في انتظار أول سلة متروكة...</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.location.href='/dashboard'" class="magic-btn w-full py-4 px-8 rounded-2xl text-black font-bold text-lg mt-6">
+                        افتح لوحة التحكم →
+                    </button>
+                    
+                    <!-- Celebration Stats -->
+                    <div class="mt-6 flex justify-center gap-6 text-xs">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-magic-green">24/7</div>
+                            <div class="text-gray-500">مراقبة</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-magic-purple">~35%</div>
+                            <div class="text-gray-500">معدل استرجاع</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-magic-gold">∞</div>
+                            <div class="text-gray-500">أرباح محتملة</div>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
-            <div class="data-item">
-                <div class="data-item-icon green">📊</div>
-                <div class="data-item-text">تقارير يومية على الإيميل</div>
-            </div>
+            
         </div>
         
-        <button class="btn btn-primary" id="finishBtn" disabled onclick="finish()">
-            ابدأ الآن 🎉
-        </button>
-    </div>
-    
-    <!-- Success -->
-    <div class="wizard-card" id="stepSuccess">
-        <div class="success-checkmark">
-            <svg viewBox="0 0 100 100" width="100" height="100">
-                <circle class="checkmark-circle" cx="50" cy="50" r="48"/>
-                <path class="checkmark-check" d="M28 50 L45 67 L72 35"/>
-            </svg>
-        </div>
-        
-        <h2 class="step-title">🎉 تم بنجاح!</h2>
-        <p class="step-desc">متجرك جاهز الآن لاسترجاع السلات المتروكة تلقائياً.</p>
-        
-        <div class="stats-preview">
-            <div class="stat-card">
-                <div class="stat-value">24/7</div>
-                <div class="stat-label">مراقبة مستمرة</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-value">~35%</div>
-                <div class="stat-label">معدل الاسترجاع</div>
-            </div>
-        </div>
-        
-        <div class="waiting-status">
-            <div class="pulse-ring"></div>
-            <span>في انتظار أول سلة متروكة...</span>
-        </div>
-        
-        <button class="btn btn-primary" style="margin-top: 24px;" onclick="window.location.href='/dashboard'">
-            الذهاب للوحة التحكم
-        </button>
-        
-        <div class="next-info">
-            <div class="next-info-title">💡 ماذا بعد؟</div>
-            <div class="next-info-text">
-                معظم المتاجر ترى أول نتائج خلال 24-48 ساعة. ستصلك إشعارات بكل سلة تم استرجاعها!
-            </div>
-        </div>
     </div>
     
     <!-- Confetti Container -->
-    <div class="confetti-container" id="confettiContainer"></div>
+    <div id="confettiContainer" class="fixed inset-0 pointer-events-none z-50"></div>
     
     <script>
         // State
         let currentStep = 1;
-        let startTime = Date.now();
-        let qrTimer = null;
+        let qrTimerInterval = null;
         let qrTimeLeft = 60;
-        let connectedPlatform = null;
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            updateTimeElapsed();
-            setInterval(updateTimeElapsed, 1000);
+            // Animate trust counter
+            animateCounters();
             
-            // Check URL params for OAuth callback
+            // Generate sparkles
+            generateSparkles();
+            
+            // Check OAuth callback
             const params = new URLSearchParams(window.location.search);
             if (params.get('connected')) {
-                connectedPlatform = params.get('connected');
                 goToStep(2);
                 loadQR();
             }
-            if (params.get('error')) {
-                showError('step1', decodeURIComponent(params.get('error')));
-            }
             
-            // Keyboard accessibility for toggle
-            document.getElementById('activateToggle').addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    toggleActivate();
-                }
-            });
+            // Rotate social proof
+            setInterval(rotateSocialProof, 5000);
         });
         
-        function updateTimeElapsed() {
-            if (currentStep > 1) {
-                const elapsed = Math.floor((Date.now() - startTime) / 1000);
-                const mins = Math.floor(elapsed / 60);
-                const secs = elapsed % 60;
-                const el = document.getElementById('timeElapsed');
-                el.textContent = `⏱️ ${mins}:${secs.toString().padStart(2, '0')} منذ البداية`;
-                el.classList.add('visible');
+        function animateCounters() {
+            document.querySelectorAll('.count-up').forEach(el => {
+                const target = parseInt(el.dataset.target);
+                const duration = 2000;
+                const start = Date.now();
+                
+                const animate = () => {
+                    const elapsed = Date.now() - start;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+                    el.textContent = Math.floor(eased * target);
+                    
+                    if (progress < 1) requestAnimationFrame(animate);
+                };
+                
+                setTimeout(animate, 500);
+            });
+        }
+        
+        function generateSparkles() {
+            const container = document.getElementById('sparkles');
+            for (let i = 0; i < 20; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'absolute w-1 h-1 bg-white rounded-full opacity-30';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animation = `sparkle ${2 + Math.random() * 2}s ease-in-out infinite`;
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                container.appendChild(sparkle);
             }
         }
         
-        function updateProgressBar() {
-            const progress = ((currentStep - 1) / 3) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
+        const socialProofs = [
+            { name: 'محمد', city: 'جدة', time: '3 دقائق' },
+            { name: 'سارة', city: 'الرياض', time: '5 دقائق' },
+            { name: 'أحمد', city: 'دبي', time: '8 دقائق' },
+            { name: 'فاطمة', city: 'الدمام', time: '12 دقيقة' },
+        ];
+        let proofIndex = 0;
+        
+        function rotateSocialProof() {
+            // Only on step 1
+            if (currentStep !== 1) return;
+            proofIndex = (proofIndex + 1) % socialProofs.length;
+            // Update proof display if visible
         }
         
         function goToStep(step) {
-            // Hide all cards
-            document.querySelectorAll('.wizard-card').forEach(c => {
-                c.classList.remove('active');
-            });
-            
-            // Update circles
+            // Hide current
             for (let i = 1; i <= 3; i++) {
-                const circle = document.getElementById('circle' + i);
-                circle.classList.remove('active', 'done');
+                const content = document.getElementById(`step${i}Content`);
+                if (content) {
+                    content.classList.remove('active');
+                    content.classList.add('hidden');
+                }
+            }
+            document.getElementById('successContent').classList.remove('active');
+            document.getElementById('successContent').classList.add('hidden');
+            
+            // Update step dots
+            for (let i = 1; i <= 3; i++) {
+                const dot = document.getElementById(`step${i}Dot`);
+                const num = dot.querySelector('.step-num');
+                const check = dot.querySelector('.step-check');
+                
                 if (i < step) {
-                    circle.classList.add('done');
+                    // Completed
+                    dot.classList.add('bg-magic-green', 'text-black');
+                    dot.classList.remove('bg-gray-800', 'text-gray-400', 'active');
+                    num.classList.add('hidden');
+                    check.classList.remove('hidden');
+                    
+                    // Animate progress line
+                    document.getElementById(`progress${i}`).style.width = '100%';
                 } else if (i === step && step <= 3) {
-                    circle.classList.add('active');
-                } else if (step > 3) {
-                    circle.classList.add('done');
+                    // Current
+                    dot.classList.add('bg-magic-green', 'text-black', 'active');
+                    dot.classList.remove('bg-gray-800', 'text-gray-400');
+                    num.classList.remove('hidden');
+                    check.classList.add('hidden');
+                } else {
+                    // Future
+                    dot.classList.remove('bg-magic-green', 'text-black', 'active');
+                    dot.classList.add('bg-gray-800', 'text-gray-400');
+                    num.classList.remove('hidden');
+                    check.classList.add('hidden');
                 }
             }
             
-            // Update lines
-            document.getElementById('line1').classList.toggle('done', step > 1);
-            document.getElementById('line2').classList.toggle('done', step > 2);
-            
-            // Show current card with animation
+            // Show target step
             setTimeout(() => {
                 if (step <= 3) {
-                    document.getElementById('step' + step).classList.add('active');
+                    document.getElementById(`step${step}Content`).classList.remove('hidden');
+                    document.getElementById(`step${step}Content`).classList.add('active');
                 } else {
-                    document.getElementById('stepSuccess').classList.add('active');
+                    // Success!
+                    document.getElementById('successContent').classList.remove('hidden');
+                    document.getElementById('successContent').classList.add('active');
+                    
+                    // All steps done
+                    for (let i = 1; i <= 3; i++) {
+                        const dot = document.getElementById(`step${i}Dot`);
+                        const num = dot.querySelector('.step-num');
+                        const check = dot.querySelector('.step-check');
+                        dot.classList.add('bg-magic-green', 'text-black');
+                        dot.classList.remove('bg-gray-800', 'text-gray-400', 'active');
+                        num.classList.add('hidden');
+                        check.classList.remove('hidden');
+                        document.getElementById(`progress${i}`).style.width = '100%';
+                    }
+                    
+                    // Launch celebration!
                     launchConfetti();
                     triggerHaptic();
                 }
             }, 50);
             
             currentStep = step;
-            updateProgressBar();
-            hideAllErrors();
-        }
-        
-        function goBack() {
-            if (currentStep > 1) {
-                goToStep(currentStep - 1);
-            }
-        }
-        
-        function hideAllErrors() {
-            document.querySelectorAll('.error-state').forEach(el => {
-                el.classList.remove('visible');
-            });
-        }
-        
-        function showError(step, message) {
-            const errorEl = document.getElementById(step + 'Error');
-            const msgEl = document.getElementById(step + 'ErrorMsg');
-            if (message) msgEl.textContent = message;
-            errorEl.classList.add('visible');
         }
         
         function connectStore(platform) {
-            const btn = event.target.closest('.btn');
-            const originalContent = btn.innerHTML;
-            
-            // Loading state
-            btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>';
+            const btn = event.target.closest('button');
+            btn.innerHTML = '<div class="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin"></div>';
             btn.disabled = true;
             
-            // Hide any previous errors
-            hideAllErrors();
-            
-            // Simulate OAuth redirect (in production, redirect to actual OAuth URL)
-            // In real app: window.location.href = '/api/auth/' + platform;
             setTimeout(() => {
-                // Simulate success
-                connectedPlatform = platform;
-                goToStep(2);
-                loadQR();
-                
-                // Reset button for if they go back
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
-            }, 1500);
-            
-            // Simulate random failure (10% chance) for demo
-            // if (Math.random() < 0.1) {
-            //     setTimeout(() => {
-            //         btn.innerHTML = originalContent;
-            //         btn.disabled = false;
-            //         showError('step1', 'تعذر الاتصال بـ ' + platform + '. تحقق من اتصالك بالإنترنت.');
-            //     }, 2000);
-            // }
-        }
-        
-        function retryStep1() {
-            hideAllErrors();
+                if (platform === 'salla') {
+                    window.location.href = '/salla/install';
+                } else {
+                    window.location.href = '/shopify/install';
+                }
+            }, 500);
         }
         
         function loadQR() {
             const qrArea = document.getElementById('qrArea');
-            const timerEl = document.getElementById('qrTimer');
             
-            // Reset timer
-            qrTimeLeft = 60;
-            timerEl.classList.remove('warning', 'expired');
-            timerEl.textContent = 'صالح لمدة 60 ثانية';
-            
-            // Show loading
-            qrArea.innerHTML = `
-                <div class="qr-loading">
-                    <div class="spinner"></div>
-                    <span style="color: #666;">جاري تحميل الكود...</span>
-                </div>
-            `;
-            
-            // Simulate QR load (in production, fetch from WhatsApp service)
+            // Simulate QR load
             setTimeout(() => {
                 qrArea.innerHTML = `
-                    <svg viewBox="0 0 200 200" width="180" height="180">
+                    <svg viewBox="0 0 200 200" width="176" height="176">
                         <rect fill="#000" x="20" y="20" width="60" height="60"/>
                         <rect fill="#fff" x="30" y="30" width="40" height="40"/>
                         <rect fill="#000" x="35" y="35" width="30" height="30"/>
@@ -1226,151 +749,83 @@
                     </svg>
                 `;
                 startQRTimer();
-            }, 1000);
+            }, 800);
         }
         
         function startQRTimer() {
-            if (qrTimer) clearInterval(qrTimer);
-            
+            qrTimeLeft = 60;
             const timerEl = document.getElementById('qrTimer');
             
-            qrTimer = setInterval(() => {
+            if (qrTimerInterval) clearInterval(qrTimerInterval);
+            
+            qrTimerInterval = setInterval(() => {
                 qrTimeLeft--;
-                timerEl.textContent = `صالح لمدة ${qrTimeLeft} ثانية`;
+                timerEl.textContent = `${qrTimeLeft} ثانية`;
                 
                 if (qrTimeLeft <= 15) {
-                    timerEl.classList.add('warning');
+                    timerEl.classList.add('text-yellow-400');
                 }
-                
                 if (qrTimeLeft <= 0) {
-                    clearInterval(qrTimer);
-                    timerEl.classList.remove('warning');
-                    timerEl.classList.add('expired');
-                    timerEl.textContent = 'انتهت الصلاحية';
-                    showError('step2', 'انتهت صلاحية الكود. اضغط لتحديثه.');
+                    clearInterval(qrTimerInterval);
+                    timerEl.textContent = 'انتهى - اضغط للتحديث';
+                    timerEl.classList.remove('text-yellow-400');
+                    timerEl.classList.add('text-red-400', 'cursor-pointer');
+                    timerEl.onclick = () => loadQR();
                 }
             }, 1000);
         }
         
-        function refreshQR() {
-            hideAllErrors();
-            loadQR();
-        }
-        
-        function showInstructions(platform) {
-            document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            const instructions = {
-                android: 'واتساب ← النقاط الثلاث (⋮) ← الأجهزة المرتبطة ← ربط جهاز',
-                ios: 'واتساب ← الإعدادات ← الأجهزة المرتبطة ← ربط جهاز'
-            };
-            
-            document.getElementById('instructionsText').textContent = instructions[platform];
-        }
-        
-        function confirmWhatsAppConnect() {
-            const btn = document.getElementById('step2Btn');
-            btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div>';
-            btn.disabled = true;
-            
-            // In production: verify connection with backend
-            // For now, simulate verification
-            setTimeout(() => {
-                if (qrTimer) clearInterval(qrTimer);
-                goToStep(3);
-                btn.innerHTML = 'تم المسح ✓';
-                btn.disabled = false;
-            }, 1000);
-        }
-        
-        function skipWhatsApp() {
-            if (qrTimer) clearInterval(qrTimer);
+        function confirmWhatsApp() {
+            if (qrTimerInterval) clearInterval(qrTimerInterval);
             goToStep(3);
         }
         
-        function toggleActivate() {
-            const toggle = document.getElementById('activateToggle');
-            const btn = document.getElementById('finishBtn');
-            const isActive = toggle.classList.toggle('active');
-            
-            toggle.setAttribute('aria-checked', isActive);
-            btn.disabled = !isActive;
+        function skipWhatsApp() {
+            if (qrTimerInterval) clearInterval(qrTimerInterval);
+            goToStep(3);
         }
         
-        function finish() {
-            const btn = document.getElementById('finishBtn');
-            btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;border-top-color:#000;"></div>';
+        function launchRIBH() {
+            const btn = document.getElementById('launchBtn');
+            btn.innerHTML = '<div class="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin"></div>';
             btn.disabled = true;
             
-            // In production: save to backend
+            // Simulate backend call
             setTimeout(() => {
-                goToStep(4);
-            }, 800);
+                goToStep(4); // Success!
+            }, 1000);
         }
         
         function triggerHaptic() {
             if ('vibrate' in navigator) {
-                navigator.vibrate([50, 30, 100]);
+                navigator.vibrate([50, 30, 100, 30, 100]);
             }
         }
         
         function launchConfetti() {
             const container = document.getElementById('confettiContainer');
-            const colors = ['#30d158', '#0a84ff', '#ff9f0a', '#ff375f', '#bf5af2', '#64d2ff'];
-            const shapes = ['circle', 'square', 'triangle'];
+            const colors = ['#30d158', '#0a84ff', '#ff9f0a', '#ff375f', '#bf5af2', '#ffd60a', '#64d2ff'];
             
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 100; i++) {
                 setTimeout(() => {
                     const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + 'vw';
-                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    const shape = shapes[Math.floor(Math.random() * shapes.length)];
-                    if (shape === 'circle') {
-                        confetti.style.borderRadius = '50%';
-                    } else if (shape === 'triangle') {
-                        confetti.style.background = 'transparent';
-                        confetti.style.borderLeft = '5px solid transparent';
-                        confetti.style.borderRight = '5px solid transparent';
-                        confetti.style.borderBottom = '10px solid ' + colors[Math.floor(Math.random() * colors.length)];
-                    }
-                    
-                    const size = 6 + Math.random() * 8;
-                    confetti.style.width = size + 'px';
-                    confetti.style.height = size + 'px';
-                    
-                    const duration = 2 + Math.random() * 2;
-                    const rotation = Math.random() * 720;
-                    const drift = (Math.random() - 0.5) * 200;
-                    
-                    confetti.style.animation = `confettiFall ${duration}s ease-out forwards`;
-                    confetti.style.setProperty('--drift', drift + 'px');
-                    confetti.style.setProperty('--rotation', rotation + 'deg');
-                    
+                    confetti.style.cssText = `
+                        position: absolute;
+                        width: ${6 + Math.random() * 8}px;
+                        height: ${6 + Math.random() * 8}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        left: ${Math.random() * 100}vw;
+                        top: -20px;
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                        animation: confettiFall ${2 + Math.random() * 2}s ease-out forwards;
+                        --drift: ${(Math.random() - 0.5) * 200}px;
+                        --rotation: ${Math.random() * 720}deg;
+                    `;
                     container.appendChild(confetti);
-                    
-                    setTimeout(() => confetti.remove(), duration * 1000);
-                }, i * 20);
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 15);
             }
         }
-        
-        // Add confetti keyframes dynamically
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes confettiFall {
-                0% {
-                    transform: translateY(0) translateX(0) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: translateY(100vh) translateX(var(--drift, 0)) rotate(var(--rotation, 720deg));
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>

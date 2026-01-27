@@ -15,6 +15,11 @@
  */
 
 const crypto = require('crypto');
+const eventTracker = require('./eventTracker');
+
+// Predictive Analytics & RFM Segmentation
+const { getCustomerPredictions, updateAllPredictions } = require('./predictiveAnalytics');
+const { segmentCustomer, runDailySegmentation } = require('./rfmSegmentation');
 
 // ==========================================
 // PHONE NUMBER UTILITIES (Saudi +966)
@@ -337,6 +342,7 @@ class SallaWebhookHandler {
         this.onCartAbandoned = options.onCartAbandoned || this.defaultCartHandler;
         this.onOrderCreated = options.onOrderCreated || this.defaultOrderHandler;
         this.onOrderUpdated = options.onOrderUpdated || this.defaultOrderUpdateHandler;
+        this.onCheckoutStarted = options.onCheckoutStarted || this.defaultCheckoutHandler;
         this.onCustomerCreated = options.onCustomerCreated || this.defaultCustomerHandler;
         this.onAppInstalled = options.onAppInstalled || this.defaultAppInstalledHandler;
         this.onAppUninstalled = options.onAppUninstalled || this.defaultAppUninstalledHandler;
@@ -434,6 +440,14 @@ class SallaWebhookHandler {
                 await this.onOrderUpdated(parseOrderUpdated(data, merchant), event);
                 break;
             
+            // Checkout started events
+            case 'checkout.started':
+            case 'checkout.start':
+            case 'checkout.created':
+            case 'checkout.initiated':
+                await this.onCheckoutStarted(parseAbandonedCart(data, merchant), event);
+                break;
+            
             // Customer events
             case 'customer.created':
             case 'customer.create':
@@ -469,6 +483,31 @@ class SallaWebhookHandler {
             total: cart.total,
             items: cart.itemCount
         });
+        
+        // Track cart abandonment event
+        const storeId = String(cart.merchant);
+        const customerId = String(cart.customer?.id || cart.customer?.phone || 'unknown');
+        
+        if (storeId && customerId !== 'unknown') {
+            try {
+                // Track the cart abandoned event
+                await eventTracker.trackEvent(storeId, customerId, eventTracker.EVENT_TYPES.CART_ADD, {
+                    cartId: cart.id,
+                    cartValue: cart.total,
+                    itemCount: cart.itemCount,
+                    items: cart.items,
+                    checkoutUrl: cart.checkoutUrl,
+                    source: 'salla_webhook',
+                    abandoned: true
+                });
+                
+                // Detect cart abandonment for this store (triggers automation)
+                const abandonments = await eventTracker.detectCartAbandon(storeId, 1);
+                this.logger.log(`📊 Event tracked + abandon detection: ${abandonments.length} carts found`);
+            } catch (err) {
+                this.logger.error('❌ Event tracking error (cart):', err.message);
+            }
+        }
     }
     
     async defaultOrderHandler(order, rawEvent) {
@@ -478,6 +517,44 @@ class SallaWebhookHandler {
             total: order.total,
             status: order.status
         });
+        
+        // Track order placed event
+        const storeId = String(order.merchant);
+        const customerId = String(order.customer?.id || order.customer?.phone || 'unknown');
+        
+        if (storeId && customerId !== 'unknown') {
+            try {
+                // Track order in event system
+                await eventTracker.trackOrderPlaced(storeId, customerId, {
+                    id: order.id,
+                    total: order.total,
+                    items: order.items,
+                    referenceId: order.referenceId,
+                    paymentMethod: order.paymentMethod
+                });
+                this.logger.log('📊 Order tracked in event system');
+            } catch (err) {
+                this.logger.error('❌ Event tracking error (order):', err.message);
+            }
+            
+            // Update predictive analytics and RFM segmentation for customer
+            try {
+                // Run predictions and segmentation in parallel
+                const [predictions, segment] = await Promise.all([
+                    getCustomerPredictions(storeId, customerId),
+                    segmentCustomer(storeId, customerId)
+                ]);
+                
+                this.logger.log('📊 Customer analytics updated:', {
+                    customerId,
+                    churnRisk: predictions?.churnRisk,
+                    segment: segment?.segment,
+                    predictedCLV: predictions?.predictedCLV
+                });
+            } catch (e) {
+                this.logger.error('⚠️ Analytics update failed:', e.message);
+            }
+        }
     }
     
     async defaultOrderUpdateHandler(order, rawEvent) {
@@ -488,6 +565,30 @@ class SallaWebhookHandler {
         });
     }
     
+    async defaultCheckoutHandler(checkout, rawEvent) {
+        this.logger.log('🛍️ Checkout started:', {
+            total: checkout.total,
+            itemCount: checkout.itemCount
+        });
+        
+        // Track checkout start event
+        const storeId = String(checkout.merchant);
+        const customerId = String(checkout.customer?.id || checkout.customer?.phone || 'unknown');
+        
+        if (storeId && customerId !== 'unknown') {
+            try {
+                await eventTracker.trackCheckoutStart(storeId, customerId, {
+                    total: checkout.total,
+                    items: checkout.items,
+                    itemCount: checkout.itemCount || checkout.items?.length || 0
+                });
+                this.logger.log('📊 Checkout start tracked');
+            } catch (err) {
+                this.logger.error('❌ Event tracking error (checkout):', err.message);
+            }
+        }
+    }
+    
     async defaultCustomerHandler(customer, rawEvent) {
         this.logger.log('👤 Customer created:', {
             id: customer.id,
@@ -495,6 +596,38 @@ class SallaWebhookHandler {
             phone: customer.phone,
             email: customer.email
         });
+        
+        // Track customer signup event
+        const storeId = String(customer.merchant);
+        const customerId = String(customer.id || customer.phone || 'unknown');
+        
+        if (storeId && customerId !== 'unknown') {
+            try {
+                // Track signup in event system
+                await eventTracker.trackEvent(storeId, customerId, eventTracker.EVENT_TYPES.SIGNUP, {
+                    name: customer.name,
+                    email: customer.email,
+                    phone: customer.phone,
+                    source: 'salla_webhook'
+                });
+                this.logger.log('📊 Customer signup tracked');
+            } catch (err) {
+                this.logger.error('❌ Event tracking error (customer):', err.message);
+            }
+            
+            // Initialize predictions for new customer (baseline)
+            try {
+                const predictions = await getCustomerPredictions(storeId, customerId);
+                this.logger.log('🔮 New customer predictions initialized:', {
+                    customerId,
+                    churnRisk: predictions?.churnRisk,
+                    segment: 'new_customers'
+                });
+            } catch (e) {
+                // New customers may have no orders yet - that's expected
+                this.logger.log('📝 New customer baseline set (no orders yet)');
+            }
+        }
     }
     
     async defaultAppInstalledHandler(data, merchant, rawEvent) {
@@ -531,6 +664,110 @@ function createSallaWebhookMiddleware(options = {}) {
 }
 
 // ==========================================
+// SCHEDULED TRIGGER CRON
+// ==========================================
+
+/**
+ * Process scheduled triggers for a store (call from cron job)
+ * 
+ * Usage in Firebase Functions:
+ * exports.processScheduledTriggers = functions.pubsub
+ *     .schedule('every 5 minutes')
+ *     .onRun(async () => {
+ *         const stores = await getActiveStores();
+ *         for (const storeId of stores) {
+ *             await processStoreTriggers(storeId);
+ *         }
+ *     });
+ */
+async function processStoreTriggers(storeId) {
+    try {
+        const result = await eventTracker.processScheduledTriggers(storeId);
+        console.log(`⏰ Processed triggers for store ${storeId}:`, {
+            processed: result.processed,
+            results: result.results?.map(r => r.flow || r.error).filter(Boolean)
+        });
+        return result;
+    } catch (err) {
+        console.error(`❌ Error processing triggers for store ${storeId}:`, err.message);
+        return { error: err.message };
+    }
+}
+
+// ==========================================
+// SCHEDULED JOBS (CRON TRIGGERS)
+// ==========================================
+
+/**
+ * Daily cron job to update all predictions and RFM segmentation
+ * Call this from Firebase scheduled function or external cron
+ * 
+ * Usage (Firebase Functions):
+ * exports.dailyAnalytics = functions.pubsub.schedule('0 3 * * *').onRun(async () => {
+ *     await runDailyAnalytics('your-store-id');
+ * });
+ */
+async function runDailyAnalytics(storeId) {
+    const startTime = Date.now();
+    console.log(`🔄 [Daily Analytics] Starting for store ${storeId}`);
+    
+    const results = {
+        storeId,
+        startedAt: new Date().toISOString(),
+        predictions: null,
+        segmentation: null,
+        errors: []
+    };
+    
+    // Run predictions update
+    try {
+        results.predictions = await updateAllPredictions(storeId);
+        console.log(`✅ [Predictions] Completed: ${results.predictions.processed} customers`);
+    } catch (e) {
+        console.error('❌ [Predictions] Failed:', e.message);
+        results.errors.push({ step: 'predictions', error: e.message });
+    }
+    
+    // Run RFM segmentation
+    try {
+        results.segmentation = await runDailySegmentation(storeId);
+        console.log(`✅ [RFM] Completed: ${results.segmentation.total} customers segmented`);
+    } catch (e) {
+        console.error('❌ [RFM] Failed:', e.message);
+        results.errors.push({ step: 'segmentation', error: e.message });
+    }
+    
+    results.completedAt = new Date().toISOString();
+    results.durationMs = Date.now() - startTime;
+    
+    console.log(`🏁 [Daily Analytics] Completed in ${results.durationMs}ms`, {
+        predictions: results.predictions?.processed || 0,
+        segments: results.segmentation?.total || 0,
+        errors: results.errors.length
+    });
+    
+    return results;
+}
+
+/**
+ * Run daily analytics for multiple stores
+ */
+async function runDailyAnalyticsAllStores(storeIds) {
+    const results = [];
+    
+    for (const storeId of storeIds) {
+        try {
+            const result = await runDailyAnalytics(storeId);
+            results.push(result);
+        } catch (e) {
+            results.push({ storeId, error: e.message });
+        }
+    }
+    
+    return results;
+}
+
+// ==========================================
 // EXPORTS
 // ==========================================
 
@@ -540,6 +777,9 @@ module.exports = {
     
     // Middleware factory
     createSallaWebhookMiddleware,
+    
+    // Cron function for scheduled triggers (abandonment detection)
+    processStoreTriggers,
     
     // Phone utilities
     normalizeSaudiPhone,
@@ -555,5 +795,12 @@ module.exports = {
     parseAbandonedCart,
     parseOrderCreated,
     parseOrderUpdated,
-    parseCustomerCreated
+    parseCustomerCreated,
+    
+    // Scheduled jobs (cron triggers)
+    runDailyAnalytics,
+    runDailyAnalyticsAllStores,
+    
+    // Re-export eventTracker for convenience
+    eventTracker
 };

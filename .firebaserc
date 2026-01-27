@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "bemo-fa49b"
+    "default": "ribh-8a479",
+    "staging": "bemo-fa49b"
   }
 }

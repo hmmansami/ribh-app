@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | لوحة السحر ✨</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        money: '#10B981',
+                        'money-light': '#34D399',
+                        'money-dark': '#059669',
+                        magic: '#8B5CF6',
+                        gold: '#F59E0B',
+                        void: '#0A0A0F',
+                        abyss: '#111118',
+                    },
+                    fontFamily: {
+                        arabic: ['IBM Plex Sans Arabic', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'celebrate': 'celebrate 0.6s ease-out',
+                        'count': 'count 0.3s ease-out',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'IBM Plex Sans Arabic', sans-serif; }
+        
+        body {
+            background: linear-gradient(135deg, #0A0A0F 0%, #111118 50%, #0A0A0F 100%);
+        }
+
+        /* Animations */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes celebrate {
+            0% { transform: scale(0) rotate(-10deg); }
+            50% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        @keyframes count {
+            from { transform: scale(1.1); color: #34D399; }
+            to { transform: scale(1); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes coinFall {
+            0% { transform: translateY(-50px) rotateY(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotateY(1080deg); opacity: 0; }
+        }
+
+        @keyframes numberPulse {
+            0%, 100% { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(16, 185, 129, 0.9), 0 0 60px rgba(16, 185, 129, 0.5); }
+        }
+
+        .number-updating {
+            animation: numberPulse 1s ease-in-out infinite;
+        }
+
+        /* Glass effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(135deg, #10B981, #34D399, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Shimmer effect for loading */
+        .shimmer {
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Coin */
+        .coin {
+            position: fixed;
+            font-size: 32px;
+            animation: coinFall 2.5s ease-in forwards;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Progress bar animation */
+        .progress-fill {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Toast notification */
+        .toast {
+            animation: slideUp 0.5s ease-out;
+        }
+
+        /* Hide scrollbar but allow scroll */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Glow effects */
+        .glow-money { box-shadow: 0 0 30px rgba(16, 185, 129, 0.3); }
+        .glow-gold { box-shadow: 0 0 30px rgba(245, 158, 11, 0.3); }
+        .glow-magic { box-shadow: 0 0 30px rgba(139, 92, 246, 0.3); }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Celebration overlay */
+        .celebration-overlay {
+            background: radial-gradient(circle at center, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden">
+    <!-- Background orbs -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-40 -right-40 w-96 h-96 bg-money/20 rounded-full blur-[100px] animate-pulse"></div>
+        <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-magic/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: -2s;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gold/10 rounded-full blur-[80px] animate-pulse" style="animation-delay: -4s;"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 left-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Celebration Popup -->
+    <div id="celebrationPopup" class="fixed inset-0 z-50 hidden items-center justify-center celebration-overlay">
+        <div class="text-center animate-celebrate">
+            <div class="text-6xl mb-4">🎉</div>
+            <div class="text-4xl font-bold text-money mb-2" id="celebrationAmount">+5,000</div>
+            <div class="text-xl text-white/80" id="celebrationText">تم استرداد البيع!</div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div class="relative z-10 max-w-lg mx-auto px-4 py-6">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6">
+            <div>
+                <h1 class="text-2xl font-bold gradient-text">رِبح</h1>
+                <p class="text-white/50 text-sm">مرحباً، أحمد 👋</p>
+            </div>
+            <div class="flex items-center gap-2 glass px-3 py-2 rounded-full">
+                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                <span class="text-sm text-white/70">متصل</span>
+            </div>
+        </header>
+
+        <!-- Main Revenue Card -->
+        <div class="glass rounded-3xl p-6 mb-4 relative overflow-hidden animate-pulse-glow" id="mainCard">
+            <div class="absolute inset-0 bg-gradient-to-br from-money/10 to-transparent"></div>
+            <div class="relative">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="text-money text-sm font-medium">💰 المسترد هذا الشهر</span>
+                    <span class="text-xs text-white/40 bg-white/5 px-2 py-0.5 rounded-full">مباشر</span>
+                </div>
+                <div class="flex items-baseline gap-2" dir="ltr">
+                    <span class="text-5xl font-bold text-white" id="totalRevenue">0</span>
+                    <span class="text-xl text-white/50">ر.س</span>
+                </div>
+                <div class="flex items-center gap-4 mt-3 text-sm">
+                    <div class="flex items-center gap-1">
+                        <span class="text-money">↑ 23%</span>
+                        <span class="text-white/50">من الشهر الماضي</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-2 gap-3 mb-4">
+            <!-- Orders Recovered -->
+            <div class="glass rounded-2xl p-4 hover:scale-[1.02] transition-transform cursor-pointer" onclick="showOrdersModal()">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-money/20 flex items-center justify-center">
+                        <span>🛒</span>
+                    </div>
+                    <span class="text-white/60 text-sm">طلبات مستردة</span>
+                </div>
+                <div class="flex items-baseline gap-1" dir="ltr">
+                    <span class="text-2xl font-bold" id="ordersCount">0</span>
+                    <span class="text-white/40 text-sm">طلب</span>
+                </div>
+                <div class="text-xs text-money mt-1">↑ 5 اليوم</div>
+            </div>
+
+            <!-- Recovery Rate -->
+            <div class="glass rounded-2xl p-4 hover:scale-[1.02] transition-transform cursor-pointer" onclick="showStatsModal()">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-magic/20 flex items-center justify-center">
+                        <span>📈</span>
+                    </div>
+                    <span class="text-white/60 text-sm">نسبة الاسترداد</span>
+                </div>
+                <div class="flex items-baseline gap-1" dir="ltr">
+                    <span class="text-2xl font-bold text-magic" id="recoveryRate">0</span>
+                    <span class="text-white/40 text-sm">%</span>
+                </div>
+                <div class="text-xs text-magic mt-1">أعلى من المتوسط ⭐</div>
+            </div>
+        </div>
+
+        <!-- Weekly Goal Progress -->
+        <div class="glass rounded-2xl p-4 mb-4">
+            <div class="flex justify-between items-center mb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-gold">🎯</span>
+                    <span class="text-white/80 font-medium">هدف الأسبوع</span>
+                </div>
+                <span class="text-gold font-bold" id="goalProgress">0%</span>
+            </div>
+            <div class="h-3 bg-white/10 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-gold to-yellow-400 rounded-full progress-fill" id="goalProgressBar" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-xs text-white/50">
+                <span id="currentGoalAmount">0 ر.س</span>
+                <span>الهدف: 10,000 ر.س</span>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-4">
+            <h3 class="text-white/60 text-sm mb-3 flex items-center gap-2">
+                <span>⚡</span> إجراءات سريعة
+            </h3>
+            <div class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                <button onclick="showOrdersModal()" class="flex-shrink-0 glass hover:bg-white/10 rounded-xl px-4 py-3 flex items-center gap-2 transition-all hover:scale-105">
+                    <span class="text-xl">📦</span>
+                    <span class="text-sm">آخر الطلبات</span>
+                </button>
+                <button onclick="showCustomersModal()" class="flex-shrink-0 glass hover:bg-white/10 rounded-xl px-4 py-3 flex items-center gap-2 transition-all hover:scale-105">
+                    <span class="text-xl">👥</span>
+                    <span class="text-sm">أفضل العملاء</span>
+                </button>
+                <button onclick="showPendingModal()" class="flex-shrink-0 glass hover:bg-white/10 rounded-xl px-4 py-3 flex items-center gap-2 transition-all hover:scale-105 relative">
+                    <span class="text-xl">⏳</span>
+                    <span class="text-sm">بانتظار الرد</span>
+                    <span class="absolute -top-1 -left-1 w-5 h-5 bg-gold text-black text-xs font-bold rounded-full flex items-center justify-center" id="pendingBadge">3</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="glass rounded-2xl p-4 mb-4">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    <span class="text-white/80 font-medium">مباشر</span>
+                </div>
+                <span class="text-white/40 text-xs">آخر تحديث: الآن</span>
+            </div>
+            <div id="liveFeed" class="space-y-3">
+                <!-- Feed items will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Achievement Banner -->
+        <div id="achievementBanner" class="hidden glass rounded-2xl p-4 mb-4 border border-gold/30 bg-gradient-to-r from-gold/10 to-transparent">
+            <div class="flex items-center gap-3">
+                <div class="text-3xl animate-float">🏆</div>
+                <div>
+                    <div class="font-bold text-gold">إنجاز جديد!</div>
+                    <div class="text-sm text-white/70" id="achievementText">استردت 50 طلب هذا الشهر</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Notification -->
+        <div id="smartNotification" class="glass rounded-2xl p-4 border border-money/30 bg-gradient-to-r from-money/10 to-transparent">
+            <div class="flex items-start gap-3">
+                <div class="text-2xl">💡</div>
+                <div>
+                    <div class="font-medium text-money mb-1">نصيحة ذكية</div>
+                    <div class="text-sm text-white/70" id="smartTip">أفضل وقت لإرسال الرسائل هو بين 8-10 مساءً</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Orders Modal -->
+    <div id="ordersModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeModal('ordersModal')"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-abyss rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>📦</span> آخر الطلبات المستردة
+            </h3>
+            <div id="ordersModalContent" class="space-y-3">
+                <!-- Orders will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Customers Modal -->
+    <div id="customersModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeModal('customersModal')"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-abyss rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>👥</span> أفضل العملاء
+            </h3>
+            <div id="customersModalContent" class="space-y-3">
+                <!-- Customers will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Modal -->
+    <div id="pendingModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeModal('pendingModal')"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-abyss rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>⏳</span> بانتظار الرد
+            </h3>
+            <div id="pendingModalContent" class="space-y-3">
+                <!-- Pending items will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal -->
+    <div id="statsModal" class="fixed inset-0 z-50 hidden">
+        <div class="modal-backdrop absolute inset-0" onclick="closeModal('statsModal')"></div>
+        <div class="absolute bottom-0 left-0 right-0 bg-abyss rounded-t-3xl p-6 max-h-[80vh] overflow-y-auto animate-slide-up">
+            <div class="w-12 h-1 bg-white/20 rounded-full mx-auto mb-6"></div>
+            <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <span>📈</span> إحصائيات مفصلة
+            </h3>
+            <div class="space-y-4">
+                <div class="glass rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-white/60">معدل الفتح</span>
+                        <span class="text-money font-bold">78%</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-money rounded-full" style="width: 78%"></div>
+                    </div>
+                </div>
+                <div class="glass rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-white/60">معدل الرد</span>
+                        <span class="text-magic font-bold">45%</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-magic rounded-full" style="width: 45%"></div>
+                    </div>
+                </div>
+                <div class="glass rounded-xl p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-white/60">معدل الشراء</span>
+                        <span class="text-gold font-bold">32%</span>
+                    </div>
+                    <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-gold rounded-full" style="width: 32%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // DATA
+        // ============================================
+        const data = {
+            totalRevenue: 47250,
+            ordersCount: 34,
+            recoveryRate: 32,
+            weeklyGoal: 10000,
+            currentWeekly: 7500,
+            pendingCount: 3
+        };
+
+        const feedItems = [
+            { name: 'أحمد الشمري', amount: 850, status: 'success', time: 'منذ دقيقتين', statusText: '🎉 اشترى!' },
+            { name: 'سارة محمد', amount: 1200, status: 'pending', time: 'منذ 5 دقائق', statusText: '⏳ عرض مرسل' },
+            { name: 'خالد العتيبي', amount: 450, status: 'success', time: 'منذ 15 دقيقة', statusText: '🎉 اشترى!' },
+            { name: 'نورة الدوسري', amount: 2100, status: 'pending', time: 'منذ 30 دقيقة', statusText: '👀 فتح الرسالة' },
+        ];
+
+        const orders = [
+            { name: 'أحمد الشمري', amount: 850, time: 'منذ دقيقتين', products: 'قميص + بنطلون' },
+            { name: 'خالد العتيبي', amount: 450, time: 'منذ 15 دقيقة', products: 'حذاء رياضي' },
+            { name: 'فهد السالم', amount: 1200, time: 'منذ ساعة', products: 'جاكيت + قبعة' },
+            { name: 'محمد القحطاني', amount: 890, time: 'منذ 3 ساعات', products: 'ساعة يد' },
+        ];
+
+        const customers = [
+            { name: 'نورة العمري', total: 12500, orders: 8, emoji: '👑' },
+            { name: 'سلطان الغامدي', total: 9800, orders: 6, emoji: '⭐' },
+            { name: 'ريم الحربي', total: 7200, orders: 5, emoji: '💎' },
+            { name: 'عبدالله السعيد', total: 5400, orders: 4, emoji: '🏆' },
+        ];
+
+        const pendingItems = [
+            { name: 'سارة محمد', amount: 1200, time: 'منذ 5 دقائق', status: 'عرض مرسل' },
+            { name: 'نورة الدوسري', amount: 2100, time: 'منذ 30 دقيقة', status: 'فتح الرسالة' },
+            { name: 'ليلى أحمد', amount: 780, time: 'منذ ساعة', status: 'لم يفتح بعد' },
+        ];
+
+        const smartTips = [
+            'أفضل وقت لإرسال الرسائل هو بين 8-10 مساءً',
+            'العروض بخصم 10% تحقق أعلى معدل استرداد',
+            'الرسائل القصيرة تحصل على ردود أسرع',
+            'إضافة اسم العميل يزيد معدل الفتح 25%',
+        ];
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        const fmt = n => n.toLocaleString('en-US');
+
+        // Animate counter
+        function animateCounter(el, target, duration = 2000) {
+            const start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+            const startTime = performance.now();
+            
+            function update(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 4);
+                const current = Math.floor(start + (target - start) * eased);
+                el.textContent = fmt(current);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.classList.remove('number-updating');
+                }
+            }
+            
+            el.classList.add('number-updating');
+            requestAnimationFrame(update);
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-money/90' : type === 'warning' ? 'bg-gold/90' : 'bg-magic/90';
+            
+            toast.className = `toast ${bgColor} rounded-xl px-4 py-3 text-sm font-medium pointer-events-auto backdrop-blur-sm`;
+            toast.innerHTML = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Create confetti
+        function createConfetti(count = 50) {
+            const colors = ['#10B981', '#34D399', '#F59E0B', '#FBBF24', '#8B5CF6', '#A78BFA'];
+            
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 4000);
+            }
+        }
+
+        // Create coin rain
+        function createCoinRain(count = 15) {
+            const coins = ['🪙', '💰', '💵', '💎'];
+            
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'coin';
+                    coin.textContent = coins[Math.floor(Math.random() * coins.length)];
+                    coin.style.left = Math.random() * 100 + 'vw';
+                    coin.style.top = '-50px';
+                    coin.style.animationDuration = (2 + Math.random() * 1.5) + 's';
+                    document.body.appendChild(coin);
+                    
+                    setTimeout(() => coin.remove(), 4000);
+                }, i * 100);
+            }
+        }
+
+        // Show celebration
+        function celebrate(amount, text = 'تم استرداد البيع!') {
+            const popup = document.getElementById('celebrationPopup');
+            document.getElementById('celebrationAmount').textContent = '+' + fmt(amount) + ' ر.س';
+            document.getElementById('celebrationText').textContent = text;
+            
+            popup.classList.remove('hidden');
+            popup.classList.add('flex');
+            createConfetti();
+            createCoinRain();
+            
+            setTimeout(() => {
+                popup.classList.add('hidden');
+                popup.classList.remove('flex');
+            }, 2500);
+        }
+
+        // ============================================
+        // RENDER FUNCTIONS
+        // ============================================
+        function renderFeed() {
+            const container = document.getElementById('liveFeed');
+            container.innerHTML = feedItems.map((item, i) => `
+                <div class="glass rounded-xl p-3 flex justify-between items-center animate-slide-up" style="animation-delay: ${i * 0.1}s">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br ${item.status === 'success' ? 'from-money/30 to-money/10' : 'from-gold/30 to-gold/10'} flex items-center justify-center">
+                            <span class="text-lg">${item.status === 'success' ? '✓' : '⏳'}</span>
+                        </div>
+                        <div>
+                            <div class="font-medium">${item.name}</div>
+                            <div class="text-xs text-white/50">${item.time} • ${item.statusText}</div>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="font-bold ${item.status === 'success' ? 'text-money' : 'text-gold'}">${item.status === 'success' ? '+' : ''}${fmt(item.amount)}</div>
+                        <div class="text-xs text-white/40">ر.س</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderOrders() {
+            const container = document.getElementById('ordersModalContent');
+            container.innerHTML = orders.map(order => `
+                <div class="glass rounded-xl p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="font-medium">${order.name}</div>
+                        <div class="text-money font-bold">+${fmt(order.amount)} ر.س</div>
+                    </div>
+                    <div class="text-sm text-white/50">${order.products}</div>
+                    <div class="text-xs text-white/30 mt-1">${order.time}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderCustomers() {
+            const container = document.getElementById('customersModalContent');
+            container.innerHTML = customers.map((customer, i) => `
+                <div class="glass rounded-xl p-4 flex items-center gap-4">
+                    <div class="text-2xl">${customer.emoji}</div>
+                    <div class="flex-1">
+                        <div class="font-medium">${customer.name}</div>
+                        <div class="text-sm text-white/50">${customer.orders} طلبات</div>
+                    </div>
+                    <div class="text-left">
+                        <div class="font-bold text-money">${fmt(customer.total)}</div>
+                        <div class="text-xs text-white/40">ر.س إجمالي</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPending() {
+            const container = document.getElementById('pendingModalContent');
+            container.innerHTML = pendingItems.map(item => `
+                <div class="glass rounded-xl p-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="font-medium">${item.name}</div>
+                        <div class="text-gold font-bold">${fmt(item.amount)} ر.س</div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div class="text-sm text-white/50">${item.status}</div>
+                        <div class="text-xs text-white/30">${item.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // MODAL FUNCTIONS
+        // ============================================
+        function showModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function showOrdersModal() {
+            renderOrders();
+            showModal('ordersModal');
+        }
+
+        function showCustomersModal() {
+            renderCustomers();
+            showModal('customersModal');
+        }
+
+        function showPendingModal() {
+            renderPending();
+            showModal('pendingModal');
+        }
+
+        function showStatsModal() {
+            showModal('statsModal');
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        function init() {
+            // Animate counters on load
+            setTimeout(() => {
+                animateCounter(document.getElementById('totalRevenue'), data.totalRevenue, 2500);
+            }, 300);
+            
+            setTimeout(() => {
+                animateCounter(document.getElementById('ordersCount'), data.ordersCount, 1500);
+            }, 500);
+            
+            setTimeout(() => {
+                animateCounter(document.getElementById('recoveryRate'), data.recoveryRate, 1500);
+            }, 700);
+
+            // Update goal progress
+            setTimeout(() => {
+                const progress = (data.currentWeekly / data.weeklyGoal) * 100;
+                document.getElementById('goalProgressBar').style.width = progress + '%';
+                document.getElementById('goalProgress').textContent = Math.round(progress) + '%';
+                document.getElementById('currentGoalAmount').textContent = fmt(data.currentWeekly) + ' ر.س';
+            }, 1000);
+
+            // Render feed
+            renderFeed();
+
+            // Update pending badge
+            document.getElementById('pendingBadge').textContent = data.pendingCount;
+
+            // Set random smart tip
+            document.getElementById('smartTip').textContent = smartTips[Math.floor(Math.random() * smartTips.length)];
+
+            // Show welcome toast
+            setTimeout(() => {
+                showToast('🎉 استردت 5,000 ر.س هذا الأسبوع!');
+            }, 2000);
+
+            // Show achievement banner if applicable
+            if (data.ordersCount >= 30) {
+                setTimeout(() => {
+                    document.getElementById('achievementBanner').classList.remove('hidden');
+                    document.getElementById('achievementText').textContent = `استردت ${data.ordersCount} طلب هذا الشهر 🎉`;
+                }, 3000);
+            }
+        }
+
+        // Simulate real-time updates
+        function simulateUpdate() {
+            const newSale = {
+                name: ['محمد العنزي', 'عبدالرحمن السعد', 'هند المالكي', 'سعود الدوسري'][Math.floor(Math.random() * 4)],
+                amount: Math.floor(Math.random() * 1500) + 300,
+            };
+
+            // Add to feed
+            feedItems.unshift({
+                ...newSale,
+                status: 'success',
+                time: 'الآن',
+                statusText: '🎉 اشترى!'
+            });
+            feedItems.pop();
+            renderFeed();
+
+            // Update total
+            data.totalRevenue += newSale.amount;
+            data.ordersCount += 1;
+            
+            animateCounter(document.getElementById('totalRevenue'), data.totalRevenue, 1000);
+            animateCounter(document.getElementById('ordersCount'), data.ordersCount, 500);
+
+            // Celebrate!
+            celebrate(newSale.amount);
+
+            // Show toast
+            setTimeout(() => {
+                showToast(`✨ ${newSale.name} اشترى بـ ${fmt(newSale.amount)} ر.س`);
+            }, 3000);
+        }
+
+        // Milestone celebrations
+        function checkMilestones() {
+            const milestones = [10000, 25000, 50000, 100000];
+            milestones.forEach(milestone => {
+                if (data.totalRevenue >= milestone && data.totalRevenue - 1500 < milestone) {
+                    setTimeout(() => {
+                        createConfetti(100);
+                        createCoinRain(30);
+                        showToast(`🏆 مبروك! وصلت لـ ${fmt(milestone)} ر.س!`, 'warning');
+                    }, 4000);
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', init);
+
+        // Simulate a sale after 8 seconds for demo
+        setTimeout(simulateUpdate, 8000);
+
+        // Periodic updates simulation
+        setInterval(() => {
+            // Pulse effect on numbers periodically
+            const elements = ['totalRevenue', 'ordersCount', 'recoveryRate'];
+            elements.forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.add('number-updating');
+                setTimeout(() => el.classList.remove('number-updating'), 1000);
+            });
+        }, 30000);
+
+        // Handle escape key for modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ['ordersModal', 'customersModal', 'pendingModal', 'statsModal'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html>
