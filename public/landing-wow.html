@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رِبح - حوّل متجرك إلى آلة مبيعات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#10B981',
+                        dark: '#0a0a0a'
+                    },
+                    fontFamily: {
+                        'arabic': ['Tajawal', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { font-family: 'Tajawal', sans-serif; }
+        .gradient-text { 
+            background: linear-gradient(135deg, #10B981 0%, #34D399 50%, #6EE7B7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow { box-shadow: 0 0 60px rgba(16, 185, 129, 0.3); }
+        .glow-sm { box-shadow: 0 0 30px rgba(16, 185, 129, 0.2); }
+        .float { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        .slide-up {
+            animation: slideUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(16, 185, 129, 0.15); }
+        .bg-grid {
+            background-image: 
+                linear-gradient(rgba(16, 185, 129, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white overflow-x-hidden">
+    <!-- Animated Background -->
+    <div class="fixed inset-0 bg-grid opacity-50"></div>
+    <div class="fixed top-1/4 right-1/4 w-96 h-96 bg-brand/10 rounded-full blur-3xl"></div>
+    <div class="fixed bottom-1/4 left-1/4 w-96 h-96 bg-brand/5 rounded-full blur-3xl"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-dark/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-brand rounded-xl flex items-center justify-center glow-sm">
+                    <span class="text-xl font-black text-dark">ر</span>
+                </div>
+                <span class="text-2xl font-bold">رِبح</span>
+            </div>
+            <a href="#cta" class="bg-brand hover:bg-brand/90 text-dark font-bold px-6 py-2.5 rounded-full transition-all hover:scale-105">
+                ابدأ مجاناً
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <!-- Badge -->
+            <div class="slide-up inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8">
+                <span class="w-2 h-2 bg-brand rounded-full animate-pulse"></span>
+                <span class="text-sm text-gray-400">+500 متجر يستخدم رِبح الآن</span>
+            </div>
+            
+            <!-- Main Headline -->
+            <h1 class="slide-up delay-1 text-5xl md:text-7xl lg:text-8xl font-black leading-tight mb-6">
+                حوّل <span class="gradient-text">واتساب</span><br>
+                إلى آلة مبيعات
+            </h1>
+            
+            <!-- Subheadline -->
+            <p class="slide-up delay-2 text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto mb-10 leading-relaxed">
+                استرجع العملاء المترددين، أرسل عروض ذكية، وزِد مبيعاتك
+                <span class="text-brand font-bold">بنسبة 40%</span> - كل ذلك تلقائياً
+            </p>
+            
+            <!-- CTA Buttons -->
+            <div class="slide-up delay-3 flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                <a href="#cta" class="group relative bg-brand hover:bg-brand/90 text-dark font-bold text-xl px-10 py-5 rounded-2xl transition-all hover:scale-105 glow">
+                    <span class="absolute inset-0 bg-brand rounded-2xl pulse-ring"></span>
+                    <span class="relative flex items-center gap-3">
+                        جرّب مجاناً - 14 يوم
+                        <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </span>
+                </a>
+                <a href="#demo" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                    <div class="w-12 h-12 border border-white/20 rounded-full flex items-center justify-center hover:bg-white/5">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                    <span>شاهد العرض</span>
+                </a>
+            </div>
+            
+            <!-- Hero Visual -->
+            <div class="slide-up delay-4 relative max-w-4xl mx-auto">
+                <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent z-10"></div>
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-3xl p-1">
+                    <div class="bg-dark/90 rounded-3xl p-8 backdrop-blur">
+                        <!-- Mock Dashboard -->
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="bg-white/5 rounded-2xl p-4 text-center">
+                                <div class="text-3xl font-black text-brand">847</div>
+                                <div class="text-sm text-gray-500">سلة مستردة</div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 text-center">
+                                <div class="text-3xl font-black text-brand">₪127K</div>
+                                <div class="text-sm text-gray-500">إيرادات إضافية</div>
+                            </div>
+                            <div class="bg-white/5 rounded-2xl p-4 text-center">
+                                <div class="text-3xl font-black text-brand">94%</div>
+                                <div class="text-sm text-gray-500">معدل التوصيل</div>
+                            </div>
+                        </div>
+                        <!-- Mock WhatsApp Messages -->
+                        <div class="space-y-3">
+                            <div class="flex gap-3 items-end justify-end">
+                                <div class="bg-brand/20 rounded-2xl rounded-br-sm px-4 py-3 max-w-xs">
+                                    <p class="text-sm">مرحباً أحمد! 👋 لاحظنا إنك تركت سلتك...</p>
+                                    <p class="text-xs text-gray-500 mt-1">الآن</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 items-end">
+                                <div class="bg-white/10 rounded-2xl rounded-bl-sm px-4 py-3 max-w-xs">
+                                    <p class="text-sm">أيوا كنت مستعجل، كيف أكمل الطلب؟</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 items-end justify-end">
+                                <div class="bg-brand/20 rounded-2xl rounded-br-sm px-4 py-3 max-w-xs">
+                                    <p class="text-sm">خصم 15% لك! 🎁 استخدم الكود: WELCOME15</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-20 border-y border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <p class="text-center text-gray-500 mb-10">موثوق من أفضل المتاجر في السعودية والخليج</p>
+            <div class="flex flex-wrap justify-center items-center gap-12 opacity-50">
+                <div class="text-2xl font-bold">سلة</div>
+                <div class="text-2xl font-bold">زد</div>
+                <div class="text-2xl font-bold">شوبيفاي</div>
+                <div class="text-2xl font-bold">ووكومرس</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">كل ما تحتاجه لـ<span class="gradient-text">مضاعفة المبيعات</span></h2>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">أدوات قوية تعمل 24/7 لتحويل الزوار إلى عملاء دائمين</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Feature 1 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">استرداد السلات المتروكة</h3>
+                    <p class="text-gray-400">رسائل واتساب ذكية ترسل تلقائياً لكل عميل ترك سلته</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">كوبونات ديناميكية</h3>
+                    <p class="text-gray-400">خصومات مخصصة لكل عميل بناءً على سلوكه وقيمة سلته</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">تحليلات متقدمة</h3>
+                    <p class="text-gray-400">تتبع كل رسالة، كل تحويل، وكل ريال إضافي تكسبه</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">ردود ذكية بالـ AI</h3>
+                    <p class="text-gray-400">روبوت يرد على استفسارات العملاء 24/7 بذكاء</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">تكامل فوري</h3>
+                    <p class="text-gray-400">اربط متجرك في 5 دقائق - سلة، شوبيفاي، زد</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="card-hover bg-white/5 border border-white/10 rounded-3xl p-8 transition-all duration-300">
+                    <div class="w-16 h-16 bg-brand/10 rounded-2xl flex items-center justify-center mb-6">
+                        <svg class="w-8 h-8 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">آمن 100%</h3>
+                    <p class="text-gray-400">بياناتك وبيانات عملائك محمية بأعلى معايير الأمان</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="py-32 bg-gradient-to-b from-brand/5 to-transparent">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div>
+                    <div class="text-5xl md:text-6xl font-black gradient-text mb-2">500+</div>
+                    <div class="text-gray-400">متجر نشط</div>
+                </div>
+                <div>
+                    <div class="text-5xl md:text-6xl font-black gradient-text mb-2">2M+</div>
+                    <div class="text-gray-400">رسالة مرسلة</div>
+                </div>
+                <div>
+                    <div class="text-5xl md:text-6xl font-black gradient-text mb-2">40%</div>
+                    <div class="text-gray-400">زيادة المبيعات</div>
+                </div>
+                <div>
+                    <div class="text-5xl md:text-6xl font-black gradient-text mb-2">94%</div>
+                    <div class="text-gray-400">معدل التوصيل</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-32">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-black text-center mb-16">ماذا يقول <span class="gradient-text">عملاؤنا</span></h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span>
+                    </div>
+                    <p class="text-lg mb-6">"رِبح غيّر قواعد اللعبة! كنت أخسر 30% من المبيعات بسبب السلات المتروكة. الآن استرجعت معظمها"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-brand/20 rounded-full flex items-center justify-center text-brand font-bold">م</div>
+                        <div>
+                            <div class="font-bold">محمد العتيبي</div>
+                            <div class="text-sm text-gray-500">متجر أزياء - الرياض</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span>
+                    </div>
+                    <p class="text-lg mb-6">"التكامل مع سلة كان سهل جداً. خلال أسبوع واحد شفت فرق واضح في المبيعات!"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-brand/20 rounded-full flex items-center justify-center text-brand font-bold">ن</div>
+                        <div>
+                            <div class="font-bold">نورة السعيد</div>
+                            <div class="text-sm text-gray-500">متجر مستحضرات - جدة</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+                    <div class="flex gap-1 mb-4">
+                        <span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span><span class="text-brand">★</span>
+                    </div>
+                    <p class="text-lg mb-6">"الدعم الفني ممتاز والنتائج مذهلة. أنصح كل صاحب متجر يجربها"</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-brand/20 rounded-full flex items-center justify-center text-brand font-bold">ع</div>
+                        <div>
+                            <div class="font-bold">عبدالله القحطاني</div>
+                            <div class="text-sm text-gray-500">متجر إلكترونيات - الدمام</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="py-32">
+        <div class="max-w-5xl mx-auto px-6">
+            <h2 class="text-4xl md:text-5xl font-black text-center mb-6">خطط <span class="gradient-text">بسيطة وشفافة</span></h2>
+            <p class="text-xl text-gray-400 text-center mb-16">ابدأ مجاناً، ادفع فقط عندما تنمو</p>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Free Plan -->
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8">
+                    <div class="text-sm text-gray-500 mb-2">للمتاجر الصغيرة</div>
+                    <h3 class="text-2xl font-bold mb-4">مجاني</h3>
+                    <div class="text-4xl font-black mb-6">0 <span class="text-lg text-gray-500">ريال/شهر</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>100 رسالة/شهر</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>استرداد السلات</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>تحليلات أساسية</li>
+                    </ul>
+                    <a href="#cta" class="block text-center border border-white/20 hover:bg-white/5 font-bold py-4 rounded-xl transition-all">ابدأ مجاناً</a>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="relative bg-gradient-to-br from-brand/20 to-brand/5 border-2 border-brand rounded-3xl p-8 glow">
+                    <div class="absolute -top-4 right-8 bg-brand text-dark text-sm font-bold px-4 py-1 rounded-full">الأكثر شيوعاً</div>
+                    <div class="text-sm text-brand mb-2">للمتاجر النامية</div>
+                    <h3 class="text-2xl font-bold mb-4">احترافي</h3>
+                    <div class="text-4xl font-black mb-6">199 <span class="text-lg text-gray-500">ريال/شهر</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>رسائل غير محدودة</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>كل مميزات المجاني</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>AI ردود ذكية</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>كوبونات ديناميكية</li>
+                        <li class="flex items-center gap-3"><svg class="w-5 h-5 text-brand" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>دعم أولوية 24/7</li>
+                    </ul>
+                    <a href="#cta" class="block text-center bg-brand hover:bg-brand/90 text-dark font-bold py-4 rounded-xl transition-all hover:scale-105">ابدأ الآن</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="cta" class="py-32">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <div class="bg-gradient-to-br from-brand/20 to-transparent border border-brand/30 rounded-3xl p-12 md:p-16 glow">
+                <h2 class="text-4xl md:text-5xl font-black mb-6">جاهز تضاعف <span class="gradient-text">مبيعاتك</span>؟</h2>
+                <p class="text-xl text-gray-400 mb-10">انضم لـ +500 متجر يستخدمون رِبح. ابدأ مجاناً - لا بطاقة ائتمان مطلوبة</p>
+                <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+                    <input type="tel" placeholder="رقم الجوال" class="flex-1 bg-white/10 border border-white/20 rounded-xl px-6 py-4 text-lg focus:outline-none focus:border-brand transition-colors" dir="ltr">
+                    <button type="submit" class="bg-brand hover:bg-brand/90 text-dark font-bold text-lg px-8 py-4 rounded-xl transition-all hover:scale-105">
+                        ابدأ الآن
+                    </button>
+                </form>
+                <p class="text-sm text-gray-500 mt-4">✓ 14 يوم مجاناً ✓ إلغاء في أي وقت ✓ دعم عربي</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-brand rounded-lg flex items-center justify-center">
+                        <span class="font-black text-dark">ر</span>
+                    </div>
+                    <span class="text-xl font-bold">رِبح</span>
+                </div>
+                <div class="flex gap-8 text-gray-400">
+                    <a href="#" class="hover:text-white transition-colors">الشروط</a>
+                    <a href="#" class="hover:text-white transition-colors">الخصوصية</a>
+                    <a href="#" class="hover:text-white transition-colors">تواصل معنا</a>
+                </div>
+                <div class="text-gray-500 text-sm">© 2025 رِبح. جميع الحقوق محفوظة</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/966579353338" target="_blank" class="fixed bottom-6 left-6 w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-50">
+        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+    </a>
+</body>
+</html>
