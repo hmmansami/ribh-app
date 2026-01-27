@@ -53,6 +53,30 @@ const handleInstalled = async (mid, data) => {
         installedAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     console.log(`[SallaApp] 📦 Installed: ${mid}`);
+    
+    // Send welcome email (async, don't block)
+    setImmediate(async () => {
+        try {
+            // Fetch merchant info from Salla API
+            const merchantInfo = await sallaApi(mid, '/store/info');
+            const store = merchantInfo.data;
+            const email = store?.email || store?.owner?.email;
+            
+            if (email) {
+                const { sendWelcomeEmail } = require('./emailSender');
+                await sendWelcomeEmail({
+                    to: email,
+                    merchantName: store?.owner?.name || store?.name,
+                    storeName: store?.name
+                });
+                console.log(`[SallaApp] 📧 Welcome email sent to ${email}`);
+            } else {
+                console.log(`[SallaApp] ⚠️ No email found for merchant ${mid}`);
+            }
+        } catch (e) {
+            console.error(`[SallaApp] ❌ Welcome email failed:`, e.message);
+        }
+    });
 };
 const handleUninstalled = async (mid) => {
     await getDb().collection('salla_merchants').doc(String(mid))

@@ -11,6 +11,7 @@ const { normalizeSaudiPhone, verifySallaSignature } = require('../lib/sallaWebho
 // RIBH lib modules for order lifecycle
 const orderNotifications = require('../lib/orderNotifications');
 const reviewCollector = require('../lib/reviewCollector');
+const { sendWelcomeEmail } = require('../lib/emailSender');
 
 // Inline helpers for order status detection
 const isShippingStatus = (status) => {
@@ -57,8 +58,21 @@ router.get('/callback', async (req, res) => {
         if (!tokenRes.ok) throw new Error('Token exchange failed');
         const tokens = await tokenRes.json();
         const userRes = await fetch('https://accounts.salla.sa/oauth2/user/info', { headers: { Authorization: `Bearer ${tokens.access_token}` } });
-        const merchantId = (await userRes.json()).data?.merchant?.id || 'unknown';
+        const userData = (await userRes.json()).data;
+        const merchantId = userData?.merchant?.id || 'unknown';
         await sallaApp.storeTokens(merchantId, tokens);
+        
+        // Send welcome email (async, don't block redirect)
+        const email = userData?.merchant?.email || userData?.email;
+        if (email) {
+            sendWelcomeEmail({
+                to: email,
+                merchantName: userData?.merchant?.name || userData?.name,
+                storeName: userData?.merchant?.store_name || userData?.merchant?.name
+            }).then(() => console.log(`[Salla] 📧 Welcome email sent to ${email}`))
+              .catch(e => console.error(`[Salla] ❌ Welcome email failed:`, e.message));
+        }
+        
         // Redirect to onboarding with success
         res.redirect(`/onboarding.html?connected=salla&merchant=${merchantId}`);
     } catch (e) { 

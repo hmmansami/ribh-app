@@ -507,7 +507,24 @@
         <header class="header">
             <div class="logo">RIBH</div>
             <p class="tagline">اربط متجرك في دقيقتين</p>
+            <p class="store-info" id="storeInfo" style="display: none; margin-top: 8px; padding: 6px 14px; background: var(--bg-tertiary); border-radius: 8px; font-size: 13px; color: var(--green);">
+                🏪 متجر: <span id="storeIdDisplay"></span>
+            </p>
         </header>
+        
+        <!-- Error screen for missing storeId -->
+        <div id="errorScreen" style="display: none; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 64px; margin-bottom: 20px;">⚠️</div>
+            <h2 style="font-size: 22px; margin-bottom: 12px; color: #EF4444;">خطأ في الوصول</h2>
+            <p style="color: var(--text-secondary); font-size: 15px; line-height: 1.7;">
+                يرجى تثبيت التطبيق من سلة أولاً.<br>
+                لا يمكن الوصول لهذه الصفحة مباشرة.
+            </p>
+            <a href="https://apps.salla.sa" class="btn btn-primary" style="margin-top: 24px; max-width: 280px; margin-left: auto; margin-right: auto;">
+                <span>🏪</span>
+                <span>زيارة متجر تطبيقات سلة</span>
+            </a>
+        </div>
 
         <!-- Progress Steps -->
         <div class="progress-container">
@@ -636,7 +653,7 @@
                     <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 20px;">
                         تابع الرسائل المرسلة والسلات المستردة
                     </p>
-                    <a href="/dashboard" class="btn btn-primary">
+                    <a href="#" id="dashboardLink" class="btn btn-primary">
                         <span>فتح لوحة التحكم</span>
                         <span style="margin-right: 4px;">←</span>
                     </a>
@@ -667,16 +684,39 @@
     <script>
         // State
         let currentStep = 1;
+        let storeId = null;
         const SALLA_CLIENT_ID = 'YOUR_SALLA_CLIENT_ID'; // Replace with actual
         const CALLBACK_URL = 'https://europe-west1-ribh-484706.cloudfunctions.net/api/salla/callback';
+        const WHATSAPP_API_BASE = 'https://ribh-whatsapp.onrender.com'; // WhatsApp bridge service
+        
+        // Check storeId from URL - REQUIRED
+        function checkStoreId() {
+            const params = new URLSearchParams(window.location.search);
+            storeId = params.get('storeId');
+            
+            if (!storeId) {
+                // No storeId - show error, hide main content
+                document.getElementById('errorScreen').style.display = 'block';
+                document.querySelector('.progress-container').style.display = 'none';
+                document.querySelector('.content').style.display = 'none';
+                return false;
+            }
+            
+            // Show storeId to user
+            document.getElementById('storeIdDisplay').textContent = storeId;
+            document.getElementById('storeInfo').style.display = 'inline-block';
+            return true;
+        }
         
         // Check URL params for OAuth callback
         function checkOAuthCallback() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('salla_connected') === 'true') {
                 goToStep(2);
-                // Clear the URL params
-                window.history.replaceState({}, '', window.location.pathname);
+                // Keep storeId in URL, just remove salla_connected
+                params.delete('salla_connected');
+                const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+                window.history.replaceState({}, '', newUrl);
             }
         }
         
@@ -711,6 +751,14 @@
             if (step === 2) {
                 loadWhatsAppQR();
             }
+            
+            if (step === 3) {
+                // Update dashboard link with storeId
+                const dashboardLink = document.getElementById('dashboardLink');
+                if (dashboardLink && storeId) {
+                    dashboardLink.href = `/dashboard?storeId=${storeId}`;
+                }
+            }
         }
         
         // Step 1: Salla OAuth
@@ -743,73 +791,38 @@
             const placeholder = document.getElementById('qrPlaceholder');
             const qrImage = document.getElementById('qrImage');
             
+            if (!storeId) {
+                console.error('No storeId available');
+                return;
+            }
+            
             try {
-                // In production, fetch from your WhatsApp bridge service
-                // const response = await fetch('/api/whatsapp/qr');
-                // const data = await response.json();
-                // qrImage.src = data.qr;
+                // Fetch QR from WhatsApp bridge service with storeId
+                const response = await fetch(`${WHATSAPP_API_BASE}/qr/${storeId}`);
+                const data = await response.json();
                 
-                // Demo: Show placeholder then simulate QR after delay
-                setTimeout(() => {
-                    // For demo, we'll show a placeholder QR
-                    placeholder.innerHTML = `
-                        <svg width="180" height="180" viewBox="0 0 180 180">
-                            <rect fill="white" width="180" height="180"/>
-                            <g fill="black">
-                                <!-- Simplified QR pattern for demo -->
-                                <rect x="10" y="10" width="50" height="50"/>
-                                <rect x="20" y="20" width="30" height="30" fill="white"/>
-                                <rect x="25" y="25" width="20" height="20"/>
-                                
-                                <rect x="120" y="10" width="50" height="50"/>
-                                <rect x="130" y="20" width="30" height="30" fill="white"/>
-                                <rect x="135" y="25" width="20" height="20"/>
-                                
-                                <rect x="10" y="120" width="50" height="50"/>
-                                <rect x="20" y="130" width="30" height="30" fill="white"/>
-                                <rect x="25" y="135" width="20" height="20"/>
-                                
-                                <!-- Random pattern -->
-                                <rect x="70" y="10" width="10" height="10"/>
-                                <rect x="90" y="10" width="10" height="10"/>
-                                <rect x="70" y="30" width="10" height="10"/>
-                                <rect x="80" y="40" width="10" height="10"/>
-                                <rect x="100" y="30" width="10" height="10"/>
-                                
-                                <rect x="10" y="70" width="10" height="10"/>
-                                <rect x="30" y="80" width="10" height="10"/>
-                                <rect x="40" y="70" width="10" height="10"/>
-                                
-                                <rect x="70" y="70" width="40" height="40"/>
-                                <rect x="80" y="80" width="20" height="20" fill="white"/>
-                                <rect x="85" y="85" width="10" height="10"/>
-                                
-                                <rect x="120" y="70" width="10" height="10"/>
-                                <rect x="140" y="80" width="10" height="10"/>
-                                <rect x="160" y="70" width="10" height="10"/>
-                                
-                                <rect x="70" y="120" width="10" height="10"/>
-                                <rect x="90" y="130" width="10" height="10"/>
-                                <rect x="80" y="150" width="10" height="10"/>
-                                <rect x="100" y="140" width="10" height="10"/>
-                                
-                                <rect x="120" y="120" width="20" height="20"/>
-                                <rect x="150" y="130" width="10" height="10"/>
-                                <rect x="140" y="150" width="20" height="20"/>
-                                <rect x="160" y="160" width="10" height="10"/>
-                            </g>
-                        </svg>
-                    `;
-                    placeholder.classList.remove('loading');
-                }, 1500);
+                if (data.qr) {
+                    // Show the real QR code
+                    qrImage.src = data.qr;
+                    qrImage.style.display = 'block';
+                    placeholder.style.display = 'none';
+                } else if (data.status === 'connected') {
+                    // Already connected
+                    onWhatsAppConnected();
+                    return;
+                } else {
+                    throw new Error(data.message || 'QR not available');
+                }
                 
                 // Start polling for connection status
                 pollWhatsAppStatus();
                 
             } catch (error) {
                 console.error('Failed to load QR:', error);
+                placeholder.classList.remove('loading');
                 placeholder.innerHTML = `
-                    <p style="color: #EF4444;">فشل تحميل الباركود</p>
+                    <p style="color: #EF4444; font-size: 14px;">فشل تحميل الباركود</p>
+                    <p style="color: #888; font-size: 12px; margin-top: 8px;">${error.message}</p>
                     <button onclick="loadWhatsAppQR()" style="margin-top: 12px; padding: 8px 16px; background: var(--green); color: white; border: none; border-radius: 8px; cursor: pointer;">إعادة المحاولة</button>
                 `;
             }
@@ -818,16 +831,22 @@
         // Poll WhatsApp connection status
         let pollInterval;
         function pollWhatsAppStatus() {
-            // In production: poll your backend for connection status
-            // clearInterval(pollInterval);
-            // pollInterval = setInterval(async () => {
-            //     const response = await fetch('/api/whatsapp/status');
-            //     const data = await response.json();
-            //     if (data.connected) {
-            //         clearInterval(pollInterval);
-            //         onWhatsAppConnected();
-            //     }
-            // }, 2000);
+            if (!storeId) return;
+            
+            clearInterval(pollInterval);
+            pollInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${WHATSAPP_API_BASE}/status/${storeId}`);
+                    const data = await response.json();
+                    
+                    if (data.status === 'connected' || data.connected) {
+                        clearInterval(pollInterval);
+                        onWhatsAppConnected();
+                    }
+                } catch (error) {
+                    console.error('Status check failed:', error);
+                }
+            }, 3000); // Check every 3 seconds
         }
         
         // WhatsApp connected callback
@@ -849,8 +868,16 @@
         }
         
         // Initialize
-        checkOAuthCallback();
-        updateUI();
+        const hasStoreId = checkStoreId();
+        if (hasStoreId) {
+            checkOAuthCallback();
+            updateUI();
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (pollInterval) clearInterval(pollInterval);
+        });
     </script>
 </body>
 </html>

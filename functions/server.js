@@ -85,6 +85,16 @@ try {
     sallaWebhooks = null;
 }
 
+// Salla App - OAuth & Token Management
+let sallaApp;
+try {
+    sallaApp = require('./lib/sallaApp');
+    console.log('✅ Salla App loaded - Token management enabled!');
+} catch (e) {
+    console.log('⚠️ Salla App not available:', e.message);
+    sallaApp = null;
+}
+
 // Predictive Analytics - CLV, churn prediction, next order
 let predictiveAnalytics;
 try {
@@ -1466,13 +1476,59 @@ app.get('/oauth/callback', async (req, res) => {
         });
 
         const userData = await userResponse.json();
-        console.log('👤 User info:', userData);
+        console.log('👤 User info:', JSON.stringify(userData, null, 2));
 
-        const merchantId = userData.data?.merchant?.id || userData.merchant?.id || 'unknown';
-        const merchantName = userData.data?.merchant?.name || userData.merchant?.name || 'متجر';
-        const merchantEmail = userData.data?.email || userData.email || '';
+        // Extract merchant data (Salla API structure varies)
+        const merchant = userData.data?.merchant || userData.merchant || {};
+        const storeId = String(merchant.id || userData.data?.id || 'unknown');
+        const storeName = merchant.name || merchant.store_name || userData.data?.name || 'متجر';
+        const email = userData.data?.email || userData.email || merchant.email || '';
+        const phone = userData.data?.mobile || userData.mobile || merchant.mobile || merchant.phone || '';
 
-        console.log(`🏪 Merchant: ${merchantName} (${merchantId})`);
+        console.log(`🏪 Merchant: ${storeName} (${storeId}), Email: ${email}, Phone: ${phone}`);
+
+        // Step 3: Save tokens to Firestore using sallaApp (proper token management)
+        if (sallaApp) {
+            await sallaApp.storeTokens(storeId, {
+                access_token: tokenData.access_token,
+                refresh_token: tokenData.refresh_token,
+                expires: tokenData.expires_in ? Date.now() + (tokenData.expires_in * 1000) : Date.now() + 86400000,
+                scope: tokenData.scope || ''
+            });
+            console.log(`✅ Tokens saved to salla_merchants/${storeId}`);
+        }
+
+        // Step 4: Create/update merchant document in merchants/{storeId}
+        const merchantDoc = {
+            storeId: storeId,
+            storeName: storeName,
+            email: email,
+            phone: phone,
+            platform: 'salla',
+            status: 'active',
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        };
+
+        await db.collection('merchants').doc(storeId).set(merchantDoc, { merge: true });
+        console.log(`✅ Merchant document created: merchants/${storeId}`);
+
+        // Also save tokens subcollection for easy access
+        await db.collection('merchants').doc(storeId).collection('tokens').doc('salla').set({
+            accessToken: tokenData.access_token,
+            refreshToken: tokenData.refresh_token,
+            expiresAt: tokenData.expires_in 
+                ? admin.firestore.Timestamp.fromMillis(Date.now() + (tokenData.expires_in * 1000))
+                : admin.firestore.Timestamp.fromMillis(Date.now() + 86400000),
+            scope: tokenData.scope || '',
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+        console.log(`✅ Tokens saved to merchants/${storeId}/tokens/salla`);
+
+        // Legacy: Keep backward compatibility with stores collection
+        const merchantId = storeId;
+        const merchantName = storeName;
+        const merchantEmail = email;
 
         // Step 3: Save store with access token
         const stores = await readDB(STORES_FILE);
@@ -1550,8 +1606,9 @@ app.get('/oauth/callback', async (req, res) => {
 
         // Step 5: Redirect based on whether this is a new or returning store
         if (isNewStore) {
-            // New store → Show amazing activation experience!
-            res.redirect(`/welcome.html?token=${ribhToken}&store=${encodeURIComponent(merchantName)}`);
+            // New store → Redirect to onboarding with storeId
+            console.log(`🎉 New store! Redirecting to onboarding: storeId=${merchantId}`);
+            res.redirect(`/onboarding-v2.html?storeId=${merchantId}&token=${ribhToken}&store=${encodeURIComponent(merchantName)}`);
         } else {
             // Returning store → Go directly to dashboard
             res.redirect(`/?token=${ribhToken}`);

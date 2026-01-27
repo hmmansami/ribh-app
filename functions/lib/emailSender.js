@@ -234,8 +234,184 @@ function buildEmailHTML(offer, storeName, checkoutUrl, customerName) {
     `;
 }
 
+/**
+ * Send a generic email via Resend
+ */
+async function sendEmail({ to, subject, html, text }) {
+    if (!RESEND_API_KEY) {
+        console.log('⚠️ Resend API key not configured');
+        return { success: false, error: 'RESEND_API_KEY not configured' };
+    }
+    if (!to) {
+        return { success: false, error: 'No email address provided' };
+    }
+
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${RESEND_API_KEY}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: EMAIL_FROM,
+                to,
+                subject,
+                html,
+                text,
+                headers: {
+                    'X-Entity-Ref-ID': `ribh-${Date.now()}`
+                }
+            })
+        });
+
+        const result = await response.json();
+        if (result.id) {
+            console.log(`✅ Email sent to ${to}: ${result.id}`);
+            return { success: true, id: result.id };
+        }
+        console.log(`❌ Email failed:`, result);
+        return { success: false, error: result.message || 'Unknown error' };
+    } catch (error) {
+        console.error('❌ Email error:', error.message);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Send welcome email to new merchant after OAuth
+ */
+async function sendWelcomeEmail({ to, merchantName, storeName }) {
+    const name = merchantName || storeName || 'التاجر الكريم';
+    
+    const subject = '🎉 مرحباً بك في رِبح! - حسابك جاهز';
+    
+    const html = `
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحباً بك في رِبح</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background-color: #f4f4f5; direction: rtl;">
+    
+    <table role="presentation" style="width: 100%; border-collapse: collapse;">
+        <tr>
+            <td style="padding: 40px 20px;">
+                <table role="presentation" style="max-width: 520px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); padding: 32px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
+                                رِبح 💚
+                            </h1>
+                            <p style="margin: 8px 0 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+                                مساعد المبيعات الذكي
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px 32px;">
+                            
+                            <h2 style="margin: 0 0 24px; color: #111827; font-size: 22px; font-weight: 700;">
+                                🎉 مرحباً ${name}!
+                            </h2>
+                            
+                            <p style="margin: 0 0 24px; color: #374151; font-size: 16px; line-height: 1.8;">
+                                تم ربط متجرك بنجاح! أنت الآن جاهز لزيادة مبيعاتك باستخدام الذكاء الاصطناعي.
+                            </p>
+                            
+                            <!-- Next Steps Box -->
+                            <table role="presentation" style="width: 100%; margin: 24px 0;">
+                                <tr>
+                                    <td style="background: #F0FDF4; border-radius: 12px; padding: 24px; border-right: 4px solid #10B981;">
+                                        <div style="color: #065F46; font-weight: 700; font-size: 16px; margin-bottom: 16px;">
+                                            📋 الخطوة التالية:
+                                        </div>
+                                        <ol style="margin: 0; padding: 0 20px 0 0; color: #374151; line-height: 2;">
+                                            <li>افتح لوحة التحكم</li>
+                                            <li>امسح رمز QR بتطبيق واتساب</li>
+                                            <li>ابدأ باستقبال الطلبات والتنبيهات!</li>
+                                        </ol>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- CTA Button -->
+                            <table role="presentation" style="width: 100%; margin: 32px 0;">
+                                <tr>
+                                    <td style="text-align: center;">
+                                        <a href="${process.env.APP_URL || 'https://ribh.click'}/onboarding.html" style="display: inline-block; background: #111827; color: #ffffff; padding: 18px 48px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 16px;">
+                                            ابدأ الإعداد الآن 🚀
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <!-- Support -->
+                            <table role="presentation" style="width: 100%; margin: 24px 0;">
+                                <tr>
+                                    <td style="background: #F9FAFB; border-radius: 12px; padding: 20px; text-align: center;">
+                                        <p style="margin: 0 0 12px; color: #6B7280; font-size: 14px;">
+                                            تحتاج مساعدة؟ تواصل معنا:
+                                        </p>
+                                        <a href="https://wa.me/966579353338" style="display: inline-block; background: #25D366; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px;">
+                                            💬 واتساب الدعم
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background: #F9FAFB; padding: 24px 32px; text-align: center; border-top: 1px solid #E5E7EB;">
+                            <p style="margin: 0; color: #9CA3AF; font-size: 12px;">
+                                © ${new Date().getFullYear()} رِبح - جميع الحقوق محفوظة
+                            </p>
+                        </td>
+                    </tr>
+                    
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `;
+    
+    const text = `
+مرحباً ${name}! 🎉
+
+تم ربط متجرك بنجاح! أنت الآن جاهز لزيادة مبيعاتك باستخدام الذكاء الاصطناعي.
+
+📋 الخطوة التالية:
+1. افتح لوحة التحكم
+2. امسح رمز QR بتطبيق واتساب
+3. ابدأ باستقبال الطلبات والتنبيهات!
+
+رابط الإعداد: ${process.env.APP_URL || 'https://ribh.click'}/onboarding.html
+
+تحتاج مساعدة؟ تواصل معنا على واتساب: +966 579 353 338
+
+---
+© ${new Date().getFullYear()} رِبح
+    `.trim();
+
+    console.log(`📧 Sending welcome email to ${to}...`);
+    return sendEmail({ to, subject, html, text });
+}
+
 module.exports = {
+    sendEmail,
     sendOfferEmail,
+    sendWelcomeEmail,
     buildEmailHTML,
     buildTextEmail
 };
