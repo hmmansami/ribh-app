@@ -109,3 +109,103 @@ async function runAllTests() {
 }
 
 runAllTests().then(success => process.exit(success ? 0 : 1));
+
+// === ADVANCED TESTS ===
+
+async function testFullRecoveryFlow() {
+  console.log('🔄 Testing FULL recovery flow (simulated)...');
+  
+  const testStoreId = 'e2e-test-' + Date.now();
+  const testPhone = '+966500000001';
+  
+  // Step 1: Simulate abandoned cart webhook
+  const cart = {
+    event: 'cart.abandoned',
+    merchant: testStoreId,
+    data: {
+      id: 'cart-' + Date.now(),
+      customer: { name: 'عبدالله', phone: testPhone, email: 'test@ribh.app' },
+      items: [{ name: 'ساعة ذكية', price: 899, quantity: 1 }],
+      total: 899,
+      currency: 'SAR',
+      checkout_url: 'https://store.salla.sa/checkout/test123'
+    }
+  };
+  
+  try {
+    // Send webhook
+    const webhookRes = await fetch(`${BASE_URL}/webhooks/salla`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cart)
+    });
+    const webhookData = await webhookRes.json();
+    console.log('   1. Webhook received:', webhookData.success ? '✅' : '❌');
+    
+    // Generate offer for this cart
+    const offerRes = await fetch(`${BASE_URL}/api/ai/generate-offer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: cart.data.customer.name,
+        value: cart.data.total,
+        products: cart.data.items.map(i => i.name),
+        productType: 'electronics'
+      })
+    });
+    const offerData = await offerRes.json();
+    console.log('   2. Offer generated:', offerData.offer?.headline ? '✅' : '❌');
+    console.log('      Message:', offerData.offer?.fullMessage?.substring(0, 100) + '...');
+    
+    // Check WhatsApp bridge readiness
+    const waRes = await fetch('https://ribh-whatsapp-1.onrender.com/status/' + testStoreId);
+    const waData = await waRes.json();
+    console.log('   3. WhatsApp session:', waData.state || 'created');
+    
+    return webhookData.success && !!offerData.offer?.headline;
+  } catch (e) {
+    console.log('   ❌ Flow error:', e.message);
+    return false;
+  }
+}
+
+async function testRateLimiting() {
+  console.log('🚦 Testing rate limiting (10 rapid requests)...');
+  const results = [];
+  
+  for (let i = 0; i < 10; i++) {
+    try {
+      const res = await fetch(`${BASE_URL}/health`);
+      results.push(res.status);
+    } catch (e) {
+      results.push('error');
+    }
+  }
+  
+  const ok = results.filter(r => r === 200).length;
+  console.log(`   ${ok}/10 requests succeeded (${results.join(', ')})`);
+  return ok >= 8; // Allow some failures
+}
+
+// Add to main test runner
+async function runAdvancedTests() {
+  console.log('\n🔬 ADVANCED TESTS\n' + '='.repeat(40) + '\n');
+  
+  const results = {
+    fullFlow: await testFullRecoveryFlow(),
+    rateLimiting: await testRateLimiting()
+  };
+  
+  console.log('\n' + '='.repeat(40));
+  console.log('📊 ADVANCED RESULTS:');
+  Object.entries(results).forEach(([test, passed]) => {
+    console.log(`   ${passed ? '✅' : '❌'} ${test}`);
+  });
+  
+  return Object.values(results).every(Boolean);
+}
+
+// Run if called directly with --advanced flag
+if (process.argv.includes('--advanced')) {
+  runAdvancedTests().then(success => process.exit(success ? 0 : 1));
+}
