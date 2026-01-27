@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RIBH - استرداد السلات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RIBH v2.02 FINAL - Performance Optimized
+           Design Philosophy: "Get sh*t done"
+           ============================================ */
+
+        :root {
+            /* Improved contrast - WCAG AA compliant */
+            --bg-primary: #121212;
+            --bg-secondary: #1a1a1a;
+            --bg-card: #1e1e1e;
+            --bg-card-hover: #252525;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-card: rgba(255, 255, 255, 0.12);
+            
+            /* Text with proper contrast ratios */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);  /* Was 0.6 - FIXED */
+            --text-tertiary: rgba(255, 255, 255, 0.6);   /* Was 0.4 - FIXED */
+            
+            /* Accent colors */
+            --accent-purple: #a78bfa;  /* Lighter for contrast */
+            --accent-blue: #60a5fa;
+            --accent-green: #34d399;
+            --accent-orange: #fbbf24;
+            --accent-red: #f87171;
+            --whatsapp: #25d366;
+            --whatsapp-dark: #128c7e;
+            
+            /* Spacing */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            
+            /* UNIFIED transitions - no more chaos */
+            --transition: 150ms ease-out;
+            --scale-press: 0.96;  /* Single scale value for ALL presses */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* ============================================
+           REDUCED MOTION - Accessibility First
+           ============================================ */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ============================================
+           Main Container
+           ============================================ */
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding-bottom: 90px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================
+           Header - Simplified
+           ============================================ */
+        .header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-primary);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .icon-btn:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .icon-btn svg {
+            width: 22px;
+            height: 22px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-red);
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+        }
+
+        /* ============================================
+           Quick Stats Bar - Compact
+           ============================================ */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            padding: 0 20px 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .stats-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .stat-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+        }
+
+        .stat-chip:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .stat-chip.highlight {
+            background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(96, 165, 250, 0.1));
+            border-color: rgba(167, 139, 250, 0.3);
+        }
+
+        .stat-chip-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-chip-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-tertiary);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .stat-chip.highlight .stat-chip-icon svg {
+            stroke: var(--accent-purple);
+        }
+
+        .stat-chip-value {
+            font-weight: 600;
+            font-size: 15px;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .stat-chip-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* ============================================
+           Section Headers
+           ============================================ */
+        .section {
+            padding: 0 20px 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            min-height: 44px; /* Touch target */
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent-purple);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .section-action {
+            font-size: 14px;
+            color: var(--accent-purple);
+            cursor: pointer;
+            padding: 10px 12px; /* Proper touch target */
+            margin: -10px -12px;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+
+        .section-action:active {
+            background: rgba(167, 139, 250, 0.1);
+            transform: scale(var(--scale-press));
+        }
+
+        /* ============================================
+           Recovery Cards - THE HERO
+           ============================================ */
+        .recovery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .recovery-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recovery-card:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .recovery-card:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .recovery-card.sending {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .recovery-card.sent {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .recovery-card.error {
+            border-color: var(--accent-red);
+            animation: shake 0.4s ease-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .recovery-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            flex-shrink: 0;
+        }
+
+        .recovery-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .recovery-name {
+            font-weight: 500;
+            font-size: 15px;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recovery-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recovery-amount {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .recovery-time {
+            color: var(--text-tertiary);
+        }
+
+        .recovery-items {
+            color: var(--text-tertiary);
+            font-size: 12px;
+        }
+
+        /* Send Button - Primary Action */
+        .send-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--whatsapp);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .send-btn:hover {
+            background: var(--whatsapp-dark);
+        }
+
+        .send-btn:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .send-btn:disabled {
+            background: var(--bg-card-hover);
+            cursor: not-allowed;
+        }
+
+        .send-btn svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        .send-btn.sending svg {
+            display: none;
+        }
+
+        .send-btn.sending::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid white;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .empty-state-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--text-tertiary);
+            fill: none;
+            stroke-width: 1;
+        }
+
+        .empty-state-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .empty-state-desc {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+
+        /* ============================================
+           Campaign Toggles - Compact
+           ============================================ */
+        .campaigns-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .campaign-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            transition: all var(--transition);
+        }
+
+        .campaign-row:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .campaign-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .campaign-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .campaign-icon.purple { background: rgba(167, 139, 250, 0.2); }
+        .campaign-icon.blue { background: rgba(96, 165, 250, 0.2); }
+        .campaign-icon.orange { background: rgba(251, 191, 36, 0.2); }
+
+        .campaign-icon svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .campaign-icon.purple svg { stroke: var(--accent-purple); }
+        .campaign-icon.blue svg { stroke: var(--accent-blue); }
+        .campaign-icon.orange svg { stroke: var(--accent-orange); }
+
+        .campaign-label {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .campaign-stat {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        /* Toggle Switch - iOS Style */
+        .toggle {
+            width: 51px;
+            height: 31px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2px;
+            cursor: pointer;
+            transition: all var(--transition);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .toggle::before {
+            content: '';
+            position: absolute;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            right: 22px;
+            transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle.active {
+            background: var(--accent-green);
+        }
+
+        .toggle.active::before {
+            right: 2px;
+        }
+
+        .toggle:active {
+            transform: scale(var(--scale-press));
+        }
+
+        /* ============================================
+           Settings Page
+           ============================================ */
+        .settings-group {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-subtle);
+            transition: background var(--transition);
+            cursor: pointer;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:active {
+            background: var(--bg-card-hover);
+        }
+
+        .settings-item-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: white;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .settings-icon.purple { background: var(--accent-purple); }
+        .settings-icon.green { background: var(--accent-green); }
+        .settings-icon.blue { background: var(--accent-blue); }
+        .settings-icon.orange { background: var(--accent-orange); }
+
+        .settings-label {
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .settings-desc {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        .settings-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--accent-green);
+        }
+
+        .settings-status.error {
+            color: var(--accent-red);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* ============================================
+           Analytics - Simplified Chart
+           ============================================ */
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .chart-value {
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .chart-value small {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            margin-right: 4px;
+        }
+
+        .chart-period {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            padding: 3px;
+        }
+
+        .chart-period-btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            min-width: 44px;
+            text-align: center;
+        }
+
+        .chart-period-btn.active {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .chart-period-btn:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100px;
+            gap: 6px;
+            padding-bottom: 24px;
+            position: relative;
+        }
+
+        .chart-bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 20px;
+            border-radius: 4px 4px 0 0;
+            background: linear-gradient(to top, var(--accent-purple), var(--accent-blue));
+            transition: height 0.5s ease-out, filter var(--transition);
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            filter: brightness(1.2);
+        }
+
+        .chart-day {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            position: absolute;
+            bottom: 0;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            padding: 14px;
+        }
+
+        .stat-box-value {
+            font-size: 22px;
+            font-weight: 700;
+            font-family: 'SF Mono', 'Menlo', monospace;
+        }
+
+        .stat-box-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           Bottom Navigation - 3 Items Only
+           ============================================ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            padding-bottom: calc(10px + env(safe-area-inset-bottom));
+            z-index: 999;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all var(--transition);
+            padding: 10px 20px;
+            border-radius: var(--radius-sm);
+            min-width: 80px;
+        }
+
+        .nav-item:active {
+            transform: scale(var(--scale-press));
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-tertiary);
+            fill: none;
+            stroke-width: 1.5;
+            transition: all var(--transition);
+        }
+
+        .nav-item span {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            transition: all var(--transition);
+        }
+
+        .nav-item.active svg {
+            stroke: var(--accent-purple);
+        }
+
+        .nav-item.active span {
+            color: var(--accent-purple);
+        }
+
+        /* ============================================
+           Toast Notification
+           ============================================ */
+        .toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            opacity: 0;
+            transition: all 300ms ease-out;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.success {
+            border-color: var(--accent-green);
+        }
+
+        .toast.error {
+            border-color: var(--accent-red);
+        }
+
+        .toast-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast.success .toast-icon {
+            background: var(--accent-green);
+        }
+
+        .toast.error .toast-icon {
+            background: var(--accent-red);
+        }
+
+        .toast-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .toast-text {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* ============================================
+           Error Banner
+           ============================================ */
+        .error-banner {
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid var(--accent-red);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            margin: 0 20px 16px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .error-banner.show {
+            display: flex;
+        }
+
+        .error-banner-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent-red);
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .error-banner-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .error-banner-action {
+            font-size: 14px;
+            color: var(--accent-red);
+            font-weight: 500;
+            cursor: pointer;
+            padding: 8px 12px;
+            margin: -8px -12px;
+            border-radius: var(--radius-sm);
+        }
+
+        .error-banner-action:active {
+            background: rgba(248, 113, 113, 0.2);
+        }
+
+        /* ============================================
+           Page Sections
+           ============================================ */
+        .page-section {
+            display: none;
+            flex: 1;
+        }
+
+        .page-section.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-hover) 50%, var(--bg-card) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-shimmer 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes skeleton-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ============================================
+           Responsive
+           ============================================ */
+        @media (min-width: 768px) {
+            .app {
+                max-width: 480px;
+            }
+        }
+
+        /* Dark mode high contrast */
+        @media (prefers-contrast: more) {
+            :root {
+                --text-secondary: rgba(255, 255, 255, 0.9);
+                --text-tertiary: rgba(255, 255, 255, 0.75);
+                --border-card: rgba(255, 255, 255, 0.2);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">ر</div>
+                <span class="logo-text">RIBH</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" aria-label="الإشعارات">
+                    <span class="notification-dot"></span>
+                    <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </button>
+                <button class="icon-btn" aria-label="الإعدادات" data-nav="settings">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Page: Home (Recovery Focus) -->
+        <div id="page-home" class="page-section active">
+            <!-- Quick Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-chip highlight">
+                    <div class="stat-chip-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <span class="stat-chip-value" id="revenue-today">24,680</span>
+                    <span class="stat-chip-label">ر.س</span>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-chip-icon">
+                        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <span class="stat-chip-value">67%</span>
+                    <span class="stat-chip-label">استرداد</span>
+                </div>
+                <div class="stat-chip">
+                    <div class="stat-chip-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <span class="stat-chip-value">142</span>
+                    <span class="stat-chip-label">رسالة</span>
+                </div>
+            </div>
+
+            <!-- Error Banner (hidden by default) -->
+            <div class="error-banner" id="error-banner">
+                <div class="error-banner-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <span class="error-banner-text">انقطع الاتصال بواتساب</span>
+                <span class="error-banner-action" onclick="reconnectWhatsApp()">إعادة الاتصال</span>
+            </div>
+
+            <!-- Cart Recovery Section - THE HERO -->
+            <div class="section" style="flex: 1; display: flex; flex-direction: column;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        سلات متروكة
+                        <span style="background: var(--accent-red); color: white; font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: 500; margin-right: 8px;" id="cart-count">18</span>
+                    </h2>
+                    <span class="section-action">عرض الكل</span>
+                </div>
+
+                <div class="recovery-list" id="recovery-list">
+                    <div class="recovery-card" data-id="1" data-customer="سارة أحمد" data-amount="890">
+                        <div class="recovery-avatar">س</div>
+                        <div class="recovery-info">
+                            <div class="recovery-name">سارة أحمد</div>
+                            <div class="recovery-details">
+                                <span class="recovery-amount">890 ر.س</span>
+                                <span class="recovery-time">• منذ 15 دقيقة</span>
+                            </div>
+                            <div class="recovery-items">3 منتجات</div>
+                        </div>
+                        <button class="send-btn" aria-label="إرسال رسالة واتساب">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="recovery-card" data-id="2" data-customer="محمد العلي" data-amount="1240">
+                        <div class="recovery-avatar">م</div>
+                        <div class="recovery-info">
+                            <div class="recovery-name">محمد العلي</div>
+                            <div class="recovery-details">
+                                <span class="recovery-amount">1,240 ر.س</span>
+                                <span class="recovery-time">• منذ 45 دقيقة</span>
+                            </div>
+                            <div class="recovery-items">5 منتجات</div>
+                        </div>
+                        <button class="send-btn" aria-label="إرسال رسالة واتساب">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="recovery-card" data-id="3" data-customer="نورة الخالد" data-amount="2100">
+                        <div class="recovery-avatar">ن</div>
+                        <div class="recovery-info">
+                            <div class="recovery-name">نورة الخالد</div>
+                            <div class="recovery-details">
+                                <span class="recovery-amount">2,100 ر.س</span>
+                                <span class="recovery-time">• منذ ساعة</span>
+                            </div>
+                            <div class="recovery-items">2 منتجات</div>
+                        </div>
+                        <button class="send-btn" aria-label="إرسال رسالة واتساب">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="recovery-card" data-id="4" data-customer="فهد السعود" data-amount="560">
+                        <div class="recovery-avatar">ف</div>
+                        <div class="recovery-info">
+                            <div class="recovery-name">فهد السعود</div>
+                            <div class="recovery-details">
+                                <span class="recovery-amount">560 ر.س</span>
+                                <span class="recovery-time">• منذ ساعتين</span>
+                            </div>
+                            <div class="recovery-items">1 منتج</div>
+                        </div>
+                        <button class="send-btn" aria-label="إرسال رسالة واتساب">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </button>
+                    </div>
+
+                    <div class="recovery-card" data-id="5" data-customer="منى الحربي" data-amount="1850">
+                        <div class="recovery-avatar">م</div>
+                        <div class="recovery-info">
+                            <div class="recovery-name">منى الحربي</div>
+                            <div class="recovery-details">
+                                <span class="recovery-amount">1,850 ر.س</span>
+                                <span class="recovery-time">• منذ 3 ساعات</span>
+                            </div>
+                            <div class="recovery-items">4 منتجات</div>
+                        </div>
+                        <button class="send-btn" aria-label="إرسال رسالة واتساب">
+                            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page: Campaigns (merged with Templates) -->
+        <div id="page-campaigns" class="page-section">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        الحملات التلقائية
+                    </h2>
+                </div>
+
+                <div class="campaigns-compact">
+                    <div class="campaign-row">
+                        <div class="campaign-info">
+                            <div class="campaign-icon purple">
+                                <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                            </div>
+                            <div>
+                                <div class="campaign-label">استرداد السلات</div>
+                                <div class="campaign-stat">67% نسبة الاسترداد • 12,450 ر.س</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" data-campaign="cart-recovery"></div>
+                    </div>
+
+                    <div class="campaign-row">
+                        <div class="campaign-info">
+                            <div class="campaign-icon blue">
+                                <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                            </div>
+                            <div>
+                                <div class="campaign-label">البيع الإضافي</div>
+                                <div class="campaign-stat">23% تحويل • 5,200 ر.س</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" data-campaign="upsell"></div>
+                    </div>
+
+                    <div class="campaign-row">
+                        <div class="campaign-info">
+                            <div class="campaign-icon orange">
+                                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </div>
+                            <div>
+                                <div class="campaign-label">متابعة ما بعد الشراء</div>
+                                <div class="campaign-stat">غير مفعّل</div>
+                            </div>
+                        </div>
+                        <div class="toggle" data-campaign="followup"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="section" style="margin-top: 8px;">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">الإيرادات المستردة</div>
+                            <div class="chart-value">28,500 <small>ر.س</small></div>
+                        </div>
+                        <div class="chart-period">
+                            <span class="chart-period-btn active">أسبوع</span>
+                            <span class="chart-period-btn">شهر</span>
+                        </div>
+                    </div>
+                    <div class="chart-bars">
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 40%;"></div>
+                            <span class="chart-day">س</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 65%;"></div>
+                            <span class="chart-day">ح</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 45%;"></div>
+                            <span class="chart-day">ن</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 80%;"></div>
+                            <span class="chart-day">ث</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 55%;"></div>
+                            <span class="chart-day">ر</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 90%;"></div>
+                            <span class="chart-day">خ</span>
+                        </div>
+                        <div class="chart-bar-container">
+                            <div class="chart-bar" style="height: 100%;"></div>
+                            <span class="chart-day">ج</span>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-box-value">89%</div>
+                            <div class="stat-box-label">معدل الفتح</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-box-value">34%</div>
+                            <div class="stat-box-label">معدل النقر</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page: Settings -->
+        <div id="page-settings" class="page-section">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        الإعدادات
+                    </h2>
+                </div>
+
+                <div class="settings-group">
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon" style="background: var(--whatsapp);">
+                                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                            </div>
+                            <div>
+                                <div class="settings-label">ربط واتساب</div>
+                                <div class="settings-desc">+966 5XX XXX XXXX</div>
+                            </div>
+                        </div>
+                        <div class="settings-status" id="whatsapp-status">
+                            <span class="status-dot"></span>
+                            متصل
+                        </div>
+                    </div>
+
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon green">
+                                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                            </div>
+                            <div>
+                                <div class="settings-label">الإشعارات</div>
+                                <div class="settings-desc">تنبيه عند كل سلة جديدة</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" data-setting="notifications"></div>
+                    </div>
+
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon blue">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            </div>
+                            <div>
+                                <div class="settings-label">الإرسال التلقائي</div>
+                                <div class="settings-desc">9 ص - 10 م</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" data-setting="auto-send"></div>
+                    </div>
+
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon orange">
+                                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div>
+                                <div class="settings-label">حماية من الحظر</div>
+                                <div class="settings-desc">تأخير ذكي بين الرسائل</div>
+                            </div>
+                        </div>
+                        <div class="toggle active" data-setting="anti-ban"></div>
+                    </div>
+                </div>
+
+                <div class="settings-group" style="margin-top: 16px;">
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon purple">
+                                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            </div>
+                            <div>
+                                <div class="settings-label">ربط المتجر</div>
+                                <div class="settings-desc">سلة</div>
+                            </div>
+                        </div>
+                        <div class="settings-status">
+                            <span class="status-dot"></span>
+                            متصل
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation - 3 Items -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-page="home">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span>السلات</span>
+        </div>
+        <div class="nav-item" data-page="campaigns">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <span>الحملات</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span>الإعدادات</span>
+        </div>
+    </nav>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-icon">
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <span class="toast-text" id="toast-text">تم الإرسال</span>
+    </div>
+
+    <script>
+        // ============================================
+        // RIBH v2.02 FINAL - Optimized Scripts
+        // Focus: Performance, Reliability, Simplicity
+        // ============================================
+
+        // State
+        let isOnline = true;
+        let cartCount = 18;
+
+        // ============================================
+        // Toast System
+        // ============================================
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toast-text');
+            
+            toast.className = 'toast ' + type;
+            toastText.textContent = message;
+            toast.classList.add('show');
+            
+            // Vibrate on mobile if available
+            if (navigator.vibrate) {
+                navigator.vibrate(type === 'error' ? [100, 50, 100] : 50);
+            }
+            
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // ============================================
+        // Send Recovery Message
+        // ============================================
+        async function sendRecoveryMessage(card) {
+            const btn = card.querySelector('.send-btn');
+            const customerName = card.dataset.customer;
+            const amount = card.dataset.amount;
+            
+            // Prevent double-tap
+            if (btn.disabled) return;
+            btn.disabled = true;
+            
+            // Show sending state
+            card.classList.add('sending');
+            btn.classList.add('sending');
+            
+            try {
+                // Simulate API call (replace with real API)
+                await new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        // 90% success rate simulation
+                        if (Math.random() > 0.1) {
+                            resolve();
+                        } else {
+                            reject(new Error('فشل الإرسال'));
+                        }
+                    }, 800);
+                });
+                
+                // Success
+                card.classList.remove('sending');
+                card.classList.add('sent');
+                showToast(`تم إرسال رسالة إلى ${customerName}`, 'success');
+                
+                // Update count
+                cartCount--;
+                document.getElementById('cart-count').textContent = cartCount;
+                
+                // Remove card after animation
+                setTimeout(() => card.remove(), 300);
+                
+            } catch (error) {
+                // Error handling
+                card.classList.remove('sending');
+                card.classList.add('error');
+                btn.classList.remove('sending');
+                btn.disabled = false;
+                
+                showToast(error.message || 'حدث خطأ، حاول مرة أخرى', 'error');
+                
+                setTimeout(() => card.classList.remove('error'), 400);
+            }
+        }
+
+        // ============================================
+        // Recovery Cards Event Listeners
+        // ============================================
+        document.querySelectorAll('.recovery-card').forEach(card => {
+            const btn = card.querySelector('.send-btn');
+            
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sendRecoveryMessage(card);
+            });
+            
+            // Allow clicking anywhere on card to send
+            card.addEventListener('click', () => {
+                sendRecoveryMessage(card);
+            });
+        });
+
+        // ============================================
+        // Toggle Switches
+        // ============================================
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+                
+                // Vibrate feedback
+                if (navigator.vibrate) {
+                    navigator.vibrate(30);
+                }
+                
+                const isActive = this.classList.contains('active');
+                const setting = this.dataset.setting || this.dataset.campaign;
+                
+                // Show feedback
+                showToast(isActive ? 'تم التفعيل' : 'تم الإيقاف', 'success');
+            });
+        });
+
+        // ============================================
+        // Navigation
+        // ============================================
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active nav
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Show page
+                const pageId = this.dataset.page;
+                document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+                document.getElementById(`page-${pageId}`).classList.add('active');
+                
+                // Vibrate
+                if (navigator.vibrate) {
+                    navigator.vibrate(20);
+                }
+            });
+        });
+
+        // Header settings button
+        document.querySelector('[data-nav="settings"]')?.addEventListener('click', () => {
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelector('[data-page="settings"]').classList.add('active');
+            document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-settings').classList.add('active');
+        });
+
+        // ============================================
+        // Chart Period Buttons
+        // ============================================
+        document.querySelectorAll('.chart-period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.chart-period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ============================================
+        // Error Banner
+        // ============================================
+        function showError(show = true) {
+            const banner = document.getElementById('error-banner');
+            if (show) {
+                banner.classList.add('show');
+            } else {
+                banner.classList.remove('show');
+            }
+        }
+
+        function reconnectWhatsApp() {
+            showToast('جاري إعادة الاتصال...', 'success');
+            setTimeout(() => {
+                showError(false);
+                showToast('تم الاتصال بنجاح', 'success');
+            }, 2000);
+        }
+
+        // ============================================
+        // Connection Status Simulation
+        // ============================================
+        // Uncomment to test error state:
+        // setTimeout(() => showError(true), 3000);
+
+        // ============================================
+        // Prevent overscroll on iOS
+        // ============================================
+        document.body.addEventListener('touchmove', (e) => {
+            if (e.target.closest('.recovery-list')) {
+                // Allow scroll in list
+            }
+        }, { passive: true });
+
+    </script>
+</body>
+</html>

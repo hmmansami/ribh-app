@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح - لوحة التحكم</title>
+    
+    <!-- Fonts: Tajawal for headers (character), Noto Naskh for body (elegance) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Refined Palette - Gold as EARNED accent, not decoration */
+            --gold: #C9A227;
+            --gold-light: #F7F3E3;
+            --gold-dark: #A68523;
+            --gold-muted: #E8DFC4;
+            
+            /* Saudi Green - Deeper, more dignified */
+            --green-deep: #165D31;
+            --green-light: #F0F7F3;
+            --green-medium: #1E8449;
+            
+            /* WhatsApp - Exact brand colors */
+            --whatsapp: #25D366;
+            --whatsapp-dark: #128C7E;
+            --whatsapp-light: #DCF8C6;
+            
+            /* Clean Neutrals - 90% white/clean approach */
+            --white: #FFFFFF;
+            --bg-primary: #FAFBFC;
+            --bg-secondary: #F4F5F7;
+            --bg-warm: #FDFCFA;
+            --text-primary: #1A1A1A;
+            --text-secondary: #4A4A4A;
+            --text-tertiary: #7A7A7A;
+            --text-muted: #9A9A9A;
+            --border: #E8E8E8;
+            --border-light: #F0F0F0;
+            
+            /* Semantic */
+            --success: #2E7D32;
+            --warning: #F57C00;
+            --error: #C62828;
+            --info: #1565C0;
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            
+            /* Radius - Slightly less rounded, more professional */
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            
+            /* Shadows - Subtle, professional */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-lg: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-gold: 0 2px 12px rgba(201,162,39,0.2);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+        
+        /* Prayer Time Mode */
+        .prayer-mode {
+            --bg-primary: #1A1A1A;
+            --bg-secondary: #242424;
+            --bg-warm: #1E1E1E;
+            --white: #1A1A1A;
+            --text-primary: #F5F5F5;
+            --text-secondary: #B0B0B0;
+            --text-tertiary: #808080;
+            --border: #333333;
+            --border-light: #2A2A2A;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Naskh Arabic', 'Tajawal', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Tajawal for headers and numbers */
+        h1, h2, h3, .brand-text, .revenue-number, .stat-value, .metric-value {
+            font-family: 'Tajawal', sans-serif;
+        }
+        
+        /* ===== APP SHELL ===== */
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .status-bar .time {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: var(--spacing-xs);
+            align-items: center;
+        }
+        
+        /* ===== HEADER - Clean, confident ===== */
+        .header {
+            background: var(--white);
+            padding: var(--spacing-md) var(--spacing-lg) var(--spacing-lg);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        /* Custom Arabic Logotype - Pride in the brand */
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--green-deep);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .brand-logo::after {
+            content: 'ر';
+            font-family: 'Tajawal', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--white);
+        }
+        
+        .brand-text {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--green-deep);
+            letter-spacing: -1px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+        
+        .icon-btn:active {
+            transform: scale(0.96);
+            background: var(--border);
+        }
+        
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .icon-btn .badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: var(--radius-full);
+        }
+        
+        /* Greeting - Natural Arabic */
+        .greeting {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        
+        .greeting-text h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .greeting-text p {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+        
+        /* WhatsApp Status - HERO trust signal */
+        .whatsapp-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--whatsapp-light);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--whatsapp-dark);
+        }
+        
+        .whatsapp-status svg {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--whatsapp);
+            border-radius: var(--radius-full);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        /* ===== REVENUE CARD - Clean with earned gold accent ===== */
+        .revenue-card {
+            margin: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        /* Gold accent only when stats are good - EARNED */
+        .revenue-card.high-performer {
+            border-color: var(--gold-muted);
+            background: linear-gradient(180deg, var(--white) 0%, var(--gold-light) 100%);
+        }
+        
+        .revenue-card.high-performer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold) 0%, transparent 60%);
+            border-radius: 0 var(--radius-xl) 0 100%;
+            opacity: 0.3;
+        }
+        
+        .revenue-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .revenue-label {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+        
+        .revenue-period {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+        
+        .revenue-amount {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .revenue-number {
+            font-size: 44px;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-xs);
+            line-height: 1;
+        }
+        
+        .revenue-currency {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .revenue-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--success);
+        }
+        
+        .revenue-change.positive { color: var(--success); }
+        .revenue-change.negative { color: var(--error); }
+        
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            padding-top: var(--spacing-md);
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .revenue-stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+        
+        /* ===== INTEGRATIONS BAR - Real Saudi trust ===== */
+        .integrations-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .integration {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        .integration img {
+            height: 16px;
+            opacity: 0.7;
+        }
+        
+        .integration svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+        }
+        
+        /* ===== ABANDONED CART - The Hero Feature ===== */
+        .cart-recovery {
+            margin: var(--spacing-md) var(--spacing-lg);
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            border: 2px solid var(--whatsapp);
+            position: relative;
+        }
+        
+        .cart-recovery::before {
+            content: 'سلات تنتظر الاسترداد';
+            position: absolute;
+            top: -10px;
+            right: var(--spacing-md);
+            background: var(--whatsapp);
+            color: var(--white);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px var(--spacing-sm);
+            border-radius: var(--radius-sm);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+            margin-top: var(--spacing-xs);
+        }
+        
+        .cart-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .cart-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .cart-value {
+            text-align: left;
+        }
+        
+        .cart-value-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        .cart-value-amount {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--green-deep);
+        }
+        
+        /* Customer Initials - Not Western emoji */
+        .cart-customers {
+            display: flex;
+            gap: calc(var(--spacing-sm) * -1);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--bg-secondary);
+            border: 2px solid var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        
+        .customer-avatar:nth-child(1) { background: #E8F5E9; color: #2E7D32; }
+        .customer-avatar:nth-child(2) { background: #E3F2FD; color: #1565C0; }
+        .customer-avatar:nth-child(3) { background: #FFF3E0; color: #E65100; }
+        .customer-avatar:nth-child(4) { background: #F3E5F5; color: #7B1FA2; }
+        .customer-avatar.more {
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            font-size: 12px;
+        }
+        
+        .cart-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .btn {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            border: none;
+        }
+        
+        .btn-whatsapp {
+            background: var(--whatsapp);
+            color: var(--white);
+        }
+        
+        .btn-whatsapp:active {
+            background: var(--whatsapp-dark);
+            transform: scale(0.98);
+        }
+        
+        .btn-whatsapp svg {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-outline:active {
+            background: var(--bg-secondary);
+        }
+        
+        /* ===== QUICK ACTIONS - Icons not emoji ===== */
+        .quick-actions {
+            padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section-title {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .section-link {
+            font-size: 14px;
+            color: var(--green-deep);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-md);
+        }
+        
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+        
+        .action-item:active {
+            transform: scale(0.95);
+        }
+        
+        .action-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .action-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .action-icon.whatsapp {
+            background: var(--whatsapp);
+            color: var(--white);
+        }
+        
+        .action-icon.gold {
+            background: var(--gold-light);
+            color: var(--gold-dark);
+        }
+        
+        .action-icon.green {
+            background: var(--green-light);
+            color: var(--green-deep);
+        }
+        
+        .action-icon.blue {
+            background: #E3F2FD;
+            color: #1565C0;
+        }
+        
+        .action-icon .notification-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            background: var(--error);
+            border-radius: var(--radius-full);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+        
+        .action-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* ===== CAMPAIGNS ===== */
+        .campaigns-section {
+            padding: 0 var(--spacing-lg) var(--spacing-lg);
+        }
+        
+        .campaign-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .campaign-card:active {
+            background: var(--bg-secondary);
+        }
+        
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .campaign-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .campaign-status.active {
+            background: rgba(46,125,50,0.1);
+            color: var(--success);
+        }
+        
+        .campaign-status.paused {
+            background: rgba(245,124,0,0.1);
+            color: var(--warning);
+        }
+        
+        .campaign-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: var(--radius-full);
+            background: currentColor;
+        }
+        
+        .campaign-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .campaign-type svg {
+            width: 14px;
+            height: 14px;
+            color: var(--whatsapp);
+        }
+        
+        .campaign-name {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .campaign-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .campaign-metrics {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+        
+        .campaign-metric {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            padding: var(--spacing-sm) var(--spacing-md);
+            padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom, 0px));
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: var(--spacing-xs);
+            cursor: pointer;
+            min-width: 56px;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--text-muted);
+            transition: color var(--transition-fast);
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--green-deep);
+        }
+        
+        .nav-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .nav-item.active .nav-label {
+            color: var(--green-deep);
+            font-weight: 600;
+        }
+        
+        /* FAB - Gold only when earned */
+        .nav-fab {
+            width: 52px;
+            height: 52px;
+            background: var(--green-deep);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -20px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .nav-fab.gold-earned {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            box-shadow: var(--shadow-gold);
+        }
+        
+        .nav-fab svg {
+            width: 24px;
+            height: 24px;
+            color: var(--white);
+        }
+        
+        .nav-fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--text-primary);
+            color: var(--white);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: calc(100% - 48px);
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.success {
+            background: var(--success);
+        }
+        
+        /* ===== CELEBRATION - ما شاء الله ===== */
+        .celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .celebration-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .celebration-card {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl) var(--spacing-xl);
+            text-align: center;
+            transform: scale(0.8);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-width: 300px;
+        }
+        
+        .celebration-overlay.show .celebration-card {
+            transform: scale(1);
+        }
+        
+        .celebration-icon {
+            font-size: 48px;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .celebration-title {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .celebration-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .celebration-stat {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--green-deep);
+        }
+        
+        .celebration-stat-label {
+            font-size: 14px;
+            color: var(--text-tertiary);
+        }
+        
+        /* ===== FOOTER TRUST - Secondary badges ===== */
+        .footer-trust {
+            padding: var(--spacing-lg);
+            padding-bottom: 100px;
+            text-align: center;
+        }
+        
+        .footer-badges {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            opacity: 0.6;
+        }
+        
+        .footer-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        .footer-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .footer-text {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 430px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time">٩:٤١</span>
+            <div class="icons">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+        
+        <!-- Header - Clean, Confident -->
+        <header class="header">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-logo"></div>
+                    <div class="brand-text">رِبح</div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="showToast('قريباً')">
+                        <span class="badge"></span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </button>
+                    <button class="icon-btn" onclick="togglePrayerMode()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="greeting">
+                <div class="greeting-text">
+                    <h1>السلام عليكم، محمد</h1>
+                    <p>متجرك يعمل بشكل ممتاز اليوم</p>
+                </div>
+                <!-- WhatsApp Status - HERO trust signal -->
+                <div class="whatsapp-status">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                    <span class="status-dot"></span>
+                    <span>متصل</span>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Integrations Bar - Real Saudi Trust -->
+        <div class="integrations-bar">
+            <div class="integration">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <span>سلة</span>
+            </div>
+            <div class="integration">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/></svg>
+                <span>مدى</span>
+            </div>
+            <div class="integration">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                <span>بياناتك محمية</span>
+            </div>
+        </div>
+        
+        <!-- Revenue Card - Clean with earned gold -->
+        <div class="revenue-card high-performer">
+            <div class="revenue-header">
+                <span class="revenue-label">إجمالي الإيرادات</span>
+                <div class="revenue-period" onclick="showToast('تغيير الفترة')">
+                    <span>هذا الشهر</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+            </div>
+            
+            <div class="revenue-amount">
+                <div class="revenue-number">
+                    <span class="revenue-currency">ر.س</span>
+                    <span>٤٧,٨٥٠</span>
+                </div>
+                <div class="revenue-change positive">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                    +٢٣٪ من الشهر الماضي
+                </div>
+            </div>
+            
+            <div class="revenue-stats">
+                <div class="revenue-stat">
+                    <div class="stat-value">١٢٤</div>
+                    <div class="stat-label">طلب مكتمل</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="stat-value">٣٨٦</div>
+                    <div class="stat-label">متوسط الطلب</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="stat-value">٨٩٪</div>
+                    <div class="stat-label">معدل التحويل</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cart Recovery - Hero Feature with WhatsApp -->
+        <div class="cart-recovery">
+            <div class="cart-header">
+                <div class="cart-info">
+                    <h3>٧ سلات خلال ٢٤ ساعة</h3>
+                    <p>عملاء مهتمين ينتظرون رسالتك</p>
+                </div>
+                <div class="cart-value">
+                    <span class="cart-value-label">القيمة المحتملة</span>
+                    <span class="cart-value-amount">٣,٢٤٠ ر.س</span>
+                </div>
+            </div>
+            
+            <!-- Arabic Initials instead of Western emoji -->
+            <div class="cart-customers">
+                <div class="customer-avatar">ف.أ</div>
+                <div class="customer-avatar">س.م</div>
+                <div class="customer-avatar">ن.ع</div>
+                <div class="customer-avatar">ر.خ</div>
+                <div class="customer-avatar more">+٣</div>
+            </div>
+            
+            <div class="cart-actions">
+                <button class="btn btn-whatsapp" onclick="celebrate()">
+                    <!-- Official WhatsApp icon -->
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                    إرسال الآن
+                </button>
+                <button class="btn btn-outline" onclick="showToast('جاري عرض التفاصيل')">
+                    التفاصيل
+                </button>
+            </div>
+        </div>
+        
+        <!-- Quick Actions - SVG Icons not emoji -->
+        <div class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">إجراءات سريعة</h2>
+            </div>
+            
+            <div class="actions-grid">
+                <div class="action-item" onclick="showToast('استرداد السلات', 'success')">
+                    <div class="action-icon whatsapp">
+                        <span class="notification-badge">٧</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <span class="action-label">استرداد السلات</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('البيع الإضافي')">
+                    <div class="action-icon gold">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+                    </div>
+                    <span class="action-label">بيع إضافي</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('قوالب الرسائل')">
+                    <div class="action-icon green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                    </div>
+                    <span class="action-label">القوالب</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('التقارير')">
+                    <div class="action-icon blue">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                    </div>
+                    <span class="action-label">التقارير</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Campaigns -->
+        <div class="campaigns-section">
+            <div class="section-header">
+                <h2 class="section-title">الحملات النشطة</h2>
+                <span class="section-link">عرض الكل</span>
+            </div>
+            
+            <div class="campaign-card" onclick="showToast('تفاصيل الحملة')">
+                <div class="campaign-header">
+                    <div class="campaign-status active">
+                        <span class="dot"></span>
+                        نشطة
+                    </div>
+                    <div class="campaign-type">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                        واتساب
+                    </div>
+                </div>
+                <h3 class="campaign-name">استرداد السلات المتروكة</h3>
+                <p class="campaign-desc">رسالة تذكيرية تلقائية للعملاء</p>
+                <div class="campaign-metrics">
+                    <div class="campaign-metric">
+                        <span class="metric-value">٢٣٤</span>
+                        <span class="metric-label">رسالة</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="metric-value">٦٧٪</span>
+                        <span class="metric-label">معدل الفتح</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="metric-value">١٢,٤٥٠</span>
+                        <span class="metric-label">ر.س إيرادات</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="campaign-card" onclick="showToast('تفاصيل الحملة')">
+                <div class="campaign-header">
+                    <div class="campaign-status active">
+                        <span class="dot"></span>
+                        نشطة
+                    </div>
+                    <div class="campaign-type">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                        واتساب
+                    </div>
+                </div>
+                <h3 class="campaign-name">عروض البيع الإضافي</h3>
+                <p class="campaign-desc">منتجات مقترحة بعد الشراء</p>
+                <div class="campaign-metrics">
+                    <div class="campaign-metric">
+                        <span class="metric-value">٨٩</span>
+                        <span class="metric-label">رسالة</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="metric-value">٤٢٪</span>
+                        <span class="metric-label">تحويل</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="metric-value">٥,٨٩٠</span>
+                        <span class="metric-label">ر.س إيرادات</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer Trust - Secondary badges tucked away -->
+        <div class="footer-trust">
+            <div class="footer-badges">
+                <div class="footer-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+                    <span>آمن</span>
+                </div>
+                <div class="footer-badge">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                    <span>موثوق</span>
+                </div>
+            </div>
+            <p class="footer-text">تعمل عبر واتساب الأعمال الرسمي</p>
+        </div>
+        
+        <!-- Bottom Navigation - Icons not emoji -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navTo(this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></svg>
+                <span class="nav-label">الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span class="nav-label">التقارير</span>
+            </div>
+            <div class="nav-fab gold-earned" onclick="showToast('إنشاء حملة جديدة', 'success')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span class="nav-label">الرسائل</span>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                <span class="nav-label">الإعدادات</span>
+            </div>
+        </nav>
+        
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-message">رسالة</span>
+        </div>
+        
+        <!-- Celebration - ما شاء الله instead of confetti -->
+        <div class="celebration-overlay" id="celebration">
+            <div class="celebration-card">
+                <div class="celebration-icon">✨</div>
+                <div class="celebration-title">ما شاء الله</div>
+                <div class="celebration-subtitle">تم إرسال رسائل الاسترداد</div>
+                <div class="celebration-stat">٧</div>
+                <div class="celebration-stat-label">رسائل في الطريق</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Toast
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-message').textContent = message;
+            toast.className = 'toast' + (type === 'success' ? ' success' : '');
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        
+        // Prayer Mode
+        let prayerMode = false;
+        function togglePrayerMode() {
+            prayerMode = !prayerMode;
+            document.body.classList.toggle('prayer-mode', prayerMode);
+            showToast(prayerMode ? 'وضع الصلاة مفعّل' : 'وضع الصلاة متوقف');
+        }
+        
+        // Navigation
+        function navTo(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+        
+        // Celebration - ما شاء الله
+        function celebrate() {
+            const overlay = document.getElementById('celebration');
+            overlay.classList.add('show');
+            setTimeout(() => overlay.classList.remove('show'), 2500);
+        }
+        
+        // Close celebration on tap
+        document.getElementById('celebration').addEventListener('click', function() {
+            this.classList.remove('show');
+        });
+        
+        // Welcome
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => showToast('السلام عليكم ورحمة الله', 'success'), 500);
+        });
+    </script>
+</body>
+</html>

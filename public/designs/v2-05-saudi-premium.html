@@ -1,0 +1,1864 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح - لوحة التحكم</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Saudi Premium Palette */
+            --gold: #D4AF37;
+            --gold-light: #F4E4B5;
+            --gold-dark: #B8962E;
+            --green-deep: #006C35;
+            --green-light: #E8F5EE;
+            --green-medium: #00A651;
+            --whatsapp: #25D366;
+            --whatsapp-dark: #128C7E;
+            
+            /* Neutrals */
+            --white: #FFFFFF;
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #F5F5F7;
+            --text-primary: #1D1D1F;
+            --text-secondary: #6E6E73;
+            --text-tertiary: #86868B;
+            --border: #E5E5EA;
+            --border-light: #F2F2F7;
+            
+            /* Semantic */
+            --success: #34C759;
+            --warning: #FF9500;
+            --error: #FF3B30;
+            --info: #007AFF;
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            
+            /* Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Shadows - Apple style */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.04), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.06), 0 4px 10px rgba(0,0,0,0.04);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.08);
+            --shadow-gold: 0 4px 20px rgba(212,175,55,0.25);
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --spring: 500ms cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Prayer Time / Night Mode */
+        .prayer-mode {
+            --bg-primary: #1C1C1E;
+            --bg-secondary: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #98989D;
+            --border: #38383A;
+            --border-light: #2C2C2E;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* ===== APP SHELL ===== */
+        .app-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Status Bar Simulation */
+        .status-bar {
+            height: 44px;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .status-bar .time {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: var(--spacing-xs);
+            align-items: center;
+        }
+        
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(180deg, var(--white) 0%, var(--bg-primary) 100%);
+            padding: var(--spacing-md) var(--spacing-lg);
+            position: sticky;
+            top: 44px;
+            z-index: 90;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--white);
+            box-shadow: var(--shadow-gold);
+        }
+        
+        .brand-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+        
+        .brand-text span {
+            color: var(--gold);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background: var(--white);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .icon-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .icon-btn .badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: var(--error);
+            border-radius: var(--radius-full);
+            border: 2px solid var(--white);
+        }
+        
+        /* Greeting */
+        .greeting {
+            margin-top: var(--spacing-sm);
+        }
+        
+        .greeting-time {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 2px;
+        }
+        
+        .greeting-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        /* ===== TRUST BADGES ===== */
+        .trust-badges {
+            display: flex;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .trust-badges::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--green-light);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--green-deep);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        .trust-badge svg {
+            width: 14px;
+            height: 14px;
+        }
+        
+        .trust-badge.gold {
+            background: var(--gold-light);
+            color: var(--gold-dark);
+        }
+        
+        /* ===== REVENUE CARD ===== */
+        .revenue-card {
+            margin: var(--spacing-md) var(--spacing-lg);
+            background: linear-gradient(135deg, var(--green-deep) 0%, #004D27 100%);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .revenue-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 50%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10%, 10%); }
+        }
+        
+        .revenue-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .revenue-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .revenue-period {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: rgba(255,255,255,0.15);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            color: var(--white);
+            cursor: pointer;
+        }
+        
+        .revenue-amount {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .revenue-number {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--white);
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-xs);
+        }
+        
+        .revenue-currency {
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        
+        .revenue-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: rgba(52,199,89,0.2);
+            border-radius: var(--radius-full);
+            font-size: 13px;
+            font-weight: 500;
+            color: #7AE89A;
+        }
+        
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .revenue-stat {
+            text-align: center;
+        }
+        
+        .revenue-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--white);
+        }
+        
+        .revenue-stat-label {
+            font-size: 11px;
+            color: rgba(255,255,255,0.7);
+            margin-top: 2px;
+        }
+        
+        /* ===== QUICK ACTIONS ===== */
+        .quick-actions {
+            padding: var(--spacing-md) var(--spacing-lg);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .section-link {
+            font-size: 14px;
+            color: var(--gold);
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--spacing-md);
+        }
+        
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            cursor: pointer;
+            transition: transform var(--transition-fast);
+        }
+        
+        .action-item:active {
+            transform: scale(0.95);
+        }
+        
+        .action-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-icon.whatsapp {
+            background: linear-gradient(135deg, var(--whatsapp) 0%, var(--whatsapp-dark) 100%);
+            color: var(--white);
+        }
+        
+        .action-icon.gold {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%);
+            color: var(--white);
+        }
+        
+        .action-icon.green {
+            background: var(--green-light);
+            color: var(--green-deep);
+        }
+        
+        .action-icon.blue {
+            background: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .action-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* Notification Dot */
+        .action-icon .notification-dot {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 12px;
+            height: 12px;
+            background: var(--error);
+            border-radius: var(--radius-full);
+            border: 2px solid var(--white);
+            font-size: 8px;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* ===== CART RECOVERY CARD ===== */
+        .cart-recovery {
+            margin: var(--spacing-md) var(--spacing-lg);
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .cart-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .cart-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+        
+        .cart-value {
+            text-align: left;
+        }
+        
+        .cart-value-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        .cart-value-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .cart-items {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .cart-item-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 2px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .cart-item-avatar:not(:first-child) {
+            margin-right: -12px;
+        }
+        
+        .cart-item-more {
+            background: var(--gold-light);
+            color: var(--gold-dark);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .cart-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+        
+        .btn {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-xs);
+            border: none;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-whatsapp {
+            background: var(--whatsapp);
+            color: var(--white);
+        }
+        
+        .btn-whatsapp:active {
+            background: var(--whatsapp-dark);
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            background: var(--white);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-outline:active {
+            background: var(--bg-secondary);
+            transform: scale(0.98);
+        }
+        
+        /* Ripple Effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* ===== TAB NAVIGATION ===== */
+        .tab-container {
+            padding: 0 var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: var(--radius-lg);
+            position: relative;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab.active {
+            color: var(--text-primary);
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            top: 4px;
+            height: calc(100% - 8px);
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-normal);
+        }
+        
+        /* ===== CAMPAIGNS LIST ===== */
+        .campaigns {
+            padding: 0 var(--spacing-lg);
+        }
+        
+        .campaign-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .campaign-card:active {
+            transform: scale(0.99);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .campaign-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .campaign-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .campaign-status.active {
+            background: rgba(52,199,89,0.15);
+            color: var(--success);
+        }
+        
+        .campaign-status.paused {
+            background: rgba(255,149,0,0.15);
+            color: var(--warning);
+        }
+        
+        .campaign-status .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: var(--radius-full);
+            background: currentColor;
+        }
+        
+        .campaign-type {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        .campaign-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .campaign-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .campaign-metrics {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+        
+        .campaign-metric {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .campaign-metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .campaign-metric-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+        }
+        
+        /* ===== MESSAGE TEMPLATES ===== */
+        .templates-section {
+            padding: var(--spacing-md) var(--spacing-lg);
+        }
+        
+        .template-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+            border: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .template-card:active {
+            background: var(--bg-secondary);
+        }
+        
+        .template-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            background: var(--green-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .template-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .template-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+        
+        .template-preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .template-arrow {
+            color: var(--text-tertiary);
+            font-size: 18px;
+        }
+        
+        /* ===== ANALYTICS MINI ===== */
+        .analytics-mini {
+            margin: var(--spacing-md) var(--spacing-lg);
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+        
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .analytics-chart {
+            height: 120px;
+            background: linear-gradient(180deg, var(--green-light) 0%, transparent 100%);
+            border-radius: var(--radius-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+        
+        .chart-line svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .chart-line path {
+            fill: none;
+            stroke: var(--green-deep);
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+        
+        .chart-line .area {
+            fill: url(#greenGradient);
+            stroke: none;
+        }
+        
+        .analytics-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .analytics-stat {
+            padding: var(--spacing-sm);
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+        }
+        
+        .analytics-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 4px;
+        }
+        
+        .analytics-stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .analytics-stat-change {
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 500;
+        }
+        
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-light);
+            padding: var(--spacing-sm) var(--spacing-md);
+            padding-bottom: calc(var(--spacing-sm) + env(safe-area-inset-bottom, 0px));
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-radius: var(--radius-md);
+            min-width: 60px;
+        }
+        
+        .nav-item:active {
+            background: var(--bg-secondary);
+        }
+        
+        .nav-icon {
+            font-size: 24px;
+            transition: transform var(--spring);
+        }
+        
+        .nav-item.active .nav-icon {
+            transform: scale(1.1);
+        }
+        
+        .nav-label {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+        
+        .nav-item.active .nav-label {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--gold);
+        }
+        
+        /* Center FAB Button */
+        .nav-fab {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--white);
+            margin-top: -20px;
+            box-shadow: var(--shadow-gold);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .nav-fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--text-primary);
+            color: var(--white);
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            box-shadow: var(--shadow-xl);
+            z-index: 1000;
+            transition: transform var(--spring);
+            max-width: calc(100% - 48px);
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.success {
+            background: var(--success);
+        }
+        
+        .toast.error {
+            background: var(--error);
+        }
+        
+        .toast-icon {
+            font-size: 20px;
+        }
+        
+        /* ===== PULL TO REFRESH ===== */
+        .pull-indicator {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50px);
+            width: 40px;
+            height: 40px;
+            background: var(--white);
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            transition: transform var(--transition-normal);
+        }
+        
+        .pull-indicator.pulling {
+            transform: translateX(-50%) translateY(20px);
+        }
+        
+        .pull-indicator svg {
+            width: 24px;
+            height: 24px;
+            color: var(--gold);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* ===== LOADING STATE ===== */
+        .skeleton {
+            background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--bg-primary) 50%, var(--bg-secondary) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: var(--radius-sm);
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* ===== CELEBRATION ===== */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* ===== SETTINGS PREVIEW ===== */
+        .settings-preview {
+            margin: var(--spacing-md) var(--spacing-lg);
+            padding-bottom: 100px;
+        }
+        
+        .settings-group {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin-bottom: var(--spacing-md);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+        }
+        
+        .settings-group-title {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            padding: var(--spacing-md) var(--spacing-md) var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .settings-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        
+        .settings-item:active {
+            background: var(--bg-secondary);
+        }
+        
+        .settings-item-content {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .settings-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        
+        .settings-icon.gold { background: var(--gold-light); }
+        .settings-icon.green { background: var(--green-light); }
+        .settings-icon.blue { background: #E3F2FD; }
+        .settings-icon.purple { background: #F3E5F5; }
+        
+        .settings-label {
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        
+        .settings-value {
+            font-size: 14px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+        
+        /* Toggle Switch */
+        .toggle {
+            width: 51px;
+            height: 31px;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: background var(--transition-fast);
+        }
+        
+        .toggle.active {
+            background: var(--green-deep);
+        }
+        
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 27px;
+            height: 27px;
+            background: var(--white);
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--transition-fast);
+        }
+        
+        .toggle.active::after {
+            transform: translateX(-20px);
+        }
+        
+        /* ===== NUMBER TOGGLE (Arabic/Western) ===== */
+        .number-toggle {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 2px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+        }
+        
+        .number-toggle span {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .number-toggle span.active {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
+        
+        /* ===== ARABIC NUMERALS ===== */
+        .arabic-nums {
+            font-feature-settings: "locl";
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 430px) {
+            .app-container {
+                max-width: 100%;
+            }
+        }
+        
+        /* Dark mode for prayer time */
+        @media (prefers-color-scheme: dark) {
+            .auto-prayer-mode .app-container {
+                background: var(--bg-primary);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <!-- Pull to Refresh Indicator -->
+        <div class="pull-indicator" id="pullIndicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12a9 9 0 11-6.219-8.56"/>
+            </svg>
+        </div>
+        
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time">٩:٤١</span>
+            <div class="icons">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.01 21.49L23.64 7c-.45-.34-4.93-4-11.64-4C5.28 3 .81 6.66.36 7l11.63 14.49.01.01.01-.01z"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4z"/></svg>
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <header class="header">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-logo">ر</div>
+                    <div class="brand-text">رِ<span>بح</span></div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="showToast('قريباً: الإشعارات', 'info')">
+                        <span class="badge"></span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </button>
+                    <button class="icon-btn" onclick="togglePrayerMode()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="greeting">
+                <p class="greeting-time">صباح الخير ☀️</p>
+                <h1 class="greeting-name">أهلاً، محمد</h1>
+            </div>
+        </header>
+        
+        <!-- Trust Badges -->
+        <div class="trust-badges">
+            <div class="trust-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                آمن ومضمون
+            </div>
+            <div class="trust-badge gold">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                تاجر موثق
+            </div>
+            <div class="trust-badge">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/><circle cx="12" cy="12" r="3"/></svg>
+                🇸🇦 سعودي
+            </div>
+        </div>
+        
+        <!-- Revenue Card -->
+        <div class="revenue-card">
+            <div class="revenue-card-header">
+                <span class="revenue-label">إجمالي الإيرادات</span>
+                <div class="revenue-period" onclick="showToast('تغيير الفترة الزمنية')">
+                    <span>هذا الشهر</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
+                </div>
+            </div>
+            
+            <div class="revenue-amount">
+                <div class="revenue-number">
+                    <span class="revenue-currency">ر.س</span>
+                    <span id="revenueValue">٤٧,٨٥٠</span>
+                </div>
+                <div class="revenue-change">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14l5-5 5 5z"/></svg>
+                    <span>+٢٣٪ من الشهر الماضي</span>
+                </div>
+            </div>
+            
+            <div class="revenue-stats">
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">١٢٤</div>
+                    <div class="revenue-stat-label">طلب مكتمل</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">٣٨٦</div>
+                    <div class="revenue-stat-label">ر.س متوسط الطلب</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">٨٩٪</div>
+                    <div class="revenue-stat-label">معدل التحويل</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="section-header">
+                <h2 class="section-title">إجراءات سريعة</h2>
+            </div>
+            
+            <div class="actions-grid">
+                <div class="action-item" onclick="showToast('جاري فتح استرداد السلات...', 'success')">
+                    <div class="action-icon whatsapp">
+                        <div class="notification-dot">٧</div>
+                        💬
+                    </div>
+                    <span class="action-label">استرداد السلات</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('جاري فتح البيع الإضافي...')">
+                    <div class="action-icon gold">📈</div>
+                    <span class="action-label">بيع إضافي</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('جاري فتح القوالب...')">
+                    <div class="action-icon green">📝</div>
+                    <span class="action-label">قوالب الرسائل</span>
+                </div>
+                
+                <div class="action-item" onclick="showToast('جاري فتح التقارير...')">
+                    <div class="action-icon blue">📊</div>
+                    <span class="action-label">التقارير</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Cart Recovery Card -->
+        <div class="cart-recovery">
+            <div class="cart-header">
+                <div class="cart-info">
+                    <h3>🛒 سلات متروكة تنتظرك</h3>
+                    <p>٧ عملاء تركوا سلاتهم خلال ٢٤ ساعة</p>
+                </div>
+                <div class="cart-value">
+                    <span class="cart-value-label">القيمة المحتملة</span>
+                    <span class="cart-value-amount">ر.س ٣,٢٤٠</span>
+                </div>
+            </div>
+            
+            <div class="cart-items">
+                <div class="cart-item-avatar">👨</div>
+                <div class="cart-item-avatar">👩</div>
+                <div class="cart-item-avatar">👨‍🦱</div>
+                <div class="cart-item-avatar">👩‍🦰</div>
+                <div class="cart-item-avatar cart-item-more">+٣</div>
+            </div>
+            
+            <div class="cart-actions">
+                <button class="btn btn-whatsapp" onclick="celebrate(); showToast('✅ تم إرسال رسائل الاسترداد!', 'success')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                    إرسال واتساب
+                </button>
+                <button class="btn btn-outline" onclick="showToast('جاري عرض التفاصيل...')">
+                    عرض الكل
+                </button>
+            </div>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tab-container">
+            <div class="tabs" id="tabs">
+                <div class="tab-indicator" id="tabIndicator" style="width: 33.33%; right: 0;"></div>
+                <div class="tab active" data-tab="campaigns" onclick="switchTab(this, 0)">الحملات</div>
+                <div class="tab" data-tab="messages" onclick="switchTab(this, 1)">الرسائل</div>
+                <div class="tab" data-tab="analytics" onclick="switchTab(this, 2)">التحليلات</div>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Campaigns -->
+        <div class="tab-content campaigns" id="content-campaigns">
+            <div class="campaign-card" onclick="showToast('جاري فتح تفاصيل الحملة...')">
+                <div class="campaign-header">
+                    <div class="campaign-status active">
+                        <span class="dot"></span>
+                        نشطة
+                    </div>
+                    <div class="campaign-type">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                        واتساب
+                    </div>
+                </div>
+                <h3 class="campaign-name">استرداد السلات المتروكة</h3>
+                <p class="campaign-desc">رسالة تذكيرية للعملاء الذين تركوا سلاتهم</p>
+                <div class="campaign-metrics">
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٢٣٤</span>
+                        <span class="campaign-metric-label">رسالة مرسلة</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٦٧٪</span>
+                        <span class="campaign-metric-label">معدل الفتح</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">ر.س ١٢,٤٥٠</span>
+                        <span class="campaign-metric-label">إيرادات محققة</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="campaign-card" onclick="showToast('جاري فتح تفاصيل الحملة...')">
+                <div class="campaign-header">
+                    <div class="campaign-status active">
+                        <span class="dot"></span>
+                        نشطة
+                    </div>
+                    <div class="campaign-type">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                        واتساب
+                    </div>
+                </div>
+                <h3 class="campaign-name">عروض البيع الإضافي</h3>
+                <p class="campaign-desc">منتجات مقترحة بعد إتمام الشراء</p>
+                <div class="campaign-metrics">
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٨٩</span>
+                        <span class="campaign-metric-label">رسالة مرسلة</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٤٢٪</span>
+                        <span class="campaign-metric-label">معدل التحويل</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">ر.س ٥,٨٩٠</span>
+                        <span class="campaign-metric-label">إيرادات محققة</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="campaign-card" onclick="showToast('جاري فتح تفاصيل الحملة...')">
+                <div class="campaign-header">
+                    <div class="campaign-status paused">
+                        <span class="dot"></span>
+                        متوقفة
+                    </div>
+                    <div class="campaign-type">
+                        📧 بريد إلكتروني
+                    </div>
+                </div>
+                <h3 class="campaign-name">رسالة الترحيب</h3>
+                <p class="campaign-desc">ترحيب بالعملاء الجدد مع كود خصم</p>
+                <div class="campaign-metrics">
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٤٥٦</span>
+                        <span class="campaign-metric-label">رسالة مرسلة</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">٥٤٪</span>
+                        <span class="campaign-metric-label">معدل الفتح</span>
+                    </div>
+                    <div class="campaign-metric">
+                        <span class="campaign-metric-value">ر.س ٨,٣٤٠</span>
+                        <span class="campaign-metric-label">إيرادات محققة</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Messages -->
+        <div class="tab-content templates-section" id="content-messages" style="display: none;">
+            <div class="section-header">
+                <h2 class="section-title">قوالب الرسائل</h2>
+                <span class="section-link" onclick="showToast('إنشاء قالب جديد...')">+ جديد</span>
+            </div>
+            
+            <div class="template-card" onclick="showToast('جاري فتح القالب...')">
+                <div class="template-icon">🛒</div>
+                <div class="template-content">
+                    <div class="template-name">تذكير السلة المتروكة</div>
+                    <div class="template-preview">مرحباً {اسم_العميل}، لاحظنا أنك تركت بعض المنتجات في سلتك...</div>
+                </div>
+                <span class="template-arrow">←</span>
+            </div>
+            
+            <div class="template-card" onclick="showToast('جاري فتح القالب...')">
+                <div class="template-icon" style="background: var(--gold-light);">🎁</div>
+                <div class="template-content">
+                    <div class="template-name">عرض خاص للعميل</div>
+                    <div class="template-preview">عميلنا العزيز، لدينا عرض حصري لك! خصم ٢٠٪ على طلبك...</div>
+                </div>
+                <span class="template-arrow">←</span>
+            </div>
+            
+            <div class="template-card" onclick="showToast('جاري فتح القالب...')">
+                <div class="template-icon" style="background: #E3F2FD;">📦</div>
+                <div class="template-content">
+                    <div class="template-name">تحديث الشحن</div>
+                    <div class="template-preview">أخبار سارة! تم شحن طلبك رقم {رقم_الطلب}...</div>
+                </div>
+                <span class="template-arrow">←</span>
+            </div>
+            
+            <div class="template-card" onclick="showToast('جاري فتح القالب...')">
+                <div class="template-icon" style="background: #FFF3E0;">⭐</div>
+                <div class="template-content">
+                    <div class="template-name">طلب تقييم</div>
+                    <div class="template-preview">شكراً لتسوقك معنا! نتمنى أن تشاركنا رأيك...</div>
+                </div>
+                <span class="template-arrow">←</span>
+            </div>
+            
+            <div class="template-card" onclick="showToast('جاري فتح القالب...')">
+                <div class="template-icon" style="background: #F3E5F5;">👋</div>
+                <div class="template-content">
+                    <div class="template-name">ترحيب بالعميل الجديد</div>
+                    <div class="template-preview">أهلاً وسهلاً بك في متجرنا! نحن سعداء بانضمامك...</div>
+                </div>
+                <span class="template-arrow">←</span>
+            </div>
+        </div>
+        
+        <!-- Tab Content: Analytics -->
+        <div class="tab-content" id="content-analytics" style="display: none;">
+            <div class="analytics-mini">
+                <div class="analytics-header">
+                    <h3 class="section-title">نظرة عامة</h3>
+                    <span class="section-link">آخر ٧ أيام ↓</span>
+                </div>
+                
+                <div class="analytics-chart">
+                    <div class="chart-line">
+                        <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="greenGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#006C35" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#006C35" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+                            <path class="area" d="M0,80 C50,70 80,30 120,40 C160,50 180,20 220,35 C260,50 280,25 300,30 L300,100 L0,100 Z"/>
+                            <path d="M0,80 C50,70 80,30 120,40 C160,50 180,20 220,35 C260,50 280,25 300,30"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="analytics-stats">
+                    <div class="analytics-stat">
+                        <div class="analytics-stat-label">الزوار</div>
+                        <div class="analytics-stat-value">٢,٤٥٦</div>
+                        <div class="analytics-stat-change">↑ ١٢٪</div>
+                    </div>
+                    <div class="analytics-stat">
+                        <div class="analytics-stat-label">الطلبات</div>
+                        <div class="analytics-stat-value">١٢٤</div>
+                        <div class="analytics-stat-change">↑ ٨٪</div>
+                    </div>
+                    <div class="analytics-stat">
+                        <div class="analytics-stat-label">معدل التحويل</div>
+                        <div class="analytics-stat-value">٥.٠٤٪</div>
+                        <div class="analytics-stat-change">↑ ٠.٣٪</div>
+                    </div>
+                    <div class="analytics-stat">
+                        <div class="analytics-stat-label">رسائل واتساب</div>
+                        <div class="analytics-stat-value">٣٨٩</div>
+                        <div class="analytics-stat-change">↑ ٢٣٪</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Preview -->
+            <div class="settings-preview">
+                <div class="section-header" style="padding: 0 0 var(--spacing-md) 0;">
+                    <h2 class="section-title">الإعدادات</h2>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">الحساب</div>
+                    <div class="settings-item" onclick="showToast('جاري فتح إعدادات المتجر...')">
+                        <div class="settings-item-content">
+                            <div class="settings-icon gold">🏪</div>
+                            <span class="settings-label">معلومات المتجر</span>
+                        </div>
+                        <span class="settings-value">←</span>
+                    </div>
+                    <div class="settings-item" onclick="showToast('جاري فتح إعدادات واتساب...')">
+                        <div class="settings-item-content">
+                            <div class="settings-icon green">💬</div>
+                            <span class="settings-label">ربط واتساب</span>
+                        </div>
+                        <span class="settings-value" style="color: var(--success);">✓ متصل ←</span>
+                    </div>
+                    <div class="settings-item" onclick="showToast('جاري فتح إعدادات سلة...')">
+                        <div class="settings-item-content">
+                            <div class="settings-icon purple">🔗</div>
+                            <span class="settings-label">ربط سلة/شوبيفاي</span>
+                        </div>
+                        <span class="settings-value">←</span>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">التفضيلات</div>
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon blue">🔢</div>
+                            <span class="settings-label">تنسيق الأرقام</span>
+                        </div>
+                        <div class="number-toggle" onclick="toggleNumbers(event)">
+                            <span class="active">٠١٢</span>
+                            <span>012</span>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon" style="background: #FFF8E1;">🌙</div>
+                            <span class="settings-label">وضع الصلاة</span>
+                        </div>
+                        <div class="toggle" id="prayerToggle" onclick="togglePrayerMode()"></div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-content">
+                            <div class="settings-icon" style="background: #E8F5E9;">🔔</div>
+                            <span class="settings-label">الإشعارات</span>
+                        </div>
+                        <div class="toggle active"></div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <div class="settings-group-title">الدعم</div>
+                    <div class="settings-item" onclick="showToast('جاري فتح مركز المساعدة...')">
+                        <div class="settings-item-content">
+                            <div class="settings-icon" style="background: #E3F2FD;">❓</div>
+                            <span class="settings-label">مركز المساعدة</span>
+                        </div>
+                        <span class="settings-value">←</span>
+                    </div>
+                    <div class="settings-item" onclick="showToast('جاري فتح واتساب الدعم...')">
+                        <div class="settings-item-content">
+                            <div class="settings-icon" style="background: #E8F5E9;">💬</div>
+                            <span class="settings-label">تواصل معنا</span>
+                        </div>
+                        <span class="settings-value">←</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navTo(this)">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">التقارير</span>
+            </div>
+            <div class="nav-fab" onclick="showToast('إنشاء حملة جديدة...', 'success')">
+                <span>+</span>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">الرسائل</span>
+            </div>
+            <div class="nav-item" onclick="navTo(this)">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">الإعدادات</span>
+            </div>
+        </nav>
+        
+        <!-- Toast -->
+        <div class="toast" id="toast">
+            <span class="toast-icon">ℹ️</span>
+            <span class="toast-message">رسالة التنبيه</span>
+        </div>
+    </div>
+    
+    <script>
+        // Tab Switching with smooth animation
+        function switchTab(el, index) {
+            const tabs = document.querySelectorAll('.tab');
+            const indicator = document.getElementById('tabIndicator');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Move indicator (RTL: right-based)
+            indicator.style.right = (index * 33.33) + '%';
+            
+            // Switch content with fade
+            contents.forEach(c => {
+                c.style.display = 'none';
+                c.style.opacity = '0';
+            });
+            
+            const contentIds = ['content-campaigns', 'content-messages', 'content-analytics'];
+            const activeContent = document.getElementById(contentIds[index]);
+            activeContent.style.display = 'block';
+            setTimeout(() => activeContent.style.opacity = '1', 10);
+        }
+        
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('.toast-icon');
+            const msg = toast.querySelector('.toast-message');
+            
+            toast.className = 'toast';
+            
+            if (type === 'success') {
+                toast.classList.add('success');
+                icon.textContent = '✅';
+            } else if (type === 'error') {
+                toast.classList.add('error');
+                icon.textContent = '❌';
+            } else {
+                icon.textContent = 'ℹ️';
+            }
+            
+            msg.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Ripple Effect
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        
+        // Prayer Mode Toggle
+        let prayerMode = false;
+        function togglePrayerMode() {
+            prayerMode = !prayerMode;
+            document.body.classList.toggle('prayer-mode', prayerMode);
+            document.getElementById('prayerToggle').classList.toggle('active', prayerMode);
+            showToast(prayerMode ? '🌙 تم تفعيل وضع الصلاة' : '☀️ تم إلغاء وضع الصلاة');
+        }
+        
+        // Number Format Toggle
+        function toggleNumbers(e) {
+            e.stopPropagation();
+            const spans = e.currentTarget.querySelectorAll('span');
+            spans.forEach(s => s.classList.toggle('active'));
+            showToast('تم تغيير تنسيق الأرقام');
+        }
+        
+        // Navigation
+        function navTo(el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+        
+        // Celebration Effect
+        function celebrate() {
+            const colors = ['#D4AF37', '#006C35', '#25D366', '#FFD700', '#00A651'];
+            const container = document.createElement('div');
+            container.className = 'confetti';
+            document.body.appendChild(container);
+            
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+                container.appendChild(piece);
+            }
+            
+            setTimeout(() => container.remove(), 3000);
+        }
+        
+        // Pull to Refresh simulation
+        let startY = 0;
+        let pulling = false;
+        
+        document.addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0) {
+                startY = e.touches[0].clientY;
+                pulling = true;
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!pulling) return;
+            const diff = e.touches[0].clientY - startY;
+            if (diff > 50) {
+                document.getElementById('pullIndicator').classList.add('pulling');
+            }
+        });
+        
+        document.addEventListener('touchend', () => {
+            if (document.getElementById('pullIndicator').classList.contains('pulling')) {
+                showToast('جاري تحديث البيانات...', 'info');
+                setTimeout(() => {
+                    document.getElementById('pullIndicator').classList.remove('pulling');
+                    showToast('✅ تم التحديث بنجاح', 'success');
+                }, 1500);
+            }
+            pulling = false;
+        });
+        
+        // Animate numbers on load
+        function animateNumber(element, target) {
+            let current = 0;
+            const increment = target / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    clearInterval(timer);
+                    current = target;
+                }
+                // Convert to Arabic numerals
+                element.textContent = Math.floor(current).toLocaleString('ar-SA');
+            }, 30);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show welcome toast
+            setTimeout(() => showToast('مرحباً بك في رِبح! 🎉', 'success'), 500);
+        });
+    </script>
+</body>
+</html>

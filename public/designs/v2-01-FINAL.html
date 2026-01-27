@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ربح - لوحة التحكم</title>
+    <style>
+        /* ═══════════════════════════════════════════════════════════════════
+           🎨 RIBH Dashboard v2.01-FINAL - "Merchant-First Design"
+           
+           Design Philosophy: 
+           - ONE number dominates
+           - ONE clear action
+           - Zero cognitive load
+           - 60fps butter-smooth animations
+           
+           Changes from v2.01:
+           ✂️ REMOVED: Command palette, pull-to-refresh, FAB, period tabs
+           ✅ FIXED: RTL positions, touch targets, font sizes, animations
+           ✨ ADDED: Hero metric, recent wins, empty states
+           ═══════════════════════════════════════════════════════════════════ */
+
+        /* ─────────────────────────────────────────────────────────────────────
+           CSS Variables - Refined Design System
+           ───────────────────────────────────────────────────────────────────── */
+        :root {
+            /* Colors - Clean and trustworthy */
+            --bg-primary: #FAFAFA;
+            --bg-secondary: #FFFFFF;
+            --bg-tertiary: #F5F5F7;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            
+            /* Accent - Refined purple (reduced glow intensity) */
+            --accent-primary: #8B5CF6;
+            --accent-secondary: #A78BFA;
+            --accent-gradient: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 50%, #C4B5FD 100%);
+            --accent-glow: rgba(139, 92, 246, 0.2);
+            
+            /* Text */
+            --text-primary: #1D1D1F;
+            --text-secondary: #6E6E73;
+            --text-tertiary: #A1A1A6;
+            
+            /* Semantic */
+            --success: #34C759;
+            --success-bg: rgba(52, 199, 89, 0.12);
+            --warning: #FF9500;
+            --warning-bg: rgba(255, 149, 0, 0.12);
+            --danger: #FF3B30;
+            --danger-bg: rgba(255, 59, 48, 0.12);
+            
+            /* WhatsApp */
+            --whatsapp: #25D366;
+            --whatsapp-bg: rgba(37, 211, 102, 0.12);
+            
+            /* Shadows - Soft, performant */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
+            --shadow-glow: 0 8px 24px var(--accent-glow);
+            
+            /* Spacing */
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+            
+            /* 60fps Easing Functions */
+            --ease-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            
+            /* Font */
+            --font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Reset & Base - Performance Optimized
+           ───────────────────────────────────────────────────────────────────── */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+            min-height: 100dvh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* GPU-accelerated transforms only */
+        .gpu {
+            transform: translateZ(0);
+            will-change: transform, opacity;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           App Container
+           ───────────────────────────────────────────────────────────────────── */
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: var(--space-md);
+            padding-bottom: 100px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Header - Minimal
+           ───────────────────────────────────────────────────────────────────── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-sm) 0;
+            margin-bottom: var(--space-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--accent-gradient);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .logo-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .logo-arabic {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            margin-right: var(--space-xs);
+        }
+
+        /* Notification - Fixed animation (3 pulses max) */
+        .notification-btn {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+        }
+
+        .notification-btn:active {
+            transform: scale(0.95);
+        }
+
+        .notification-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 18px;
+            height: 18px;
+            background: var(--danger);
+            border: 2px solid var(--bg-primary);
+            border-radius: var(--radius-full);
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse-badge 0.5s var(--ease-bounce) 3;
+        }
+
+        @keyframes pulse-badge {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           HERO METRIC - The ONE Number That Matters
+           ───────────────────────────────────────────────────────────────────── */
+        .hero-metric {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl) var(--space-lg);
+            margin-bottom: var(--space-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-metric::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .hero-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+        }
+
+        .hero-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+            line-height: 1.1;
+            margin-bottom: var(--space-xs);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-currency {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-right: var(--space-xs);
+        }
+
+        .hero-change {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: 6px 12px;
+            background: var(--success-bg);
+            color: var(--success);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .hero-change svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .hero-period {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: var(--space-md);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Action Card - Clear CTA
+           ───────────────────────────────────────────────────────────────────── */
+        .action-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-md);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+        }
+
+        .action-card:active {
+            transform: scale(0.98);
+        }
+
+        .action-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--warning-bg);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .action-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--warning);
+        }
+
+        .action-icon.success {
+            background: var(--success-bg);
+        }
+
+        .action-icon.success svg {
+            stroke: var(--success);
+        }
+
+        .action-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .action-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+            white-space: nowrap;
+            min-height: 44px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn.whatsapp {
+            background: var(--whatsapp);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Recent Wins - Dopamine Section
+           ───────────────────────────────────────────────────────────────────── */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .section-link {
+            font-size: 14px;
+            color: var(--accent-primary);
+            text-decoration: none;
+            padding: var(--space-sm);
+            margin: calc(-1 * var(--space-sm));
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+        }
+
+        .wins-list {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+
+        .win-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            transition: background 0.15s var(--ease-smooth);
+        }
+
+        .win-item:last-child {
+            border-bottom: none;
+        }
+
+        .win-item:active {
+            background: var(--bg-tertiary);
+        }
+
+        .win-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--success-bg);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .win-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--success);
+        }
+
+        .win-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .win-amount {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .win-time {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .win-badge {
+            padding: 4px 10px;
+            background: var(--whatsapp-bg);
+            color: var(--whatsapp);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Quick Stats - Secondary Metrics (2 sizes only)
+           ───────────────────────────────────────────────────────────────────── */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+        }
+
+        .quick-stat {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            text-align: center;
+        }
+
+        .quick-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .quick-stat-label {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-top: 2px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Toggle - iOS Style (Proper RTL)
+           ───────────────────────────────────────────────────────────────────── */
+        .toggle-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .toggle-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .toggle-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-glow);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .toggle-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent-primary);
+        }
+
+        .toggle-label {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .toggle-desc {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .toggle {
+            position: relative;
+            width: 51px;
+            height: 31px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: #E5E5EA;
+            border-radius: var(--radius-full);
+            transition: background 0.3s var(--ease-smooth);
+        }
+
+        .toggle input:checked + .toggle-track {
+            background: var(--success);
+        }
+
+        .toggle-thumb {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 27px;
+            height: 27px;
+            background: white;
+            border-radius: var(--radius-full);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+            transition: transform 0.3s var(--ease-smooth);
+        }
+
+        .toggle input:checked ~ .toggle-thumb {
+            transform: translateX(-20px);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           WhatsApp Templates - Readable Text (15px min)
+           ───────────────────────────────────────────────────────────────────── */
+        .template-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            margin-bottom: var(--space-md);
+            cursor: pointer;
+            transition: transform 0.2s var(--ease-smooth), border-color 0.2s var(--ease-smooth);
+        }
+
+        .template-card:active {
+            transform: scale(0.98);
+        }
+
+        .template-card:hover {
+            border-color: var(--whatsapp);
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .template-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .template-badge {
+            padding: 4px 10px;
+            background: var(--whatsapp-bg);
+            color: var(--whatsapp);
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .template-preview {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: var(--space-md);
+            border-radius: var(--radius-sm);
+            border-right: 3px solid var(--whatsapp);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Empty State
+           ───────────────────────────────────────────────────────────────────── */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-xl);
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+        }
+
+        .empty-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: var(--text-tertiary);
+        }
+
+        .empty-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        .empty-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-md);
+        }
+
+        .empty-btn {
+            padding: 12px 24px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: var(--radius-full);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Toast Notifications
+           ───────────────────────────────────────────────────────────────────── */
+        .toast-container {
+            position: fixed;
+            top: var(--space-lg);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md) var(--space-lg);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            pointer-events: auto;
+            animation: toastIn 0.3s var(--ease-out);
+        }
+
+        .toast.hiding {
+            animation: toastOut 0.25s var(--ease-smooth) forwards;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-16px); }
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toast-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .toast.success .toast-icon {
+            background: var(--success-bg);
+        }
+
+        .toast.success .toast-icon svg {
+            stroke: var(--success);
+        }
+
+        .toast.info .toast-icon {
+            background: rgba(139, 92, 246, 0.12);
+        }
+
+        .toast.info .toast-icon svg {
+            stroke: var(--accent-primary);
+        }
+
+        .toast-message {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Page Sections - Smooth transitions
+           ───────────────────────────────────────────────────────────────────── */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.3s var(--ease-out);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Bottom Navigation - Simple 3-item (Touch targets 44px+)
+           ───────────────────────────────────────────────────────────────────── */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(480px, 100%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+            padding: var(--space-sm) var(--space-lg);
+            padding-bottom: max(var(--space-sm), env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            padding: var(--space-sm) var(--space-md);
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: var(--radius-md);
+            min-width: 72px;
+            min-height: 48px;
+            transition: transform 0.15s var(--ease-smooth);
+        }
+
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-tertiary);
+            stroke-width: 1.5;
+            transition: stroke 0.2s var(--ease-smooth);
+        }
+
+        .nav-item span {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            transition: color 0.2s var(--ease-smooth);
+        }
+
+        .nav-item.active svg {
+            stroke: var(--accent-primary);
+            stroke-width: 2;
+        }
+
+        .nav-item.active span {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Settings Section
+           ───────────────────────────────────────────────────────────────────── */
+        .settings-group {
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-bottom: var(--space-md);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-md);
+            min-height: 56px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            cursor: pointer;
+            transition: background 0.15s var(--ease-smooth);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-item:active {
+            background: var(--bg-tertiary);
+        }
+
+        .settings-info {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .settings-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-secondary);
+        }
+
+        .settings-icon.green {
+            background: var(--whatsapp-bg);
+        }
+
+        .settings-icon.green svg {
+            stroke: var(--whatsapp);
+        }
+
+        .settings-label {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .settings-desc {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .settings-arrow {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-tertiary);
+            transform: rotate(180deg);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Shimmer Loading (for future data loading)
+           ───────────────────────────────────────────────────────────────────── */
+        .shimmer {
+            background: linear-gradient(
+                90deg,
+                var(--bg-tertiary) 0%,
+                var(--bg-secondary) 50%,
+                var(--bg-tertiary) 100%
+            );
+            background-size: 200% 100%;
+            animation: shimmer 1.2s infinite linear;
+            border-radius: var(--radius-sm);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────
+           Responsive
+           ───────────────────────────────────────────────────────────────────── */
+        @media (max-width: 380px) {
+            .hero-value {
+                font-size: 40px;
+            }
+            
+            .hero-currency {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Main App -->
+    <div class="app">
+        <!-- Header - Minimal -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </div>
+                <div>
+                    <span class="logo-text">RIBH</span>
+                    <span class="logo-arabic">ربح</span>
+                </div>
+            </div>
+            <button class="notification-btn" id="notifBtn" aria-label="الإشعارات">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                </svg>
+                <span class="notification-badge">3</span>
+            </button>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section class="page-section active" id="section-dashboard">
+            <!-- HERO METRIC - The ONE Number -->
+            <div class="hero-metric" id="heroMetric">
+                <div class="hero-label">الإيرادات المستردة</div>
+                <div class="hero-value">
+                    <span id="heroValue">٢٤,٧٥٠</span>
+                    <span class="hero-currency">ر.س</span>
+                </div>
+                <div class="hero-change">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                    +٢٣٪ عن أمس
+                </div>
+                <div class="hero-period">اليوم • آخر تحديث قبل ٥ دقائق</div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="quick-stats">
+                <div class="quick-stat">
+                    <div class="quick-stat-value">٤٧</div>
+                    <div class="quick-stat-label">سلة مستردة</div>
+                </div>
+                <div class="quick-stat">
+                    <div class="quick-stat-value">١٨٪</div>
+                    <div class="quick-stat-label">معدل الاسترداد</div>
+                </div>
+            </div>
+
+            <!-- Action Card - ONE Clear CTA -->
+            <div class="action-card" id="actionCard">
+                <div class="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                    </svg>
+                </div>
+                <div class="action-content">
+                    <div class="action-title">١٥٦ سلة متروكة</div>
+                    <div class="action-subtitle">أرسل تذكير لاستردادها الآن</div>
+                </div>
+                <button class="action-btn whatsapp" id="sendReminder">إرسال</button>
+            </div>
+
+            <!-- Recent Wins -->
+            <div class="section-header">
+                <h2 class="section-title">آخر الاستردادات</h2>
+                <a href="#" class="section-link">عرض الكل</a>
+            </div>
+
+            <div class="wins-list">
+                <div class="win-item">
+                    <div class="win-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="win-content">
+                        <div class="win-amount">٣٤٥ ر.س</div>
+                        <div class="win-time">قبل ساعة</div>
+                    </div>
+                    <span class="win-badge">واتساب</span>
+                </div>
+                <div class="win-item">
+                    <div class="win-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="win-content">
+                        <div class="win-amount">٥٦٧ ر.س</div>
+                        <div class="win-time">قبل ٣ ساعات</div>
+                    </div>
+                    <span class="win-badge">واتساب</span>
+                </div>
+                <div class="win-item">
+                    <div class="win-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="win-content">
+                        <div class="win-amount">٨٩٠ ر.س</div>
+                        <div class="win-time">قبل ٥ ساعات</div>
+                    </div>
+                    <span class="win-badge">واتساب</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recovery Section -->
+        <section class="page-section" id="section-recovery">
+            <h2 class="section-title" style="margin-bottom: var(--space-md);">استرداد السلات</h2>
+
+            <!-- Toggle Card -->
+            <div class="toggle-card">
+                <div class="toggle-info">
+                    <div class="toggle-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                            <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="toggle-label">الرسائل التلقائية</div>
+                        <div class="toggle-desc">إرسال تذكيرات واتساب</div>
+                    </div>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" checked id="autoMessagesToggle">
+                    <span class="toggle-track"></span>
+                    <span class="toggle-thumb"></span>
+                </label>
+            </div>
+
+            <!-- Templates -->
+            <div class="section-header">
+                <h3 class="section-title">قوالب الرسائل</h3>
+            </div>
+
+            <div class="template-card" onclick="copyTemplate(this)">
+                <div class="template-header">
+                    <span class="template-name">تذكير بعد ساعة</span>
+                    <span class="template-badge">الأعلى تحويلاً</span>
+                </div>
+                <div class="template-preview">مرحباً {الاسم} 👋
+لاحظنا أنك تركت منتجات في سلتك! 🛒
+أكمل طلبك الآن واحصل على خصم ١٠٪ 🎁</div>
+            </div>
+
+            <div class="template-card" onclick="copyTemplate(this)">
+                <div class="template-header">
+                    <span class="template-name">تذكير بعد يوم</span>
+                    <span class="template-badge">نشط</span>
+                </div>
+                <div class="template-preview">أهلاً {الاسم}! 💫
+منتجاتك المفضلة ما زالت في انتظارك
+الشحن مجاني لأول ٢٤ ساعة! 🚚</div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="page-section" id="section-settings">
+            <h2 class="section-title" style="margin-bottom: var(--space-md);">الإعدادات</h2>
+
+            <div class="settings-group">
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-icon green">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                                <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-label">ربط واتساب</div>
+                            <div class="settings-desc">متصل ✓</div>
+                        </div>
+                    </div>
+                    <svg class="settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0110 0v4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-label">الاشتراك</div>
+                            <div class="settings-desc">الخطة الاحترافية</div>
+                        </div>
+                    </div>
+                    <svg class="settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-label">إعدادات عامة</div>
+                            <div class="settings-desc">اللغة، المنطقة الزمنية</div>
+                        </div>
+                    </div>
+                    <svg class="settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <div class="settings-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                                <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-label">الإشعارات</div>
+                            <div class="settings-desc">تنبيهات التطبيق</div>
+                        </div>
+                    </div>
+                    <svg class="settings-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-item" style="color: var(--danger);">
+                    <div class="settings-info">
+                        <div class="settings-icon" style="background: var(--danger-bg);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" style="stroke: var(--danger);">
+                                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="settings-label" style="color: var(--danger);">تسجيل الخروج</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Bottom Navigation - 3 Items Only -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-page="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>الرئيسية</span>
+        </button>
+        <button class="nav-item" data-page="recovery">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+            </svg>
+            <span>الاسترداد</span>
+        </button>
+        <button class="nav-item" data-page="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+            </svg>
+            <span>الإعدادات</span>
+        </button>
+    </nav>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════════
+        // 🚀 RIBH Dashboard - Minimal, Fast, Focused
+        // ═══════════════════════════════════════════════════════════════════
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Toast Notifications - Lightweight
+        // ─────────────────────────────────────────────────────────────────────
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+                info: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>'
+            };
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icons[type] || icons.info}</div>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('hiding');
+                setTimeout(() => toast.remove(), 250);
+            }, 2500);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Copy to Clipboard - ACTUALLY WORKS NOW
+        // ─────────────────────────────────────────────────────────────────────
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('تم النسخ!', 'success');
+                }).catch(() => {
+                    fallbackCopy(text);
+                });
+            } else {
+                fallbackCopy(text);
+            }
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast('تم النسخ!', 'success');
+            } catch (e) {
+                showToast('فشل النسخ', 'info');
+            }
+            document.body.removeChild(textarea);
+        }
+
+        // Copy hero value
+        document.getElementById('heroMetric').addEventListener('click', () => {
+            const value = document.getElementById('heroValue').textContent + ' ر.س';
+            copyToClipboard(value);
+        });
+
+        // Copy template
+        function copyTemplate(element) {
+            const preview = element.querySelector('.template-preview').textContent;
+            copyToClipboard(preview);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Bottom Navigation - Single System
+        // ─────────────────────────────────────────────────────────────────────
+        document.querySelectorAll('.bottom-nav .nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                
+                // Update nav
+                document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                
+                // Show section
+                document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+                const section = document.getElementById(`section-${page}`);
+                if (section) section.classList.add('active');
+            });
+        });
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Toggle Switch Handler
+        // ─────────────────────────────────────────────────────────────────────
+        document.querySelectorAll('.toggle input').forEach(toggle => {
+            toggle.addEventListener('change', () => {
+                const status = toggle.checked ? 'تم التفعيل ✓' : 'تم الإيقاف';
+                showToast(status, toggle.checked ? 'success' : 'info');
+            });
+        });
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Send Reminder Button
+        // ─────────────────────────────────────────────────────────────────────
+        document.getElementById('sendReminder').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const btn = e.target;
+            btn.textContent = 'جاري...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                showToast('تم إرسال ١٥٦ رسالة تذكير!', 'success');
+                btn.textContent = 'تم ✓';
+                
+                setTimeout(() => {
+                    btn.textContent = 'إرسال';
+                    btn.disabled = false;
+                }, 2000);
+            }, 1500);
+        });
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Notification Button
+        // ─────────────────────────────────────────────────────────────────────
+        document.getElementById('notifBtn').addEventListener('click', () => {
+            showToast('٣ إشعارات جديدة', 'info');
+        });
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Prevent zoom on double tap (iOS)
+        // ─────────────────────────────────────────────────────────────────────
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        // ─────────────────────────────────────────────────────────────────────
+        // Performance: Reduce motion for those who prefer it
+        // ─────────────────────────────────────────────────────────────────────
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.style.setProperty('--ease-smooth', 'linear');
+            document.documentElement.style.setProperty('--ease-out', 'linear');
+            document.documentElement.style.setProperty('--ease-spring', 'linear');
+        }
+    </script>
+</body>
+</html>

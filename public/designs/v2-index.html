@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 RIBH V2 Showroom - التصاميم المحسّنة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f0f1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .header p {
+            color: #888;
+            font-size: 16px;
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 16px;
+        }
+        .pipeline {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .pipeline-step {
+            background: #1e1e2e;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #888;
+        }
+        .pipeline-step.done { background: #166534; color: #fff; }
+        .arrow { color: #444; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #16161e;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid #2a2a3a;
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #8b5cf6;
+            box-shadow: 0 20px 50px rgba(139, 92, 246, 0.15);
+        }
+        .card-preview {
+            height: 200px;
+            background: #1a1a24;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-preview iframe {
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top right;
+            border: none;
+            pointer-events: none;
+        }
+        .card-number {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.6);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .card-body { padding: 20px; }
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .card-desc {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+        .card-changes {
+            background: #1e1e28;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+        .card-changes-title {
+            font-size: 11px;
+            color: #22c55e;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .card-changes ul {
+            list-style: none;
+            font-size: 12px;
+            color: #aaa;
+            line-height: 1.7;
+        }
+        .card-changes li::before {
+            content: "✓ ";
+            color: #22c55e;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        .btn-primary:hover { transform: scale(1.03); }
+        .btn-secondary {
+            background: #2a2a3a;
+            color: #aaa;
+        }
+        .btn-secondary:hover { background: #3a3a4a; }
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: #555;
+            font-size: 13px;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 28px; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 صالة العرض V2</h1>
+        <p>٥ تصاميم محسّنة بعد النقد والتحسين</p>
+        <div class="badge">✅ جاهز للمراجعة</div>
+    </div>
+
+    <div class="pipeline">
+        <span class="pipeline-step done">Creator</span>
+        <span class="arrow">→</span>
+        <span class="pipeline-step done">Critic</span>
+        <span class="arrow">→</span>
+        <span class="pipeline-step done">Improver</span>
+        <span class="arrow">→</span>
+        <span class="pipeline-step">FINAL</span>
+    </div>
+
+    <div class="grid">
+        <!-- V1: Apple + Linear Light -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="card-number">1</span>
+                <span class="card-badge">⭐ TOP</span>
+                <iframe src="v2-01-FINAL.html" loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Apple + Linear Light</h3>
+                <div class="card-desc">أبيض نظيف + تفاعلات سلسة</div>
+                <div class="card-changes">
+                    <div class="card-changes-title">تحسينات بعد النقد:</div>
+                    <ul>
+                        <li>حذف ⌘K (غير مفيد على الجوال)</li>
+                        <li>نظام تنقل واحد فقط</li>
+                        <li>تقليل العناصر 50%</li>
+                        <li>FAB في الجهة الصحيحة RTL</li>
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <a href="v2-01-FINAL.html" class="btn btn-primary" target="_blank">افتح FINAL</a>
+                    <a href="v2-01-apple-linear-light.html" class="btn btn-secondary" target="_blank">الأصلي</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- V2: Dark Premium -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="card-number">2</span>
+                <iframe src="v2-02-FINAL.html" loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Dark Premium</h3>
+                <div class="card-desc">داكن فاخر + تأثيرات زجاجية</div>
+                <div class="card-changes">
+                    <div class="card-changes-title">تحسينات بعد النقد:</div>
+                    <ul>
+                        <li>تحسين contrast للقراءة</li>
+                        <li>تقليل blur layers للأداء</li>
+                        <li>حذف confetti والإضاءات الزائدة</li>
+                        <li>تبسيط التنقل (5 → 3)</li>
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <a href="v2-02-FINAL.html" class="btn btn-primary" target="_blank">افتح FINAL</a>
+                    <a href="v2-02-dark-premium.html" class="btn btn-secondary" target="_blank">الأصلي</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- V3: Glassmorphism -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="card-number">3</span>
+                <iframe src="v2-03-FINAL.html" loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Glassmorphism Refined</h3>
+                <div class="card-desc">تأثيرات زجاجية مصقولة</div>
+                <div class="card-changes">
+                    <div class="card-changes-title">تحسينات بعد النقد:</div>
+                    <ul>
+                        <li>حذف particles (أداء أفضل)</li>
+                        <li>خلفية ثابتة بدل متحركة</li>
+                        <li>glass على البطاقة الرئيسية فقط</li>
+                        <li>أنيميشن واحد في كل مرة</li>
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <a href="v2-03-FINAL.html" class="btn btn-primary" target="_blank">افتح FINAL</a>
+                    <a href="v2-03-glass-delight.html" class="btn btn-secondary" target="_blank">الأصلي</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- V4: Minimal Motion -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="card-number">4</span>
+                <iframe src="v2-04-FINAL.html" loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Minimal Motion</h3>
+                <div class="card-desc">بسيط + حركة ذكية</div>
+                <div class="card-changes">
+                    <div class="card-changes-title">تحسينات بعد النقد:</div>
+                    <ul>
+                        <li>إضافة onboarding للمستخدم الجديد</li>
+                        <li>تصحيح اتجاه swipe للـ RTL</li>
+                        <li>حذف double-tap heart</li>
+                        <li>تنقل مرئي بدل مخفي</li>
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <a href="v2-04-FINAL.html" class="btn btn-primary" target="_blank">افتح FINAL</a>
+                    <a href="v2-04-minimal-motion.html" class="btn btn-secondary" target="_blank">الأصلي</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- V5: Saudi Premium -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="card-number">5</span>
+                <span class="card-badge">🇸🇦 سعودي</span>
+                <iframe src="v2-05-FINAL.html" loading="lazy"></iframe>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Saudi Premium</h3>
+                <div class="card-desc">مصمم للتاجر السعودي</div>
+                <div class="card-changes">
+                    <div class="card-changes-title">تحسينات بعد النقد:</div>
+                    <ul>
+                        <li>Typography أفضل (ليس generic)</li>
+                        <li>MAROOF بدل 🇸🇦 badge</li>
+                        <li>دراسة Noon/Mrsool/Jahez</li>
+                        <li>ذهبي راقي ليس flashy</li>
+                    </ul>
+                </div>
+                <div class="buttons">
+                    <a href="v2-05-FINAL.html" class="btn btn-primary" target="_blank">افتح FINAL</a>
+                    <a href="v2-05-saudi-premium.html" class="btn btn-secondary" target="_blank">الأصلي</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>صُنع بواسطة 21 agent في pipeline | Creator → Critic → Improver</p>
+    </div>
+</body>
+</html>

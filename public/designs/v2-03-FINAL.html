@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>رِبح - لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════════════════════════
+           CSS CUSTOM PROPERTIES - Refined Theme
+           ═══════════════════════════════════════════════════════════════ */
+        :root {
+            /* Solid backgrounds (not glass for everything) */
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-bg-solid: #ffffff;
+            --card-border: rgba(0, 0, 0, 0.06);
+            --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --card-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+            
+            /* Hero glass - ONLY for the main card */
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-blur: 16px;
+            
+            /* Colors - unchanged */
+            --primary: #7c3aed;
+            --primary-light: #a78bfa;
+            --secondary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #1e1b4b;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #7c3aed, #06b6d4);
+            --gradient-success: linear-gradient(135deg, #10b981, #34d399);
+            --gradient-warm: linear-gradient(135deg, #f59e0b, #f97316);
+            
+            /* Spacing */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            
+            /* Border Radius */
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            
+            /* Spring Animations - kept, they're good */
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --spring-soft: cubic-bezier(0.22, 1, 0.36, 1);
+            --spring-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+            
+            /* Sizing */
+            --tap-target: 44px;
+            --nav-height: 72px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BASE STYLES
+           ═══════════════════════════════════════════════════════════════ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0f0a1e;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BACKGROUND - SIMPLIFIED (No continuous animation)
+           One beautiful static gradient with a subtle pulse
+           ═══════════════════════════════════════════════════════════════ */
+        .gradient-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(
+                135deg,
+                #1e1b4b 0%,
+                #312e81 40%,
+                #4c1d95 70%,
+                #1e3a5f 100%
+            );
+            /* NO animation - static is elegant */
+        }
+
+        /* Single subtle ambient glow - static positioning */
+        .gradient-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 80%, rgba(167, 139, 250, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.15) 0%, transparent 45%);
+            /* NO animation */
+        }
+
+        /* PARTICLES REMOVED - they were distracting */
+
+        /* ═══════════════════════════════════════════════════════════════
+           CARD COMPONENTS - Differentiated Hierarchy
+           ═══════════════════════════════════════════════════════════════ */
+        
+        /* Hero card - ONLY this gets glass treatment */
+        .glass-card-hero {
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s var(--spring-soft), box-shadow 0.3s ease;
+        }
+
+        /* Desktop: enable backdrop-filter only on capable devices */
+        @media (min-width: 768px) {
+            .glass-card-hero {
+                backdrop-filter: blur(var(--glass-blur));
+                -webkit-backdrop-filter: blur(var(--glass-blur));
+            }
+        }
+
+        .glass-card-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Standard cards - solid white, no glass effect */
+        .card {
+            background: var(--card-bg-solid);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s var(--spring-soft), box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .card:active {
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MAIN CONTAINER
+           ═══════════════════════════════════════════════════════════════ */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: var(--spacing-md);
+            padding-bottom: calc(var(--nav-height) + var(--spacing-xl));
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 1200px;
+                padding: var(--spacing-xl);
+                padding-top: calc(var(--nav-height) + var(--spacing-xl));
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           HEADER - Clean, minimal
+           ═══════════════════════════════════════════════════════════════ */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .icon-btn {
+            width: var(--tap-target);
+            height: var(--tap-target);
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s var(--spring-bounce);
+            color: white;
+            font-size: 18px;
+        }
+
+        .icon-btn:active {
+            transform: scale(0.92);
+        }
+
+        .icon-btn.has-badge::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 10px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid #1e1b4b;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           GREETING - NO waving hand animation (distracting)
+           ═══════════════════════════════════════════════════════════════ */
+        .greeting {
+            margin-bottom: var(--spacing-xl);
+            color: white;
+        }
+
+        .greeting-time {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4px;
+        }
+
+        .greeting-name {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        /* Wave removed - static emoji is fine */
+
+        /* ═══════════════════════════════════════════════════════════════
+           REVENUE CARD - Hero Section (THE ONE ANIMATED ELEMENT)
+           ═══════════════════════════════════════════════════════════════ */
+        .revenue-card {
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .revenue-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 60%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .revenue-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .revenue-amount {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text);
+            display: flex;
+            align-items: baseline;
+            gap: var(--spacing-xs);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .currency {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Simplified number animation - one smooth fade-in */
+        .revenue-value {
+            opacity: 0;
+            animation: revealNumber 0.8s var(--spring-soft) forwards;
+        }
+
+        @keyframes revealNumber {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .revenue-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--success);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .revenue-change.negative {
+            background: rgba(239, 68, 68, 0.12);
+            color: var(--danger);
+        }
+
+        /* Mini Chart - simplified, draws once */
+        .mini-chart {
+            height: 60px;
+            margin-top: var(--spacing-lg);
+            position: relative;
+        }
+
+        .mini-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: url(#chartGradient);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: drawLine 1s var(--spring-soft) forwards 0.3s;
+        }
+
+        .chart-area {
+            fill: url(#areaGradient);
+            opacity: 0;
+            animation: fadeIn 0.4s ease forwards 0.8s;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           STATS GRID - Solid cards, instant numbers
+           ═══════════════════════════════════════════════════════════════ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        @media (min-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .stat-card {
+            padding: var(--spacing-lg);
+            cursor: default;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-icon.purple { background: rgba(124, 58, 237, 0.1); }
+        .stat-icon.cyan { background: rgba(6, 182, 212, 0.1); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .stat-icon.orange { background: rgba(245, 158, 11, 0.1); }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           CART RECOVERY SECTION
+           ═══════════════════════════════════════════════════════════════ */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            padding: 0 var(--spacing-xs);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .section-badge {
+            background: var(--danger);
+            color: white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .cart-item {
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .cart-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .cart-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .cart-details {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .cart-time {
+            color: var(--warning);
+        }
+
+        .cart-amount {
+            font-weight: 700;
+            color: var(--text);
+            margin-left: auto;
+            padding-left: var(--spacing-md);
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: var(--spacing-xs);
+        }
+
+        .cart-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform 0.15s var(--spring-bounce);
+        }
+
+        .cart-btn:active {
+            transform: scale(0.9);
+        }
+
+        .cart-btn.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .cart-btn.email {
+            background: #f3f4f6;
+            border: 1px solid var(--card-border);
+            color: var(--text);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           UPSELL CAMPAIGNS
+           ═══════════════════════════════════════════════════════════════ */
+        .campaigns-scroll {
+            display: flex;
+            gap: var(--spacing-md);
+            overflow-x: auto;
+            padding: var(--spacing-xs) 0;
+            margin: 0 calc(var(--spacing-md) * -1);
+            padding: 0 var(--spacing-md);
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .campaigns-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .campaign-card {
+            min-width: 280px;
+            padding: var(--spacing-lg);
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .campaign-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .campaign-status.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .campaign-status.paused {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .campaign-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .campaign-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .campaign-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .campaign-stats {
+            display: flex;
+            gap: var(--spacing-lg);
+        }
+
+        .campaign-stat {
+            text-align: center;
+        }
+
+        .campaign-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .campaign-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           WHATSAPP TEMPLATES
+           ═══════════════════════════════════════════════════════════════ */
+        .templates-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .template-card {
+            margin-bottom: var(--spacing-sm);
+            overflow: hidden;
+        }
+
+        .template-header {
+            padding: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .template-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: rgba(37, 211, 102, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .template-info {
+            flex: 1;
+        }
+
+        .template-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .template-preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .template-expand {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: transform 0.3s var(--spring-bounce);
+        }
+
+        .template-card.expanded .template-expand {
+            transform: rotate(180deg);
+        }
+
+        .template-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s var(--spring-soft);
+        }
+
+        .template-card.expanded .template-content {
+            max-height: 300px;
+        }
+
+        .template-body {
+            padding: 0 var(--spacing-md) var(--spacing-md);
+        }
+
+        .template-message {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-md);
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.7;
+            margin-bottom: var(--spacing-md);
+            border-right: 3px solid #25D366;
+        }
+
+        .template-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           BUTTONS - 3D Press Effect (kept - it's good)
+           ═══════════════════════════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            min-height: var(--tap-target);
+            padding: 0 var(--spacing-lg);
+            border-radius: var(--radius-full);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            transform: translateY(0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            box-shadow: none;
+        }
+
+        .btn-sm {
+            min-height: 36px;
+            padding: 0 var(--spacing-md);
+            font-size: 13px;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           ANALYTICS - Static bars (no animation overload)
+           ═══════════════════════════════════════════════════════════════ */
+        .analytics-card {
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .analytics-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .analytics-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .analytics-period {
+            font-size: 13px;
+            color: var(--text-secondary);
+            background: rgba(0, 0, 0, 0.04);
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+        }
+
+        .analytics-chart {
+            height: 120px;
+            position: relative;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 100%;
+            gap: var(--spacing-sm);
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 30px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            /* Instant display - no animation */
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           FLOATING NAV - Solid, not glass
+           ═══════════════════════════════════════════════════════════════ */
+        .nav-container {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+        }
+
+        @media (min-width: 768px) {
+            .nav-container {
+                top: var(--spacing-lg);
+                bottom: auto;
+            }
+        }
+
+        .nav-pill {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-sm);
+            background: rgba(30, 27, 75, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-full);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-full);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s var(--spring-bounce);
+            position: relative;
+        }
+
+        .nav-item:active {
+            transform: scale(0.9);
+        }
+
+        .nav-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+        }
+
+        .nav-item.has-badge::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 2px solid rgba(30, 27, 75, 0.95);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           MODAL - Clean slide up
+           ═══════════════════════════════════════════════════════════════ */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            z-index: 201;
+            transform: translateY(100%);
+            transition: transform 0.4s var(--spring-bounce);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        @media (min-width: 768px) {
+            .modal {
+                left: 50%;
+                top: 50%;
+                bottom: auto;
+                transform: translate(-50%, -50%) scale(0.95);
+                opacity: 0;
+                max-width: 480px;
+                border-radius: var(--radius-lg);
+                max-height: 80vh;
+            }
+
+            .modal-overlay.active .modal {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-full);
+            margin: var(--spacing-sm) auto var(--spacing-md);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-lg) var(--spacing-md);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-full);
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--text-secondary);
+            transition: background 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-body {
+            padding: var(--spacing-lg);
+        }
+
+        /* Settings Items */
+        .settings-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-sm);
+            background: rgba(124, 58, 237, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .settings-info {
+            flex: 1;
+        }
+
+        .settings-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .settings-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            width: 52px;
+            height: 32px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--gradient-primary);
+        }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s var(--spring-bounce);
+        }
+
+        .toggle.active::after {
+            transform: translateX(-20px);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           SUCCESS ANIMATION - Simplified
+           ═══════════════════════════════════════════════════════════════ */
+        .success-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .success-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-success);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-lg);
+            transform: scale(0);
+            animation: popIn 0.4s var(--spring-bounce) forwards 0.1s;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .checkmark {
+            stroke: white;
+            stroke-width: 4;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 60;
+            stroke-dashoffset: 60;
+            animation: drawCheck 0.4s ease forwards 0.4s;
+        }
+
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .success-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeIn 0.3s ease forwards 0.5s;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           TOAST NOTIFICATIONS
+           ═══════════════════════════════════════════════════════════════ */
+        .toast {
+            position: fixed;
+            bottom: calc(var(--nav-height) + var(--spacing-xl));
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text);
+            color: white;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            z-index: 150;
+            opacity: 0;
+            transition: all 0.3s var(--spring-bounce);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        .toast.active {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           RESPONSIVE DESKTOP LAYOUT
+           ═══════════════════════════════════════════════════════════════ */
+        @media (min-width: 768px) {
+            .desktop-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: var(--spacing-lg);
+            }
+
+            .desktop-full {
+                grid-column: 1 / -1;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════════
+           REDUCED MOTION - Respect user preferences
+           ═══════════════════════════════════════════════════════════════ */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .revenue-value {
+                opacity: 1;
+                transform: none;
+            }
+
+            .chart-line {
+                stroke-dashoffset: 0;
+            }
+
+            .chart-area {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Simplified Gradient Background (static) -->
+    <div class="gradient-bg"></div>
+
+    <!-- NO PARTICLES - removed for performance and focus -->
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <span class="logo-text">رِبح</span>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn has-badge" style="position: relative;" onclick="showToast('3 إشعارات جديدة')">
+                    🔔
+                </button>
+                <button class="icon-btn" onclick="openSettings()">
+                    ⚙️
+                </button>
+            </div>
+        </header>
+
+        <!-- Greeting (no animated wave) -->
+        <div class="greeting">
+            <div class="greeting-time" id="greeting-time">مساء الخير</div>
+            <div class="greeting-name">
+                أهلاً، محمد 👋
+            </div>
+        </div>
+
+        <!-- Desktop Grid Start -->
+        <div class="desktop-grid">
+            <!-- Revenue Card - THE HERO (only glass element) -->
+            <div class="glass-card-hero revenue-card desktop-full">
+                <div class="revenue-label">
+                    إجمالي الإيرادات
+                </div>
+                <div class="revenue-amount">
+                    <span class="revenue-value" id="revenue-value">127,450</span>
+                    <span class="currency">ر.س</span>
+                </div>
+                <span class="revenue-change">
+                    ↑ +23.5%
+                    <span style="color: var(--text-secondary); font-weight: 400;">من الشهر الماضي</span>
+                </span>
+                
+                <!-- Mini Chart -->
+                <div class="mini-chart">
+                    <svg viewBox="0 0 300 60" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#7c3aed"/>
+                                <stop offset="100%" style="stop-color:#06b6d4"/>
+                            </linearGradient>
+                            <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:0.2"/>
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="chart-area" d="M0,60 L0,45 Q30,35 60,40 T120,30 T180,35 T240,20 T300,25 L300,60 Z"/>
+                        <path class="chart-line" d="M0,45 Q30,35 60,40 T120,30 T180,35 T240,20 T300,25"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Stats Grid - SOLID cards, instant numbers -->
+            <div class="stats-grid desktop-full">
+                <div class="card stat-card">
+                    <div class="stat-icon purple">🛒</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">سلة متروكة</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon cyan">💬</div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-label">رسالة مرسلة</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon green">✓</div>
+                    <div class="stat-value">34</div>
+                    <div class="stat-label">استرداد ناجح</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-icon orange">↗</div>
+                    <div class="stat-value">21.8%</div>
+                    <div class="stat-label">معدل التحويل</div>
+                </div>
+            </div>
+
+            <!-- Cart Recovery Section -->
+            <div class="cart-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        السلات المتروكة
+                        <span class="section-badge">12</span>
+                    </h2>
+                    <a href="#" class="see-all">عرض الكل</a>
+                </div>
+
+                <div class="cart-list">
+                    <div class="card cart-item">
+                        <div class="cart-avatar">أح</div>
+                        <div class="cart-info">
+                            <div class="cart-name">أحمد الشمري</div>
+                            <div class="cart-details">
+                                <span>3 منتجات</span>
+                                <span class="cart-time">• منذ 15 دقيقة</span>
+                            </div>
+                        </div>
+                        <div class="cart-amount">850 ر.س</div>
+                        <div class="cart-actions">
+                            <button class="cart-btn whatsapp" onclick="sendWhatsApp()">📱</button>
+                            <button class="cart-btn email">✉️</button>
+                        </div>
+                    </div>
+
+                    <div class="card cart-item">
+                        <div class="cart-avatar" style="background: var(--gradient-success);">سا</div>
+                        <div class="cart-info">
+                            <div class="cart-name">سارة العتيبي</div>
+                            <div class="cart-details">
+                                <span>1 منتج</span>
+                                <span class="cart-time">• منذ 32 دقيقة</span>
+                            </div>
+                        </div>
+                        <div class="cart-amount">1,240 ر.س</div>
+                        <div class="cart-actions">
+                            <button class="cart-btn whatsapp" onclick="sendWhatsApp()">📱</button>
+                            <button class="cart-btn email">✉️</button>
+                        </div>
+                    </div>
+
+                    <div class="card cart-item">
+                        <div class="cart-avatar" style="background: var(--gradient-warm);">فه</div>
+                        <div class="cart-info">
+                            <div class="cart-name">فهد القحطاني</div>
+                            <div class="cart-details">
+                                <span>5 منتجات</span>
+                                <span class="cart-time">• منذ ساعة</span>
+                            </div>
+                        </div>
+                        <div class="cart-amount">2,100 ر.س</div>
+                        <div class="cart-actions">
+                            <button class="cart-btn whatsapp" onclick="sendWhatsApp()">📱</button>
+                            <button class="cart-btn email">✉️</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upsell Campaigns -->
+            <div class="campaigns-section">
+                <div class="section-header">
+                    <h2 class="section-title">حملات الأبسل</h2>
+                    <a href="#" class="see-all">إدارة</a>
+                </div>
+
+                <div class="campaigns-scroll">
+                    <div class="card campaign-card">
+                        <span class="campaign-status active">نشطة</span>
+                        <h3 class="campaign-name">خصم نهاية الأسبوع</h3>
+                        <p class="campaign-desc">خصم 15% على جميع المنتجات</p>
+                        <div class="campaign-stats">
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">2,450</div>
+                                <div class="campaign-stat-label">مشاهدة</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">186</div>
+                                <div class="campaign-stat-label">تحويل</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">7.6%</div>
+                                <div class="campaign-stat-label">معدل</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card campaign-card">
+                        <span class="campaign-status active">نشطة</span>
+                        <h3 class="campaign-name">شحن مجاني</h3>
+                        <p class="campaign-desc">للطلبات فوق 200 ر.س</p>
+                        <div class="campaign-stats">
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">1,820</div>
+                                <div class="campaign-stat-label">مشاهدة</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">234</div>
+                                <div class="campaign-stat-label">تحويل</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">12.9%</div>
+                                <div class="campaign-stat-label">معدل</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card campaign-card">
+                        <span class="campaign-status paused">متوقفة</span>
+                        <h3 class="campaign-name">اشتري 2 واحصل على 1</h3>
+                        <p class="campaign-desc">على منتجات مختارة</p>
+                        <div class="campaign-stats">
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">890</div>
+                                <div class="campaign-stat-label">مشاهدة</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">67</div>
+                                <div class="campaign-stat-label">تحويل</div>
+                            </div>
+                            <div class="campaign-stat">
+                                <div class="campaign-stat-value">7.5%</div>
+                                <div class="campaign-stat-label">معدل</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Templates -->
+        <div class="templates-section">
+            <div class="section-header">
+                <h2 class="section-title">قوالب الرسائل</h2>
+                <a href="#" class="see-all">إضافة قالب</a>
+            </div>
+
+            <div class="template-card card" onclick="toggleTemplate(this)">
+                <div class="template-header">
+                    <div class="template-icon">🛒</div>
+                    <div class="template-info">
+                        <div class="template-name">تذكير السلة المتروكة</div>
+                        <div class="template-preview">مرحباً {الاسم}، لاحظنا أن سلتك...</div>
+                    </div>
+                    <div class="template-expand">▼</div>
+                </div>
+                <div class="template-content">
+                    <div class="template-body">
+                        <div class="template-message">
+                            مرحباً {الاسم} 👋
+
+لاحظنا أنك تركت بعض المنتجات الرائعة في سلتك!
+
+سلتك بانتظارك مع منتجات مميزة بقيمة {المبلغ} ر.س
+
+أكمل طلبك الآن واستمتع بتجربة تسوق مميزة
+
+{رابط_السلة}
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-sm btn-primary">تعديل</button>
+                            <button class="btn btn-sm btn-outline">معاينة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card card" onclick="toggleTemplate(this)">
+                <div class="template-header">
+                    <div class="template-icon">🎁</div>
+                    <div class="template-info">
+                        <div class="template-name">عرض خاص</div>
+                        <div class="template-preview">حصرياً لك! خصم 10% على طلبك...</div>
+                    </div>
+                    <div class="template-expand">▼</div>
+                </div>
+                <div class="template-content">
+                    <div class="template-body">
+                        <div class="template-message">
+                            عرض حصري لك يا {الاسم}!
+
+نقدر اهتمامك بمنتجاتنا، ولأنك مميز عندنا...
+
+احصل على خصم 10% على طلبك
+استخدم الكود: RIBH10
+
+العرض ساري لمدة 24 ساعة فقط
+
+{رابط_المتجر}
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-sm btn-primary">تعديل</button>
+                            <button class="btn btn-sm btn-outline">معاينة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-card card" onclick="toggleTemplate(this)">
+                <div class="template-header">
+                    <div class="template-icon">📦</div>
+                    <div class="template-info">
+                        <div class="template-name">تأكيد الشحن</div>
+                        <div class="template-preview">تم شحن طلبك! رقم التتبع...</div>
+                    </div>
+                    <div class="template-expand">▼</div>
+                </div>
+                <div class="template-content">
+                    <div class="template-body">
+                        <div class="template-message">
+                            أخبار سارة يا {الاسم}!
+
+تم شحن طلبك رقم #{رقم_الطلب} وهو في طريقه إليك
+
+رقم التتبع: {رقم_التتبع}
+موعد التسليم المتوقع: {تاريخ_التسليم}
+
+تابع شحنتك من هنا:
+{رابط_التتبع}
+                        </div>
+                        <div class="template-actions">
+                            <button class="btn btn-sm btn-primary">تعديل</button>
+                            <button class="btn btn-sm btn-outline">معاينة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mini Analytics - static bars -->
+        <div class="card analytics-card">
+            <div class="analytics-header">
+                <h3 class="analytics-title">أداء الأسبوع</h3>
+                <span class="analytics-period">آخر 7 أيام</span>
+            </div>
+            <div class="analytics-chart">
+                <div class="bar-chart">
+                    <div class="bar-group">
+                        <div class="bar" style="height: 60%;"></div>
+                        <span class="bar-label">سبت</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 85%;"></div>
+                        <span class="bar-label">أحد</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 45%;"></div>
+                        <span class="bar-label">إثن</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 70%;"></div>
+                        <span class="bar-label">ثلا</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 90%;"></div>
+                        <span class="bar-label">أرب</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 55%;"></div>
+                        <span class="bar-label">خمي</span>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 100%;"></div>
+                        <span class="bar-label">جمع</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Navigation -->
+    <nav class="nav-container">
+        <div class="nav-pill">
+            <div class="nav-item active">🏠</div>
+            <div class="nav-item has-badge">🛒</div>
+            <div class="nav-item">📊</div>
+            <div class="nav-item">💬</div>
+            <div class="nav-item" onclick="openSettings()">👤</div>
+        </div>
+    </nav>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal" onclick="closeSettings(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <h2 class="modal-title">الإعدادات</h2>
+                <button class="modal-close" onclick="closeSettings()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-item">
+                    <div class="settings-icon">🔔</div>
+                    <div class="settings-info">
+                        <div class="settings-label">الإشعارات</div>
+                        <div class="settings-desc">تلقي تنبيهات السلات المتروكة</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-icon">📱</div>
+                    <div class="settings-info">
+                        <div class="settings-label">واتساب تلقائي</div>
+                        <div class="settings-desc">إرسال رسائل استرداد آلية</div>
+                    </div>
+                    <div class="toggle active" onclick="toggleSwitch(this)"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-icon">⏰</div>
+                    <div class="settings-info">
+                        <div class="settings-label">التأخير الذكي</div>
+                        <div class="settings-desc">انتظار 30 دقيقة قبل الإرسال</div>
+                    </div>
+                    <div class="toggle" onclick="toggleSwitch(this)"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-icon">🌙</div>
+                    <div class="settings-info">
+                        <div class="settings-label">الوضع الليلي</div>
+                        <div class="settings-desc">تفعيل المظهر الداكن</div>
+                    </div>
+                    <div class="toggle" onclick="toggleSwitch(this)"></div>
+                </div>
+                <div class="settings-item">
+                    <div class="settings-icon">🔗</div>
+                    <div class="settings-info">
+                        <div class="settings-label">ربط المتجر</div>
+                        <div class="settings-desc">متصل بـ Salla</div>
+                    </div>
+                    <span style="color: var(--success); font-weight: 600;">✓ متصل</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Animation Overlay -->
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-icon">
+            <svg viewBox="0 0 50 50">
+                <path class="checkmark" d="M14,27 L22,35 L37,16"/>
+            </svg>
+        </div>
+        <div class="success-text">تم إرسال الرسالة بنجاح!</div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toast-text">تم النسخ</span>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // SIMPLIFIED JAVASCRIPT - No over-animation
+        // ═══════════════════════════════════════════════════════════════
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGreeting();
+            // NO particles
+            // NO odometer animation frenzy
+            // Revenue card animation is handled by CSS
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // GREETING
+        // ═══════════════════════════════════════════════════════════════
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('greeting-time');
+            
+            if (hour >= 5 && hour < 12) {
+                greetingEl.textContent = 'صباح الخير';
+            } else if (hour >= 12 && hour < 17) {
+                greetingEl.textContent = 'مساء الخير';
+            } else if (hour >= 17 && hour < 21) {
+                greetingEl.textContent = 'مساء النور';
+            } else {
+                greetingEl.textContent = 'مساء الخير';
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TEMPLATES
+        // ═══════════════════════════════════════════════════════════════
+        function toggleTemplate(card) {
+            card.classList.toggle('expanded');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // SETTINGS MODAL
+        // ═══════════════════════════════════════════════════════════════
+        function openSettings() {
+            document.getElementById('settings-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSettings(event) {
+            if (!event || event.target === event.currentTarget) {
+                document.getElementById('settings-modal').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+
+        function toggleSwitch(el) {
+            el.classList.toggle('active');
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // WHATSAPP & SUCCESS
+        // ═══════════════════════════════════════════════════════════════
+        function sendWhatsApp() {
+            const overlay = document.getElementById('success-overlay');
+            overlay.classList.add('active');
+            
+            // Reset animations
+            const icon = overlay.querySelector('.success-icon');
+            const check = overlay.querySelector('.checkmark');
+            const text = overlay.querySelector('.success-text');
+            
+            icon.style.animation = 'none';
+            check.style.animation = 'none';
+            text.style.animation = 'none';
+            
+            // Force reflow
+            void icon.offsetWidth;
+            
+            icon.style.animation = '';
+            check.style.animation = '';
+            text.style.animation = '';
+            
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 2000);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // TOAST
+        // ═══════════════════════════════════════════════════════════════
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const text = document.getElementById('toast-text');
+            text.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2500);
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // NAV ACTIVE STATE
+        // ═══════════════════════════════════════════════════════════════
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // KEYBOARD SHORTCUTS
+        // ═══════════════════════════════════════════════════════════════
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeSettings();
+            }
+        });
+    </script>
+</body>
+</html>
