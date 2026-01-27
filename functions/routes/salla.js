@@ -44,7 +44,7 @@ router.get('/install', (req, res) => {
 router.get('/callback', async (req, res) => {
     const { code, error } = req.query;
     if (error || !code) {
-        return res.redirect(`/onboarding.html?error=${encodeURIComponent(error || 'لم يتم استلام رمز التفويض')}`);
+        return res.redirect(`/setup.html?error=${encodeURIComponent(error || 'لم يتم استلام رمز التفويض')}`);
     }
     try {
         const tokenRes = await fetch(sallaApp.SALLA_TOKEN_URL, {
@@ -73,11 +73,11 @@ router.get('/callback', async (req, res) => {
               .catch(e => console.error(`[Salla] ❌ Welcome email failed:`, e.message));
         }
         
-        // Redirect to onboarding with success
-        res.redirect(`/onboarding.html?connected=salla&merchant=${merchantId}`);
+        // Redirect to setup page for WhatsApp connection
+        res.redirect(`/setup.html?connected=salla&merchant=${merchantId}`);
     } catch (e) { 
-        // Redirect to onboarding with error
-        res.redirect(`/onboarding.html?error=${encodeURIComponent(e.message)}`);
+        // Redirect to setup with error
+        res.redirect(`/setup.html?error=${encodeURIComponent(e.message)}`);
     }
 });
 

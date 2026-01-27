@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH | إعداد واتساب</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --card: #1c1c1e;
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text: #ffffff;
+            --text-secondary: #8e8e93;
+            --green: #30d158;
+            --green-dim: rgba(48, 209, 88, 0.15);
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+        }
+
+        /* Step indicator */
+        .steps {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            background: var(--green);
+            color: #000;
+        }
+
+        .step.done {
+            background: var(--green);
+            color: #000;
+        }
+
+        .step.pending {
+            background: var(--card);
+            color: var(--text-secondary);
+            border: 1px solid var(--card-border);
+        }
+
+        .step-line {
+            width: 40px;
+            height: 2px;
+            background: var(--card);
+            border-radius: 1px;
+        }
+
+        .step-line.done {
+            background: var(--green);
+        }
+
+        /* Card */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 32px 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        /* QR Container */
+        .qr-container {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .qr-area {
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .qr-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .qr-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e5e5e5;
+            border-top-color: var(--green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .qr-loading span {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Status */
+        .status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status.waiting .status-dot {
+            background: #ff9f0a;
+        }
+
+        .status.connected .status-dot {
+            background: var(--green);
+        }
+
+        .status.error .status-dot {
+            background: #ff453a;
+        }
+
+        /* Instructions */
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            text-align: right;
+        }
+
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .instruction-num {
+            width: 24px;
+            height: 24px;
+            background: var(--green-dim);
+            color: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 16px 24px;
+            background: var(--green);
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(48, 209, 88, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 15px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            font-family: inherit;
+            margin-top: 12px;
+        }
+
+        .btn-secondary:hover {
+            color: var(--text);
+        }
+
+        /* Success State */
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--green-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 40px;
+        }
+
+        /* Error State */
+        .error-box {
+            background: rgba(255, 69, 58, 0.1);
+            border: 1px solid rgba(255, 69, 58, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .error-box p {
+            color: #ff453a;
+            font-size: 14px;
+        }
+
+        /* Hidden states */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Connection animation */
+        @keyframes checkmark {
+            0% { stroke-dashoffset: 50; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .checkmark {
+            stroke-dasharray: 50;
+            stroke-dashoffset: 50;
+            animation: checkmark 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="logo">RIBH</div>
+        <p class="subtitle">ربط واتساب الأعمال</p>
+
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step done" id="step1">✓</div>
+            <div class="step-line done"></div>
+            <div class="step active" id="step2">2</div>
+            <div class="step-line" id="line2"></div>
+            <div class="step pending" id="step3">3</div>
+        </div>
+
+        <!-- Main Card - QR Scan -->
+        <div class="card" id="qrCard">
+            <h1 class="card-title">امسح رمز QR</h1>
+            <p class="card-desc">افتح واتساب على هاتفك وامسح الرمز لربط رقمك</p>
+
+            <div class="qr-container">
+                <div class="qr-area" id="qrArea">
+                    <div class="qr-loading">
+                        <div class="spinner"></div>
+                        <span>جاري التحميل...</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="status waiting" id="status">
+                <div class="status-dot"></div>
+                <span id="statusText">في انتظار المسح...</span>
+            </div>
+
+            <div class="instructions">
+                <div class="instruction-step">
+                    <span class="instruction-num">1</span>
+                    <span>افتح واتساب على هاتفك</span>
+                </div>
+                <div class="instruction-step">
+                    <span class="instruction-num">2</span>
+                    <span>اذهب إلى الإعدادات ← الأجهزة المرتبطة</span>
+                </div>
+                <div class="instruction-step">
+                    <span class="instruction-num">3</span>
+                    <span>اضغط "ربط جهاز" وامسح الرمز</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Card (hidden initially) -->
+        <div class="card hidden" id="successCard">
+            <div class="success-icon">✓</div>
+            <h1 class="card-title">تم الربط بنجاح!</h1>
+            <p class="card-desc">واتساب جاهز لإرسال رسائل استرداد السلات تلقائياً</p>
+        </div>
+
+        <!-- Error Box (hidden initially) -->
+        <div class="error-box hidden" id="errorBox">
+            <p id="errorText">حدث خطأ. يرجى المحاولة مرة أخرى.</p>
+        </div>
+
+        <!-- Buttons -->
+        <button class="btn-primary" id="continueBtn" onclick="goToDashboard()">
+            المتابعة إلى لوحة التحكم ←
+        </button>
+        
+        <button class="btn-secondary" id="skipBtn" onclick="skipWhatsApp()">
+            تخطي الآن (يمكنك الربط لاحقاً)
+        </button>
+    </div>
+
+    <script>
+        // Get store ID from URL
+        const params = new URLSearchParams(window.location.search);
+        const storeId = params.get('merchant') || params.get('store') || params.get('storeId') || 'demo';
+        const connected = params.get('connected');
+        const error = params.get('error');
+
+        // WhatsApp service URL
+        const WA_SERVICE = 'https://ribh-whatsapp-1.onrender.com';
+
+        // State
+        let isConnected = false;
+        let pollInterval = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show error if present
+            if (error) {
+                showError(decodeURIComponent(error));
+            }
+
+            // Load QR
+            loadQR();
+        });
+
+        // Load QR code
+        async function loadQR() {
+            const qrArea = document.getElementById('qrArea');
+            
+            try {
+                // First check if already connected
+                const statusRes = await fetch(`${WA_SERVICE}/status/${storeId}`);
+                const statusData = await statusRes.json();
+                
+                if (statusData.connected) {
+                    showConnected();
+                    return;
+                }
+
+                // Load QR image
+                qrArea.innerHTML = `<img src="${WA_SERVICE}/qr/${storeId}" alt="QR Code" onload="qrLoaded()" onerror="qrError()">`;
+                
+                // Start polling for connection status
+                startPolling();
+                
+            } catch (e) {
+                console.error('QR load error:', e);
+                qrArea.innerHTML = `
+                    <div class="qr-loading">
+                        <span style="color: #ff453a;">⚠️ خطأ في التحميل</span>
+                        <button onclick="loadQR()" style="background: var(--green); color: #000; border: none; padding: 8px 16px; border-radius: 8px; margin-top: 8px; cursor: pointer;">إعادة المحاولة</button>
+                    </div>
+                `;
+            }
+        }
+
+        function qrLoaded() {
+            updateStatus('waiting', 'في انتظار المسح...');
+        }
+
+        function qrError() {
+            const qrArea = document.getElementById('qrArea');
+            qrArea.innerHTML = `
+                <div class="qr-loading">
+                    <span style="color: #666;">جاري تجهيز الاتصال...</span>
+                    <div class="spinner"></div>
+                </div>
+            `;
+            
+            // Retry after 3 seconds
+            setTimeout(loadQR, 3000);
+        }
+
+        // Poll for connection status
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            
+            pollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(`${WA_SERVICE}/status/${storeId}`);
+                    const data = await res.json();
+                    
+                    if (data.connected) {
+                        showConnected();
+                    }
+                } catch (e) {
+                    console.error('Status poll error:', e);
+                }
+            }, 2000); // Check every 2 seconds
+        }
+
+        // Show connected state
+        function showConnected() {
+            isConnected = true;
+            
+            // Stop polling
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+
+            // Update UI
+            document.getElementById('qrCard').classList.add('hidden');
+            document.getElementById('successCard').classList.remove('hidden');
+            document.getElementById('skipBtn').classList.add('hidden');
+            
+            // Update steps
+            document.getElementById('step2').innerHTML = '✓';
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step2').classList.add('done');
+            document.getElementById('line2').classList.add('done');
+            document.getElementById('step3').classList.remove('pending');
+            document.getElementById('step3').classList.add('active');
+
+            updateStatus('connected', 'تم الربط بنجاح');
+        }
+
+        // Update status display
+        function updateStatus(state, text) {
+            const status = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            
+            status.className = 'status ' + state;
+            statusText.textContent = text;
+        }
+
+        // Show error
+        function showError(message) {
+            const errorBox = document.getElementById('errorBox');
+            const errorText = document.getElementById('errorText');
+            
+            errorText.textContent = message;
+            errorBox.classList.remove('hidden');
+        }
+
+        // Go to dashboard
+        function goToDashboard() {
+            // Store connection status
+            if (isConnected) {
+                localStorage.setItem('ribh_wa_connected', 'true');
+                localStorage.setItem('ribh_store_id', storeId);
+            }
+            
+            window.location.href = `/index.html?merchant=${storeId}`;
+        }
+
+        // Skip WhatsApp setup
+        function skipWhatsApp() {
+            localStorage.setItem('ribh_wa_skipped', 'true');
+            localStorage.setItem('ribh_store_id', storeId);
+            
+            window.location.href = `/index.html?merchant=${storeId}&wa_pending=true`;
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -801,9 +801,9 @@
                 const response = await fetch(`${WHATSAPP_API_BASE}/qr/${storeId}`);
                 const data = await response.json();
                 
-                if (data.qr) {
+                if (data.qr || data.qrCode) {
                     // Show the real QR code
-                    qrImage.src = data.qr;
+                    qrImage.src = data.qr || data.qrCode;
                     qrImage.style.display = 'block';
                     placeholder.style.display = 'none';
                 } else if (data.status === 'connected') {

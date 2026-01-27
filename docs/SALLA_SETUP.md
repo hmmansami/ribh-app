@@ -1,293 +1,238 @@
-# Salla Store Integration Guide for RIBH
+# Salla Partner Dashboard Configuration Guide
 
-## Overview
-
-This guide explains how to connect a Salla store to RIBH for abandoned cart recovery.
-
-## Prerequisites
-
-1. A Salla store (merchant account)
-2. Firebase project deployed (`ribh-484706`)
-3. RIBH app registered in Salla Partner Portal
-
-## Current Status
-
-| Component | Status | Details |
-|-----------|--------|---------|
-| Salla App | ✅ Registered | Client ID: `476e7ed1-796c-4731-b145-73a13d0019de` |
-| Webhook Handler | ✅ Ready | `/webhooks/salla/cart` |
-| Firebase Deploy | ⚠️ Required | Functions need deployment |
+**App Name:** RIBH (رِبح)  
+**App Client ID:** `476e7ed1-796c-4731-b145-73a13d0019de`  
+**API Base URL:** `https://europe-west1-ribh-484706.cloudfunctions.net/api`
 
 ---
 
-## Step 1: Deploy Firebase Functions
+## 📋 Quick Checklist
 
-Before connecting stores, deploy the Firebase Functions:
+- [ ] Authentication Mode: **Easy Mode**
+- [ ] Callback URL configured
+- [ ] Webhook URL configured  
+- [ ] Webhook events subscribed
+- [ ] Scopes selected
+- [ ] Webhook secret set (optional but recommended)
 
-```bash
-cd /home/ubuntu/clawd/ribh-app
-firebase deploy --only functions
+---
+
+## 1️⃣ Authentication Mode
+
+**Select: Easy Mode (الوضع السهل)**
+
+RIBH uses **Easy Mode** authentication. In this mode:
+- Salla sends access tokens directly via the `app.store.authorize` webhook
+- No manual OAuth flow needed for basic operations
+- Tokens are automatically managed and refreshed
+
+> **Why Easy Mode?** Simpler integration, tokens arrive via webhook, less code to maintain.
+
+---
+
+## 2️⃣ URLs Configuration
+
+### OAuth Callback URL
+```
+https://europe-west1-ribh-484706.cloudfunctions.net/api/oauth/callback
 ```
 
-After deployment, verify the API is accessible:
-```bash
-curl https://europe-west1-ribh-484706.cloudfunctions.net/api/health
+### Webhook URL (Primary)
+```
+https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla
 ```
 
-### Fix 403 Errors (Make Function Public)
+### Alternative Webhook URLs (all work)
+```
+https://europe-west1-ribh-484706.cloudfunctions.net/api/api/webhooks/salla
+https://europe-west1-ribh-484706.cloudfunctions.net/api/webhook
+```
 
-If you get 403, the function needs public access:
-
-```bash
-# Option 1: Via gcloud
-gcloud functions add-iam-policy-binding api \
-  --member="allUsers" \
-  --role="roles/cloudfunctions.invoker" \
-  --project=ribh-484706 \
-  --region=europe-west1
-
-# Option 2: Via Firebase Console
-# Go to: Google Cloud Console > Cloud Functions > api > Permissions
-# Add principal: allUsers
-# Role: Cloud Functions Invoker
+### Abandoned Cart Webhook (Optional - Dedicated)
+```
+https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla/cart
 ```
 
 ---
 
-## Step 2: Configure Salla Partner Dashboard
+## 3️⃣ Webhook Events to Subscribe
 
-### 2.1 Login to Salla Partners
+Subscribe to **ALL** of these events in Salla Partner Dashboard:
 
-Go to: https://salla.partners/
+### 🛒 Cart & Checkout Events (CRITICAL for cart recovery)
+| Event | Purpose |
+|-------|---------|
+| `cart.abandoned` | Triggers cart recovery sequence |
+| `abandoned_cart.created` | Alternative cart abandonment event |
+| `abandoned.cart` | Alternative cart abandonment event |
+| `checkout.abandoned` | Checkout abandonment |
+| `checkout.started` | Track checkout initiation |
+| `checkout.created` | Track checkout creation |
 
-Login with your Salla developer account.
+### 📦 Order Events (CRITICAL to stop recovery when customer buys)
+| Event | Purpose |
+|-------|---------|
+| `order.created` | Cancel recovery sequence, track conversion |
+| `order.updated` | Track order status changes |
+| `order.status.updated` | Delivery tracking, analytics |
 
-### 2.2 Find/Create Your App
+### 👤 Customer Events
+| Event | Purpose |
+|-------|---------|
+| `customer.created` | Welcome sequence, customer profiling |
 
-Navigate to **Apps** → Select your app (RIBH)
-
-### 2.3 Configure Webhooks
-
-In your app settings, go to **Webhooks** tab and add:
-
-| Event | URL |
-|-------|-----|
-| `abandoned.cart` | `https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla/cart` |
-
-**Webhook Settings:**
-- **Secret Key**: Generate a secure secret and save it
-- Set the secret as `SALLA_WEBHOOK_SECRET` in Firebase config:
-
-```bash
-firebase functions:config:set salla.webhook_secret="YOUR_WEBHOOK_SECRET"
-firebase deploy --only functions
-```
-
-### 2.4 Set OAuth Callback URL
-
-In **OAuth Settings**, set:
-- **Callback URL**: `https://ribh.click/oauth/callback`
-
----
-
-## Step 3: Install App on Store
-
-### For Store Owner (Hmman)
-
-1. Go to Salla App Store or the direct install URL:
-   ```
-   https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de
-   ```
-
-2. Click **Install** and authorize the permissions
-
-3. You'll be redirected to RIBH dashboard with a login token
-
-4. Done! Abandoned carts will now flow to RIBH.
+### 🔧 App Lifecycle Events (REQUIRED)
+| Event | Purpose |
+|-------|---------|
+| `app.installed` | Store setup on install |
+| `app.store.authorize` | **Receive access tokens** (Easy Mode) |
+| `app.uninstalled` | Cleanup on uninstall |
 
 ---
 
-## Step 4: Test the Integration
+## 4️⃣ Required Scopes
 
-### 4.1 Quick Webhook Test
+Select these scopes in the Partner Dashboard:
 
-Run the test script:
+### Essential Scopes
+| Scope | Why Needed |
+|-------|------------|
+| `offline_access` | Refresh tokens for long-term access |
+| `orders.read` | Read order data for conversion tracking |
+| `customers.read` | Read customer info for personalization |
+| `products.read` | Read product info for cart recovery messages |
 
-```bash
-bash /home/ubuntu/clawd/ribh-app/scripts/test-salla-webhook.sh
+### Recommended Additional Scopes
+| Scope | Why Needed |
+|-------|------------|
+| `carts.read` | Access abandoned cart details |
+| `checkouts.read` | Access checkout information |
+| `settings.read` | Read store settings |
+| `store.read` | Read store information |
+
+### Scope String (for reference)
+```
+offline_access orders.read customers.read products.read carts.read checkouts.read
 ```
 
-Or use curl directly:
+---
+
+## 5️⃣ Webhook Security (Recommended)
+
+### Webhook Secret
+Set a webhook secret in Salla Partner Dashboard and add it to your environment:
 
 ```bash
-curl -X POST "https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla/cart" \
-  -H "Content-Type: application/json" \
-  -H "X-Salla-Signature: test" \
-  -d '{
-    "event": "abandoned.cart",
-    "merchant": 12345678,
-    "data": {
-      "id": "test_cart_001",
-      "customer": {
-        "name": "محمد أحمد",
-        "mobile": "+966501234567",
-        "email": "test@example.com"
-      },
-      "items": [
-        {"name": "منتج تجريبي", "quantity": 1, "price": {"amount": 100}}
-      ],
-      "total": {"amount": 100, "currency": "SAR"},
-      "checkout_url": "https://store.salla.sa/checkout/test"
-    }
-  }'
+# Add to your .env or Firebase config
+SALLA_WEBHOOK_SECRET=your-webhook-secret-here
 ```
 
-**Expected Response:**
+The app verifies the `x-salla-signature` header using HMAC-SHA256.
+
+> **Note:** If no secret is configured, signature verification is skipped (development mode).
+
+---
+
+## 6️⃣ Environment Variables
+
+Ensure these are set in your deployment:
+
+```bash
+# Required
+SALLA_CLIENT_ID=476e7ed1-796c-4731-b145-73a13d0019de
+SALLA_CLIENT_SECRET=c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe
+
+# Recommended
+SALLA_WEBHOOK_SECRET=your-webhook-secret-here
+```
+
+---
+
+## 7️⃣ Testing the Integration
+
+### Test Webhook URL Validation
+Salla validates webhook URLs by sending a GET request. Test it:
+```bash
+curl https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla
+```
+
+Expected response:
 ```json
 {
   "success": true,
-  "message": "Abandoned cart saved",
-  "cartId": "test_cart_001",
-  "storeId": "12345678",
-  "total": 100,
-  "itemCount": 1
+  "message": "رِبح Webhook endpoint is ready",
+  "app": "ribh",
+  "version": "1.0.0",
+  "status": "active"
 }
 ```
 
-### 4.2 Verify in Firestore
-
-Check Firebase Console → Firestore → `abandoned_carts` collection
-
-You should see a document with ID: `12345678_test_cart_001`
+### Test OAuth Callback
+Visit this URL (you'll be redirected to Salla login):
+```
+https://europe-west1-ribh-484706.cloudfunctions.net/api/salla/install
+```
 
 ---
 
-## Webhook Endpoint Reference
+## 8️⃣ Firestore Collections
 
-### URL
-```
-POST https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla/cart
-```
+The app stores data in these Firestore collections:
 
-### Headers
-| Header | Description |
-|--------|-------------|
-| `Content-Type` | `application/json` |
-| `X-Salla-Signature` | HMAC-SHA256 signature (if secret configured) |
-
-### Payload Structure
-
-Salla sends this format for `abandoned.cart` events:
-
-```json
-{
-  "event": "abandoned.cart",
-  "merchant": 12345678,
-  "created_at": "2025-01-27T12:00:00Z",
-  "data": {
-    "id": "cart_123",
-    "customer": {
-      "id": 987654,
-      "name": "محمد أحمد",
-      "email": "customer@example.com",
-      "mobile": "+966501234567"
-    },
-    "items": [
-      {
-        "id": "prod_001",
-        "name": "Product Name",
-        "quantity": 2,
-        "price": {
-          "amount": 150,
-          "currency": "SAR"
-        }
-      }
-    ],
-    "total": {
-      "amount": 300,
-      "currency": "SAR"
-    },
-    "checkout_url": "https://store.salla.sa/checkout/abc123",
-    "age_in_minutes": 30,
-    "status": "abandoned"
-  }
-}
-```
-
-### Responses
-
-| Status | Meaning |
-|--------|---------|
-| 200 | Webhook received and processed |
-| 400 | Missing required fields |
-| 401 | Invalid signature (if secret configured) |
-| 500 | Server error |
+| Collection | Purpose |
+|------------|---------|
+| `salla_merchants` | OAuth tokens, merchant status |
+| `merchants` | Merchant profile data |
+| `carts` | Abandoned cart data |
+| `logs` | Webhook event logs |
 
 ---
 
-## Troubleshooting
+## 9️⃣ How Events Flow
 
-### Webhook not receiving data?
-
-1. **Check Salla Partner Dashboard** - Verify webhook URL is correct
-2. **Check Cloud Function logs**:
-   ```bash
-   firebase functions:log --only api
-   ```
-3. **Verify function is deployed**:
-   ```bash
-   curl https://europe-west1-ribh-484706.cloudfunctions.net/api/health
-   ```
-
-### 403 Forbidden Error?
-
-The Cloud Function needs public invoker permissions:
-```bash
-gcloud functions add-iam-policy-binding api \
-  --member="allUsers" \
-  --role="roles/cloudfunctions.invoker" \
-  --project=ribh-484706 \
-  --region=europe-west1
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    SALLA PARTNER APP                         │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│  1. Store installs app → app.installed webhook              │
+│  2. Salla sends tokens → app.store.authorize webhook        │
+│  3. Customer abandons cart → cart.abandoned webhook         │
+│  4. RIBH sends recovery messages                            │
+│  5. Customer purchases → order.created webhook              │
+│  6. RIBH stops recovery, tracks conversion                  │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Signature validation failing?
+---
 
-Ensure `SALLA_WEBHOOK_SECRET` matches exactly what's in Salla Partner Dashboard:
-```bash
-firebase functions:config:get salla.webhook_secret
-```
+## 🔧 Troubleshooting
 
-### Customer phone not normalized?
+### "رابط غير صحيح" (Invalid URL) Error
+- Ensure the webhook URL responds to GET requests with 200 OK
+- Test: `curl https://europe-west1-ribh-484706.cloudfunctions.net/api/webhooks/salla`
 
-The handler normalizes Saudi phones to `+966` format. Supported inputs:
-- `0501234567` → `+966501234567`
-- `501234567` → `+966501234567`
-- `966501234567` → `+966501234567`
-- `+966501234567` → `+966501234567`
+### Tokens Not Arriving
+- Ensure `app.store.authorize` event is subscribed
+- Check Easy Mode is selected (not Custom Mode)
+
+### Signature Verification Failing
+- Ensure `SALLA_WEBHOOK_SECRET` matches the secret in Partner Dashboard
+- Check payload is not being modified by middleware
+
+### Missing Cart Data
+- Ensure `cart.abandoned` and `abandoned_cart.created` events are subscribed
+- Check `carts.read` scope is enabled
 
 ---
 
-## Files Reference
+## 📞 Support
 
-| File | Purpose |
-|------|---------|
-| `/functions/webhooks/sallaCart.js` | Abandoned cart webhook handler |
-| `/functions/lib/sallaWebhooks.js` | General Salla webhooks library |
-| `/scripts/test-salla-webhook.sh` | Test script for webhook |
+- **Salla Partner Docs:** https://docs.salla.dev
+- **RIBH Support:** [Your support contact]
 
 ---
 
-## Next Steps After Connection
-
-1. **Configure WhatsApp** - Connect merchant's WhatsApp for recovery messages
-2. **Set Recovery Sequences** - Configure timing (1h, 6h, 24h reminders)
-3. **Enable AI Messages** - Turn on personalized message generation
-4. **Monitor Analytics** - Track recovery rates in dashboard
-
----
-
-## Support
-
-- **Salla Partner Docs**: https://docs.salla.dev/
-- **Firebase Console**: https://console.firebase.google.com/project/ribh-484706
-- **RIBH Dashboard**: https://ribh.click/
+*Last Updated: June 2025*

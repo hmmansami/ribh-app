@@ -34,8 +34,13 @@ async function sendEmail({ to, subject, html, text }) {
   }
 }
 
-async function sendWelcomeEmail({ to, merchantName, storeName }) {
-  const subject = 'مرحباً بك في رِبح! 🎉';
+async function sendWelcomeEmail({ to, merchantName, storeName, merchantId, dashboardUrl }) {
+  const subject = 'مرحباً بك في رِبح! 🎉 - أكمل الإعداد';
+  
+  // Use provided URLs or defaults with merchant ID
+  const baseUrl = process.env.APP_URL || 'https://ribh.click';
+  const setupLink = `${baseUrl}/setup.html?merchant=${merchantId || 'new'}`;
+  const dashLink = dashboardUrl || `${baseUrl}/index.html?merchant=${merchantId || 'new'}`;
   
   const html = `
 <!DOCTYPE html>
@@ -46,14 +51,29 @@ async function sendWelcomeEmail({ to, merchantName, storeName }) {
     <h1 style="color: #10B981; margin: 0;">مرحباً ${merchantName || 'بك'}! 🎉</h1>
     <p style="font-size: 18px; color: #333;">تم تفعيل رِبح على متجرك <strong>${storeName || ''}</strong> بنجاح!</p>
     
-    <h2 style="color: #333;">الخطوة التالية:</h2>
-    <p style="font-size: 16px; color: #666;">اربط الواتساب لبدء استرجاع السلات المتروكة تلقائياً</p>
+    <div style="background: #F0FDF4; border-radius: 8px; padding: 20px; margin: 20px 0;">
+      <h2 style="color: #10B981; margin: 0 0 10px 0;">📱 الخطوة التالية: ربط واتساب</h2>
+      <p style="margin: 0 0 15px 0; color: #666;">اربط واتساب لإرسال رسائل استرداد السلات تلقائياً</p>
+      <a href="${setupLink}" 
+         style="display: inline-block; background: #10B981; color: white; padding: 15px 30px; 
+                border-radius: 8px; text-decoration: none; font-size: 18px;">
+        أكمل الإعداد ← (دقيقة واحدة)
+      </a>
+    </div>
     
-    <a href="https://ribh-app.onrender.com/onboarding-v2.html" 
-       style="display: inline-block; background: #10B981; color: white; padding: 15px 30px; 
-              border-radius: 8px; text-decoration: none; font-size: 18px; margin: 20px 0;">
-      ربط الواتساب الآن ←
-    </a>
+    <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; margin: 20px 0;">
+      <p style="margin: 0; font-size: 14px; color: #666;">
+        📊 <a href="${dashLink}" style="color: #10B981;">الدخول إلى لوحة التحكم مباشرة</a>
+      </p>
+    </div>
+    
+    <h2 style="color: #333;">✨ ماذا ستحصل عليه:</h2>
+    <ul style="font-size: 16px; color: #666; line-height: 2;">
+      <li>🛒 استرداد 30% من السلات المتروكة</li>
+      <li>📱 رسائل واتساب ذكية تلقائية</li>
+      <li>📈 تقارير وإحصائيات مفصلة</li>
+      <li>💰 زيادة المبيعات بدون جهد إضافي</li>
+    </ul>
     
     <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
     <p style="color: #888; font-size: 14px;">
@@ -64,7 +84,16 @@ async function sendWelcomeEmail({ to, merchantName, storeName }) {
 </body>
 </html>`;
 
-  const text = `مرحباً ${merchantName}! تم تفعيل رِبح على متجرك ${storeName}. الخطوة التالية: اربط الواتساب.`;
+  const text = `مرحباً ${merchantName}! تم تفعيل رِبح على متجرك ${storeName} بنجاح!
+
+📊 لوحة التحكم الخاصة بك: ${dashLink}
+
+✨ ما يمكنك فعله:
+- استرداد السلات المتروكة تلقائياً
+- ربط الواتساب لإرسال رسائل ذكية
+- متابعة الإحصائيات والأرباح
+
+للمساعدة: واتساب 966579353338`;
   
   return sendEmail({ to, subject, html, text });
 }

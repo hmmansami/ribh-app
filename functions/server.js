@@ -1456,7 +1456,7 @@ app.get('/oauth/callback', async (req, res) => {
                 code: code,
                 client_id: config.SALLA_CLIENT_ID,
                 client_secret: config.SALLA_CLIENT_SECRET,
-                redirect_uri: 'https://ribh.click/oauth/callback'
+                redirect_uri: 'https://europe-west1-ribh-484706.cloudfunctions.net/api/oauth/callback'
             })
         });
 
@@ -1679,9 +1679,10 @@ app.get('/app', async (req, res) => {
     // Since merchant is already logged into Salla, this is seamless
     console.log('🔐 No auth found, triggering Salla OAuth...');
 
+    const callbackUrl = 'https://europe-west1-ribh-484706.cloudfunctions.net/api/oauth/callback';
     const oauthUrl = `https://accounts.salla.sa/oauth2/auth?` +
         `client_id=${config.SALLA_CLIENT_ID}` +
-        `&redirect_uri=${encodeURIComponent('https://ribh.click/oauth/callback')}` +
+        `&redirect_uri=${encodeURIComponent(callbackUrl)}` +
         `&response_type=code` +
         `&scope=offline_access`;
 
@@ -2051,13 +2052,18 @@ async function handleSallaWebhook(req, res) {
                 handleCustomerCreated(event.data, event.merchant);
                 break;
 
-            case 'app.installed':
             case 'app.store.authorize':
-                handleAppInstalled(event.data, event.merchant);
+                // OAuth tokens received - save them!
+                await handleAppAuthorize(event.data, event.merchant);
+                break;
+                
+            case 'app.installed':
+                // App installation confirmed
+                await handleAppInstalled(event.data, event.merchant);
                 break;
 
             case 'app.uninstalled':
-                handleAppUninstalled(event.merchant);
+                await handleAppUninstalled(event.merchant);
                 break;
 
             default:
@@ -2279,14 +2285,25 @@ function getTelegramChatId(phone) {
 }
 
 // Handle app uninstalled
-function handleAppUninstalled(merchant) {
+async function handleAppUninstalled(merchant) {
     console.log('👋 App uninstalled by:', merchant);
-    const stores = readDB(STORES_FILE);
-    const storeIndex = stores.findIndex(s => s.merchant === merchant);
+    
+    // Call sallaApp handler for proper token management
+    if (sallaApp) {
+        try {
+            await sallaApp.handleUninstalled(String(merchant));
+        } catch (e) {
+            console.error('❌ sallaApp.handleUninstalled error:', e.message);
+        }
+    }
+    
+    const stores = await readDB(STORES_FILE);
+    const storeIndex = stores.findIndex(s => s.merchant === merchant || String(s.merchant) === String(merchant));
     if (storeIndex !== -1) {
         stores[storeIndex].active = false;
         stores[storeIndex].uninstalledAt = new Date().toISOString();
-        writeDB(STORES_FILE, stores);
+        await writeDB(STORES_FILE, stores);
+        console.log(`✅ Store ${merchant} marked as uninstalled in stores collection`);
     }
 }
 
@@ -2809,69 +2826,119 @@ async function sendWelcomeEmail(customer, merchant) {
     return false;
 }
 
-// Handle app installed
-function handleAppInstalled(data, merchant) {
-    console.log('🎊 App installed by:', merchant);
+// Handle app.store.authorize - OAuth tokens from Salla
+async function handleAppAuthorize(data, merchant) {
+    const merchantId = String(merchant?.id || merchant);
+    console.log('🔐 App authorized (tokens received) for:', merchantId);
+    console.log('📦 Token data keys:', Object.keys(data || {}));
+    
+    // Save tokens via sallaApp module (to salla_merchants collection)
+    if (sallaApp && data?.access_token) {
+        try {
+            await sallaApp.handleAuthorize(merchantId, data);
+            console.log(`✅ Tokens saved to salla_merchants/${merchantId}`);
+        } catch (e) {
+            console.error('❌ sallaApp.handleAuthorize error:', e.message);
+        }
+    }
+    
+    // Also save/update in stores collection for dashboard access
+    const stores = await readDB(STORES_FILE);
+    let existingStore = stores.find(s => 
+        String(s.merchant) === merchantId || s.merchant === merchantId
+    );
+    
+    if (existingStore) {
+        // Update existing store with new tokens
+        existingStore.accessToken = data.access_token;
+        existingStore.refreshToken = data.refresh_token;
+        existingStore.tokenUpdatedAt = new Date().toISOString();
+        await writeDB(STORES_FILE, stores);
+        console.log(`✅ Tokens updated in stores collection for ${merchantId}`);
+    } else {
+        // Create new store entry with tokens
+        const token = generateToken();
+        const newStore = {
+            merchant: merchantId,
+            token,
+            ribhToken: token,
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token,
+            installedAt: new Date().toISOString(),
+            active: true,
+            settings: {
+                cartRecoveryEnabled: true,
+                enableEmail: true,
+                enableWhatsApp: true,
+                enableTelegram: true,
+                smartOffersEnabled: true,
+                language: 'ar'
+            },
+            stats: {
+                cartsReceived: 0,
+                cartsRecovered: 0,
+                revenueRecovered: 0,
+                messagesSent: 0
+            }
+        };
+        stores.push(newStore);
+        await writeDB(STORES_FILE, stores);
+        console.log(`✅ New store created in stores collection: ${merchantId}`);
+    }
+}
 
-    const stores = readDB(STORES_FILE);
-    const existingStore = stores.find(s => s.merchant === merchant);
+// Handle app.installed - App installation confirmation
+async function handleAppInstalled(data, merchant) {
+    const merchantId = String(merchant?.id || merchant);
+    console.log('🎊 App installed by:', merchantId);
+    console.log('📦 Install data keys:', Object.keys(data || {}));
+    
+    // Call sallaApp handler
+    if (sallaApp) {
+        try {
+            await sallaApp.handleInstalled(merchantId, data);
+        } catch (e) {
+            console.error('❌ sallaApp.handleInstalled error:', e.message);
+        }
+    }
+
+    const stores = await readDB(STORES_FILE);
+    const existingStore = stores.find(s => 
+        String(s.merchant) === merchantId || s.merchant === merchantId
+    );
 
     if (!existingStore) {
         // Generate token and extract info from Salla data
         const token = generateToken();
         const email = data?.owner?.email || data?.email || data?.store?.email || '';
-        const storeName = data?.store?.name || data?.name || 'متجر';
+        const storeName = data?.store?.name || data?.name || data?.app_name || 'متجر';
 
-        // ============================================
         // 🚀 ONE-CLICK ACTIVATION - AUTO-ENABLE EVERYTHING!
-        // ============================================
-        // Smart defaults that work out of the box
         stores.push({
-            merchant,
+            merchant: merchantId,
             token,
-            ribhToken: token, // For dashboard login
+            ribhToken: token,
             email,
             merchantName: storeName,
             installedAt: new Date().toISOString(),
             active: true,
-            // ====== AUTO-ENABLED FEATURES ======
             settings: {
-                // 🛒 Cart Recovery (CORE VALUE)
                 cartRecoveryEnabled: true,
-                cartRecoverySequence: 'smart', // AI-optimized timing
-
-                // 📧 Email (FREE - always on)
+                cartRecoverySequence: 'smart',
                 enableEmail: true,
-                emailStyle: 'friendly', // or 'urgent'
-
-                // 📱 WhatsApp (when configured)
-                enableWhatsApp: true, // Will work when META_WHATSAPP_TOKEN is set
-
-                // 🔔 Telegram (when configured)
+                emailStyle: 'friendly',
+                enableWhatsApp: true,
                 enableTelegram: true,
-
-                // 💰 Smart Offers (AI-powered)
                 smartOffersEnabled: true,
-                maxDiscount: 15, // Max auto-discount percentage
-
-                // 🎁 Upsell/Cross-sell
+                maxDiscount: 15,
                 upsellEnabled: true,
-
-                // 💳 Payment Plans (Tamara/Tabby)
                 paymentPlansEnabled: true,
-                paymentPlanThreshold: 500, // Offer تقسيط above 500 SAR
-
-                // 🔄 Customer Reactivation
+                paymentPlanThreshold: 500,
                 reactivationEnabled: true,
-                reactivationDays: 30, // Remind after 30 days inactive
-
-                // 📊 AI Learning
+                reactivationDays: 30,
                 aiLearningEnabled: true,
-
-                // Language
                 language: 'ar'
             },
-            // Track initial stats
             stats: {
                 cartsReceived: 0,
                 cartsRecovered: 0,
@@ -2880,16 +2947,122 @@ function handleAppInstalled(data, merchant) {
             },
             data
         });
-        writeDB(STORES_FILE, stores);
-        console.log(`🚀 ONE-CLICK ACTIVATION: Store ${storeName} (${merchant}) installed with ALL features enabled!`);
-        console.log(`   ✅ Cart Recovery: ON`);
-        console.log(`   ✅ Smart Offers: ON`);
-        console.log(`   ✅ Email: ON`);
-        console.log(`   ✅ WhatsApp: READY`);
-        console.log(`   ✅ Payment Plans: ON`);
-        console.log(`   ✅ AI Learning: ON`);
+        await writeDB(STORES_FILE, stores);
+        console.log(`🚀 ONE-CLICK ACTIVATION: Store ${storeName} (${merchantId}) installed!`);
+    } else {
+        // Update existing store with install data
+        existingStore.merchantName = data?.store?.name || data?.name || existingStore.merchantName;
+        existingStore.email = data?.owner?.email || data?.email || existingStore.email;
+        existingStore.active = true;
+        await writeDB(STORES_FILE, stores);
+        console.log(`✅ Store ${merchantId} updated with install data`);
     }
 }
+
+// ==========================================
+// ADMIN: Resend Welcome Message to Merchant
+// ==========================================
+app.post('/api/admin/send-welcome', async (req, res) => {
+    const { merchantId, phone, email } = req.body;
+    
+    if (!merchantId) {
+        return res.status(400).json({ success: false, error: 'merchantId required' });
+    }
+    
+    const dashboardUrl = `https://europe-west1-ribh-484706.cloudfunctions.net/api/app?merchant=${merchantId}`;
+    const results = { email: null, whatsapp: null };
+    
+    try {
+        // Get merchant info
+        let merchantName = 'التاجر';
+        let storeName = 'المتجر';
+        let merchantPhone = phone;
+        let merchantEmail = email;
+        
+        // Try to get info from Salla API
+        if (sallaApp) {
+            try {
+                const merchantInfo = await sallaApp.sallaApi(merchantId, '/store/info');
+                const store = merchantInfo.data;
+                merchantName = store?.owner?.name || store?.name || merchantName;
+                storeName = store?.name || storeName;
+                merchantPhone = merchantPhone || store?.owner?.mobile || store?.mobile;
+                merchantEmail = merchantEmail || store?.email || store?.owner?.email;
+            } catch (e) {
+                console.log(`⚠️ Could not fetch merchant info: ${e.message}`);
+            }
+        }
+        
+        // Send WhatsApp if phone provided
+        if (merchantPhone) {
+            let normalizedPhone = String(merchantPhone).replace(/[^\d]/g, '');
+            if (normalizedPhone.startsWith('0')) normalizedPhone = '966' + normalizedPhone.substring(1);
+            if (!normalizedPhone.startsWith('966')) normalizedPhone = '966' + normalizedPhone;
+            normalizedPhone = '+' + normalizedPhone;
+            
+            const message = `🎉 مرحباً ${merchantName}!
+
+تم تثبيت تطبيق رِبح بنجاح على متجرك "${storeName}" ✅
+
+🚀 ابدأ الآن واسترد سلاتك المتروكة!
+
+📊 لوحة التحكم الخاصة بك:
+${dashboardUrl}
+
+💡 ما الذي يمكنك فعله:
+• استرداد السلات المتروكة تلقائياً
+• إرسال رسائل ذكية للعملاء
+• متابعة الإحصائيات والأرباح
+
+للمساعدة: تواصل معنا على +966579353338
+
+شكراً لاختيارك رِبح! 💚`;
+
+            const RIBH_WHATSAPP = process.env.RIBH_WHATSAPP_API || 'https://ribh-whatsapp.onrender.com';
+            
+            try {
+                const response = await fetch(`${RIBH_WHATSAPP}/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ to: normalizedPhone, message })
+                });
+                
+                results.whatsapp = response.ok ? 'sent' : 'failed';
+                console.log(`📱 Welcome WhatsApp ${results.whatsapp} to ${normalizedPhone}`);
+            } catch (e) {
+                results.whatsapp = 'error: ' + e.message;
+            }
+        }
+        
+        // Send email if email provided
+        if (merchantEmail) {
+            try {
+                const { sendWelcomeEmail } = require('./lib/emailSender');
+                await sendWelcomeEmail({
+                    to: merchantEmail,
+                    merchantName,
+                    storeName,
+                    dashboardUrl
+                });
+                results.email = 'sent';
+                console.log(`📧 Welcome email sent to ${merchantEmail}`);
+            } catch (e) {
+                results.email = 'error: ' + e.message;
+            }
+        }
+        
+        res.json({
+            success: true,
+            merchantId,
+            dashboardUrl,
+            results
+        });
+        
+    } catch (error) {
+        console.error('❌ Send welcome error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 // Schedule reminder (simplified - in production use proper job queue like Bull/Redis)
 function scheduleReminder(cart) {
@@ -3863,6 +4036,60 @@ app.get('/api/stats', async (req, res) => {
 app.get('/api/stores', async (req, res) => {
     const stores = await readDB(STORES_FILE);
     res.json(stores);
+});
+
+// Debug: Check all collections for merchant data
+app.get('/api/debug/merchant/:id', async (req, res) => {
+    const merchantId = req.params.id;
+    const results = {};
+    
+    try {
+        // Check salla_merchants collection
+        const sallaDoc = await db.collection('salla_merchants').doc(merchantId).get();
+        results.salla_merchants = sallaDoc.exists ? sallaDoc.data() : null;
+        
+        // Check merchants collection
+        const merchantDoc = await db.collection('merchants').doc(merchantId).get();
+        results.merchants = merchantDoc.exists ? merchantDoc.data() : null;
+        
+        // Check stores collection
+        const stores = await readDB(STORES_FILE);
+        results.stores = stores.find(s => String(s.merchant) === merchantId || s.merchant === merchantId) || null;
+        
+        res.json({ success: true, merchantId, data: results });
+    } catch (e) {
+        res.json({ success: false, error: e.message });
+    }
+});
+
+// Test endpoint to simulate app.store.authorize webhook
+app.post('/api/test/authorize', async (req, res) => {
+    const { merchantId, access_token, refresh_token } = req.body;
+    
+    if (!merchantId) {
+        return res.status(400).json({ error: 'merchantId required' });
+    }
+    
+    try {
+        await handleAppAuthorize({
+            access_token: access_token || 'test_token_' + Date.now(),
+            refresh_token: refresh_token || 'test_refresh_' + Date.now(),
+            expires_in: 86400,
+            scope: 'offline_access'
+        }, merchantId);
+        
+        const stores = await readDB(STORES_FILE);
+        const store = stores.find(s => String(s.merchant) === String(merchantId));
+        
+        res.json({ 
+            success: true, 
+            message: 'Test authorize completed',
+            storeFound: !!store,
+            store: store ? { merchant: store.merchant, ribhToken: store.ribhToken } : null
+        });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
 });
 
 // ==========================================

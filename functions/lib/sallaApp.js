@@ -8,11 +8,32 @@ const getDb = () => admin.firestore();
 
 /** Store tokens from app.store.authorize webhook */
 async function storeTokens(merchantId, data) {
-    const expiresAt = new Date(data.expires > 1e11 ? data.expires : data.expires * 1000);
+    // Handle various expiry formats from Salla
+    let expiresAt;
+    if (data.expires) {
+        // Already an absolute timestamp
+        expiresAt = new Date(data.expires > 1e11 ? data.expires : data.expires * 1000);
+    } else if (data.expires_in) {
+        // Relative seconds from now
+        expiresAt = new Date(Date.now() + (data.expires_in * 1000));
+    } else {
+        // Default to 24 hours
+        expiresAt = new Date(Date.now() + 86400000);
+    }
+    
+    console.log(`[SallaApp] 📝 Storing tokens for ${merchantId}:`, {
+        hasAccessToken: !!data.access_token,
+        hasRefreshToken: !!data.refresh_token,
+        expiresAt: expiresAt.toISOString()
+    });
+    
     await getDb().collection('salla_merchants').doc(String(merchantId)).set({
-        merchantId: String(merchantId), accessToken: data.access_token,
-        refreshToken: data.refresh_token, expiresAt: admin.firestore.Timestamp.fromDate(expiresAt),
-        scope: data.scope || '', status: 'active',
+        merchantId: String(merchantId), 
+        accessToken: data.access_token,
+        refreshToken: data.refresh_token, 
+        expiresAt: admin.firestore.Timestamp.fromDate(expiresAt),
+        scope: data.scope || '', 
+        status: 'active',
         updatedAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     console.log(`[SallaApp] ✅ Tokens stored: ${merchantId}`);
@@ -54,30 +75,123 @@ const handleInstalled = async (mid, data) => {
     }, { merge: true });
     console.log(`[SallaApp] 📦 Installed: ${mid}`);
     
-    // Send welcome email (async, don't block)
+    // Dashboard URL for this merchant
+    const dashboardUrl = `https://europe-west1-ribh-484706.cloudfunctions.net/api/app?merchant=${mid}`;
+    
+    // Send welcome messages (async, don't block)
     setImmediate(async () => {
         try {
             // Fetch merchant info from Salla API
             const merchantInfo = await sallaApi(mid, '/store/info');
             const store = merchantInfo.data;
             const email = store?.email || store?.owner?.email;
+            const phone = store?.owner?.mobile || store?.mobile || store?.phone || data?.owner?.mobile;
+            const merchantName = store?.owner?.name || store?.name || 'التاجر';
+            const storeName = store?.name || 'المتجر';
             
+            // Save phone/email to merchant doc for future use
+            await getDb().collection('salla_merchants').doc(String(mid)).set({
+                ownerPhone: phone,
+                ownerEmail: email,
+                storeName: storeName,
+                ownerName: merchantName
+            }, { merge: true });
+            
+            // 1. Send welcome email
             if (email) {
-                const { sendWelcomeEmail } = require('./emailSender');
-                await sendWelcomeEmail({
-                    to: email,
-                    merchantName: store?.owner?.name || store?.name,
-                    storeName: store?.name
-                });
-                console.log(`[SallaApp] 📧 Welcome email sent to ${email}`);
+                try {
+                    const { sendWelcomeEmail } = require('./emailSender');
+                    await sendWelcomeEmail({
+                        to: email,
+                        merchantName: merchantName,
+                        storeName: storeName,
+                        dashboardUrl: dashboardUrl
+                    });
+                    console.log(`[SallaApp] 📧 Welcome email sent to ${email}`);
+                } catch (e) {
+                    console.error(`[SallaApp] ❌ Welcome email failed:`, e.message);
+                }
             } else {
                 console.log(`[SallaApp] ⚠️ No email found for merchant ${mid}`);
             }
+            
+            // 2. Send welcome WhatsApp message with dashboard link
+            if (phone) {
+                try {
+                    await sendWelcomeWhatsApp(mid, phone, merchantName, storeName, dashboardUrl);
+                    console.log(`[SallaApp] 📱 Welcome WhatsApp sent to ${phone}`);
+                } catch (e) {
+                    console.error(`[SallaApp] ❌ Welcome WhatsApp failed:`, e.message);
+                }
+            } else {
+                console.log(`[SallaApp] ⚠️ No phone found for merchant ${mid}`);
+            }
         } catch (e) {
-            console.error(`[SallaApp] ❌ Welcome email failed:`, e.message);
+            console.error(`[SallaApp] ❌ Welcome messages failed:`, e.message);
         }
     });
 };
+
+/** Send welcome WhatsApp to new merchant */
+async function sendWelcomeWhatsApp(merchantId, phone, merchantName, storeName, dashboardUrl) {
+    // Normalize Saudi phone number
+    let normalizedPhone = String(phone).replace(/[^\d]/g, '');
+    if (normalizedPhone.startsWith('0')) {
+        normalizedPhone = '966' + normalizedPhone.substring(1);
+    }
+    if (!normalizedPhone.startsWith('966')) {
+        normalizedPhone = '966' + normalizedPhone;
+    }
+    normalizedPhone = '+' + normalizedPhone;
+    
+    const message = `🎉 مرحباً ${merchantName}!
+
+تم تثبيت تطبيق رِبح بنجاح على متجرك "${storeName}" ✅
+
+🚀 ابدأ الآن واسترد سلاتك المتروكة!
+
+📊 لوحة التحكم الخاصة بك:
+${dashboardUrl}
+
+💡 ما الذي يمكنك فعله:
+• استرداد السلات المتروكة تلقائياً
+• إرسال رسائل ذكية للعملاء
+• متابعة الإحصائيات والأرباح
+
+للمساعدة: تواصل معنا على +966579353338
+
+شكراً لاختيارك رِبح! 💚`;
+
+    // Try WhatsApp via Hmman's Business Number (using external API)
+    const RIBH_WHATSAPP = process.env.RIBH_WHATSAPP_API || 'https://ribh-whatsapp.onrender.com';
+    
+    try {
+        const response = await fetch(`${RIBH_WHATSAPP}/send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                to: normalizedPhone,
+                message: message
+            })
+        });
+        
+        if (response.ok) {
+            console.log(`[SallaApp] ✅ Welcome WhatsApp sent via bridge to ${normalizedPhone}`);
+            return { success: true };
+        } else {
+            const err = await response.text();
+            console.log(`[SallaApp] ⚠️ WhatsApp bridge error: ${err}`);
+        }
+    } catch (e) {
+        console.log(`[SallaApp] ⚠️ WhatsApp bridge unavailable: ${e.message}`);
+    }
+    
+    // Log for manual follow-up if WhatsApp fails
+    console.log(`[SallaApp] 📝 Manual WhatsApp needed for ${normalizedPhone}:`);
+    console.log(message);
+    
+    return { success: false, phone: normalizedPhone, message };
+}
 const handleUninstalled = async (mid) => {
     await getDb().collection('salla_merchants').doc(String(mid))
         .update({ status: 'uninstalled', uninstalledAt: admin.firestore.FieldValue.serverTimestamp() }).catch(() => {});
