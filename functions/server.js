@@ -135,6 +135,16 @@ try {
     eventTracker = null;
 }
 
+// Outreach Tracker - WhatsApp outreach A/B testing
+let outreachTracker;
+try {
+    outreachTracker = require('./lib/outreachTracker');
+    console.log('✅ Outreach Tracker loaded - WhatsApp A/B testing enabled!');
+} catch (e) {
+    console.log('⚠️ Outreach Tracker not available:', e.message);
+    outreachTracker = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -1138,6 +1148,212 @@ app.post('/api/events/track', async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Failed to track event'
+        });
+    }
+});
+
+// ==========================================
+// 📱 OUTREACH TRACKER API - WhatsApp A/B Testing
+// Track manual WhatsApp outreach and conversions
+// ==========================================
+
+/**
+ * Log a new outreach message
+ * POST /api/outreach/log
+ * Body: { phone, message, abGroup, notes }
+ */
+app.post('/api/outreach/log', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const { phone, message, abGroup, notes } = req.body;
+
+        if (!phone || !abGroup) {
+            return res.status(400).json({
+                success: false,
+                error: 'phone and abGroup are required'
+            });
+        }
+
+        const result = await outreachTracker.logOutreach({ phone, message, abGroup, notes });
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ Error logging outreach:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to log outreach'
+        });
+    }
+});
+
+/**
+ * Mark contact as converted
+ * POST /api/outreach/convert
+ * Body: { phone, notes }
+ */
+app.post('/api/outreach/convert', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const { phone, notes } = req.body;
+
+        if (!phone) {
+            return res.status(400).json({
+                success: false,
+                error: 'phone is required'
+            });
+        }
+
+        const result = await outreachTracker.markConverted(phone, notes);
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ Error marking conversion:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to mark conversion'
+        });
+    }
+});
+
+/**
+ * Unmark conversion
+ * POST /api/outreach/unconvert
+ * Body: { phone }
+ */
+app.post('/api/outreach/unconvert', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const { phone } = req.body;
+
+        if (!phone) {
+            return res.status(400).json({
+                success: false,
+                error: 'phone is required'
+            });
+        }
+
+        const result = await outreachTracker.unmarkConverted(phone);
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ Error unmarking conversion:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to unmark conversion'
+        });
+    }
+});
+
+/**
+ * Get all outreach contacts
+ * GET /api/outreach/list?limit=100&abGroup=A&convertedOnly=true
+ */
+app.get('/api/outreach/list', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const limit = parseInt(req.query.limit) || 100;
+        const abGroup = req.query.abGroup;
+        const convertedOnly = req.query.convertedOnly === 'true';
+
+        const contacts = await outreachTracker.getAll({ limit, abGroup, convertedOnly });
+        res.json({
+            success: true,
+            count: contacts.length,
+            contacts
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting outreach list:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to get outreach list'
+        });
+    }
+});
+
+/**
+ * Get outreach stats for A/B testing
+ * GET /api/outreach/stats
+ */
+app.get('/api/outreach/stats', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const stats = await outreachTracker.getStats();
+        res.json({
+            success: true,
+            stats
+        });
+
+    } catch (error) {
+        console.error('❌ Error getting outreach stats:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to get outreach stats'
+        });
+    }
+});
+
+/**
+ * Delete a contact
+ * POST /api/outreach/delete
+ * Body: { phone }
+ */
+app.post('/api/outreach/delete', async (req, res) => {
+    try {
+        if (!outreachTracker) {
+            return res.status(503).json({
+                success: false,
+                error: 'Outreach Tracker not available'
+            });
+        }
+
+        const { phone } = req.body;
+
+        if (!phone) {
+            return res.status(400).json({
+                success: false,
+                error: 'phone is required'
+            });
+        }
+
+        const result = await outreachTracker.deleteContact(phone);
+        res.json(result);
+
+    } catch (error) {
+        console.error('❌ Error deleting contact:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message || 'Failed to delete contact'
         });
     }
 });
