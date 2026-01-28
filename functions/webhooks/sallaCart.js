@@ -191,12 +191,13 @@ function extractName(data) {
 
 /**
  * Extract cart items from Salla payload
+ * Ensures no undefined values (Firestore doesn't accept them)
  */
 function extractItems(data) {
     const rawItems = data?.items || data?.products || data?.cart?.items || [];
     
-    return rawItems.map(item => ({
-        id: item.id || item.product_id,
+    return rawItems.map((item, index) => ({
+        id: String(item.id || item.product_id || `item_${index}`),
         name: item.name || item.product_name || item.title || 'منتج',
         quantity: item.quantity || 1,
         price: parseFloat(item.price?.amount || item.price || 0),
