@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة السلات المتروكة | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .logo {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .logo span { color: #10B981; }
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #a1a1aa;
+            font-weight: 500;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #a1a1aa;
+            font-size: 0.9rem;
+        }
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 1.1rem;
+            font-family: inherit;
+            text-align: center;
+        }
+        input:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+        input::placeholder { color: #52525b; }
+        .btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+        }
+        .result {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .lost-money {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #EF4444;
+            margin: 20px 0;
+        }
+        .recover-money {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #10B981;
+            margin: 20px 0;
+        }
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-label { color: #a1a1aa; }
+        .stat-value { font-weight: 600; }
+        .cta-box {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .cta-box h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .cta-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .cta-input input {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            text-align: right;
+        }
+        .cta-input input::placeholder { color: rgba(255,255,255,0.6); }
+        .cta-btn {
+            padding: 15px 25px;
+            background: #fff;
+            color: #059669;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .emoji { font-size: 4rem; margin-bottom: 10px; }
+        .reset-btn {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+            margin-top: 15px;
+        }
+        .reset-btn:hover {
+            background: rgba(255,255,255,0.1);
+            box-shadow: none;
+            transform: none;
+        }
+        .trust {
+            text-align: center;
+            margin-top: 30px;
+            color: #52525b;
+            font-size: 0.85rem;
+        }
+        .success-msg {
+            display: none;
+            background: rgba(16,185,129,0.2);
+            border: 1px solid #10B981;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">رِ<span>بح</span> 💚</div>
+        <h1>كم تخسر من السلات المتروكة؟</h1>
+
+        <div class="card" id="calculator">
+            <div class="input-group">
+                <label>عدد الزوار شهرياً</label>
+                <input type="number" id="visitors" placeholder="مثال: 10000" value="">
+            </div>
+            <div class="input-group">
+                <label>نسبة السلات المتروكة %</label>
+                <input type="number" id="abandonRate" placeholder="المتوسط: 70%" value="70">
+            </div>
+            <div class="input-group">
+                <label>متوسط قيمة السلة (ر.س)</label>
+                <input type="number" id="cartValue" placeholder="مثال: 300" value="">
+            </div>
+            <button class="btn" onclick="calculate()">احسب خسارتي 📊</button>
+        </div>
+
+        <div class="card result" id="result">
+            <div class="emoji">😱</div>
+            <p style="color: #a1a1aa;">أنت تخسر شهرياً</p>
+            <div class="lost-money" id="lostMoney">0 ر.س</div>
+            
+            <div class="stat-row">
+                <span class="stat-label">سلات متروكة شهرياً</span>
+                <span class="stat-value" id="abandonedCarts">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">خسارة سنوية</span>
+                <span class="stat-value" id="yearlyLoss">0 ر.س</span>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #a1a1aa;">رِبح يسترد 15-25% من السلات</p>
+                <div class="recover-money" id="recoverMoney">0 - 0 ر.س</div>
+                <p style="color: #10B981; font-weight: 500;">شهرياً في جيبك 💰</p>
+            </div>
+
+            <button class="btn reset-btn" onclick="reset()">احسب مرة ثانية</button>
+        </div>
+
+        <div class="cta-box" id="ctaBox" style="display: none;">
+            <h3>🚀 انضم لقائمة الانتظار</h3>
+            <p style="opacity: 0.9; font-size: 0.95rem;">احصل على 50% خصم عند الإطلاق</p>
+            <div class="cta-input">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                <button class="cta-btn" onclick="joinWaitlist()">انضم</button>
+            </div>
+            <div class="success-msg" id="successMsg">
+                ✅ تم تسجيلك! سنتواصل معك قريباً
+            </div>
+        </div>
+
+        <p class="trust">🔒 لا نحفظ بياناتك • أداة مجانية من رِبح</p>
+    </div>
+
+    <script>
+        function calculate() {
+            const visitors = parseInt(document.getElementById('visitors').value) || 0;
+            const abandonRate = parseInt(document.getElementById('abandonRate').value) || 70;
+            const cartValue = parseInt(document.getElementById('cartValue').value) || 0;
+
+            if (visitors === 0 || cartValue === 0) {
+                alert('الرجاء إدخال عدد الزوار ومتوسط قيمة السلة');
+                return;
+            }
+
+            // Assume 30% of visitors add to cart
+            const addToCartRate = 0.30;
+            const cartsCreated = visitors * addToCartRate;
+            const abandonedCarts = Math.round(cartsCreated * (abandonRate / 100));
+            const lostMoney = abandonedCarts * cartValue;
+            const yearlyLoss = lostMoney * 12;
+            const recoverMin = Math.round(lostMoney * 0.15);
+            const recoverMax = Math.round(lostMoney * 0.25);
+
+            document.getElementById('lostMoney').textContent = lostMoney.toLocaleString() + ' ر.س';
+            document.getElementById('abandonedCarts').textContent = abandonedCarts.toLocaleString();
+            document.getElementById('yearlyLoss').textContent = yearlyLoss.toLocaleString() + ' ر.س';
+            document.getElementById('recoverMoney').textContent = recoverMin.toLocaleString() + ' - ' + recoverMax.toLocaleString() + ' ر.س';
+
+            document.getElementById('calculator').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('ctaBox').style.display = 'block';
+        }
+
+        function reset() {
+            document.getElementById('calculator').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('ctaBox').style.display = 'none';
+        }
+
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value;
+            if (!email || !email.includes('@')) {
+                alert('الرجاء إدخال بريد صحيح');
+                return;
+            }
+
+            try {
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        merchantId: 'waitlist',
+                        source: 'calculator'
+                    })
+                });
+            } catch(e) {}
+
+            document.getElementById('successMsg').style.display = 'block';
+            document.getElementById('email').disabled = true;
+            document.querySelector('.cta-btn').disabled = true;
+            document.querySelector('.cta-btn').textContent = '✓';
+        }
+    </script>
+</body>
+</html>

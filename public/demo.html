@@ -2,1372 +2,324 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIBH - شاهد كيف ترجع فلوسك الضايعة</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | استرد سلاتك المتروكة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --wa-green: #25D366;
-            --wa-dark: #075E54;
-            --wa-light: #DCF8C6;
-            --wa-bg: #E5DDD5;
-            --gold: #FFD700;
-            --gold-dark: #FFA500;
-            --danger: #e74c3c;
-            --dark: #0a0a15;
-            --darker: #050508;
+        html, body {
+            height: 100%;
+            overflow: hidden;
         }
-        
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--darker);
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
             min-height: 100vh;
-            color: #fff;
-            overflow-x: hidden;
+            min-height: -webkit-fill-available;
         }
-        
-        /* Sound Toggle */
-        .sound-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 25px;
-            cursor: pointer;
-            z-index: 200;
-            font-family: inherit;
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
-        
-        .sound-toggle:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        
-        .sound-toggle.muted {
-            opacity: 0.5;
-        }
-        
-        /* MASSIVE Money Counter - CENTER STAGE */
-        .money-hero {
-            position: relative;
-            text-align: center;
-            padding: 60px 20px 40px;
-            background: radial-gradient(ellipse at center, rgba(255,215,0,0.1) 0%, transparent 70%);
-        }
-        
-        .money-label {
-            font-size: 1.3em;
-            color: #888;
-            margin-bottom: 10px;
-        }
-        
-        .money-amount {
-            font-size: 5em;
-            font-weight: 800;
-            background: linear-gradient(180deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 60px rgba(255,215,0,0.3);
-            direction: ltr;
-            display: inline-block;
-            min-width: 300px;
-            transition: transform 0.1s;
-        }
-        
-        .money-amount.bump {
-            transform: scale(1.1);
-        }
-        
-        .money-subtitle {
-            font-size: 1.1em;
-            color: #666;
-            margin-top: 10px;
-        }
-        
-        .money-particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        
-        .coin {
-            position: absolute;
-            font-size: 2em;
-            animation: coinFall 2s ease-in forwards;
-            opacity: 0;
-        }
-        
-        @keyframes coinFall {
-            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(200px) rotate(360deg); opacity: 0; }
-        }
-        
-        /* Lost Money Warning */
-        .lost-money-banner {
-            background: linear-gradient(90deg, rgba(231,76,60,0.2), rgba(231,76,60,0.1));
-            border: 1px solid rgba(231,76,60,0.3);
-            padding: 15px 25px;
-            margin: 0 20px 30px;
-            border-radius: 12px;
-            text-align: center;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .lost-money-banner strong {
-            color: var(--danger);
-            font-size: 1.2em;
-        }
-        
-        /* Title */
-        .page-title {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-        
-        .page-subtitle {
-            text-align: center;
-            color: #888;
-            font-size: 1.2em;
-            margin-bottom: 30px;
-        }
-        
-        /* Start Button */
-        .start-section {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .start-btn {
-            background: linear-gradient(135deg, var(--wa-green), var(--wa-dark));
-            border: none;
-            color: #fff;
-            font-size: 1.4em;
-            font-weight: 700;
-            padding: 20px 60px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(37,211,102,0.4);
-            font-family: inherit;
-        }
-        
-        .start-btn:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 50px rgba(37,211,102,0.5);
-        }
-        
-        .start-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        /* Demo Container */
-        .demo-container {
-            max-width: 1100px;
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 20px 25px;
+            max-width: 500px;
             margin: 0 auto;
-            padding: 0 20px;
+            width: 100%;
         }
         
-        /* Demo Grid */
-        .demo-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 40px;
+        /* Header */
+        .header {
+            text-align: center;
         }
-        
-        @media (max-width: 800px) {
-            .demo-grid {
-                grid-template-columns: 1fr;
-            }
-            .money-amount {
-                font-size: 3em;
-                min-width: auto;
-            }
-        }
-        
-        /* Card Base */
-        .demo-card {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.08);
-            transition: all 0.5s;
-            opacity: 0.4;
-        }
-        
-        .demo-card.active {
-            opacity: 1;
-            border-color: var(--wa-green);
-            box-shadow: 0 0 40px rgba(37,211,102,0.15);
-        }
-        
-        .demo-card.completed {
-            opacity: 0.7;
-            border-color: var(--gold);
-        }
-        
-        .card-header {
-            padding: 18px 20px;
-            background: rgba(255,255,255,0.05);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
-        
-        .step-badge {
-            width: 32px;
-            height: 32px;
-            background: var(--wa-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9em;
+        .logo {
+            font-size: 1.6rem;
             font-weight: 700;
         }
+        .logo span { color: #10B981; }
         
-        /* Abandoned Cart - Realistic Salla/Shopify Style */
-        .cart-content {
-            padding: 20px;
-        }
-        
-        .customer-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-        }
-        
-        .customer-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-        }
-        
-        .customer-details {
+        /* Main Calculator */
+        .main {
             flex: 1;
-        }
-        
-        .customer-name {
-            font-weight: 600;
-            font-size: 1.05em;
-        }
-        
-        .customer-phone {
-            color: #888;
-            font-size: 0.9em;
-            direction: ltr;
-            text-align: right;
-        }
-        
-        .cart-items-list {
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        
-        .cart-item {
             display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+        .question {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #a1a1aa;
+        }
+        .sales-display {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #10B981;
         }
         
-        .cart-item:last-child {
-            border-bottom: none;
+        /* Slider */
+        .slider-container {
+            padding: 0 5px;
         }
-        
-        .item-image {
-            width: 60px;
-            height: 60px;
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(to left, #10B981 0%, #10B981 var(--progress), #222 var(--progress), #222 100%);
             border-radius: 10px;
-            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8em;
-            flex-shrink: 0;
+            outline: none;
+            --progress: 50%;
         }
-        
-        .item-info {
-            flex: 1;
-            text-align: right;
-            color: #333;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-        
-        .item-name {
-            font-weight: 600;
-            margin-bottom: 4px;
-            font-size: 0.95em;
-        }
-        
-        .item-variant {
-            font-size: 0.8em;
-            color: #888;
-        }
-        
-        .item-price {
-            font-weight: 700;
-            color: var(--wa-dark);
-            font-size: 1.05em;
-        }
-        
-        .cart-footer {
-            background: #f8f8f8;
-            padding: 15px;
+        .slider-labels {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            color: #333;
+            color: #444;
+            font-size: 0.75rem;
+            margin-top: 8px;
         }
         
-        .cart-total-label {
-            font-size: 0.95em;
-        }
-        
-        .cart-total-amount {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: var(--wa-dark);
-        }
-        
-        .cart-status-bar {
-            padding: 12px 15px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.95em;
-            transition: all 0.5s;
-        }
-        
-        .cart-status-bar.abandoned {
-            background: linear-gradient(90deg, #ffebee, #fce4ec);
-            color: var(--danger);
-        }
-        
-        .cart-status-bar.recovered {
-            background: linear-gradient(90deg, #e8f5e9, #c8e6c9);
-            color: var(--wa-dark);
-        }
-        
-        /* REALISTIC WhatsApp Panel */
-        .whatsapp-phone {
-            background: #000;
-            border-radius: 30px;
-            padding: 8px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        
-        .whatsapp-screen {
-            background: var(--wa-bg);
-            border-radius: 24px;
-            overflow: hidden;
-        }
-        
-        .wa-header {
-            background: var(--wa-dark);
-            padding: 12px 15px;
+        /* Loss & Recovery Row */
+        .results-row {
             display: flex;
-            align-items: center;
             gap: 12px;
         }
-        
-        .wa-back {
-            color: #fff;
-            font-size: 1.2em;
-        }
-        
-        .wa-profile-pic {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2em;
-            position: relative;
-        }
-        
-        .wa-verified {
-            position: absolute;
-            bottom: -2px;
-            right: -2px;
-            background: #00a884;
-            border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6em;
-            border: 2px solid var(--wa-dark);
-        }
-        
-        .wa-contact-info {
+        .result-card {
             flex: 1;
+            padding: 15px 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .loss-card {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.2);
+        }
+        .recover-card {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.2);
+        }
+        .result-label {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .result-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .loss-card .result-value { color: #EF4444; }
+        .recover-card .result-value { color: #10B981; }
+        .result-sub {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 3px;
         }
         
-        .wa-contact-name {
-            color: #fff;
-            font-weight: 600;
-            font-size: 1em;
-        }
-        
-        .wa-contact-status {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.75em;
-        }
-        
-        .wa-header-icons {
-            display: flex;
-            gap: 18px;
-            color: #fff;
-            font-size: 1.1em;
-        }
-        
-        .wa-chat-area {
-            min-height: 280px;
-            padding: 15px;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23cdc4b4' fill-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") #E5DDD5;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .wa-date-chip {
-            align-self: center;
-            background: rgba(255,255,255,0.9);
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 0.75em;
-            color: #667;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .wa-bubble {
-            max-width: 85%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(10px) scale(0.95);
-            transition: all 0.3s ease-out;
-            font-size: 0.95em;
-            line-height: 1.5;
-        }
-        
-        .wa-bubble.visible {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .wa-bubble.incoming {
-            background: #fff;
-            color: #303030;
-            align-self: flex-start;
-            border-top-left-radius: 0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        
-        .wa-bubble.outgoing {
-            background: var(--wa-light);
-            color: #303030;
-            align-self: flex-end;
-            border-top-right-radius: 0;
-        }
-        
-        .wa-bubble-meta {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 4px;
-            margin-top: 4px;
-            font-size: 0.7em;
-            color: #667;
-        }
-        
-        .wa-checks {
-            color: #53bdeb;
-        }
-        
-        .wa-typing {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Guarantee Badge */
+        .guarantee {
+            background: linear-gradient(135deg, #10B981, #059669);
             padding: 12px 15px;
-            background: #fff;
-            border-radius: 8px;
-            border-top-left-radius: 0;
-            max-width: 80px;
-            align-self: flex-start;
-            opacity: 0;
-            transition: opacity 0.3s;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .guarantee-icon {
+            font-size: 1.2rem;
+            margin-left: 5px;
         }
         
-        .wa-typing.visible {
-            opacity: 1;
-        }
-        
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-        
-        .typing-dots span {
-            width: 8px;
-            height: 8px;
-            background: #90a4ae;
-            border-radius: 50%;
-            animation: typingBounce 1.4s infinite;
-        }
-        
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-        
-        @keyframes typingBounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-6px); }
-        }
-        
-        .wa-input-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: #f0f0f0;
-        }
-        
-        .wa-input-field {
-            flex: 1;
-            background: #fff;
-            border-radius: 25px;
-            padding: 10px 15px;
-            font-size: 0.9em;
-            color: #999;
-        }
-        
-        .wa-send-btn {
-            width: 45px;
-            height: 45px;
-            background: var(--wa-green);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.2em;
-        }
-        
-        /* Customer Reply Bubble */
-        .customer-reply {
-            opacity: 0;
-            transform: translateX(20px);
-            transition: all 0.4s ease-out;
-        }
-        
-        .customer-reply.visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        
-        /* Cha-ching Overlay */
-        .chaching-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
+        /* CTA Section */
+        .cta-section {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 500;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s;
+            gap: 10px;
         }
-        
-        .chaching-overlay.visible {
-            opacity: 1;
-            pointer-events: auto;
+        .cta-form {
+            display: flex;
+            gap: 8px;
         }
-        
-        .chaching-emoji {
-            font-size: 6em;
-            animation: chachingPop 0.6s ease-out;
-        }
-        
-        .chaching-text {
-            font-size: 3em;
-            font-weight: 800;
-            background: linear-gradient(90deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-top: 20px;
-            animation: chachingSlide 0.6s ease-out 0.2s both;
-        }
-        
-        .chaching-amount {
-            font-size: 2em;
+        .cta-form input {
+            flex: 1;
+            padding: 14px 15px;
+            border: 1px solid #333;
+            border-radius: 10px;
+            background: #111;
             color: #fff;
-            margin-top: 15px;
-            animation: chachingSlide 0.6s ease-out 0.4s both;
+            font-size: 0.95rem;
+            font-family: inherit;
         }
-        
-        @keyframes chachingPop {
-            0% { transform: scale(0) rotate(-20deg); }
-            50% { transform: scale(1.2) rotate(10deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        .cta-form input:focus {
+            outline: none;
+            border-color: #10B981;
         }
-        
-        @keyframes chachingSlide {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .cta-form input::placeholder { color: #555; }
+        .cta-form button {
+            padding: 14px 22px;
+            background: #10B981;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            white-space: nowrap;
         }
-        
-        /* Confetti */
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 20px;
-            top: -30px;
-            z-index: 600;
-            transform-origin: center;
+        .cta-form button:active {
+            transform: scale(0.98);
         }
-        
-        @keyframes confettiFall {
-            0% { 
-                transform: translateY(0) rotate(0deg) rotateX(0deg); 
-                opacity: 1; 
-            }
-            100% { 
-                transform: translateY(100vh) rotate(720deg) rotateX(360deg); 
-                opacity: 0; 
-            }
-        }
-        
-        /* FINAL CTA SECTION */
-        .final-section {
+        .success-msg {
             display: none;
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            padding: 12px;
+            border-radius: 10px;
             text-align: center;
-            padding: 60px 20px;
-            background: radial-gradient(ellipse at center, rgba(255,215,0,0.1) 0%, transparent 70%);
-            animation: fadeInUp 0.8s ease-out;
+            font-size: 0.9rem;
         }
+        .success-msg.show { display: block; }
         
-        .final-section.visible {
-            display: block;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .final-headline {
-            font-size: 2.5em;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-        
-        .final-headline .gold {
-            background: linear-gradient(90deg, #FFD700, #FFA500);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .final-subline {
-            font-size: 1.3em;
-            color: #888;
-            margin-bottom: 40px;
-        }
-        
-        /* Testimonial Card */
-        .testimonial-card {
-            max-width: 500px;
-            margin: 0 auto 40px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: right;
-        }
-        
-        .testimonial-quote {
-            font-size: 1.15em;
-            line-height: 1.7;
-            margin-bottom: 20px;
-            color: #ccc;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        .testimonial-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3em;
-        }
-        
-        .testimonial-name {
-            font-weight: 700;
-        }
-        
-        .testimonial-role {
-            font-size: 0.85em;
-            color: #888;
-        }
-        
-        .testimonial-stars {
-            color: var(--gold);
-            font-size: 1.2em;
-            margin-top: 15px;
-        }
-        
-        /* Stats Row */
-        .stats-row {
+        /* Features Row */
+        .features {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
+            gap: 20px;
             flex-wrap: wrap;
         }
-        
-        .stat-item {
-            text-align: center;
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        .feature-icon {
+            font-size: 0.9rem;
         }
         
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: var(--wa-green);
-        }
-        
-        .stat-label {
-            color: #888;
-            font-size: 0.95em;
-        }
-        
-        /* Final CTA Button */
-        .final-cta {
-            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
-            border: none;
-            color: #000;
-            font-size: 1.5em;
-            font-weight: 800;
-            padding: 22px 70px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 10px 40px rgba(255,215,0,0.4);
-            font-family: inherit;
-            display: inline-block;
-            text-decoration: none;
-        }
-        
-        .final-cta:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 15px 50px rgba(255,215,0,0.5);
-        }
-        
-        .cta-subtext {
-            margin-top: 15px;
-            color: #888;
-            font-size: 0.95em;
-        }
-        
-        .cta-subtext span {
-            color: var(--wa-green);
-        }
-        
-        /* Urgency Banner */
-        .urgency-banner {
-            background: linear-gradient(90deg, rgba(231,76,60,0.2), rgba(231,76,60,0.1));
-            border: 1px solid rgba(231,76,60,0.3);
-            padding: 12px 20px;
-            border-radius: 10px;
-            margin-top: 25px;
-            display: inline-block;
-        }
-        
-        .urgency-text {
-            color: #e74c3c;
-            font-weight: 600;
-        }
-        
-        /* Pulse Animation */
-        .pulse {
-            animation: pulse 1.5s ease-in-out infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-        }
-        
-        /* Glow Animation */
-        .glow {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { filter: drop-shadow(0 0 10px rgba(255,215,0,0.5)); }
-            to { filter: drop-shadow(0 0 30px rgba(255,215,0,0.8)); }
-        }
+        /* Hide form when success */
+        .cta-form.hidden { display: none; }
     </style>
 </head>
 <body>
-    <!-- Sound Toggle -->
-    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">
-        🔊 الصوت مفعّل
-    </button>
-    
-    <!-- Audio Elements -->
-    <audio id="notificationSound" preload="auto">
-        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV////////////////////////////////////////////AAAAAExhdmM1OC4xMwAAAAAAAAAAAAAAACQDgAAAAAAAAAGw7HMevgAAAAAAAAAAAAAAAAD/4zDAAAQAAQAEQAAAAAGkGGP////MTMRM//+Z//iAgICAkJCQoKCgwMDA4ODhAQEBISEhQUFBYWFhgYGBwcHB4eHiAgICIiIiQkJCYmJigAAA/+MYxBoMCAI1hwAAAAAAA0gAAAAAD//EJEgCBIkgwHjGCEjOcI7mB4uHBwwAAAP/jGMQsDDQSmYcAAAMAAAANIAAAAD/5gYaBo4WBgPEAwHhwgMEBAQCAoIBQODg4QEBAT/4xjENA0MeXmHAAADAAAADSAAAAAIFBgkGg8QGCRoPHhwoKBIkGg8PGCQaMCYYIB4cICAkP/jGMQ2C/ACcYcAAAMAAAANIAAAAAoEAgICAwGAwMDAwODg4QEB" type="audio/mp3">
-    </audio>
-    
-    <!-- Cha-ching Overlay -->
-    <div class="chaching-overlay" id="chachingOverlay">
-        <div class="chaching-emoji">💰</div>
-        <div class="chaching-text">تم استرداد البيع!</div>
-        <div class="chaching-amount" id="chachingAmount">+٤٥٠ ر.س</div>
-    </div>
-    
-    <!-- HERO: Money Counter -->
-    <section class="money-hero">
-        <div class="money-particles" id="moneyParticles"></div>
-        <div class="money-label">💸 فلوس راجعة لجيبك</div>
-        <div class="money-amount" id="totalRecovered">٠ ر.س</div>
-        <div class="money-subtitle">من سلة واحدة متروكة فقط</div>
-    </section>
-    
-    <!-- Lost Money Warning -->
-    <div class="lost-money-banner">
-        ⚠️ <strong>٧٠٪ من عملائك</strong> يتركون السلة بدون شراء. كم فلوس ضايعة عليك؟
-    </div>
-    
-    <!-- Title -->
-    <h1 class="page-title">شاهد كيف RIBH يرجّع لك المبيعات الضايعة</h1>
-    <p class="page-subtitle">عرض حي لعميل حقيقي ترك السلة... وكيف رجّعناه</p>
-    
-    <!-- Start Button -->
-    <div class="start-section">
-        <button class="start-btn" id="startBtn" onclick="startDemo()">
-            ▶️ شغّل العرض
-        </button>
-    </div>
-    
-    <!-- Demo Grid -->
-    <div class="demo-container">
-        <div class="demo-grid">
-            <!-- LEFT: Abandoned Cart -->
-            <div class="demo-card" id="cartCard">
-                <div class="card-header">
-                    <div class="step-badge">1</div>
-                    <span>🛒 سلة متروكة - لوحة التحكم</span>
-                </div>
-                
-                <div class="cart-content">
-                    <div class="customer-row">
-                        <div class="customer-avatar" id="custAvatar">👩</div>
-                        <div class="customer-details">
-                            <div class="customer-name" id="custName">نورة العتيبي</div>
-                            <div class="customer-phone" id="custPhone">+966 55 847 3291</div>
-                        </div>
-                    </div>
-                    
-                    <div class="cart-items-list" id="cartItemsList">
-                        <!-- Items inserted by JS -->
-                    </div>
-                    
-                    <div class="cart-footer">
-                        <div class="cart-total-label">المجموع</div>
-                        <div class="cart-total-amount" id="cartTotalAmount">٤٥٠ ر.س</div>
-                    </div>
-                    
-                    <div class="cart-status-bar abandoned" id="cartStatusBar">
-                        ⏰ متروكة من ٤٧ دقيقة
-                    </div>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِ<span>بح</span> 💚</div>
+        </div>
+        
+        <!-- Main Calculator -->
+        <div class="main">
+            <p class="question">كم مبيعاتك الشهرية؟</p>
+            
+            <div class="sales-display"><span id="salesValue">100,000</span> ر.س</div>
+            
+            <div class="slider-container">
+                <input type="range" id="salesSlider" min="10000" max="500000" value="100000" step="5000">
+                <div class="slider-labels">
+                    <span>+500k</span>
+                    <span>10k</span>
                 </div>
             </div>
             
-            <!-- RIGHT: WhatsApp Phone -->
-            <div class="demo-card" id="waCard">
-                <div class="card-header">
-                    <div class="step-badge">2</div>
-                    <span>📱 رسالة واتساب تلقائية</span>
+            <div class="results-row">
+                <div class="result-card loss-card">
+                    <p class="result-label">تخسر شهرياً</p>
+                    <p class="result-value"><span id="lossValue">21,000</span> ر.س</p>
+                    <p class="result-sub">من السلات المتروكة</p>
                 </div>
-                
-                <div class="whatsapp-phone">
-                    <div class="whatsapp-screen">
-                        <div class="wa-header">
-                            <span class="wa-back">←</span>
-                            <div class="wa-profile-pic">
-                                🛍️
-                                <div class="wa-verified">✓</div>
-                            </div>
-                            <div class="wa-contact-info">
-                                <div class="wa-contact-name">متجر الأناقة ✨</div>
-                                <div class="wa-contact-status" id="waOnlineStatus">متصل الآن</div>
-                            </div>
-                            <div class="wa-header-icons">
-                                <span>📹</span>
-                                <span>📞</span>
-                                <span>⋮</span>
-                            </div>
-                        </div>
-                        
-                        <div class="wa-chat-area" id="waChatArea">
-                            <div class="wa-date-chip">اليوم</div>
-                            
-                            <div class="wa-typing" id="waTyping">
-                                <div class="typing-dots">
-                                    <span></span><span></span><span></span>
-                                </div>
-                            </div>
-                            
-                            <div class="wa-bubble outgoing" id="waBubble1">
-                                <div id="waMessage1"></div>
-                                <div class="wa-bubble-meta">
-                                    <span>٣:٤٥ م</span>
-                                    <span class="wa-checks">✓✓</span>
-                                </div>
-                            </div>
-                            
-                            <div class="wa-bubble incoming customer-reply" id="waReply">
-                                <div>تمام، خلاص أكملت الطلب 😊</div>
-                                <div class="wa-bubble-meta">
-                                    <span>٣:٥٢ م</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="wa-input-bar">
-                            <span>😊</span>
-                            <div class="wa-input-field">اكتب رسالة...</div>
-                            <span>📎</span>
-                            <div class="wa-send-btn">🎤</div>
-                        </div>
-                    </div>
+                <div class="result-card recover-card">
+                    <p class="result-label">نسترد لك</p>
+                    <p class="result-value"><span id="recoverValue">3,150</span>+ ر.س</p>
+                    <p class="result-sub">15% مضمونة</p>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <!-- FINAL SECTION -->
-    <section class="final-section" id="finalSection">
-        <h2 class="final-headline">
-            🎉 <span class="gold">مبروك!</span> رجّعت مبيعة ضايعة
-        </h2>
-        <p class="final-subline">هذا يصير تلقائياً... ٢٤ ساعة... وأنت نايم 😴</p>
-        
-        <!-- Testimonial -->
-        <div class="testimonial-card">
-            <div class="testimonial-quote">
-                "والله ما صدقت! أول أسبوع رجّعت ٤٧ سلة متروكة = ١٢,٤٠٠ ريال كانت بتضيع عليّ. الحين ما أقدر أستغني عن RIBH."
-            </div>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar">👨‍💼</div>
-                <div>
-                    <div class="testimonial-name">عبدالله السبيعي</div>
-                    <div class="testimonial-role">صاحب متجر إلكتروني - الرياض</div>
-                </div>
-            </div>
-            <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-        </div>
-        
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-item">
-                <div class="stat-number">+٣٥٪</div>
-                <div class="stat-label">زيادة في المبيعات</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">٤٧٪</div>
-                <div class="stat-label">نسبة استرداد السلات</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">٢٤/٧</div>
-                <div class="stat-label">يشتغل بدون تدخل</div>
+            
+            <div class="guarantee">
+                <span class="guarantee-icon">🛡️</span>
+                نضمن 15% استرداد أو لا تدفع شيء
             </div>
         </div>
         
         <!-- CTA -->
-        <a href="/signup.html" class="final-cta glow">
-            🚀 ابدأ تجربتك المجانية
-        </a>
-        <div class="cta-subtext">
-            <span>✓</span> بدون بطاقة ائتمان &nbsp;&nbsp;
-            <span>✓</span> إلغاء أي وقت &nbsp;&nbsp;
-            <span>✓</span> دعم عربي ٢٤/٧
+        <div class="cta-section">
+            <div class="cta-form" id="ctaForm">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                <button onclick="joinWaitlist()">ابدأ مجاناً</button>
+            </div>
+            <div class="success-msg" id="successMsg">
+                ✅ تم تسجيلك! سنتواصل معك قريباً
+            </div>
+            <div class="features">
+                <span class="feature"><span class="feature-icon">⚡</span> تفعيل فوري</span>
+                <span class="feature"><span class="feature-icon">💳</span> بدون بطاقة</span>
+                <span class="feature"><span class="feature-icon">📱</span> واتساب مجاني</span>
+            </div>
         </div>
-        
-        <!-- Urgency -->
-        <div class="urgency-banner">
-            <span class="urgency-text">⏳ العرض متاح لـ ٥٠ متجر فقط هذا الشهر</span>
-        </div>
-    </section>
-    
+    </div>
+
     <script>
-        // State
-        let soundEnabled = true;
-        let totalMoney = 0;
+        const slider = document.getElementById('salesSlider');
+        const salesValue = document.getElementById('salesValue');
+        const lossValue = document.getElementById('lossValue');
+        const recoverValue = document.getElementById('recoverValue');
         
-        // Data - More realistic Saudi products
-        const customers = [
-            { name: 'نورة العتيبي', phone: '+966 55 847 3291', avatar: '👩' },
-            { name: 'محمد الدوسري', phone: '+966 50 612 8834', avatar: '👨' },
-            { name: 'سارة القحطاني', phone: '+966 54 229 7751', avatar: '👩' },
-            { name: 'فهد المطيري', phone: '+966 56 441 3892', avatar: '👨' },
-            { name: 'ريم الشمري', phone: '+966 55 183 4427', avatar: '👩' },
-        ];
-        
-        const products = [
-            { name: 'عطر عود ملكي 100مل', variant: 'تركيز: Eau de Parfum', price: 450, emoji: '🌸' },
-            { name: 'ساعة هوغو بوس رجالية', variant: 'لون: ذهبي/أسود', price: 1250, emoji: '⌚' },
-            { name: 'شنطة مايكل كورس', variant: 'لون: بيج', price: 890, emoji: '👜' },
-            { name: 'نظارة قوتشي شمسية', variant: 'إطار: ذهبي', price: 750, emoji: '🕶️' },
-            { name: 'سماعات ابل AirPods Pro', variant: 'الجيل الثاني', price: 899, emoji: '🎧' },
-            { name: 'عباية مطرزة فاخرة', variant: 'مقاس: M', price: 680, emoji: '🧥' },
-            { name: 'بخور عود كمبودي', variant: 'الوزن: 50 غرام', price: 320, emoji: '✨' },
-        ];
-        
-        // Saudi-style WhatsApp messages
-        const messages = [
-            `أهلين {name} 👋
-
-لاحظنا سلتك فيها أغراض حلوة!
-
-🎁 عشانك: خصم ١٥٪ إذا أكملتي الطلب خلال ساعة
-
-الكود: WELCOME15
-
-محتاجة أي مساعدة؟ رديّ علينا 💬`,
-
-            `هلا {name}! 🌟
-
-أغراضك لسا محجوزة عندنا 🛍️
-
-⚡ عرض خاص: شحن مجاني الحين فقط!
-
-لا تفوّتين الفرصة ✨
-
-أي سؤال احنا هنا 📲`,
-
-            `مرحبا {name} 😊
-
-تبين نحجز لك الأغراض؟ الكمية محدودة!
-
-🔥 خصم إضافي ١٠٪ عشانك
-الكود: VIP10
-
-يعطيك العافية 🙏`
-        ];
-        
-        function randomFrom(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
         }
         
-        function formatArabicNumber(n) {
-            const arabicNums = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
-            return n.toString().replace(/\d/g, d => arabicNums[d]);
-        }
-        
-        function formatPrice(n) {
-            return formatArabicNumber(n.toLocaleString()) + ' ر.س';
-        }
-        
-        function sleep(ms) {
-            return new Promise(r => setTimeout(r, ms));
-        }
-        
-        function toggleSound() {
-            soundEnabled = !soundEnabled;
-            const btn = document.getElementById('soundToggle');
-            btn.textContent = soundEnabled ? '🔊 الصوت مفعّل' : '🔇 الصوت مغلق';
-            btn.classList.toggle('muted', !soundEnabled);
-        }
-        
-        function playSound(type) {
-            if (!soundEnabled) return;
+        function calculate() {
+            const sales = parseInt(slider.value);
+            const loss = Math.round(sales * 0.21);
+            const recover = Math.round(loss * 0.15);
             
-            // Use Web Audio API for better sound
+            salesValue.textContent = formatNumber(sales);
+            lossValue.textContent = formatNumber(loss);
+            recoverValue.textContent = formatNumber(recover);
+            
+            const progress = ((sales - 10000) / (500000 - 10000)) * 100;
+            slider.style.setProperty('--progress', progress + '%');
+        }
+        
+        slider.addEventListener('input', calculate);
+        calculate();
+        
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value;
+            if (!email || !email.includes('@')) {
+                alert('الرجاء إدخال بريد صحيح');
+                return;
+            }
+            
             try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioCtx.createOscillator();
-                const gainNode = audioCtx.createGain();
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioCtx.destination);
-                
-                if (type === 'notification') {
-                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-                    oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.3);
-                } else if (type === 'chaching') {
-                    // Multiple notes for cha-ching
-                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-                    notes.forEach((freq, i) => {
-                        const osc = audioCtx.createOscillator();
-                        const gain = audioCtx.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.frequency.value = freq;
-                        osc.type = 'sine';
-                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.3);
-                        osc.start(audioCtx.currentTime + i * 0.1);
-                        osc.stop(audioCtx.currentTime + i * 0.1 + 0.3);
-                    });
-                } else if (type === 'coin') {
-                    oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(2400, audioCtx.currentTime + 0.1);
-                    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-                    oscillator.start();
-                    oscillator.stop(audioCtx.currentTime + 0.15);
-                }
-            } catch (e) {
-                console.log('Audio not supported');
-            }
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        merchantId: 'waitlist',
+                        source: 'lead_magnet_v2',
+                        monthlySales: slider.value
+                    })
+                });
+            } catch(e) {}
+            
+            document.getElementById('ctaForm').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('show');
         }
-        
-        function createCoinParticle() {
-            const container = document.getElementById('moneyParticles');
-            const coin = document.createElement('div');
-            coin.className = 'coin';
-            coin.textContent = '💰';
-            coin.style.left = (20 + Math.random() * 60) + '%';
-            coin.style.animationDuration = (1.5 + Math.random()) + 's';
-            container.appendChild(coin);
-            
-            playSound('coin');
-            
-            setTimeout(() => coin.remove(), 2500);
-        }
-        
-        function createConfetti() {
-            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96E6A1', '#DDA0DD', '#25D366'];
-            
-            for (let i = 0; i < 80; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.background = randomFrom(colors);
-                confetti.style.width = (8 + Math.random() * 8) + 'px';
-                confetti.style.height = (12 + Math.random() * 12) + 'px';
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                confetti.style.animation = `confettiFall ${2 + Math.random() * 2}s linear forwards`;
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                document.body.appendChild(confetti);
-                
-                setTimeout(() => confetti.remove(), 4500);
-            }
-        }
-        
-        async function animateMoneyCounter(amount) {
-            const el = document.getElementById('totalRecovered');
-            const startVal = totalMoney;
-            const endVal = totalMoney + amount;
-            const duration = 1500;
-            const steps = 40;
-            const stepDuration = duration / steps;
-            const increment = amount / steps;
-            
-            for (let i = 1; i <= steps; i++) {
-                const currentVal = Math.round(startVal + increment * i);
-                el.textContent = formatPrice(currentVal);
-                el.classList.add('bump');
-                
-                if (i % 5 === 0) createCoinParticle();
-                
-                await sleep(stepDuration);
-                el.classList.remove('bump');
-            }
-            
-            totalMoney = endVal;
-            el.textContent = formatPrice(totalMoney);
-        }
-        
-        async function typeMessage(element, text, speed = 40) {
-            element.innerHTML = '';
-            const lines = text.split('\n');
-            
-            for (let i = 0; i < lines.length; i++) {
-                if (i > 0) {
-                    element.innerHTML += '<br>';
-                }
-                
-                for (let char of lines[i]) {
-                    element.innerHTML += char;
-                    await sleep(speed);
-                }
-            }
-        }
-        
-        async function startDemo() {
-            const btn = document.getElementById('startBtn');
-            btn.disabled = true;
-            btn.textContent = '⏳ جاري العرض...';
-            
-            // Reset UI
-            document.getElementById('finalSection').classList.remove('visible');
-            document.getElementById('chachingOverlay').classList.remove('visible');
-            document.getElementById('waBubble1').classList.remove('visible');
-            document.getElementById('waReply').classList.remove('visible');
-            document.getElementById('waTyping').classList.remove('visible');
-            document.getElementById('cartCard').classList.remove('active', 'completed');
-            document.getElementById('waCard').classList.remove('active', 'completed');
-            document.getElementById('cartStatusBar').className = 'cart-status-bar abandoned';
-            document.getElementById('cartStatusBar').textContent = '⏰ متروكة من ٤٧ دقيقة';
-            
-            // Pick random data
-            const customer = randomFrom(customers);
-            const prod1 = randomFrom(products);
-            const prod2 = randomFrom(products.filter(p => p !== prod1));
-            const cartProducts = Math.random() > 0.3 ? [prod1, prod2] : [prod1];
-            const cartTotal = cartProducts.reduce((s, p) => s + p.price, 0);
-            
-            // Setup customer
-            document.getElementById('custName').textContent = customer.name;
-            document.getElementById('custPhone').textContent = customer.phone;
-            document.getElementById('custAvatar').textContent = customer.avatar;
-            
-            // Setup cart items
-            const cartItemsHtml = cartProducts.map(p => `
-                <div class="cart-item">
-                    <div class="item-image">${p.emoji}</div>
-                    <div class="item-info">
-                        <div class="item-name">${p.name}</div>
-                        <div class="item-variant">${p.variant}</div>
-                    </div>
-                    <div class="item-price">${formatPrice(p.price)}</div>
-                </div>
-            `).join('');
-            document.getElementById('cartItemsList').innerHTML = cartItemsHtml;
-            document.getElementById('cartTotalAmount').textContent = formatPrice(cartTotal);
-            
-            // Setup cha-ching amount
-            document.getElementById('chachingAmount').textContent = '+' + formatPrice(cartTotal);
-            
-            // STAGE 1: Show abandoned cart
-            await sleep(500);
-            document.getElementById('cartCard').classList.add('active');
-            await sleep(2500);
-            document.getElementById('cartCard').classList.remove('active');
-            document.getElementById('cartCard').classList.add('completed');
-            
-            // STAGE 2: WhatsApp sends message
-            document.getElementById('waCard').classList.add('active');
-            await sleep(500);
-            
-            // Show typing indicator
-            document.getElementById('waTyping').classList.add('visible');
-            playSound('notification');
-            await sleep(2000);
-            
-            // Hide typing, show message
-            document.getElementById('waTyping').classList.remove('visible');
-            
-            const messageTemplate = randomFrom(messages);
-            const firstName = customer.name.split(' ')[0];
-            const messageText = messageTemplate.replace('{name}', firstName);
-            
-            await typeMessage(document.getElementById('waMessage1'), messageText, 25);
-            document.getElementById('waBubble1').classList.add('visible');
-            playSound('notification');
-            
-            await sleep(2500);
-            
-            // Customer replies
-            document.getElementById('waReply').classList.add('visible');
-            playSound('notification');
-            
-            await sleep(1000);
-            
-            // Cart status changes to recovered
-            document.getElementById('cartStatusBar').className = 'cart-status-bar recovered';
-            document.getElementById('cartStatusBar').innerHTML = '✅ العميل أكمل الطلب!';
-            
-            // CHA-CHING!
-            await sleep(500);
-            document.getElementById('chachingOverlay').classList.add('visible');
-            playSound('chaching');
-            createConfetti();
-            
-            await sleep(2500);
-            document.getElementById('chachingOverlay').classList.remove('visible');
-            
-            // Animate money counter
-            animateMoneyCounter(cartTotal);
-            
-            document.getElementById('waCard').classList.remove('active');
-            document.getElementById('waCard').classList.add('completed');
-            
-            // Show final section
-            await sleep(1500);
-            document.getElementById('finalSection').classList.add('visible');
-            
-            // Scroll to final section
-            document.getElementById('finalSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            
-            // Reset button
-            btn.disabled = false;
-            btn.textContent = '🔄 شاهد مرة ثانية';
-        }
-        
-        // Auto-enable sound on first interaction
-        document.addEventListener('click', function enableAudio() {
-            // Create silent audio context to enable audio
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                audioCtx.resume();
-            } catch (e) {}
-            document.removeEventListener('click', enableAudio);
-        }, { once: true });
     </script>
 </body>
 </html>
