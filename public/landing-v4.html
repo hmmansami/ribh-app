@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | هالفلوس رايحة كل يوم</title>
+    <meta name="description" content="فلوسك تروح كل يوم من السلات المتروكة - رِبح يرجعها لك تلقائياً">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 120px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 15px 0 10px;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+        .logo span { color: #10B981; }
+        
+        /* ==========================================
+           SECTION 1: LOSS CALCULATOR (TOP)
+           ========================================== */
+        .loss-calculator {
+            margin: 20px 0;
+        }
+        .loss-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .loss-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+        .loss-header h1 .red { color: #EF4444; }
+        .loss-header h1 .green { color: #10B981; }
+        
+        .calculator-card {
+            background: rgba(17,17,17,0.9);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+        }
+        .calc-question {
+            text-align: center;
+            font-size: 1rem;
+            color: #aaa;
+            margin-bottom: 12px;
+        }
+        .calc-value {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        .calc-value span { color: #10B981; }
+        
+        .slider-container { padding: 0 10px; margin-bottom: 25px; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to left, #10B981 0%, #10B981 var(--progress), #222 var(--progress), #222 100%);
+            border-radius: 12px;
+            outline: none;
+            --progress: 50%;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #555;
+            font-size: 0.75rem;
+            margin-top: 10px;
+        }
+        
+        /* Loss Display - Big Impact */
+        .loss-display {
+            background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(239,68,68,0.05));
+            border: 2px solid rgba(239,68,68,0.4);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .loss-label {
+            font-size: 1rem;
+            color: #EF4444;
+            margin-bottom: 8px;
+        }
+        .loss-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #EF4444;
+        }
+        .loss-sub {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
+        }
+        
+        .recovery-row {
+            display: flex;
+            gap: 12px;
+        }
+        .recovery-card {
+            flex: 1;
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 14px;
+            padding: 18px 12px;
+            text-align: center;
+        }
+        .recovery-label {
+            font-size: 0.8rem;
+            color: #10B981;
+            margin-bottom: 5px;
+        }
+        .recovery-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #10B981;
+        }
+        
+        /* ==========================================
+           SECTION 2: WHATSAPP MESSAGE PREVIEW
+           ========================================== */
+        .wa-section {
+            margin: 35px 0;
+        }
+        .wa-label {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .wa-message {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #333;
+        }
+        .wa-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+        .wa-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .wa-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .wa-status {
+            font-size: 0.8rem;
+            color: #10B981;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #10B981;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); }
+            30% { opacity: 1; transform: scale(1); }
+        }
+        
+        .wa-bubble {
+            background: #054640;
+            border-radius: 12px 12px 4px 12px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            position: relative;
+        }
+        .wa-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            border: 8px solid transparent;
+            border-bottom-color: #054640;
+            border-right: 0;
+        }
+        .wa-link {
+            display: block;
+            background: rgba(16,185,129,0.2);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #10B981;
+            font-size: 0.9rem;
+            text-decoration: none;
+            text-align: center;
+        }
+        .wa-time {
+            text-align: left;
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        /* ==========================================
+           SECTION 3: FEATURES
+           ========================================== */
+        .features-section {
+            margin: 35px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .feature-item {
+            background: rgba(17,17,17,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .feature-item:hover {
+            border-color: rgba(16,185,129,0.4);
+            transform: translateY(-3px);
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .feature-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.4;
+        }
+        
+        /* ==========================================
+           SECTION 4: EMAIL SIGNUP
+           ========================================== */
+        .signup-section {
+            margin: 40px 0;
+        }
+        .signup-card {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(99,102,241,0.1));
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        .signup-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .signup-sub {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        .signup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .signup-form input {
+            padding: 16px 18px;
+            border: 2px solid #222;
+            border-radius: 14px;
+            background: #111;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            text-align: center;
+        }
+        .signup-form input:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+        .signup-form input::placeholder { color: #555; }
+        .signup-form button {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .signup-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(16,185,129,0.4);
+        }
+        
+        .success-msg {
+            display: none;
+            padding: 20px;
+        }
+        .success-msg.show { display: block; }
+        .success-msg h3 {
+            font-size: 1.3rem;
+            color: #10B981;
+            margin-bottom: 8px;
+        }
+        .success-msg p {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        .signup-form.hidden { display: none; }
+        
+        /* ==========================================
+           SECTION 5: FOOTER TRUST BADGES
+           ========================================== */
+        .trust-footer {
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        .trust-badge span:first-child {
+            color: #10B981;
+        }
+        
+        .copyright {
+            font-size: 0.75rem;
+            color: #444;
+            margin-top: 20px;
+        }
+        
+        /* Guarantee Strip */
+        .guarantee-strip {
+            background: linear-gradient(135deg, #10B981, #059669);
+            padding: 14px 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 25px 0;
+        }
+        
+        /* Responsive */
+        @media (max-width: 400px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .loss-header h1 {
+                font-size: 1.5rem;
+            }
+            .loss-amount {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِ<span>بح</span> 💚</div>
+        </div>
+        
+        <!-- ==========================================
+             SECTION 1: LOSS CALCULATOR (TOP)
+             ========================================== -->
+        <div class="loss-calculator">
+            <div class="loss-header">
+                <h1>
+                    هالفلوس <span class="red">رايحة</span> كل يوم 💸
+                </h1>
+            </div>
+            
+            <div class="calculator-card">
+                <p class="calc-question">كم مبيعاتك الشهرية؟</p>
+                <div class="calc-value"><span id="salesValue">80,000</span> ر.س</div>
+                
+                <div class="slider-container">
+                    <input type="range" id="salesSlider" min="10000" max="500000" value="80000" step="5000">
+                    <div class="slider-labels">
+                        <span>+500k</span>
+                        <span>10k</span>
+                    </div>
+                </div>
+                
+                <div class="loss-display">
+                    <p class="loss-label">😱 تخسر شهرياً</p>
+                    <p class="loss-amount" id="lossValue">16,800 ر.س</p>
+                    <p class="loss-sub">من السلات المتروكة (21% من مبيعاتك)</p>
+                </div>
+                
+                <div class="recovery-row">
+                    <div class="recovery-card">
+                        <p class="recovery-label">نسترد لك</p>
+                        <p class="recovery-value" id="recoverValue">+2,520 ر.س</p>
+                    </div>
+                    <div class="recovery-card">
+                        <p class="recovery-label">سنوياً</p>
+                        <p class="recovery-value" id="yearlyValue">+30,240 ر.س</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="guarantee-strip">
+                🛡️ نضمن 15% استرداد أو لا تدفع شيء
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             SECTION 2: WHATSAPP MESSAGE PREVIEW
+             ========================================== -->
+        <div class="wa-section">
+            <p class="wa-label">رسالة واحدة ترجع لك آلاف الريالات 💬</p>
+            <div class="wa-message">
+                <div class="wa-header">
+                    <div class="wa-avatar">🏪</div>
+                    <div>
+                        <div class="wa-name">متجرك</div>
+                        <div class="wa-status">
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span class="typing-dot"></span>
+                            <span style="margin-right: 6px;">يكتب...</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="wa-bubble">
+                    مرحباً محمد! 👋
+                    <br>لاحظنا إنك ما كملت طلبك...
+                    <br>منتجك لسا محجوز 🛒
+                    <br>خصم 10% لو كملت خلال ساعة ⏰
+                    <div class="wa-link">🔗 كمّل طلبك الآن ←</div>
+                    <div class="wa-time">✓✓ 10:30 م</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             SECTION 3: FEATURES
+             ========================================== -->
+        <div class="features-section">
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-text">تفعيل فوري</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💳</div>
+                    <div class="feature-text">بدون بطاقة</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-text">واتساب مجاني</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             SECTION 4: EMAIL SIGNUP (EMAIL ONLY)
+             ========================================== -->
+        <div class="signup-section">
+            <div class="signup-card">
+                <h2 class="signup-title">🚀 احجز مقعدك في أول 100 متجر</h2>
+                <p class="signup-sub">وصول مبكر مجاني + دعم VIP</p>
+                
+                <div class="signup-form" id="signupForm">
+                    <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                    <button onclick="joinWaitlist()">احجز مقعدك 🚀</button>
+                </div>
+                
+                <div class="success-msg" id="successMsg">
+                    <h3>🎉 أنت من أول 100!</h3>
+                    <p>سنبلغك فور الإطلاق - استعد للأرباح</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ==========================================
+             SECTION 5: FOOTER TRUST BADGES
+             ========================================== -->
+        <div class="trust-footer">
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span>✓</span>
+                    <span>لا مخاطرة</span>
+                </div>
+                <div class="trust-badge">
+                    <span>✓</span>
+                    <span>بدون التزام</span>
+                </div>
+                <div class="trust-badge">
+                    <span>✓</span>
+                    <span>ادفع بس إذا ربحت</span>
+                </div>
+            </div>
+            
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <span>🔒</span>
+                    <span>بياناتك آمنة</span>
+                </div>
+                <div class="trust-badge">
+                    <span>🛡️</span>
+                    <span>ضمان 15%</span>
+                </div>
+            </div>
+            
+            <p class="copyright">© 2025 رِبح - استرداد المبيعات المفقودة</p>
+        </div>
+    </div>
+
+    <script>
+        // Calculator Logic
+        const slider = document.getElementById('salesSlider');
+        const salesValue = document.getElementById('salesValue');
+        const lossValue = document.getElementById('lossValue');
+        const recoverValue = document.getElementById('recoverValue');
+        const yearlyValue = document.getElementById('yearlyValue');
+        
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
+        }
+        
+        function calculate() {
+            const sales = parseInt(slider.value);
+            const loss = Math.round(sales * 0.21);
+            const recover = Math.round(loss * 0.15);
+            const yearly = recover * 12;
+            
+            salesValue.textContent = formatNumber(sales);
+            lossValue.textContent = formatNumber(loss) + ' ر.س';
+            recoverValue.textContent = '+' + formatNumber(recover) + ' ر.س';
+            yearlyValue.textContent = '+' + formatNumber(yearly) + ' ر.س';
+            
+            // Update slider gradient
+            const progress = ((sales - 10000) / (500000 - 10000)) * 100;
+            slider.style.setProperty('--progress', progress + '%');
+        }
+        
+        slider.addEventListener('input', calculate);
+        calculate();
+        
+        // Signup
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email || !email.includes('@')) {
+                document.getElementById('email').style.borderColor = '#EF4444';
+                document.getElementById('email').placeholder = 'الرجاء إدخال بريد صحيح';
+                return;
+            }
+            
+            const monthlySales = slider.value;
+            
+            try {
+                await fetch('/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        merchantId: 'waitlist',
+                        source: 'landing_v4',
+                        monthlySales: monthlySales
+                    })
+                });
+            } catch(e) {
+                console.log('Lead capture error:', e);
+            }
+            
+            document.getElementById('signupForm').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('show');
+        }
+        
+        // Enter key to submit
+        document.getElementById('email').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinWaitlist();
+        });
+    </script>
+</body>
+</html>

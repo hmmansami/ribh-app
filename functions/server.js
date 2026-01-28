@@ -5411,8 +5411,15 @@ app.post('/api/sequences/cancel', async (req, res) => {
     }
 });
 
-// Root serves the dashboard (index.html is served by express.static)
-// No need for explicit / route - express.static handles it
+// Root serves landing page for new visitors
+app.get('/', (req, res) => {
+    res.sendFile('landing-v4.html', { root: path.join(__dirname, '../public') });
+});
+
+// Dashboard is at /dashboard
+app.get('/dashboard', (req, res) => {
+    res.sendFile('dashboard.html', { root: path.join(__dirname, '../public') });
+});
 
 // ==========================================
 // BEHAVIORAL ANALYTICS (Mom Test Style)
@@ -7139,8 +7146,31 @@ app.get('/api/leads/:merchantId', async (req, res) => {
     res.json({
         success: true,
         total: merchantLeads.length,
-        leads: merchantLeads.slice(-50) // Last 50
+        leads: merchantLeads.slice(-100) // Last 100
     });
+});
+
+/**
+ * Update lead status (e.g., mark as converted)
+ */
+app.post('/api/leads/update', async (req, res) => {
+    const { email, merchantId, converted } = req.body;
+    
+    if (!email || !merchantId) {
+        return res.status(400).json({ error: 'Missing email or merchantId' });
+    }
+    
+    const leads = await readDB(LEADS_COLLECTION) || [];
+    const lead = leads.find(l => l.email === email && l.merchantId === merchantId);
+    
+    if (lead) {
+        lead.converted = converted;
+        lead.convertedAt = converted ? new Date().toISOString() : null;
+        await writeDB(LEADS_COLLECTION, leads);
+        res.json({ success: true, lead });
+    } else {
+        res.status(404).json({ error: 'Lead not found' });
+    }
 });
 
 // ==========================================
