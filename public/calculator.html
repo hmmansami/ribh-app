@@ -48,7 +48,7 @@
             color: #a1a1aa;
             font-size: 0.9rem;
         }
-        input[type="number"], input[type="text"] {
+        input {
             width: 100%;
             padding: 15px;
             border: 2px solid rgba(255,255,255,0.1);
@@ -81,13 +81,9 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(16,185,129,0.3);
         }
-        .btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
         .result {
             display: none;
+            text-align: center;
             animation: fadeIn 0.5s ease;
         }
         @keyframes fadeIn {
@@ -99,13 +95,12 @@
             font-weight: 700;
             color: #EF4444;
             margin: 20px 0;
-            text-align: center;
         }
         .recover-money {
             font-size: 2rem;
             font-weight: 600;
             color: #10B981;
-            margin: 15px 0;
+            margin: 20px 0;
         }
         .stat-row {
             display: flex;
@@ -115,7 +110,40 @@
         }
         .stat-label { color: #a1a1aa; }
         .stat-value { font-weight: 600; }
-        .emoji { font-size: 4rem; margin-bottom: 10px; text-align: center; }
+        .cta-box {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .cta-box h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        .cta-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .cta-input input {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            text-align: right;
+        }
+        .cta-input input::placeholder { color: rgba(255,255,255,0.6); }
+        .cta-btn {
+            padding: 15px 25px;
+            background: #fff;
+            color: #059669;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .emoji { font-size: 4rem; margin-bottom: 10px; }
         .reset-btn {
             background: transparent;
             border: 2px solid rgba(255,255,255,0.2);
@@ -132,46 +160,6 @@
             color: #52525b;
             font-size: 0.85rem;
         }
-        
-        /* Signup Section - Inside Results */
-        .signup-section {
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 2px solid rgba(16, 185, 129, 0.3);
-        }
-        .signup-section h3 {
-            text-align: center;
-            font-size: 1.2rem;
-            margin-bottom: 8px;
-            color: #10B981;
-        }
-        .signup-section .subtitle {
-            text-align: center;
-            color: #a1a1aa;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-        .signup-form {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .signup-form input {
-            padding: 15px;
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        .signup-form input[type="email"] {
-            text-align: right;
-        }
-        .signup-form input[type="tel"] {
-            text-align: left;
-            direction: ltr;
-        }
         .success-msg {
             display: none;
             background: rgba(16,185,129,0.2);
@@ -181,25 +169,6 @@
             text-align: center;
             margin-top: 15px;
         }
-        .error-msg {
-            display: none;
-            background: rgba(239,68,68,0.2);
-            border: 1px solid #EF4444;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            margin-top: 15px;
-            color: #EF4444;
-        }
-        .whatsapp-note {
-            text-align: center;
-            font-size: 0.85rem;
-            color: #71717a;
-            margin-top: 12px;
-        }
-        .whatsapp-note span {
-            color: #25D366;
-        }
     </style>
 </head>
 <body>
@@ -207,7 +176,6 @@
         <div class="logo">رِ<span>بح</span> 💚</div>
         <h1>كم تخسر من السلات المتروكة؟</h1>
 
-        <!-- Step 1: Calculator Input -->
         <div class="card" id="calculator">
             <div class="input-group">
                 <label>عدد الزوار شهرياً</label>
@@ -224,11 +192,9 @@
             <button class="btn" onclick="calculate()">احسب خسارتي 📊</button>
         </div>
 
-        <!-- Step 2: Results + Signup (appears after calculation) -->
         <div class="card result" id="result">
-            <!-- The Scary Number -->
             <div class="emoji">😱</div>
-            <p style="color: #a1a1aa; text-align: center;">أنت تخسر شهرياً</p>
+            <p style="color: #a1a1aa;">أنت تخسر شهرياً</p>
             <div class="lost-money" id="lostMoney">0 ر.س</div>
             
             <div class="stat-row">
@@ -236,37 +202,29 @@
                 <span class="stat-value" id="abandonedCarts">0</span>
             </div>
             <div class="stat-row">
-                <span class="stat-label">خسارة سنوية 💸</span>
-                <span class="stat-value" style="color: #EF4444;" id="yearlyLoss">0 ر.س</span>
+                <span class="stat-label">خسارة سنوية</span>
+                <span class="stat-value" id="yearlyLoss">0 ر.س</span>
             </div>
             
-            <!-- The Solution Preview -->
-            <div style="margin-top: 25px; padding: 20px; background: rgba(16,185,129,0.1); border-radius: 12px; text-align: center;">
-                <p style="color: #a1a1aa; margin-bottom: 5px;">رِبح يسترد 15-25% من سلاتك</p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p style="color: #a1a1aa;">رِبح يسترد 15-25% من السلات</p>
                 <div class="recover-money" id="recoverMoney">0 - 0 ر.س</div>
                 <p style="color: #10B981; font-weight: 500;">شهرياً في جيبك 💰</p>
             </div>
 
-            <!-- Step 3: Signup Form (AFTER seeing the pain + solution) -->
-            <div class="signup-section">
-                <h3>🚀 ابدأ استرداد خسائرك</h3>
-                <p class="subtitle">سجل الآن واحصل على خصم ترحيبي حصري</p>
-                
-                <div class="signup-form" id="signupForm">
-                    <input type="email" id="email" placeholder="بريدك الإلكتروني">
-                    <input type="tel" id="phone" placeholder="رقم الجوال (05XXXXXXXX)">
-                    <button class="btn" onclick="joinWaitlist()">انضم الآن 🎁</button>
-                </div>
-                
-                <p class="whatsapp-note">📱 سنرسل كود الخصم على <span>واتساب</span></p>
-                
-                <div class="success-msg" id="successMsg">
-                    ✅ تم تسجيلك! تحقق من واتساب لكود الخصم 🎉
-                </div>
-                <div class="error-msg" id="errorMsg"></div>
-            </div>
-
             <button class="btn reset-btn" onclick="reset()">احسب مرة ثانية</button>
+        </div>
+
+        <div class="cta-box" id="ctaBox" style="display: none;">
+            <h3>🚀 انضم لقائمة الانتظار</h3>
+            <p style="opacity: 0.9; font-size: 0.95rem;">احصل على 50% خصم عند الإطلاق</p>
+            <div class="cta-input">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                <button class="cta-btn" onclick="joinWaitlist()">انضم</button>
+            </div>
+            <div class="success-msg" id="successMsg">
+                ✅ تم تسجيلك! سنتواصل معك قريباً
+            </div>
         </div>
 
         <p class="trust">🔒 لا نحفظ بياناتك • أداة مجانية من رِبح</p>
@@ -297,84 +255,40 @@
             document.getElementById('yearlyLoss').textContent = yearlyLoss.toLocaleString() + ' ر.س';
             document.getElementById('recoverMoney').textContent = recoverMin.toLocaleString() + ' - ' + recoverMax.toLocaleString() + ' ر.س';
 
-            // Store for later submission
-            window.calculatedLoss = lostMoney;
-
             document.getElementById('calculator').style.display = 'none';
             document.getElementById('result').style.display = 'block';
-            
-            // Smooth scroll to results
-            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('ctaBox').style.display = 'block';
         }
 
         function reset() {
             document.getElementById('calculator').style.display = 'block';
             document.getElementById('result').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'flex';
-            document.getElementById('successMsg').style.display = 'none';
-            document.getElementById('errorMsg').style.display = 'none';
-            document.getElementById('email').disabled = false;
-            document.getElementById('phone').disabled = false;
+            document.getElementById('ctaBox').style.display = 'none';
         }
 
         async function joinWaitlist() {
             const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'none';
-            
             if (!email || !email.includes('@')) {
-                errorMsg.textContent = 'الرجاء إدخال بريد صحيح';
-                errorMsg.style.display = 'block';
+                alert('الرجاء إدخال بريد صحيح');
                 return;
             }
-            
-            // Validate Saudi phone
-            const cleanPhone = phone.replace(/\D/g, '');
-            if (!cleanPhone || cleanPhone.length < 9) {
-                errorMsg.textContent = 'الرجاء إدخال رقم جوال صحيح (مثال: 05XXXXXXXX)';
-                errorMsg.style.display = 'block';
-                return;
-            }
-
-            // Disable form while submitting
-            document.getElementById('email').disabled = true;
-            document.getElementById('phone').disabled = true;
 
             try {
-                const res = await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        email,
-                        phone,
+                        email, 
                         merchantId: 'waitlist',
-                        source: 'calculator',
-                        monthlySales: window.calculatedLoss || 0
+                        source: 'calculator'
                     })
                 });
-                
-                const data = await res.json();
-                
-                if (!data.success) {
-                    errorMsg.textContent = data.message || 'حدث خطأ، حاول مرة أخرى';
-                    errorMsg.style.display = 'block';
-                    document.getElementById('email').disabled = false;
-                    document.getElementById('phone').disabled = false;
-                    return;
-                }
-                
-                // Show success with discount info
-                const successMsg = document.getElementById('successMsg');
-                successMsg.innerHTML = `✅ تم تسجيلك! خصمك الحصري <strong>${data.discount}</strong> في طريقه على واتساب 🎉`;
-                successMsg.style.display = 'block';
-                document.getElementById('signupForm').style.display = 'none';
-                
-            } catch(e) {
-                // Show success anyway (capture might have worked)
-                document.getElementById('successMsg').style.display = 'block';
-                document.getElementById('signupForm').style.display = 'none';
-            }
+            } catch(e) {}
+
+            document.getElementById('successMsg').style.display = 'block';
+            document.getElementById('email').disabled = true;
+            document.querySelector('.cta-btn').disabled = true;
+            document.querySelector('.cta-btn').textContent = '✓';
         }
     </script>
 </body>
