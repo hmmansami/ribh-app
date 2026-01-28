@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | استرد سلاتك المتروكة</title>
+    <meta name="description" content="رِبح يسترد 30% من السلات المتروكة تلقائياً - سجل الآن للحصول على شهر مجاني">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+        
+        /* Animated Background */
+        .bg-glow {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(16,185,129,0.08), transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(99,102,241,0.05), transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .logo span { color: #10B981; }
+        
+        /* Hero */
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .hero h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .hero h1 .green { color: #10B981; }
+        .hero h1 .red { color: #EF4444; }
+        .hero p {
+            font-size: 0.95rem;
+            color: #888;
+        }
+        
+        /* Calculator */
+        .calculator {
+            background: rgba(17,17,17,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin-bottom: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .question {
+            text-align: center;
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .sales-display {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10B981;
+            margin-bottom: 15px;
+        }
+        
+        /* Slider */
+        .slider-container {
+            padding: 0 5px;
+            margin-bottom: 25px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to left, #10B981 0%, #10B981 var(--progress), #222 var(--progress), #222 100%);
+            border-radius: 10px;
+            outline: none;
+            --progress: 50%;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 30px;
+            height: 30px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #444;
+            font-size: 0.75rem;
+            margin-top: 10px;
+        }
+        
+        /* Results */
+        .results-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .result-card {
+            flex: 1;
+            padding: 18px 12px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        .loss-card {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+        }
+        .recover-card {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .result-label {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+        .loss-card .result-value { color: #EF4444; }
+        .recover-card .result-value { color: #10B981; }
+        .result-sub {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        /* Guarantee */
+        .guarantee {
+            background: linear-gradient(135deg, #10B981, #059669);
+            padding: 14px 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            margin-top: auto;
+        }
+        
+        .spots-banner {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #F59E0B;
+        }
+        
+        .cta-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .cta-form input {
+            flex: 1;
+            padding: 16px 18px;
+            border: 2px solid #222;
+            border-radius: 12px;
+            background: #0a0a0a;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .cta-form input:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+        .cta-form input::placeholder { color: #444; }
+        .cta-form button {
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .cta-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+        }
+        .cta-form button:active {
+            transform: scale(0.98);
+        }
+        
+        .success-msg {
+            display: none;
+            background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.3);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        .success-msg.show { display: block; }
+        .success-msg h3 {
+            font-size: 1.2rem;
+            color: #10B981;
+            margin-bottom: 8px;
+        }
+        .success-msg p {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        /* Hide form when success */
+        .cta-form.hidden { display: none; }
+        .spots-banner.hidden { display: none; }
+        
+        @media (max-width: 400px) {
+            .cta-form { flex-direction: column; }
+            .cta-form button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِ<span>بح</span> 💚</div>
+        </div>
+        
+        <!-- Hero -->
+        <div class="hero">
+            <h1>
+                <span class="red">70%</span> من عملائك يتركون السلة
+                <br>
+                رِبح يسترد <span class="green">30%</span> منهم
+            </h1>
+            <p>واتساب ذكي يعمل وأنت نايم</p>
+        </div>
+        
+        <!-- Calculator -->
+        <div class="calculator">
+            <p class="question">كم مبيعاتك الشهرية؟</p>
+            
+            <div class="sales-display"><span id="salesValue">100,000</span> ر.س</div>
+            
+            <div class="slider-container">
+                <input type="range" id="salesSlider" min="10000" max="500000" value="100000" step="5000">
+                <div class="slider-labels">
+                    <span>+500k</span>
+                    <span>10k</span>
+                </div>
+            </div>
+            
+            <div class="results-row">
+                <div class="result-card loss-card">
+                    <p class="result-label">تخسر شهرياً</p>
+                    <p class="result-value"><span id="lossValue">21,000</span> ر.س</p>
+                    <p class="result-sub">من السلات المتروكة</p>
+                </div>
+                <div class="result-card recover-card">
+                    <p class="result-label">نسترد لك</p>
+                    <p class="result-value"><span id="recoverValue">6,300</span>+ ر.س</p>
+                    <p class="result-sub">30% مضمونة</p>
+                </div>
+            </div>
+            
+            <div class="guarantee">
+                <span>🛡️</span>
+                نضمن 15% استرداد أو لا تدفع شيء
+            </div>
+        </div>
+        
+        <!-- CTA -->
+        <div class="cta-section">
+            <div class="spots-banner" id="spotsBanner">
+                ⚡ باقي <strong id="spotsLeft">47</strong> مقعد في الإطلاق المبكر
+            </div>
+            
+            <div class="cta-form" id="ctaForm">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                <button onclick="joinWaitlist()">ابدأ مجاناً</button>
+            </div>
+            
+            <div class="success-msg" id="successMsg">
+                <h3>🎉 تم تسجيلك بنجاح!</h3>
+                <p>سنتواصل معك خلال 24 ساعة</p>
+            </div>
+            
+            <div class="features">
+                <span class="feature">⚡ تفعيل 5 دقائق</span>
+                <span class="feature">💳 بدون بطاقة</span>
+                <span class="feature">📱 واتساب مجاني</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const slider = document.getElementById('salesSlider');
+        const salesValue = document.getElementById('salesValue');
+        const lossValue = document.getElementById('lossValue');
+        const recoverValue = document.getElementById('recoverValue');
+        
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
+        }
+        
+        function calculate() {
+            const sales = parseInt(slider.value);
+            const loss = Math.round(sales * 0.21);
+            const recover = Math.round(loss * 0.30);
+            
+            salesValue.textContent = formatNumber(sales);
+            lossValue.textContent = formatNumber(loss);
+            recoverValue.textContent = formatNumber(recover);
+            
+            const progress = ((sales - 10000) / (500000 - 10000)) * 100;
+            slider.style.setProperty('--progress', progress + '%');
+        }
+        
+        slider.addEventListener('input', calculate);
+        calculate();
+        
+        // Random spots
+        document.getElementById('spotsLeft').textContent = Math.floor(Math.random() * 40) + 20;
+        
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email || !email.includes('@')) {
+                document.getElementById('email').style.borderColor = '#EF4444';
+                document.getElementById('email').placeholder = 'الرجاء إدخال بريد صحيح';
+                return;
+            }
+            
+            try {
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        merchantId: 'waitlist',
+                        source: 'landing_v1_calculator',
+                        monthlySales: slider.value
+                    })
+                });
+            } catch(e) {}
+            
+            document.getElementById('ctaForm').classList.add('hidden');
+            document.getElementById('spotsBanner').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('show');
+        }
+        
+        document.getElementById('email').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinWaitlist();
+        });
+    </script>
+</body>
+</html>

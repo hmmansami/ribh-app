@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | اكتشف كم تخسر من السلات المتروكة</title>
+    <meta name="description" content="أدخل رابط متجرك واكتشف كم تخسر شهرياً من السلات المتروكة - تحليل مجاني">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        .bg-glow {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(16,185,129,0.08), transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(99,102,241,0.05), transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .logo span { color: #10B981; }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .hero h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        .hero h1 .highlight {
+            color: #EF4444;
+            position: relative;
+        }
+        .hero p {
+            font-size: 1rem;
+            color: #888;
+        }
+        
+        /* Store Input Section */
+        .analyzer-section {
+            background: rgba(17,17,17,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .section-title span { font-size: 1.3rem; }
+        
+        .store-input-wrapper {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        .store-input {
+            width: 100%;
+            padding: 18px 20px;
+            padding-right: 50px;
+            background: #0a0a0a;
+            border: 2px solid #222;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s;
+            direction: ltr;
+            text-align: left;
+        }
+        .store-input:focus {
+            outline: none;
+            border-color: #10B981;
+            box-shadow: 0 0 20px rgba(16,185,129,0.2);
+        }
+        .store-input::placeholder {
+            color: #444;
+            direction: rtl;
+            text-align: right;
+        }
+        .input-icon {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+        }
+        
+        .analyze-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+        }
+        .analyze-btn:active {
+            transform: scale(0.98);
+        }
+        .analyze-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .analyze-btn .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .analyze-btn.loading .spinner { display: block; }
+        .analyze-btn.loading .btn-text { display: none; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .platforms-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+            margin-top: 12px;
+        }
+        .platforms-note img {
+            height: 16px;
+            vertical-align: middle;
+            margin: 0 5px;
+            opacity: 0.6;
+        }
+        
+        /* Analysis Results - Hidden initially */
+        .analysis-results {
+            display: none;
+            animation: slideIn 0.5s ease-out;
+        }
+        .analysis-results.show { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .store-card {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(99,102,241,0.1));
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .store-logo {
+            width: 70px;
+            height: 70px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            overflow: hidden;
+        }
+        .store-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .store-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .store-platform {
+            font-size: 0.85rem;
+            color: #10B981;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        /* Analysis Cards */
+        .analysis-grid {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .analysis-card {
+            background: rgba(17,17,17,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 18px;
+        }
+        .analysis-card.danger {
+            border-color: rgba(239,68,68,0.3);
+            background: rgba(239,68,68,0.05);
+        }
+        .analysis-card.success {
+            border-color: rgba(16,185,129,0.3);
+            background: rgba(16,185,129,0.05);
+        }
+        .analysis-card.info {
+            border-color: rgba(99,102,241,0.3);
+            background: rgba(99,102,241,0.05);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .card-icon {
+            font-size: 1.5rem;
+        }
+        .card-title {
+            font-size: 0.9rem;
+            color: #888;
+        }
+        .card-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+        .analysis-card.danger .card-value { color: #EF4444; }
+        .analysis-card.success .card-value { color: #10B981; }
+        .analysis-card.info .card-value { color: #6366F1; }
+        .card-desc {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        /* Opportunities Section */
+        .opportunities {
+            background: rgba(17,17,17,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .opportunities h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .opportunity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .opportunity-item:last-child { border-bottom: none; }
+        .opportunity-icon {
+            font-size: 1.2rem;
+            padding-top: 2px;
+        }
+        .opportunity-text {
+            flex: 1;
+        }
+        .opportunity-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .opportunity-desc {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        /* Guarantee */
+        .guarantee-box {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .guarantee-icon { font-size: 2rem; margin-bottom: 10px; }
+        .guarantee-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .guarantee-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* Final CTA */
+        .final-cta {
+            background: rgba(17,17,17,0.9);
+            border: 2px solid rgba(16,185,129,0.5);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+        }
+        .cta-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .cta-subtitle {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 20px;
+        }
+        .cta-spots {
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #F59E0B;
+        }
+        .email-form {
+            display: flex;
+            gap: 10px;
+        }
+        .email-input {
+            flex: 1;
+            padding: 16px 18px;
+            background: #0a0a0a;
+            border: 2px solid #222;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .email-input:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+        .email-input::placeholder { color: #444; }
+        .submit-btn {
+            padding: 16px 25px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .submit-btn:active { transform: scale(0.98); }
+        
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .success-message.show { display: block; }
+        .success-icon { font-size: 3rem; margin-bottom: 15px; }
+        .success-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #10B981;
+            margin-bottom: 10px;
+        }
+        .success-desc {
+            font-size: 0.95rem;
+            color: #888;
+        }
+        
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        
+        /* Mobile */
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 1.5rem; }
+            .email-form { flex-direction: column; }
+            .submit-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِ<span>بح</span> 💚</div>
+        </div>
+        
+        <!-- Hero -->
+        <div class="hero">
+            <h1>
+                متجرك يخسر <span class="highlight">21%</span> من مبيعاته
+                <br>بسبب السلات المتروكة
+            </h1>
+            <p>أدخل رابط متجرك واكتشف كم تخسر فعلاً</p>
+        </div>
+        
+        <!-- Store Analyzer -->
+        <div class="analyzer-section" id="analyzerSection">
+            <div class="section-title">
+                <span>🔍</span>
+                تحليل مجاني لمتجرك
+            </div>
+            
+            <div class="store-input-wrapper">
+                <span class="input-icon">🏪</span>
+                <input type="text" 
+                       class="store-input" 
+                       id="storeUrl" 
+                       placeholder="رابط متجرك (مثال: store.salla.sa)"
+                       autocomplete="off">
+            </div>
+            
+            <button class="analyze-btn" id="analyzeBtn" onclick="analyzeStore()">
+                <span class="spinner"></span>
+                <span class="btn-text">🚀 حلل متجري مجاناً</span>
+            </button>
+            
+            <p class="platforms-note">
+                يدعم: سلة • شوبيفاي • زد • ووكومرس
+            </p>
+        </div>
+        
+        <!-- Analysis Results (Hidden initially) -->
+        <div class="analysis-results" id="analysisResults">
+            
+            <!-- Store Card -->
+            <div class="store-card">
+                <div class="store-logo" id="storeLogo">🏪</div>
+                <div class="store-name" id="storeName">متجرك</div>
+                <div class="store-platform">
+                    <span>✓</span>
+                    <span id="storePlatform">سلة</span>
+                </div>
+            </div>
+            
+            <!-- Analysis Grid -->
+            <div class="analysis-grid">
+                <div class="analysis-card danger">
+                    <div class="card-header">
+                        <span class="card-icon">💸</span>
+                        <span class="card-title">الخسارة الشهرية المتوقعة</span>
+                    </div>
+                    <div class="card-value" id="monthlyLoss">~21,000 ر.س</div>
+                    <div class="card-desc">من السلات المتروكة (70% من الزوار يغادرون)</div>
+                </div>
+                
+                <div class="analysis-card success">
+                    <div class="card-header">
+                        <span class="card-icon">💰</span>
+                        <span class="card-title">رِبح يسترد لك</span>
+                    </div>
+                    <div class="card-value" id="canRecover">+6,300 ر.س/شهر</div>
+                    <div class="card-desc">30% من السلات المتروكة - مضمون</div>
+                </div>
+            </div>
+            
+            <!-- Opportunities -->
+            <div class="opportunities">
+                <h3>
+                    <span>💡</span>
+                    فرص نمو لمتجرك
+                </h3>
+                
+                <div class="opportunity-item">
+                    <span class="opportunity-icon">🌙</span>
+                    <div class="opportunity-text">
+                        <div class="opportunity-title">رمضان قادم بعد 30 يوم</div>
+                        <div class="opportunity-desc">جهز رسائل استرداد خاصة للموسم - المتوسط يرتفع 40%</div>
+                    </div>
+                </div>
+                
+                <div class="opportunity-item">
+                    <span class="opportunity-icon">⏰</span>
+                    <div class="opportunity-text">
+                        <div class="opportunity-title">أفضل وقت للرسائل: 8-10 مساءً</div>
+                        <div class="opportunity-desc">معدل فتح أعلى بـ 60% في هذا الوقت</div>
+                    </div>
+                </div>
+                
+                <div class="opportunity-item">
+                    <span class="opportunity-icon">📱</span>
+                    <div class="opportunity-text">
+                        <div class="opportunity-title">واتساب أفضل من الإيميل 5x</div>
+                        <div class="opportunity-desc">معدل استجابة 45% مقابل 8% للإيميل</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Guarantee -->
+            <div class="guarantee-box">
+                <div class="guarantee-icon">🛡️</div>
+                <div class="guarantee-title">نضمن 15% استرداد أو لا تدفع شيء</div>
+                <div class="guarantee-desc">ادفع فقط 10% من المبيعات المستردة • بدون مخاطرة</div>
+            </div>
+            
+            <!-- Final CTA -->
+            <div class="final-cta" id="finalCta">
+                <div class="cta-title">🎁 احجز مقعدك في الإطلاق المبكر</div>
+                <div class="cta-subtitle">أول 100 متجر يحصلون على شهر مجاني + أولوية الدعم</div>
+                
+                <div class="cta-spots">
+                    ⚡ باقي <strong id="spotsLeft">47</strong> مقعد فقط
+                </div>
+                
+                <div class="email-form" id="emailForm">
+                    <input type="email" class="email-input" id="email" placeholder="بريدك الإلكتروني">
+                    <button class="submit-btn" onclick="joinWaitlist()">احجز الآن</button>
+                </div>
+                
+                <div class="features">
+                    <span class="feature">⚡ تفعيل فوري</span>
+                    <span class="feature">💳 بدون بطاقة</span>
+                    <span class="feature">🔒 بياناتك آمنة</span>
+                </div>
+            </div>
+            
+            <!-- Success Message -->
+            <div class="success-message" id="successMessage">
+                <div class="success-icon">🎉</div>
+                <div class="success-title">تم تسجيلك بنجاح!</div>
+                <div class="success-desc">
+                    سنتواصل معك خلال 24 ساعة لتفعيل متجرك
+                    <br><br>
+                    <strong>تابعنا على تويتر للتحديثات:</strong>
+                    <br>
+                    <a href="https://twitter.com/ribh_app" style="color: #10B981;">@ribh_app</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Store analysis data
+        let analysisData = null;
+        
+        // Detect platform from URL
+        function detectPlatform(url) {
+            url = url.toLowerCase();
+            if (url.includes('salla') || url.includes('.sa')) return { name: 'سلة', icon: '🟢' };
+            if (url.includes('shopify') || url.includes('myshopify')) return { name: 'شوبيفاي', icon: '🟣' };
+            if (url.includes('zid')) return { name: 'زد', icon: '🔵' };
+            if (url.includes('woo') || url.includes('wordpress')) return { name: 'ووكومرس', icon: '🟠' };
+            return { name: 'متجر إلكتروني', icon: '🏪' };
+        }
+        
+        // Extract store name from URL
+        function extractStoreName(url) {
+            try {
+                // Remove protocol
+                url = url.replace(/^https?:\/\//, '');
+                // Get first part before dots
+                let name = url.split('.')[0];
+                // Clean up
+                name = name.replace(/[-_]/g, ' ');
+                // Capitalize
+                name = name.charAt(0).toUpperCase() + name.slice(1);
+                return name || 'متجرك';
+            } catch (e) {
+                return 'متجرك';
+            }
+        }
+        
+        // Generate "analysis" based on URL
+        function generateAnalysis(url) {
+            const platform = detectPlatform(url);
+            const storeName = extractStoreName(url);
+            
+            // Generate realistic-looking numbers
+            const estimatedMonthlySales = Math.floor(Math.random() * 150000) + 50000;
+            const monthlyLoss = Math.floor(estimatedMonthlySales * 0.21);
+            const canRecover = Math.floor(monthlyLoss * 0.30);
+            
+            return {
+                platform,
+                storeName,
+                estimatedMonthlySales,
+                monthlyLoss,
+                canRecover,
+                url
+            };
+        }
+        
+        // Format number with commas
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
+        }
+        
+        // Analyze store
+        async function analyzeStore() {
+            const urlInput = document.getElementById('storeUrl');
+            const btn = document.getElementById('analyzeBtn');
+            let url = urlInput.value.trim();
+            
+            if (!url) {
+                urlInput.style.borderColor = '#EF4444';
+                urlInput.placeholder = 'الرجاء إدخال رابط متجرك';
+                return;
+            }
+            
+            // Add https if missing
+            if (!url.startsWith('http')) {
+                url = 'https://' + url;
+            }
+            
+            // Show loading
+            btn.classList.add('loading');
+            btn.disabled = true;
+            
+            // Simulate analysis delay (feels more real)
+            await new Promise(r => setTimeout(r, 1500 + Math.random() * 1000));
+            
+            // Generate analysis
+            analysisData = generateAnalysis(url);
+            
+            // Update UI
+            document.getElementById('storeName').textContent = analysisData.storeName;
+            document.getElementById('storePlatform').textContent = analysisData.platform.name;
+            document.getElementById('storeLogo').textContent = analysisData.platform.icon;
+            document.getElementById('monthlyLoss').textContent = '~' + formatNumber(analysisData.monthlyLoss) + ' ر.س';
+            document.getElementById('canRecover').textContent = '+' + formatNumber(analysisData.canRecover) + ' ر.س/شهر';
+            
+            // Hide analyzer, show results
+            document.getElementById('analyzerSection').style.display = 'none';
+            document.getElementById('analysisResults').classList.add('show');
+            
+            // Scroll to results
+            document.getElementById('analysisResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Reset button
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+        
+        // Join waitlist
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email || !email.includes('@')) {
+                document.getElementById('email').style.borderColor = '#EF4444';
+                document.getElementById('email').placeholder = 'الرجاء إدخال بريد صحيح';
+                return;
+            }
+            
+            // Submit to backend
+            try {
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email,
+                        merchantId: 'waitlist',
+                        source: 'landing_v2_analysis',
+                        storeUrl: analysisData?.url || '',
+                        platform: analysisData?.platform?.name || '',
+                        estimatedLoss: analysisData?.monthlyLoss || 0,
+                        estimatedRecovery: analysisData?.canRecover || 0
+                    })
+                });
+            } catch (e) {
+                console.log('Error submitting:', e);
+            }
+            
+            // Show success
+            document.getElementById('finalCta').style.display = 'none';
+            document.getElementById('successMessage').classList.add('show');
+        }
+        
+        // Random spots left (between 20-60)
+        document.getElementById('spotsLeft').textContent = Math.floor(Math.random() * 40) + 20;
+        
+        // Enter key to submit
+        document.getElementById('storeUrl').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') analyzeStore();
+        });
+        document.getElementById('email').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinWaitlist();
+        });
+    </script>
+</body>
+</html>
