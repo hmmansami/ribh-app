@@ -9,7 +9,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body {
             height: 100%;
-            overflow: hidden;
         }
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
@@ -24,7 +23,6 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding: 20px 20px 25px;
             max-width: 500px;
             margin: 0 auto;
@@ -34,6 +32,7 @@
         /* Header */
         .header {
             text-align: center;
+            margin-bottom: 20px;
         }
         .logo {
             font-size: 1.6rem;
@@ -46,7 +45,6 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             gap: 20px;
         }
         .question {
@@ -145,14 +143,29 @@
         .cta-section {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            margin-top: 15px;
+            padding-top: 20px;
+            border-top: 1px solid #222;
+        }
+        .cta-title {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .cta-subtitle {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #71717a;
+            margin-bottom: 5px;
         }
         .cta-form {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            gap: 10px;
         }
         .cta-form input {
-            flex: 1;
             padding: 14px 15px;
             border: 1px solid #333;
             border-radius: 10px;
@@ -161,13 +174,23 @@
             font-size: 0.95rem;
             font-family: inherit;
         }
+        .cta-form input[type="email"] {
+            text-align: right;
+        }
+        .cta-form input[type="tel"] {
+            text-align: left;
+            direction: ltr;
+        }
         .cta-form input:focus {
             outline: none;
             border-color: #10B981;
         }
         .cta-form input::placeholder { color: #555; }
+        .cta-form input:disabled {
+            opacity: 0.6;
+        }
         .cta-form button {
-            padding: 14px 22px;
+            padding: 16px 22px;
             background: #10B981;
             color: #fff;
             border: none;
@@ -175,22 +198,45 @@
             font-weight: 600;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.95rem;
-            white-space: nowrap;
+            font-size: 1rem;
+            transition: transform 0.2s;
         }
         .cta-form button:active {
             transform: scale(0.98);
+        }
+        .cta-form button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
         .success-msg {
             display: none;
             background: rgba(16,185,129,0.15);
             border: 1px solid rgba(16,185,129,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+        .success-msg.show { display: block; }
+        .error-msg {
+            display: none;
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
             padding: 12px;
             border-radius: 10px;
             text-align: center;
             font-size: 0.9rem;
+            color: #EF4444;
         }
-        .success-msg.show { display: block; }
+        .error-msg.show { display: block; }
+        .whatsapp-note {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #555;
+        }
+        .whatsapp-note span {
+            color: #25D366;
+        }
         
         /* Features Row */
         .features {
@@ -198,6 +244,7 @@
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
+            margin-top: 10px;
         }
         .feature {
             display: flex;
@@ -235,14 +282,15 @@
                 </div>
             </div>
             
+            <!-- Results (Pain Point + Solution) -->
             <div class="results-row">
                 <div class="result-card loss-card">
-                    <p class="result-label">تخسر شهرياً</p>
+                    <p class="result-label">تخسر شهرياً 😱</p>
                     <p class="result-value"><span id="lossValue">21,000</span> ر.س</p>
                     <p class="result-sub">من السلات المتروكة</p>
                 </div>
                 <div class="result-card recover-card">
-                    <p class="result-label">نسترد لك</p>
+                    <p class="result-label">نسترد لك 💰</p>
                     <p class="result-value"><span id="recoverValue">3,150</span>+ ر.س</p>
                     <p class="result-sub">15% مضمونة</p>
                 </div>
@@ -252,24 +300,30 @@
                 <span class="guarantee-icon">🛡️</span>
                 نضمن 15% استرداد أو لا تدفع شيء
             </div>
-        </div>
-        
-        <!-- CTA -->
-        <div class="cta-section">
-            <div class="cta-form" id="ctaForm" style="flex-direction: column; gap: 10px;">
-                <input type="email" id="email" placeholder="بريدك الإلكتروني" style="text-align: right;">
-                <input type="tel" id="phone" placeholder="رقم الجوال (05XXXXXXXX)" dir="ltr" style="text-align: left;">
-                <button onclick="joinWaitlist()" style="width: 100%;">ابدأ مجاناً 🚀</button>
-            </div>
-            <div class="success-msg" id="successMsg">
-                ✅ تم تسجيلك! تحقق من واتساب لكود الخصم 🎉
-            </div>
-            <div class="error-msg" id="errorMsg" style="display: none; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 12px; border-radius: 10px; text-align: center; font-size: 0.9rem; color: #EF4444;">
-            </div>
-            <div class="features">
-                <span class="feature"><span class="feature-icon">⚡</span> تفعيل فوري</span>
-                <span class="feature"><span class="feature-icon">💳</span> بدون بطاقة</span>
-                <span class="feature"><span class="feature-icon">📱</span> واتساب مجاني</span>
+            
+            <!-- CTA - After seeing the pain -->
+            <div class="cta-section">
+                <p class="cta-title">🚀 ابدأ استرداد خسائرك</p>
+                <p class="cta-subtitle">سجل الآن واحصل على خصم ترحيبي حصري</p>
+                
+                <div class="cta-form" id="ctaForm">
+                    <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                    <input type="tel" id="phone" placeholder="رقم الجوال (05XXXXXXXX)">
+                    <button onclick="joinWaitlist()">ابدأ مجاناً 🚀</button>
+                </div>
+                
+                <p class="whatsapp-note">📱 سنرسل كود الخصم على <span>واتساب</span></p>
+                
+                <div class="success-msg" id="successMsg">
+                    ✅ تم تسجيلك! تحقق من واتساب لكود الخصم 🎉
+                </div>
+                <div class="error-msg" id="errorMsg"></div>
+                
+                <div class="features">
+                    <span class="feature"><span class="feature-icon">⚡</span> تفعيل فوري</span>
+                    <span class="feature"><span class="feature-icon">💳</span> بدون بطاقة</span>
+                    <span class="feature"><span class="feature-icon">📱</span> واتساب مجاني</span>
+                </div>
             </div>
         </div>
     </div>
@@ -304,11 +358,11 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             const errorMsg = document.getElementById('errorMsg');
-            errorMsg.style.display = 'none';
+            errorMsg.classList.remove('show');
             
             if (!email || !email.includes('@')) {
                 errorMsg.textContent = 'الرجاء إدخال بريد صحيح';
-                errorMsg.style.display = 'block';
+                errorMsg.classList.add('show');
                 return;
             }
             
@@ -316,9 +370,14 @@
             const cleanPhone = phone.replace(/\D/g, '');
             if (!cleanPhone || cleanPhone.length < 9) {
                 errorMsg.textContent = 'الرجاء إدخال رقم جوال صحيح';
-                errorMsg.style.display = 'block';
+                errorMsg.classList.add('show');
                 return;
             }
+            
+            // Disable while submitting
+            document.getElementById('email').disabled = true;
+            document.getElementById('phone').disabled = true;
+            document.querySelector('.cta-form button').disabled = true;
             
             try {
                 const res = await fetch('https://ribh-app.onrender.com/api/leads/capture', {
@@ -337,7 +396,10 @@
                 
                 if (!data.success) {
                     errorMsg.textContent = data.message || 'حدث خطأ، حاول مرة أخرى';
-                    errorMsg.style.display = 'block';
+                    errorMsg.classList.add('show');
+                    document.getElementById('email').disabled = false;
+                    document.getElementById('phone').disabled = false;
+                    document.querySelector('.cta-form button').disabled = false;
                     return;
                 }
                 
@@ -345,10 +407,14 @@
                 const successMsg = document.getElementById('successMsg');
                 successMsg.innerHTML = `✅ خصمك <strong>${data.discount}</strong> في طريقه على واتساب! 🎉`;
                 
-            } catch(e) {}
-            
-            document.getElementById('ctaForm').classList.add('hidden');
-            document.getElementById('successMsg').classList.add('show');
+                document.getElementById('ctaForm').classList.add('hidden');
+                successMsg.classList.add('show');
+                
+            } catch(e) {
+                // Show success anyway
+                document.getElementById('ctaForm').classList.add('hidden');
+                document.getElementById('successMsg').classList.add('show');
+            }
         }
     </script>
 </body>
