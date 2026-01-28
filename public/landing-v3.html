@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>رِبح | استرد فلوسك الضايعة</title>
+    <meta name="description" content="فلوسك تروح كل يوم من السلات المتروكة - رِبح يرجعها لك تلقائياً">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+        .logo span { color: #10B981; }
+        
+        /* WhatsApp Message Preview */
+        .wa-section {
+            margin: 20px 0 30px;
+        }
+        .wa-label {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 15px;
+        }
+        .wa-message {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            border: 1px solid #333;
+        }
+        .wa-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+        .wa-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .wa-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .wa-status {
+            font-size: 0.75rem;
+            color: #10B981;
+        }
+        .wa-bubble {
+            background: #054640;
+            border-radius: 12px 12px 4px 12px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            position: relative;
+        }
+        .wa-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -8px;
+            border: 8px solid transparent;
+            border-bottom-color: #054640;
+            border-right: 0;
+        }
+        .wa-link {
+            display: block;
+            background: rgba(16,185,129,0.2);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            color: #10B981;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .wa-time {
+            text-align: left;
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 8px;
+        }
+        
+        /* Value Prop */
+        .value-prop {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .value-prop h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        .value-prop h2 .red { color: #EF4444; }
+        .value-prop h2 .green { color: #10B981; }
+        .value-prop p {
+            font-size: 1rem;
+            color: #888;
+        }
+        
+        /* Calculator */
+        .calculator {
+            background: rgba(17,17,17,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px 20px;
+            margin: 25px 0;
+        }
+        .calc-question {
+            text-align: center;
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .calc-value {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #10B981;
+            margin-bottom: 15px;
+        }
+        .slider-container { padding: 0 5px; margin-bottom: 20px; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(to left, #10B981 0%, #10B981 var(--progress), #222 var(--progress), #222 100%);
+            border-radius: 10px;
+            outline: none;
+            --progress: 50%;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.3);
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            color: #444;
+            font-size: 0.75rem;
+            margin-top: 8px;
+        }
+        .results-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .result-card {
+            flex: 1;
+            padding: 18px 12px;
+            border-radius: 14px;
+            text-align: center;
+        }
+        .loss-card {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.25);
+        }
+        .recover-card {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.25);
+        }
+        .result-label { font-size: 0.8rem; color: #888; margin-bottom: 6px; }
+        .result-value { font-size: 1.4rem; font-weight: 800; }
+        .loss-card .result-value { color: #EF4444; }
+        .recover-card .result-value { color: #10B981; }
+        .result-sub { font-size: 0.75rem; color: #666; margin-top: 4px; }
+        
+        /* Guarantee + Commission */
+        .guarantee-commission {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .guarantee-box {
+            background: linear-gradient(135deg, #10B981, #059669);
+            padding: 14px 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .commission-box {
+            background: rgba(99,102,241,0.1);
+            border: 1px solid rgba(99,102,241,0.3);
+            padding: 14px 18px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #a5b4fc;
+        }
+        .commission-box strong {
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        /* Features Section */
+        .features-section {
+            margin: 35px 0;
+        }
+        .features-title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .feature-card {
+            background: rgba(17,17,17,0.9);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .feature-card:hover {
+            border-color: rgba(16,185,129,0.3);
+            transform: translateX(-4px);
+        }
+        .feature-icon {
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+        .feature-content { flex: 1; }
+        .feature-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #fff;
+        }
+        .feature-desc {
+            font-size: 0.85rem;
+            color: #888;
+            line-height: 1.5;
+        }
+        
+        /* Flying $ Animation */
+        .dollar-fly {
+            position: absolute;
+            font-size: 1rem;
+            color: #10B981;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+        }
+        @keyframes flyDollar {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50px, -80px) scale(0.5);
+            }
+        }
+        .dollar-fly.animate {
+            animation: flyDollar 1.5s ease-out forwards;
+        }
+        
+        /* Sticky CTA */
+        .sticky-cta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+        .sticky-inner {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .cta-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .cta-form input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid #222;
+            border-radius: 12px;
+            background: #111;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+        .cta-form input:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+        .cta-form input::placeholder { color: #444; }
+        .cta-form button {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        .cta-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16,185,129,0.3);
+        }
+        .cta-features {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .cta-feature {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        
+        /* Success */
+        .success-msg {
+            display: none;
+            text-align: center;
+            padding: 15px;
+        }
+        .success-msg.show { display: block; }
+        .success-msg h3 {
+            font-size: 1.1rem;
+            color: #10B981;
+            margin-bottom: 5px;
+        }
+        .success-msg p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .cta-form.hidden { display: none; }
+        
+        @media (max-width: 400px) {
+            .cta-form { flex-direction: column; }
+            .cta-form button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">رِ<span>بح</span> 💚</div>
+        </div>
+        
+        <!-- WhatsApp Preview -->
+        <div class="wa-section">
+            <p class="wa-label">رسالة واحدة ترجع لك آلاف الريالات 💬</p>
+            <div class="wa-message">
+                <div class="wa-header">
+                    <div class="wa-avatar">💚</div>
+                    <div>
+                        <div class="wa-name">متجرك</div>
+                        <div class="wa-status">● يكتب...</div>
+                    </div>
+                </div>
+                <div class="wa-bubble">
+                    مرحباً محمد! 👋
+                    <br>لاحظنا إنك ما كملت طلبك...
+                    <br>منتجك لسا محجوز 🛒
+                    <br>خصم 10% لو كملت خلال ساعة ⏰
+                    <div class="wa-link">🔗 كمّل طلبك الآن ←</div>
+                    <div class="wa-time">✓✓ 10:30 م</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Value Prop -->
+        <div class="value-prop">
+            <h2>
+                هالفلوس <span class="red">رايحة</span> كل يوم
+                <br>رِبح <span class="green">يرجعها</span> لك 💰
+            </h2>
+            <p>بدون رسوم • بدون خطر • بدون تعب</p>
+        </div>
+        
+        <!-- Calculator -->
+        <div class="calculator">
+            <p class="calc-question">كم مبيعاتك الشهرية؟</p>
+            <div class="calc-value"><span id="salesValue">80,000</span> ر.س</div>
+            
+            <div class="slider-container">
+                <input type="range" id="salesSlider" min="10000" max="500000" value="80000" step="5000">
+                <div class="slider-labels">
+                    <span>+500k</span>
+                    <span>10k</span>
+                </div>
+            </div>
+            
+            <div class="results-row">
+                <div class="result-card loss-card">
+                    <p class="result-label">تخسر شهرياً</p>
+                    <p class="result-value"><span id="lossValue">16,800</span> ر.س</p>
+                    <p class="result-sub">من السلات المتروكة</p>
+                </div>
+                <div class="result-card recover-card">
+                    <p class="result-label">نسترد لك</p>
+                    <p class="result-value"><span id="recoverValue">2,520</span>+ ر.س</p>
+                    <p class="result-sub">15% مضمونة</p>
+                </div>
+            </div>
+            
+            <!-- Guarantee + Commission -->
+            <div class="guarantee-commission">
+                <div class="guarantee-box">
+                    <span>🛡️</span>
+                    نضمن 15% استرداد أو لا تدفع شيء
+                </div>
+                <div class="commission-box">
+                    نأخذ <strong>30%</strong> فقط من المبيعات المستردة
+                    <br>يعني تربح <strong>70%</strong> من فلوس كانت ضايعة!
+                </div>
+            </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="features-section">
+            <h3 class="features-title">ليش رِبح؟ 🚀</h3>
+            
+            <div class="feature-card" data-dollars="3">
+                <span class="feature-icon">🔗</span>
+                <div class="feature-content">
+                    <div class="feature-title">ربط بضغطة وحدة</div>
+                    <div class="feature-desc">وصّل متجرك بثواني وخلّنا نشتغل</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="5">
+                <span class="feature-icon">📱</span>
+                <div class="feature-content">
+                    <div class="feature-title">واتساب بلا حدود</div>
+                    <div class="feature-desc">رسائل غير محدودة بدون رسوم إضافية</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="4">
+                <span class="feature-icon">🤖</span>
+                <div class="feature-content">
+                    <div class="feature-title">ذكاء اصطناعي مخصص</div>
+                    <div class="feature-desc">كل متجر رسالته الخاصة اللي تناسب عملاءه</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="6">
+                <span class="feature-icon">🌙</span>
+                <div class="feature-content">
+                    <div class="feature-title">عروض رمضان جاهزة</div>
+                    <div class="feature-desc">رسائل موسمية تزيد التحويل 40%</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="3">
+                <span class="feature-icon">⏰</span>
+                <div class="feature-content">
+                    <div class="feature-title">استعجال ذكي</div>
+                    <div class="feature-desc">"باقي ساعة" - تضاعف الاستجابة</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="4">
+                <span class="feature-icon">🔗</span>
+                <div class="feature-content">
+                    <div class="feature-title">رابط مباشر للمنتج</div>
+                    <div class="feature-desc">ضغطة وحدة يرجع العميل لسلته</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="5">
+                <span class="feature-icon">💾</span>
+                <div class="feature-content">
+                    <div class="feature-title">نحفظ الأرقام</div>
+                    <div class="feature-desc">استرجاع العملاء مجاناً مستقبلاً</div>
+                </div>
+            </div>
+            
+            <div class="feature-card" data-dollars="8">
+                <span class="feature-icon">💰</span>
+                <div class="feature-content">
+                    <div class="feature-title">ادفع بس إذا ربحت</div>
+                    <div class="feature-desc">ما نأخذ شيء إلا لما تربح فعلاً</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sticky CTA -->
+    <div class="sticky-cta">
+        <div class="sticky-inner">
+            <div class="cta-form" id="ctaForm">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني">
+                <button onclick="joinWaitlist()">ابدأ مجاناً ←</button>
+            </div>
+            <div class="success-msg" id="successMsg">
+                <h3>🎉 تم تسجيلك!</h3>
+                <p>سنتواصل معك خلال 24 ساعة</p>
+            </div>
+            <div class="cta-features">
+                <span class="cta-feature">⚡ تفعيل فوري</span>
+                <span class="cta-feature">💳 بدون بطاقة</span>
+                <span class="cta-feature">📱 واتساب مجاني</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calculator
+        const slider = document.getElementById('salesSlider');
+        const salesValue = document.getElementById('salesValue');
+        const lossValue = document.getElementById('lossValue');
+        const recoverValue = document.getElementById('recoverValue');
+        
+        function formatNumber(num) {
+            return num.toLocaleString('en-US');
+        }
+        
+        function calculate() {
+            const sales = parseInt(slider.value);
+            const loss = Math.round(sales * 0.21);
+            const recover = Math.round(loss * 0.15);
+            
+            salesValue.textContent = formatNumber(sales);
+            lossValue.textContent = formatNumber(loss);
+            recoverValue.textContent = formatNumber(recover);
+            
+            const progress = ((sales - 10000) / (500000 - 10000)) * 100;
+            slider.style.setProperty('--progress', progress + '%');
+        }
+        
+        slider.addEventListener('input', calculate);
+        calculate();
+        
+        // Flying Dollars Animation
+        function createFlyingDollar(card) {
+            const count = parseInt(card.dataset.dollars) || 3;
+            
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const dollar = document.createElement('span');
+                    dollar.className = 'dollar-fly';
+                    dollar.textContent = '$';
+                    dollar.style.top = (Math.random() * 50 + 10) + 'px';
+                    dollar.style.right = (Math.random() * 30 + 10) + 'px';
+                    card.appendChild(dollar);
+                    
+                    requestAnimationFrame(() => {
+                        dollar.classList.add('animate');
+                    });
+                    
+                    setTimeout(() => dollar.remove(), 1500);
+                }, i * 200);
+            }
+        }
+        
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    createFlyingDollar(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        document.querySelectorAll('.feature-card').forEach(card => {
+            observer.observe(card);
+        });
+        
+        // Signup
+        async function joinWaitlist() {
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email || !email.includes('@')) {
+                document.getElementById('email').style.borderColor = '#EF4444';
+                document.getElementById('email').placeholder = 'الرجاء إدخال بريد صحيح';
+                return;
+            }
+            
+            try {
+                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        email, 
+                        merchantId: 'waitlist',
+                        source: 'landing_v3_whatsapp',
+                        monthlySales: slider.value
+                    })
+                });
+            } catch(e) {}
+            
+            document.getElementById('ctaForm').classList.add('hidden');
+            document.getElementById('successMsg').classList.add('show');
+        }
+        
+        document.getElementById('email').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') joinWaitlist();
+        });
+    </script>
+</body>
+</html>
