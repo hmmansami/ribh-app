@@ -217,13 +217,17 @@
 
         <div class="cta-box" id="ctaBox" style="display: none;">
             <h3>🚀 انضم لقائمة الانتظار</h3>
-            <p style="opacity: 0.9; font-size: 0.95rem;">احصل على 50% خصم عند الإطلاق</p>
-            <div class="cta-input">
-                <input type="email" id="email" placeholder="بريدك الإلكتروني">
-                <button class="cta-btn" onclick="joinWaitlist()">انضم</button>
+            <p style="opacity: 0.9; font-size: 0.95rem;">احصل على خصم ترحيبي حصري عند الإطلاق</p>
+            <div class="cta-input" style="flex-direction: column; gap: 12px;">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني" style="text-align: right;">
+                <input type="tel" id="phone" placeholder="رقم الجوال (05XXXXXXXX)" dir="ltr" style="text-align: left;">
+                <button class="cta-btn" onclick="joinWaitlist()" style="width: 100%; padding: 18px;">انضم الآن 🎁</button>
             </div>
+            <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 10px;">📱 سنرسل لك كود الخصم على واتساب</p>
             <div class="success-msg" id="successMsg">
-                ✅ تم تسجيلك! سنتواصل معك قريباً
+                ✅ تم تسجيلك! تحقق من واتساب لكود الخصم 🎉
+            </div>
+            <div class="error-msg" id="errorMsg" style="display: none; background: rgba(239,68,68,0.2); border: 1px solid #EF4444; border-radius: 10px; padding: 15px; text-align: center; margin-top: 15px; color: #EF4444;">
             </div>
         </div>
 
@@ -268,27 +272,58 @@
 
         async function joinWaitlist() {
             const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'none';
+            
             if (!email || !email.includes('@')) {
-                alert('الرجاء إدخال بريد صحيح');
+                errorMsg.textContent = 'الرجاء إدخال بريد صحيح';
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            // Validate Saudi phone
+            const cleanPhone = phone.replace(/\D/g, '');
+            if (!cleanPhone || cleanPhone.length < 9) {
+                errorMsg.textContent = 'الرجاء إدخال رقم جوال صحيح (مثال: 05XXXXXXXX)';
+                errorMsg.style.display = 'block';
                 return;
             }
 
             try {
-                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                const res = await fetch('https://ribh-app.onrender.com/api/leads/capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        email, 
+                        email,
+                        phone,
                         merchantId: 'waitlist',
                         source: 'calculator'
                     })
                 });
-            } catch(e) {}
+                
+                const data = await res.json();
+                
+                if (!data.success) {
+                    errorMsg.textContent = data.message || 'حدث خطأ، حاول مرة أخرى';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+                
+                // Show success with discount info
+                const successMsg = document.getElementById('successMsg');
+                successMsg.innerHTML = `✅ تم تسجيلك! خصمك الحصري <strong>${data.discount}</strong> في طريقه على واتساب 🎉`;
+                successMsg.style.display = 'block';
+                
+            } catch(e) {
+                // Show success anyway (capture might have worked)
+                document.getElementById('successMsg').style.display = 'block';
+            }
 
-            document.getElementById('successMsg').style.display = 'block';
             document.getElementById('email').disabled = true;
+            document.getElementById('phone').disabled = true;
             document.querySelector('.cta-btn').disabled = true;
-            document.querySelector('.cta-btn').textContent = '✓';
+            document.querySelector('.cta-btn').textContent = '✓ تم';
         }
     </script>
 </body>

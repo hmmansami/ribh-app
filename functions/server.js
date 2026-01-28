@@ -6814,13 +6814,102 @@ app.get('/api/stats/live', async (req, res) => {
 const LEADS_COLLECTION = 'leads';
 
 /**
- * Save lead (email collected before cart)
+ * Validate and normalize Saudi phone number
+ * Returns normalized number (966XXXXXXXXX) or null if invalid
+ */
+function validateSaudiPhone(phone) {
+    if (!phone) return null;
+    
+    // Remove all non-digits
+    let cleaned = String(phone).replace(/\D/g, '');
+    
+    // Handle different formats:
+    // 05XXXXXXXX -> 9665XXXXXXXX
+    // +966XXXXXXXXX -> 966XXXXXXXXX
+    // 966XXXXXXXXX -> 966XXXXXXXXX
+    if (cleaned.startsWith('0') && cleaned.length === 10) {
+        cleaned = '966' + cleaned.substring(1);
+    } else if (cleaned.startsWith('5') && cleaned.length === 9) {
+        cleaned = '966' + cleaned;
+    }
+    
+    // Validate: must be 12 digits starting with 966 and 5 (Saudi mobile)
+    if (cleaned.length === 12 && cleaned.startsWith('9665')) {
+        return cleaned;
+    }
+    
+    return null;
+}
+
+/**
+ * Assign A/B test group (50/50 split)
+ * Group A: 10% discount messaging
+ * Group B: 30% discount messaging
+ */
+function assignABGroup() {
+    return Math.random() < 0.5 ? 'A' : 'B';
+}
+
+/**
+ * Send WhatsApp welcome message to new lead
+ */
+async function sendLeadWelcomeWhatsApp(lead) {
+    if (!lead.phone) return { success: false, error: 'No phone number' };
+    
+    // Get discount based on A/B group
+    const discount = lead.abGroup === 'A' ? '10%' : '30%';
+    
+    const message = `مرحباً ${lead.name || 'عزيزي العميل'}! 🎉
+
+شكراً لتسجيلك في رِبح ✅
+
+أنت الآن في قائمة VIP للعروض الحصرية!
+
+🎁 كهدية ترحيبية، لك خصم ${discount} على أول طلب:
+الكود: RIBH${lead.abGroup}
+
+نتطلع لخدمتك قريباً! 💚`;
+
+    try {
+        // Try sending via WhatsApp bridge (merchant's number)
+        if (whatsappBridge) {
+            const result = await whatsappBridge.sendMessage('ribh-default', lead.phone, message, { immediate: true });
+            if (result.success) {
+                console.log(`✅ WhatsApp welcome sent to ${lead.phone}`);
+                return result;
+            }
+        }
+        
+        // Fallback: Try Meta Cloud API
+        const whatsappSender = require('./lib/whatsappSender');
+        const result = await whatsappSender.sendMessage(lead.phone, message);
+        console.log(`✅ WhatsApp welcome sent via Meta API to ${lead.phone}`);
+        return result;
+    } catch (error) {
+        console.error('❌ WhatsApp welcome error:', error.message);
+        return { success: false, error: error.message };
+    }
+}
+
+/**
+ * Save lead (email + phone collected for lead magnet)
+ * With A/B testing and WhatsApp welcome message
  */
 app.post('/api/leads/capture', async (req, res) => {
-    const { email, name, merchantId, source, phone } = req.body;
+    const { email, name, merchantId, source, phone, monthlySales } = req.body;
 
     if (!email || !merchantId) {
         return res.status(400).json({ success: false, error: 'Email and merchantId required' });
+    }
+
+    // Validate phone if provided (required for waitlist signups)
+    const normalizedPhone = validateSaudiPhone(phone);
+    if (phone && !normalizedPhone && merchantId === 'waitlist') {
+        return res.status(400).json({ 
+            success: false, 
+            error: 'invalid_phone',
+            message: 'الرجاء إدخال رقم جوال سعودي صحيح (مثال: 05XXXXXXXX)'
+        });
     }
 
     const leads = await readDB(LEADS_COLLECTION) || [];
@@ -6828,39 +6917,64 @@ app.post('/api/leads/capture', async (req, res) => {
     // Check if lead exists
     const existingLead = leads.find(l => l.email === email && l.merchantId === merchantId);
 
+    let isNewLead = false;
+    let lead;
+
     if (existingLead) {
         // Update existing lead
         existingLead.visits = (existingLead.visits || 1) + 1;
         existingLead.lastVisit = new Date().toISOString();
-        if (phone && !existingLead.phone) existingLead.phone = phone;
+        if (normalizedPhone && !existingLead.phone) {
+            existingLead.phone = normalizedPhone;
+        }
+        lead = existingLead;
     } else {
-        // Create new lead
-        leads.push({
+        // Create new lead with A/B group assignment
+        const abGroup = assignABGroup();
+        lead = {
             email,
             name: name || email.split('@')[0],
-            phone: phone || null,
+            phone: normalizedPhone || null,
             merchantId,
             source: source || 'popup',
+            abGroup, // A or B for A/B testing
+            monthlySales: monthlySales || null, // Optional: from calculator
             createdAt: new Date().toISOString(),
             lastVisit: new Date().toISOString(),
             visits: 1,
             converted: false,
-            sentWelcome: false
-        });
+            sentWelcome: false,
+            sentWhatsApp: false
+        };
+        leads.push(lead);
+        isNewLead = true;
     }
 
     await writeDB(LEADS_COLLECTION, leads);
-    console.log(`✅ Lead captured: ${email}`);
+    console.log(`✅ Lead captured: ${email} (Group ${lead.abGroup}, Phone: ${normalizedPhone || 'none'})`);
 
     // Send welcome email to new lead
-    const lead = existingLead || leads[leads.length - 1];
-    if (!lead.sentWelcome && config.ENABLE_EMAIL) {
+    if (isNewLead && !lead.sentWelcome && config.ENABLE_EMAIL) {
         await sendLeadWelcomeEmail(lead, merchantId);
         lead.sentWelcome = true;
         await writeDB(LEADS_COLLECTION, leads);
     }
 
-    res.json({ success: true, message: 'Lead captured' });
+    // Send WhatsApp welcome to new lead with phone
+    if (isNewLead && normalizedPhone && !lead.sentWhatsApp) {
+        const waResult = await sendLeadWelcomeWhatsApp(lead);
+        if (waResult.success) {
+            lead.sentWhatsApp = true;
+            await writeDB(LEADS_COLLECTION, leads);
+        }
+    }
+
+    res.json({ 
+        success: true, 
+        message: 'Lead captured',
+        abGroup: lead.abGroup,
+        discount: lead.abGroup === 'A' ? '10%' : '30%'
+    });
 });
 
 /**

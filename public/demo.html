@@ -256,12 +256,15 @@
         
         <!-- CTA -->
         <div class="cta-section">
-            <div class="cta-form" id="ctaForm">
-                <input type="email" id="email" placeholder="بريدك الإلكتروني">
-                <button onclick="joinWaitlist()">ابدأ مجاناً</button>
+            <div class="cta-form" id="ctaForm" style="flex-direction: column; gap: 10px;">
+                <input type="email" id="email" placeholder="بريدك الإلكتروني" style="text-align: right;">
+                <input type="tel" id="phone" placeholder="رقم الجوال (05XXXXXXXX)" dir="ltr" style="text-align: left;">
+                <button onclick="joinWaitlist()" style="width: 100%;">ابدأ مجاناً 🚀</button>
             </div>
             <div class="success-msg" id="successMsg">
-                ✅ تم تسجيلك! سنتواصل معك قريباً
+                ✅ تم تسجيلك! تحقق من واتساب لكود الخصم 🎉
+            </div>
+            <div class="error-msg" id="errorMsg" style="display: none; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 12px; border-radius: 10px; text-align: center; font-size: 0.9rem; color: #EF4444;">
             </div>
             <div class="features">
                 <span class="feature"><span class="feature-icon">⚡</span> تفعيل فوري</span>
@@ -299,22 +302,49 @@
         
         async function joinWaitlist() {
             const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.style.display = 'none';
+            
             if (!email || !email.includes('@')) {
-                alert('الرجاء إدخال بريد صحيح');
+                errorMsg.textContent = 'الرجاء إدخال بريد صحيح';
+                errorMsg.style.display = 'block';
+                return;
+            }
+            
+            // Validate Saudi phone
+            const cleanPhone = phone.replace(/\D/g, '');
+            if (!cleanPhone || cleanPhone.length < 9) {
+                errorMsg.textContent = 'الرجاء إدخال رقم جوال صحيح';
+                errorMsg.style.display = 'block';
                 return;
             }
             
             try {
-                await fetch('https://ribh-app.onrender.com/api/leads/capture', {
+                const res = await fetch('https://ribh-app.onrender.com/api/leads/capture', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
-                        email, 
+                        email,
+                        phone,
                         merchantId: 'waitlist',
-                        source: 'lead_magnet_v2',
+                        source: 'demo',
                         monthlySales: slider.value
                     })
                 });
+                
+                const data = await res.json();
+                
+                if (!data.success) {
+                    errorMsg.textContent = data.message || 'حدث خطأ، حاول مرة أخرى';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+                
+                // Update success message with discount
+                const successMsg = document.getElementById('successMsg');
+                successMsg.innerHTML = `✅ خصمك <strong>${data.discount}</strong> في طريقه على واتساب! 🎉`;
+                
             } catch(e) {}
             
             document.getElementById('ctaForm').classList.add('hidden');
