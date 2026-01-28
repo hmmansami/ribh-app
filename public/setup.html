@@ -315,6 +315,26 @@
             font-size: 14px;
         }
 
+        /* Merchant Info */
+        .merchant-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .merchant-info .merchant-id {
+            color: var(--text-secondary);
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
         /* Hidden states */
         .hidden {
             display: none !important;
@@ -338,6 +358,13 @@
         <!-- Header -->
         <div class="logo">RIBH</div>
         <p class="subtitle">ربط واتساب الأعمال</p>
+        
+        <!-- Merchant Info (shown when ID available) -->
+        <div id="merchantInfo" class="merchant-info hidden">
+            <span>🏪</span>
+            <span id="merchantName">متجرك</span>
+            <span class="merchant-id" id="merchantIdDisplay"></span>
+        </div>
 
         <!-- Steps -->
         <div class="steps">
@@ -409,11 +436,29 @@
         // Get store ID from URL
         const params = new URLSearchParams(window.location.search);
         const storeId = params.get('merchant') || params.get('store') || params.get('storeId') || 'demo';
+        const storeName = params.get('store') ? decodeURIComponent(params.get('store')) : null;
+        const token = params.get('token');
         const connected = params.get('connected');
         const error = params.get('error');
 
         // WhatsApp service URL
         const WA_SERVICE = 'https://ribh-whatsapp-1.onrender.com';
+        
+        // Show merchant info if available
+        if (storeId && storeId !== 'demo') {
+            const infoEl = document.getElementById('merchantInfo');
+            const nameEl = document.getElementById('merchantName');
+            const idEl = document.getElementById('merchantIdDisplay');
+            
+            if (infoEl) {
+                infoEl.classList.remove('hidden');
+                nameEl.textContent = storeName || 'متجرك';
+                idEl.textContent = `#${storeId}`;
+            }
+            
+            // Log for debugging
+            console.log('📦 Setup page loaded:', { storeId, storeName, token: token ? 'present' : 'none' });
+        }
 
         // State
         let isConnected = false;
@@ -548,7 +593,11 @@
                 localStorage.setItem('ribh_store_id', storeId);
             }
             
-            window.location.href = `/index.html?merchant=${storeId}`;
+            // Build URL with token if available
+            let url = `/index.html?merchant=${storeId}`;
+            if (token) url += `&token=${token}`;
+            
+            window.location.href = url;
         }
 
         // Skip WhatsApp setup
@@ -556,7 +605,11 @@
             localStorage.setItem('ribh_wa_skipped', 'true');
             localStorage.setItem('ribh_store_id', storeId);
             
-            window.location.href = `/index.html?merchant=${storeId}&wa_pending=true`;
+            // Build URL with token if available
+            let url = `/index.html?merchant=${storeId}&wa_pending=true`;
+            if (token) url += `&token=${token}`;
+            
+            window.location.href = url;
         }
 
         // Cleanup on page unload

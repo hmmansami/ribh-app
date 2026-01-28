@@ -3,6 +3,7 @@
  * 
  * Dedicated handler for Salla abandoned.cart webhook events.
  * Saves cart data to Firestore for recovery automation.
+ * NOW WITH INSTANT WHATSAPP SENDING!
  * 
  * Events handled:
  * - abandoned.cart (primary)
@@ -14,6 +15,26 @@
 const express = require('express');
 const crypto = require('crypto');
 const admin = require('firebase-admin');
+
+// WhatsApp Client - calls the Render-hosted bridge
+let whatsappClient;
+try {
+    whatsappClient = require('../lib/whatsappClient');
+    console.log('✅ [SallaCart] WhatsApp Client loaded');
+} catch (e) {
+    console.log('⚠️ [SallaCart] WhatsApp Client not available:', e.message);
+    whatsappClient = null;
+}
+
+// AI Messenger - generates personalized messages
+let aiMessenger;
+try {
+    aiMessenger = require('../lib/aiMessenger');
+    console.log('✅ [SallaCart] AI Messenger loaded');
+} catch (e) {
+    console.log('⚠️ [SallaCart] AI Messenger not available:', e.message);
+    aiMessenger = null;
+}
 
 const router = express.Router();
 
@@ -282,6 +303,158 @@ async function saveToFirestore(cartData) {
 }
 
 // ==========================================
+// WHATSAPP INTEGRATION
+// ==========================================
+
+/**
+ * Check if merchant has WhatsApp connected via the Render bridge
+ */
+async function checkMerchantWhatsAppStatus(storeId) {
+    if (!whatsappClient) return { connected: false, reason: 'client_not_available' };
+    
+    try {
+        const status = await whatsappClient.getStatus(storeId);
+        return {
+            connected: status.connected,
+            phone: status.info?.phone || null,
+            reason: status.connected ? 'connected' : 'not_connected'
+        };
+    } catch (error) {
+        console.error(`[SallaCart] WhatsApp status check failed for ${storeId}:`, error.message);
+        return { connected: false, reason: 'status_check_failed' };
+    }
+}
+
+/**
+ * Generate AI-powered personalized message for cart recovery
+ */
+function generateRecoveryMessage(cartData) {
+    const { customer, items, total, currency, checkoutUrl } = cartData;
+    const customerName = customer?.name || 'عزيزنا العميل';
+    
+    // Use AI Messenger if available
+    if (aiMessenger) {
+        try {
+            const analysis = aiMessenger.analyzeCartDeep({
+                total,
+                items,
+                currency,
+                customer,
+                checkoutUrl
+            });
+            
+            // Get the template message (AI generation is async, so use template for instant send)
+            const message = aiMessenger.getAdvancedTemplate(
+                { total, items, currency, customer, checkoutUrl },
+                analysis,
+                1 // First reminder
+            );
+            
+            return {
+                message,
+                discountCode: analysis.discountCode,
+                discount: analysis.suggestedDiscount
+            };
+        } catch (error) {
+            console.error('[SallaCart] AI message generation failed:', error.message);
+        }
+    }
+    
+    // Fallback: Simple personalized template
+    let message = `مرحباً ${customerName}! 👋\n\n`;
+    message += `لاحظنا أن لديك منتجات في سلة التسوق 🛒\n\n`;
+    
+    if (items && items.length > 0) {
+        message += `📦 منتجاتك:\n`;
+        items.slice(0, 3).forEach(item => {
+            message += `• ${item.name}\n`;
+        });
+        if (items.length > 3) {
+            message += `• و ${items.length - 3} منتجات أخرى...\n`;
+        }
+        message += `\n`;
+    }
+    
+    message += `💰 المجموع: ${total} ${currency || 'ر.س'}\n\n`;
+    
+    if (checkoutUrl) {
+        message += `👉 أكمل طلبك الآن:\n${checkoutUrl}`;
+    } else {
+        message += `👉 أكمل طلبك الآن!`;
+    }
+    
+    return { message, discountCode: null, discount: 0 };
+}
+
+/**
+ * Send WhatsApp recovery message via Render bridge
+ */
+async function sendWhatsAppRecovery(storeId, cartData) {
+    if (!whatsappClient) {
+        return { success: false, error: 'whatsapp_client_not_available' };
+    }
+    
+    const phone = cartData.customer?.phone;
+    if (!phone) {
+        return { success: false, error: 'no_phone_number' };
+    }
+    
+    // Check merchant WhatsApp status first
+    const waStatus = await checkMerchantWhatsAppStatus(storeId);
+    if (!waStatus.connected) {
+        console.log(`[SallaCart] ⚠️ Merchant ${storeId} WhatsApp not connected: ${waStatus.reason}`);
+        return { 
+            success: false, 
+            error: 'merchant_not_connected',
+            reason: waStatus.reason
+        };
+    }
+    
+    // Generate personalized message
+    const { message, discountCode, discount } = generateRecoveryMessage(cartData);
+    
+    console.log(`[SallaCart] 📤 Sending WhatsApp to ${phone} via merchant ${storeId}`);
+    
+    try {
+        const result = await whatsappClient.sendMessage(storeId, phone, message);
+        
+        if (result.success) {
+            console.log(`[SallaCart] ✅ WhatsApp sent successfully! ID: ${result.messageId}`);
+            
+            // Update Firestore with send status
+            const db = admin.firestore();
+            const docId = `${storeId}_${cartData.cartId}`;
+            await db.collection(COLLECTION_NAME).doc(docId).update({
+                whatsappSent: true,
+                whatsappSentAt: new Date().toISOString(),
+                whatsappMessageId: result.messageId,
+                discountOffered: discount,
+                discountCode: discountCode
+            });
+            
+            return { 
+                success: true, 
+                messageId: result.messageId,
+                discountCode,
+                discount
+            };
+        } else {
+            console.error(`[SallaCart] ❌ WhatsApp send failed:`, result.error);
+            return { 
+                success: false, 
+                error: result.error 
+            };
+        }
+    } catch (error) {
+        console.error(`[SallaCart] ❌ WhatsApp send exception:`, error.message);
+        return { 
+            success: false, 
+            error: error.message 
+        };
+    }
+}
+
+// ==========================================
 // WEBHOOK ROUTE
 // ==========================================
 
@@ -357,7 +530,29 @@ router.post('/', async (req, res) => {
         const processingTime = Date.now() - startTime;
         console.log(`[SallaCart] ✅ Saved: ${docId} (${cartData.total} ${cartData.currency}, ${cartData.itemCount} items) in ${processingTime}ms`);
         
-        // 8. Success response
+        // 8. INSTANT WHATSAPP RECOVERY! 📱
+        // Send WhatsApp message if merchant is connected and customer has phone
+        let whatsappResult = { success: false, skipped: true };
+        
+        if (cartData.customer.phone && whatsappClient) {
+            console.log(`[SallaCart] 📱 Attempting WhatsApp recovery for ${cartData.customer.phone}...`);
+            
+            // Fire-and-forget: Don't block webhook response
+            // But we'll await for now to get result (Salla has long webhook timeout)
+            whatsappResult = await sendWhatsAppRecovery(cartData.storeId, cartData);
+            
+            if (whatsappResult.success) {
+                console.log(`[SallaCart] 🎉 INSTANT RECOVERY SENT! Cart ${cartData.cartId} → ${cartData.customer.phone}`);
+            } else if (whatsappResult.error === 'merchant_not_connected') {
+                console.log(`[SallaCart] ⚠️ Merchant not connected to WhatsApp - cart saved for later`);
+            } else {
+                console.log(`[SallaCart] ⚠️ WhatsApp send failed: ${whatsappResult.error}`);
+            }
+        } else if (!cartData.customer.phone) {
+            console.log(`[SallaCart] ⚠️ No phone number - cart saved for email recovery only`);
+        }
+        
+        // 9. Success response
         return res.status(200).json({
             success: true,
             message: 'Abandoned cart saved',
@@ -365,7 +560,15 @@ router.post('/', async (req, res) => {
             storeId: cartData.storeId,
             total: cartData.total,
             itemCount: cartData.itemCount,
-            processingTimeMs: processingTime
+            processingTimeMs: processingTime,
+            // WhatsApp status
+            whatsapp: {
+                attempted: !whatsappResult.skipped,
+                sent: whatsappResult.success,
+                messageId: whatsappResult.messageId || null,
+                error: whatsappResult.error || null,
+                discountOffered: whatsappResult.discount || 0
+            }
         });
         
     } catch (error) {

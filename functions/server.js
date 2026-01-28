@@ -359,7 +359,7 @@ app.use((req, res, next) => {
 
     // List of static HTML pages
     const staticPages = ['faq', 'privacy', 'login', 'settings', 'analytics', 'messages',
-        'referrals', 'telegram', 'welcome', 'landing', 'magic', 'oneclick', 'preview', 'whatsapp'];
+        'referrals', 'telegram', 'welcome', 'landing', 'magic', 'oneclick', 'preview', 'whatsapp', 'setup'];
 
     const pageName = req.path.substring(1); // Remove leading /
 
@@ -1615,9 +1615,9 @@ app.get('/oauth/callback', async (req, res) => {
 
         // Step 5: Redirect based on whether this is a new or returning store
         if (isNewStore) {
-            // New store → Redirect to onboarding with storeId
-            console.log(`🎉 New store! Redirecting to onboarding: storeId=${merchantId}`);
-            res.redirect(`/onboarding-v2.html?storeId=${merchantId}&token=${ribhToken}&store=${encodeURIComponent(merchantName)}`);
+            // New store → Redirect to setup page for WhatsApp connection
+            console.log(`🎉 New store! Redirecting to setup: merchant=${merchantId}`);
+            res.redirect(`/setup.html?merchant=${merchantId}&token=${ribhToken}&store=${encodeURIComponent(merchantName)}`);
         } else {
             // Returning store → Go directly to dashboard
             res.redirect(`/?token=${ribhToken}`);

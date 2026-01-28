@@ -66,35 +66,34 @@ async function refreshAccessToken(merchantId, refreshToken) {
 }
 
 /** Handle app events */
-const handleAuthorize = (mid, data) => storeTokens(mid, data);
-const handleInstalled = async (mid, data) => {
-    await getDb().collection('salla_merchants').doc(String(mid)).set({
-        merchantId: String(mid), appId: data.id, appName: data.app_name,
-        scopes: data.app_scopes || [], status: 'installed',
-        installedAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-    console.log(`[SallaApp] 📦 Installed: ${mid}`);
+const handleAuthorize = async (mid, data) => {
+    // Store tokens first
+    await storeTokens(mid, data);
     
+    // Now we have tokens - send welcome messages!
     // Dashboard URL for this merchant
     const dashboardUrl = `https://europe-west1-ribh-484706.cloudfunctions.net/api/app?merchant=${mid}`;
     
-    // Send welcome messages (async, don't block)
+    // Send welcome messages (async, don't block webhook response)
     setImmediate(async () => {
         try {
-            // Fetch merchant info from Salla API
+            // Fetch merchant info from Salla API (now we have valid tokens!)
             const merchantInfo = await sallaApi(mid, '/store/info');
             const store = merchantInfo.data;
             const email = store?.email || store?.owner?.email;
-            const phone = store?.owner?.mobile || store?.mobile || store?.phone || data?.owner?.mobile;
+            const phone = store?.owner?.mobile || store?.mobile || store?.phone;
             const merchantName = store?.owner?.name || store?.name || 'التاجر';
             const storeName = store?.name || 'المتجر';
+            
+            console.log(`[SallaApp] 🔍 Merchant info for ${mid}:`, { email, phone, merchantName, storeName });
             
             // Save phone/email to merchant doc for future use
             await getDb().collection('salla_merchants').doc(String(mid)).set({
                 ownerPhone: phone,
                 ownerEmail: email,
                 storeName: storeName,
-                ownerName: merchantName
+                ownerName: merchantName,
+                welcomeSentAt: admin.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
             
             // 1. Send welcome email
@@ -105,6 +104,7 @@ const handleInstalled = async (mid, data) => {
                         to: email,
                         merchantName: merchantName,
                         storeName: storeName,
+                        merchantId: mid,
                         dashboardUrl: dashboardUrl
                     });
                     console.log(`[SallaApp] 📧 Welcome email sent to ${email}`);
@@ -127,9 +127,19 @@ const handleInstalled = async (mid, data) => {
                 console.log(`[SallaApp] ⚠️ No phone found for merchant ${mid}`);
             }
         } catch (e) {
-            console.error(`[SallaApp] ❌ Welcome messages failed:`, e.message);
+            console.error(`[SallaApp] ❌ Welcome messages failed for ${mid}:`, e.message, e.stack);
         }
     });
+};
+
+const handleInstalled = async (mid, data) => {
+    // Just record the install - tokens come later via app.store.authorize
+    await getDb().collection('salla_merchants').doc(String(mid)).set({
+        merchantId: String(mid), appId: data.id, appName: data.app_name,
+        scopes: data.app_scopes || [], status: 'installed',
+        installedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    console.log(`[SallaApp] 📦 Installed: ${mid} (waiting for authorize webhook to send welcome)`);
 };
 
 /** Send welcome WhatsApp to new merchant */
