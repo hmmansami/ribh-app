@@ -28,6 +28,11 @@
                 "region": "europe-west1"
             },
             {
+                "source": "/webhooks/**",
+                "function": "api",
+                "region": "europe-west1"
+            },
+            {
                 "source": "/shopify/**",
                 "function": "api",
                 "region": "europe-west1"
