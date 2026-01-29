@@ -722,7 +722,7 @@
                 </div>
                 
                 <p style="text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 20px;">
-                    * بناءً على متوسط 70% سلات متروكة و 30% معدل استرداد
+                    * بناءً على متوسط 70% سلات متروكة و 15% معدل استرداد (يمكن أن يرتفع أكثر)
                 </p>
             </div>
         </section>
@@ -971,7 +971,7 @@
             const slider = document.getElementById('salesSlider');
             const sales = parseInt(slider.value);
             const lost = Math.round(sales * 0.7); // 70% abandoned
-            const recovered = Math.round(lost * 0.3); // 30% recovery rate
+            const recovered = Math.round(lost * 0.15); // 15% recovery rate (can go higher)
             
             document.getElementById('salesValue').textContent = sales.toLocaleString('ar-SA') + ' ر.س';
             document.getElementById('lostValue').textContent = lost.toLocaleString('ar-SA') + ' ر.س';
