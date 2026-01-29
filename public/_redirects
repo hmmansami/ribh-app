@@ -1,4 +1,4 @@
-/            /landing-v4.html    200
-/dashboard   /dashboard.html    200
-/onboarding  /onboarding-v2.html    200
-/admin       /admin/index.html    200
+/landing     /index.html         200
+/dashboard   /dashboard.html     200
+/onboarding  /onboarding.html    200
+/admin       /admin/index.html   200

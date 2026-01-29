@@ -187,4 +187,57 @@ async function sendMerchantWelcomeEmail(merchantEmail, storeName) {
   return sendEmail({ to: merchantEmail, subject, html, text });
 }
 
-module.exports = { sendEmail, sendWelcomeEmail, sendMerchantWelcomeEmail };
+/**
+ * Send offer email (cart recovery, win-back, etc.)
+ * Used by sequenceEngine.js
+ */
+async function sendOfferEmail(to, offer, context = {}) {
+  const { storeName = 'متجر رِبح', checkoutUrl = '#' } = context;
+  
+  const subject = offer.headline || '🛒 عرض خاص لك!';
+  
+  const html = `
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: 'Segoe UI', Tahoma, sans-serif; background: #f5f5f5; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; padding: 30px;">
+    <h1 style="color: #10B981; margin: 0;">${offer.headline || 'عرض خاص!'}</h1>
+    
+    <p style="font-size: 18px; color: #333; margin-top: 20px;">
+      ${offer.body || offer.fullMessage || 'لديك عرض خاص في انتظارك!'}
+    </p>
+    
+    ${offer.urgency ? `<p style="color: #EF4444; font-weight: bold;">${offer.urgency}</p>` : ''}
+    ${offer.scarcity ? `<p style="color: #F59E0B;">${offer.scarcity}</p>` : ''}
+    ${offer.bonus ? `<p style="color: #10B981;">${offer.bonus}</p>` : ''}
+    ${offer.guarantee ? `<p style="color: #6B7280;">${offer.guarantee}</p>` : ''}
+    
+    ${offer.discount ? `
+    <div style="background: #F0FDF4; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+      <span style="font-size: 24px; color: #10B981; font-weight: bold;">خصم ${offer.discount}%</span>
+    </div>
+    ` : ''}
+    
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${checkoutUrl}" 
+         style="display: inline-block; background: #10B981; color: white; padding: 15px 40px; 
+                border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold;">
+        ${offer.cta || 'أكمل طلبك الآن ←'}
+      </a>
+    </div>
+    
+    <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+    <p style="color: #888; font-size: 14px; text-align: center;">
+      ${storeName} - نحن هنا لخدمتك 💚
+    </p>
+  </div>
+</body>
+</html>`;
+
+  const text = `${offer.headline || 'عرض خاص!'}\n\n${offer.body || offer.fullMessage || ''}\n\n${checkoutUrl}`;
+  
+  return sendEmail({ to, subject, html, text });
+}
+
+module.exports = { sendEmail, sendWelcomeEmail, sendMerchantWelcomeEmail, sendOfferEmail };

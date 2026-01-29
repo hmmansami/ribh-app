@@ -98,4 +98,40 @@ async function generateOffer(opts = {}) {
   }
 }
 
-module.exports = { generateOffer, SEASONS, PRODUCT_VIBES, CART_HOOKS };
+/**
+ * Alias for generateOffer - used by lifecycleEngineV2
+ * @param {Object} store - Store object (not used currently)
+ * @param {string} type - 'attraction', 'conversion', 'continuity'
+ * @param {Object} context - { customerEmail, customerName, products, cartValue, customerData }
+ */
+async function createOffer(store, type, context = {}) {
+  // Map lifecycle types to offer parameters
+  const opts = {
+    name: context.customerName || 'عميلنا',
+    value: context.cartValue || 0,
+    products: context.products || [],
+    season: 'default',
+    productType: 'default'
+  };
+
+  // Adjust based on type
+  if (type === 'attraction') {
+    opts.value = 0; // New customer, no cart
+  } else if (type === 'continuity') {
+    // Win-back offer - higher discount
+    const offer = await generateOffer(opts);
+    offer.discount = 25; // Higher for win-back
+    return offer;
+  }
+
+  const offer = await generateOffer(opts);
+  
+  // Add discount based on cart tier
+  if (opts.value >= 500) offer.discount = 15;
+  else if (opts.value >= 200) offer.discount = 10;
+  else offer.discount = 5;
+
+  return offer;
+}
+
+module.exports = { generateOffer, createOffer, SEASONS, PRODUCT_VIBES, CART_HOOKS };
