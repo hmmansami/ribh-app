@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - حاسبة خسائر السلات المتروكة | احسب كم يخسر متجرك</title>
+    <meta name="description" content="احسب كم تخسر شهرياً من السلات المتروكة وكم يمكن لـ RIBH أن يسترجع لك تلقائياً عبر واتساب">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --green: #10B981;
+            --green-light: #34D399;
+            --green-dark: #059669;
+            --dark-bg: #0a0a0a;
+            --dark-card: #141414;
+            --dark-card-2: #1a1a1a;
+            --dark-border: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --danger: #e74c3c;
+            --danger-bg: rgba(231, 76, 60, 0.12);
+            --success: #27ae60;
+            --green-bg: rgba(16, 185, 129, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 60px 0 80px;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, #0f0f0f 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 400px;
+            background: radial-gradient(ellipse at center top, rgba(16, 185, 129, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            width: 100%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+            color: var(--dark-bg);
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 900;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* ===== CALCULATOR CARD ===== */
+        .calculator {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 24px;
+            padding: 48px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 120px rgba(16, 185, 129, 0.05);
+            position: relative;
+        }
+
+        .calc-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 40px;
+        }
+
+        /* ===== SLIDER GROUPS ===== */
+        .slider-group {
+            margin-bottom: 36px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+        }
+
+        .slider-label {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .slider-value {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--green);
+            direction: ltr;
+            min-width: 120px;
+            text-align: left;
+            transition: transform 0.15s ease;
+        }
+
+        .slider-value.bump {
+            transform: scale(1.08);
+        }
+
+        /* ===== RANGE INPUT STYLING ===== */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--dark-border);
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            border: 3px solid var(--green-light);
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.5), 0 0 30px rgba(16, 185, 129, 0.15);
+            cursor: grab;
+            transition: box-shadow 0.2s, transform 0.15s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            box-shadow: 0 0 22px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.25);
+            transform: scale(1.1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:active {
+            cursor: grabbing;
+            transform: scale(1.2);
+            box-shadow: 0 0 28px rgba(16, 185, 129, 0.8), 0 0 50px rgba(16, 185, 129, 0.3);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            border: 3px solid var(--green-light);
+            box-shadow: 0 0 14px rgba(16, 185, 129, 0.5);
+            cursor: grab;
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--dark-border);
+        }
+
+        .slider-range-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            direction: ltr;
+        }
+
+        .slider-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        /* ===== DIVIDER ===== */
+        .calc-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--dark-border), transparent);
+            margin: 40px 0 36px;
+        }
+
+        /* ===== RESULTS TITLE ===== */
+        .results-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        /* ===== FUNNEL ROWS ===== */
+        .funnel {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .funnel-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-radius: 14px;
+            border: 1px solid;
+            transition: all 0.3s ease;
+        }
+
+        .funnel-row.loss {
+            background: var(--danger-bg);
+            border-color: rgba(231, 76, 60, 0.25);
+        }
+
+        .funnel-row.recover {
+            background: var(--green-bg);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+
+        .funnel-row.neutral {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--dark-border);
+        }
+
+        .funnel-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .funnel-label .icon {
+            font-size: 18px;
+        }
+
+        .funnel-amount {
+            font-size: 20px;
+            font-weight: 800;
+            direction: ltr;
+            transition: all 0.15s ease;
+        }
+
+        .funnel-amount.red { color: var(--danger); }
+        .funnel-amount.dim { color: var(--text-muted); }
+        .funnel-amount.green { color: var(--green); }
+
+        /* ===== PROFIT CARD (BIG) ===== */
+        .profit-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0.04) 100%);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            border-radius: 20px;
+            padding: 40px 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profit-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .profit-label {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .profit-amount {
+            font-size: clamp(42px, 9vw, 64px);
+            font-weight: 900;
+            color: var(--green);
+            direction: ltr;
+            line-height: 1.1;
+            margin-bottom: 4px;
+            transition: transform 0.15s ease;
+            position: relative;
+        }
+
+        .profit-amount.bump {
+            transform: scale(1.04);
+        }
+
+        .profit-currency {
+            font-size: 20px;
+            color: var(--green-dark);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .profit-sub {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .profit-sub span {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        /* ===== 3 RESULT CARDS ===== */
+        .result-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .result-card {
+            border-radius: 14px;
+            padding: 20px 14px;
+            text-align: center;
+            border: 1px solid;
+        }
+
+        .result-card.loss-card {
+            background: var(--danger-bg);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .result-card.recover-card {
+            background: var(--green-bg);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .result-card.fee-card {
+            background: rgba(255,255,255,0.03);
+            border-color: var(--dark-border);
+        }
+
+        .rc-icon {
+            font-size: 24px;
+            margin-bottom: 6px;
+        }
+
+        .rc-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .rc-amount {
+            font-size: clamp(18px, 3.5vw, 24px);
+            font-weight: 900;
+            direction: ltr;
+            transition: all 0.15s ease;
+        }
+
+        .rc-amount.bump {
+            transform: scale(1.06);
+        }
+
+        .loss-card .rc-amount { color: var(--danger); }
+        .recover-card .rc-amount { color: var(--green); }
+        .fee-card .rc-amount { color: var(--text-secondary); }
+
+        .rc-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ===== YEARLY BANNER ===== */
+        .yearly-banner {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.03) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 14px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .yb-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .yb-amount {
+            font-size: 30px;
+            font-weight: 900;
+            color: var(--green-light);
+            direction: ltr;
+            transition: all 0.15s ease;
+        }
+
+        .yb-amount.bump {
+            transform: scale(1.04);
+        }
+
+        /* ===== FEE NOTE ===== */
+        .fee-note {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px 20px;
+            text-align: center;
+        }
+
+        .fee-note p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .fee-note strong {
+            color: var(--text-secondary);
+        }
+
+        /* ===== SECTIONS COMMON ===== */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--green);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 5vw, 42px);
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 60px;
+        }
+
+        /* ===== HOW IT WORKS ===== */
+        .how-it-works {
+            background: linear-gradient(180deg, #0f0f0f 0%, var(--dark-bg) 100%);
+            text-align: center;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .step-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .step-card:hover {
+            border-color: rgba(16, 185, 129, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--dark-bg);
+            margin: 0 auto 20px;
+        }
+
+        .step-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        .step-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta {
+            background: linear-gradient(180deg, var(--dark-bg) 0%, #080808 50%, var(--dark-bg) 100%);
+            padding: 120px 0;
+        }
+
+        .cta-card {
+            background: linear-gradient(135deg, var(--dark-card) 0%, var(--dark-card-2) 100%);
+            border: 2px solid var(--green);
+            border-radius: 32px;
+            padding: 60px 48px;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 150px rgba(16, 185, 129, 0.08);
+        }
+
+        .cta-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--green-dark), var(--green), var(--green-dark));
+        }
+
+        .cta-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta h2 {
+            font-size: clamp(28px, 5vw, 40px);
+            font-weight: 900;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-sub {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-dynamic {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--green);
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            direction: ltr;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-spots {
+            display: inline-block;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: var(--danger);
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 22px 40px;
+            font-size: 22px;
+            font-weight: 800;
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+            border: none;
+            border-radius: 16px;
+            color: var(--dark-bg);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 36px rgba(16, 185, 129, 0.35);
+        }
+
+        .cta-button:active {
+            transform: translateY(-1px);
+        }
+
+        .cta-note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        footer a {
+            color: var(--green);
+            text-decoration: none;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .calculator {
+                padding: 32px 20px;
+            }
+
+            .result-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-card {
+                padding: 40px 24px;
+            }
+
+            .slider-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .slider-value {
+                text-align: right;
+                font-size: 22px;
+            }
+
+            .profit-card {
+                padding: 28px 20px;
+            }
+
+            .funnel-row {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .funnel-amount {
+                font-size: 17px;
+            }
+
+            .yearly-banner {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .funnel-label {
+                font-size: 13px;
+            }
+            .funnel-amount {
+                font-size: 15px;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes countPop {
+            from { opacity: 0.6; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .count-anim {
+            animation: countPop 0.15s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SECTION 1: Hero + Calculator -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <div class="badge">&#128202; حاسبة خسائر الإيرادات</div>
+                <h1>احسب كم يخسر متجرك يوميا</h1>
+                <p class="hero-subtitle">70% من زوارك يتركون سلاتهم. اكتشف كم تخسر وكم نقدر نسترد لك</p>
+
+                <div class="calculator">
+                    <div class="calc-title">&#9881; ادخل بيانات متجرك</div>
+
+                    <!-- Slider 1: Monthly Revenue -->
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">&#128176; الإيرادات الشهرية (ريال)</span>
+                            <span class="slider-value" id="revenueDisplay">50,000</span>
+                        </div>
+                        <input type="range" id="revenueSlider" min="5000" max="500000" step="1000" value="50000">
+                        <div class="slider-range-labels">
+                            <span>500,000</span>
+                            <span>5,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Slider 2: Monthly Visitors -->
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">&#128101; عدد الزوار الشهري</span>
+                            <span class="slider-value" id="visitorsDisplay">5,000</span>
+                        </div>
+                        <input type="range" id="visitorsSlider" min="500" max="100000" step="100" value="5000">
+                        <div class="slider-range-labels">
+                            <span>100,000</span>
+                            <span>500</span>
+                        </div>
+                    </div>
+
+                    <!-- Slider 3: Average Order Value -->
+                    <div class="slider-group">
+                        <div class="slider-header">
+                            <span class="slider-label">&#128717; متوسط قيمة الطلب (ريال)</span>
+                            <span class="slider-value" id="aovDisplay">250</span>
+                        </div>
+                        <input type="range" id="aovSlider" min="50" max="5000" step="10" value="250">
+                        <div class="slider-range-labels">
+                            <span>5,000</span>
+                            <span>50</span>
+                        </div>
+                    </div>
+
+                    <div class="calc-divider"></div>
+
+                    <!-- Results Breakdown -->
+                    <div class="results-title">&#128200; تحليل خسائرك والاسترداد المتوقع</div>
+
+                    <div class="funnel">
+                        <div class="funnel-row neutral">
+                            <span class="funnel-label"><span class="icon">&#128101;</span> الزوار شهريا</span>
+                            <span class="funnel-amount dim" id="fVisitors">5,000</span>
+                        </div>
+                        <div class="funnel-row loss">
+                            <span class="funnel-label"><span class="icon">&#128683;</span> سلات متروكة (70%)</span>
+                            <span class="funnel-amount red" id="fAbandoned">3,500</span>
+                        </div>
+                        <div class="funnel-row loss">
+                            <span class="funnel-label"><span class="icon">&#128680;</span> إيرادات مفقودة شهريا</span>
+                            <span class="funnel-amount red" id="fLostRevenue">875,000 ر.س</span>
+                        </div>
+                        <div class="funnel-row recover">
+                            <span class="funnel-label"><span class="icon">&#9989;</span> RIBH يسترد (15%)</span>
+                            <span class="funnel-amount green" id="fRecovered">131,250 ر.س</span>
+                        </div>
+                        <div class="funnel-row recover">
+                            <span class="funnel-label"><span class="icon">&#128181;</span> عمولة RIBH (10%)</span>
+                            <span class="funnel-amount green" id="fRibhCost">13,125 ر.س</span>
+                        </div>
+                    </div>
+
+                    <!-- Big Profit Card -->
+                    <div class="profit-card">
+                        <div class="profit-label">&#127881; صافي ربحك الإضافي شهريا</div>
+                        <div class="profit-amount" id="netProfit">118,125</div>
+                        <div class="profit-currency">ريال سعودي</div>
+                        <div class="profit-sub">بعد خصم عمولة RIBH - هذا ربح صافي &#128640;</div>
+                    </div>
+
+                    <!-- 3 Summary Cards -->
+                    <div class="result-cards">
+                        <div class="result-card loss-card">
+                            <div class="rc-icon">&#128308;</div>
+                            <div class="rc-label">تخسر شهريا</div>
+                            <div class="rc-amount" id="rcLoss">875,000</div>
+                            <div class="rc-sub">ر.س مفقودة</div>
+                        </div>
+                        <div class="result-card recover-card">
+                            <div class="rc-icon">&#128994;</div>
+                            <div class="rc-label">RIBH يسترجع</div>
+                            <div class="rc-amount" id="rcRecover">131,250</div>
+                            <div class="rc-sub">ر.س شهريا</div>
+                        </div>
+                        <div class="result-card fee-card">
+                            <div class="rc-icon">&#128178;</div>
+                            <div class="rc-label">عمولة RIBH</div>
+                            <div class="rc-amount" id="rcFee">13,125</div>
+                            <div class="rc-sub">ر.س (10% فقط)</div>
+                        </div>
+                    </div>
+
+                    <!-- Yearly Banner -->
+                    <div class="yearly-banner">
+                        <div class="yb-label">&#128640; إجمالي ربحك الصافي سنويا مع RIBH</div>
+                        <div class="yb-amount" id="yearlyProfit">1,417,500 ر.س</div>
+                    </div>
+
+                    <!-- Fee Note -->
+                    <div class="fee-note">
+                        <p><strong>بدون مخاطرة:</strong> لا اشتراك شهري. تدفع 10% عمولة فقط على المبيعات اللي نرجعها لك. ما استرجعنا شي = ما تدفع شي.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: How it Works -->
+    <section class="how-it-works">
+        <div class="container">
+            <span class="section-badge">&#9889; كيف يعمل RIBH</span>
+            <h2 class="section-title">3 خطوات واسترد مبيعاتك المفقودة</h2>
+            <p class="section-subtitle">ربط سهل وبدون أي تعقيد - يشتغل مع سلة وشوبيفاي</p>
+
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>اربط متجرك</h3>
+                    <p>ربط مباشر مع سلة أو شوبيفاي بضغطة زر واحدة. ما يحتاج أي خبرة تقنية.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>RIBH يتابع السلات</h3>
+                    <p>الذكاء الاصطناعي يكتشف السلات المتروكة ويرسل رسائل واتساب ذكية تلقائيا للعملاء.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>استرد واربح</h3>
+                    <p>شاهد المبيعات ترجع لمتجرك. تدفع عمولة 10% فقط على المبيعات المستردة بنجاح.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: CTA -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-card">
+                <h2>تبي تبدأ تسترد؟</h2>
+                <p class="cta-sub">فعّل RIBH على متجرك الآن وابدأ استرجاع السلات المتروكة تلقائيا</p>
+
+                <div class="cta-dynamic" id="ctaDynamic">صافي ربحك المتوقع: 118,125 ر.س / شهر</div>
+
+                <br>
+
+                <div class="cta-spots">&#9889; باقي 73 مكان من 100 للأعضاء المؤسسين</div>
+
+                <br>
+
+                <a href="/login.html" class="cta-button">فعّل مجانا الآن - بدون بطاقة ائتمان</a>
+
+                <p class="cta-note">&#128274; بدون بطاقة ائتمان. بدون عقود. الغي أي وقت.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 <a href="/">RIBH</a> - جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script>
+        // ===== DOM ELEMENTS =====
+        var revenueSlider = document.getElementById('revenueSlider');
+        var visitorsSlider = document.getElementById('visitorsSlider');
+        var aovSlider = document.getElementById('aovSlider');
+
+        var revenueDisplay = document.getElementById('revenueDisplay');
+        var visitorsDisplay = document.getElementById('visitorsDisplay');
+        var aovDisplay = document.getElementById('aovDisplay');
+
+        // Funnel
+        var fVisitors = document.getElementById('fVisitors');
+        var fAbandoned = document.getElementById('fAbandoned');
+        var fLostRevenue = document.getElementById('fLostRevenue');
+        var fRecovered = document.getElementById('fRecovered');
+        var fRibhCost = document.getElementById('fRibhCost');
+
+        // Profit
+        var netProfitEl = document.getElementById('netProfit');
+
+        // Summary cards
+        var rcLoss = document.getElementById('rcLoss');
+        var rcRecover = document.getElementById('rcRecover');
+        var rcFee = document.getElementById('rcFee');
+
+        // Yearly
+        var yearlyProfitEl = document.getElementById('yearlyProfit');
+
+        // CTA
+        var ctaDynamic = document.getElementById('ctaDynamic');
+
+        // ===== FORMATTERS =====
+        function formatNum(num) {
+            return Math.round(num).toLocaleString('en-US');
+        }
+
+        function formatSAR(num) {
+            return formatNum(num) + ' \u0631.\u0633';
+        }
+
+        // ===== SLIDER TRACK FILL (RTL: fill from right) =====
+        function updateSliderTrack(slider) {
+            var min = parseFloat(slider.min);
+            var max = parseFloat(slider.max);
+            var val = parseFloat(slider.value);
+            var pct = ((val - min) / (max - min)) * 100;
+            slider.style.background = 'linear-gradient(to left, #10B981 0%, #059669 ' + pct + '%, #2a2a2a ' + pct + '%, #2a2a2a 100%)';
+        }
+
+        // ===== BUMP ANIMATION =====
+        function bumpEl(el) {
+            el.classList.remove('bump');
+            el.classList.remove('count-anim');
+            void el.offsetWidth;
+            el.classList.add('bump');
+            el.classList.add('count-anim');
+            setTimeout(function() {
+                el.classList.remove('bump');
+            }, 180);
+        }
+
+        // ===== CORE CALCULATION =====
+        function calculate() {
+            var revenue = parseInt(revenueSlider.value);
+            var visitors = parseInt(visitorsSlider.value);
+            var aov = parseInt(aovSlider.value);
+
+            // Update slider display values
+            revenueDisplay.textContent = formatNum(revenue);
+            visitorsDisplay.textContent = formatNum(visitors);
+            aovDisplay.textContent = formatNum(aov);
+
+            // Core calculations per spec:
+            // Estimated abandoned carts: visitors x 0.70
+            var abandonedCarts = Math.round(visitors * 0.70);
+            // Lost revenue/month: abandoned_carts x avg_order_value
+            var lostRevenue = abandonedCarts * aov;
+            // Recoverable with RIBH (15%): lost_revenue x 0.15
+            var recoverable = lostRevenue * 0.15;
+            // RIBH cost (10% commission): recoverable x 0.10
+            var ribhCost = recoverable * 0.10;
+            // Net profit: recoverable x 0.90
+            var netProfit = recoverable * 0.90;
+            // Yearly recovered: monthly_recovered x 12
+            var yearlyNet = netProfit * 12;
+
+            // Update funnel rows
+            fVisitors.textContent = formatNum(visitors);
+            fAbandoned.textContent = formatNum(abandonedCarts);
+            fLostRevenue.textContent = formatSAR(lostRevenue);
+            fRecovered.textContent = formatSAR(recoverable);
+            fRibhCost.textContent = formatSAR(ribhCost);
+
+            // Update big profit card
+            netProfitEl.textContent = formatNum(netProfit);
+            bumpEl(netProfitEl);
+
+            // Update summary cards
+            rcLoss.textContent = formatNum(lostRevenue);
+            rcRecover.textContent = formatNum(recoverable);
+            rcFee.textContent = formatNum(ribhCost);
+
+            // Update yearly banner
+            yearlyProfitEl.textContent = formatSAR(yearlyNet);
+            bumpEl(yearlyProfitEl);
+
+            // Update CTA dynamic text (Arabic: "صافي ربحك المتوقع")
+            ctaDynamic.textContent = '\u0635\u0627\u0641\u064a \u0631\u0628\u062d\u0643 \u0627\u0644\u0645\u062a\u0648\u0642\u0639: ' + formatSAR(netProfit) + ' / \u0634\u0647\u0631';
+
+            // Update slider track fills
+            updateSliderTrack(revenueSlider);
+            updateSliderTrack(visitorsSlider);
+            updateSliderTrack(aovSlider);
+
+            // Bump slider display values
+            bumpEl(revenueDisplay);
+            bumpEl(visitorsDisplay);
+            bumpEl(aovDisplay);
+        }
+
+        // ===== EVENT LISTENERS =====
+        revenueSlider.addEventListener('input', calculate);
+        visitorsSlider.addEventListener('input', calculate);
+        aovSlider.addEventListener('input', calculate);
+
+        // Prevent page scroll while sliding on mobile
+        revenueSlider.addEventListener('touchmove', function(e) { e.stopPropagation(); });
+        visitorsSlider.addEventListener('touchmove', function(e) { e.stopPropagation(); });
+        aovSlider.addEventListener('touchmove', function(e) { e.stopPropagation(); });
+
+        // ===== INIT =====
+        calculate();
+    </script>
+
+</body>
+</html>

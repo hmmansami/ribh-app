@@ -145,6 +145,46 @@ try {
     outreachTracker = null;
 }
 
+// Post-Purchase Upsell Engine - AI-powered upsells after orders
+let postPurchaseUpsell;
+try {
+    postPurchaseUpsell = require('./lib/postPurchaseUpsell');
+    console.log('✅ Post-Purchase Upsell loaded - AI upsells after orders!');
+} catch (e) {
+    console.log('⚠️ Post-Purchase Upsell not available:', e.message);
+    postPurchaseUpsell = null;
+}
+
+// Review Collector - WhatsApp review collection + smart routing
+let reviewCollector;
+try {
+    reviewCollector = require('./lib/reviewCollector');
+    console.log('✅ Review Collector loaded - WhatsApp review collection enabled!');
+} catch (e) {
+    console.log('⚠️ Review Collector not available:', e.message);
+    reviewCollector = null;
+}
+
+// Browse Abandonment - Detect & recover product browsers
+let browseAbandonment;
+try {
+    browseAbandonment = require('./lib/browseAbandonment');
+    console.log('✅ Browse Abandonment loaded - Product view recovery enabled!');
+} catch (e) {
+    console.log('⚠️ Browse Abandonment not available:', e.message);
+    browseAbandonment = null;
+}
+
+// Campaign Launcher - Cold outreach campaign management
+let campaignLauncher;
+try {
+    campaignLauncher = require('./lib/campaignLauncher');
+    console.log('✅ Campaign Launcher loaded - Cold outreach campaigns enabled!');
+} catch (e) {
+    console.log('⚠️ Campaign Launcher not available:', e.message);
+    campaignLauncher = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -5260,6 +5300,248 @@ app.post('/api/telegram/subscribe', async (req, res) => {
         message: 'افتح الرابط للاشتراك',
         link
     });
+});
+
+// ==========================================
+// POST-PURCHASE UPSELL API
+// ==========================================
+
+// Trigger upsell for an order
+app.post('/api/upsell/trigger', async (req, res) => {
+    if (!postPurchaseUpsell) return res.status(503).json({ error: 'Post-Purchase Upsell not available' });
+    try {
+        const { orderData, storeId } = req.body;
+        const result = await postPurchaseUpsell.handleOrderCreated(orderData, { storeId });
+        res.json({ success: true, result });
+    } catch (e) {
+        console.error('Upsell trigger error:', e);
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get upsell stats for a store
+app.get('/api/upsell/stats/:storeId', async (req, res) => {
+    if (!postPurchaseUpsell) return res.status(503).json({ error: 'Post-Purchase Upsell not available' });
+    try {
+        const stats = await postPurchaseUpsell.getUpsellStats(req.params.storeId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Track upsell click
+app.post('/api/upsell/click/:upsellId', async (req, res) => {
+    if (!postPurchaseUpsell) return res.status(503).json({ error: 'Post-Purchase Upsell not available' });
+    try {
+        await postPurchaseUpsell.trackUpsellClick(req.params.upsellId);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Track upsell conversion
+app.post('/api/upsell/convert/:upsellId', async (req, res) => {
+    if (!postPurchaseUpsell) return res.status(503).json({ error: 'Post-Purchase Upsell not available' });
+    try {
+        await postPurchaseUpsell.trackUpsellConversion(req.params.upsellId, req.body.revenue);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// REVIEW COLLECTOR API
+// ==========================================
+
+// Schedule a review request
+app.post('/api/reviews/schedule', async (req, res) => {
+    if (!reviewCollector) return res.status(503).json({ error: 'Review Collector not available' });
+    try {
+        const { orderId, storeId } = req.body;
+        const result = await reviewCollector.scheduleReviewRequest(orderId, storeId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Handle incoming review response (rating)
+app.post('/api/reviews/respond', async (req, res) => {
+    if (!reviewCollector) return res.status(503).json({ error: 'Review Collector not available' });
+    try {
+        const { phone, message, storeId } = req.body;
+        const result = await reviewCollector.handleReviewResponse(phone, message, storeId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get review stats for a store
+app.get('/api/reviews/stats/:storeId', async (req, res) => {
+    if (!reviewCollector) return res.status(503).json({ error: 'Review Collector not available' });
+    try {
+        const stats = await reviewCollector.getReviewStats(req.params.storeId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get NPS score
+app.get('/api/reviews/nps/:storeId', async (req, res) => {
+    if (!reviewCollector) return res.status(503).json({ error: 'Review Collector not available' });
+    try {
+        const nps = await reviewCollector.calculateNPS(req.params.storeId);
+        res.json({ success: true, nps });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// BROWSE ABANDONMENT API
+// ==========================================
+
+// Track a product view
+app.post('/api/browse/track', async (req, res) => {
+    if (!browseAbandonment) return res.status(503).json({ error: 'Browse Abandonment not available' });
+    try {
+        const { customerId, productData, storeId } = req.body;
+        const result = await browseAbandonment.trackProductView(customerId, productData, storeId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Run browse abandonment detection
+app.post('/api/browse/detect/:storeId', async (req, res) => {
+    if (!browseAbandonment) return res.status(503).json({ error: 'Browse Abandonment not available' });
+    try {
+        const result = await browseAbandonment.detectBrowseAbandonment(req.params.storeId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get browse abandonment stats
+app.get('/api/browse/stats/:storeId', async (req, res) => {
+    if (!browseAbandonment) return res.status(503).json({ error: 'Browse Abandonment not available' });
+    try {
+        const stats = await browseAbandonment.getBrowseStats(req.params.storeId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// CAMPAIGN LAUNCHER API
+// ==========================================
+
+// Create a new campaign
+app.post('/api/campaigns/create', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const result = await campaignLauncher.createCampaign(req.body);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Upload contacts to a campaign
+app.post('/api/campaigns/:campaignId/contacts', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const result = await campaignLauncher.uploadContacts(req.params.campaignId, req.body.contacts);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Start a campaign
+app.post('/api/campaigns/:campaignId/start', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const result = await campaignLauncher.startCampaign(req.params.campaignId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Pause a campaign
+app.post('/api/campaigns/:campaignId/pause', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const result = await campaignLauncher.pauseCampaign(req.params.campaignId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get all campaigns
+app.get('/api/campaigns/list', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const campaigns = await campaignLauncher.getAllCampaigns();
+        res.json({ success: true, campaigns });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get campaign stats
+app.get('/api/campaigns/:campaignId/stats', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const stats = await campaignLauncher.getCampaignStats(req.params.campaignId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Update contact status
+app.post('/api/campaigns/:campaignId/contacts/:contactId/status', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const { status, note } = req.body;
+        await campaignLauncher.updateContactStatus(req.params.campaignId, req.params.contactId, status, note);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Mark phone as do-not-contact
+app.post('/api/campaigns/do-not-contact', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        await campaignLauncher.markDoNotContact(req.body.phone);
+        res.json({ success: true });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Export campaign results
+app.get('/api/campaigns/:campaignId/export', async (req, res) => {
+    if (!campaignLauncher) return res.status(503).json({ error: 'Campaign Launcher not available' });
+    try {
+        const results = await campaignLauncher.exportResults(req.params.campaignId);
+        res.json({ success: true, results });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
 });
 
 // ==========================================
