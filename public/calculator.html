@@ -792,20 +792,20 @@
             const revenue = parseInt(revenueSlider.value);
             const visitors = parseInt(visitorsSlider.value);
 
-            // Derived values
+            // Rates
             const addToCartRate = 0.20;            // 20% add to cart
-            const abandonmentRate = 0.70;           // 70% abandon
+            const abandonmentRate = 0.70;           // 70% abandon their cart
             const recoveryRate = 0.15;              // 15% recovery with RIBH
-            const ribhFee = 0.10;                   // 10% of recovered
+            const ribhFee = 0.10;                   // 10% of recovered revenue
 
+            // Visitor funnel (for display)
             const addToCart = Math.round(visitors * addToCartRate);
             const abandoned = Math.round(addToCart * abandonmentRate);
 
-            // Average order value derived from revenue & completing customers
-            const completedOrders = addToCart - abandoned; // 30% of add-to-cart
-            const aov = completedOrders > 0 ? revenue / completedOrders : 0;
-
-            const lostRevenue = abandoned * aov;
+            // Financial model: simple & conservative
+            // "70% of your potential revenue is lost to cart abandonment"
+            // Lost revenue = current_revenue × 70%
+            const lostRevenue = revenue * abandonmentRate;
             const recoveredRevenue = lostRevenue * recoveryRate;
             const ribhCost = recoveredRevenue * ribhFee;
             const netProfit = recoveredRevenue - ribhCost;
