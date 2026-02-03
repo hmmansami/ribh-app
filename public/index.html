@@ -613,6 +613,230 @@
             border: 3px solid var(--primary);
         }
         
+        /* STICKY URGENCY BAR */
+        .sticky-urgency {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(245, 158, 11, 0.9));
+            padding: 12px 24px;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .sticky-urgency .spots-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 800;
+        }
+        body { padding-top: 48px; }
+
+        /* PRICING SECTION */
+        .pricing-section { margin-bottom: 60px; }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 36px;
+            position: relative;
+            overflow: hidden;
+        }
+        .pricing-card.featured {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.15);
+        }
+        .pricing-card.featured::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+        .pricing-badge {
+            display: inline-block;
+            background: var(--gradient);
+            color: #fff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .pricing-card h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .pricing-card .price-sub {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .pricing-card .price .currency {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .pricing-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 24px;
+        }
+        .pricing-features li {
+            padding: 10px 0;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .pricing-features li:last-child { border-bottom: none; }
+        .pricing-features .check { color: var(--success); font-size: 18px; flex-shrink: 0; }
+        .pricing-card .spots-remaining {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #EF4444;
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .pricing-card .cta-button-sm {
+            display: block;
+            text-align: center;
+            background: var(--gradient);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+        .pricing-card .cta-button-sm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 50px var(--primary-glow);
+        }
+        /* Regular pricing tiers */
+        .regular-tiers {
+            margin-top: 16px;
+        }
+        .regular-tiers h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .tier-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--card-border);
+            font-size: 14px;
+        }
+        .tier-item:last-child { border-bottom: none; }
+        .tier-item .tier-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+        .tier-item .tier-price {
+            color: var(--text-muted);
+        }
+
+        /* COMPARISON TABLE */
+        .comparison-section { margin-bottom: 60px; }
+        .comparison-table-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            font-size: 15px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .comparison-table th {
+            background: rgba(255,255,255,0.03);
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .comparison-table th:first-child,
+        .comparison-table td:first-child {
+            text-align: right;
+            font-weight: 600;
+        }
+        .comparison-table tr:last-child td { border-bottom: none; }
+        .comparison-table .ribh-col {
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .comparison-table th.ribh-col {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary);
+        }
+        .comparison-table .winner {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* CALC CTA LINK */
+        .calc-cta-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 12px 28px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .calc-cta-link:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .steps-container { grid-template-columns: 1fr; }
@@ -623,13 +847,27 @@
             .value-item { flex-direction: column; align-items: flex-start; gap: 8px; }
             .value-item .amount { text-align: right; }
             .urgency-bar { flex-direction: column; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .pricing-card .price { font-size: 36px; }
+            .comparison-table { font-size: 13px; }
+            .comparison-table th, .comparison-table td { padding: 12px 10px; }
+            .sticky-urgency { font-size: 13px; padding: 10px 16px; }
+            body { padding-top: 44px; }
         }
     </style>
 </head>
 
 <body>
     <div class="cosmic-bg"></div>
-    
+
+    <!-- STICKY URGENCY BAR -->
+    <div class="sticky-urgency">
+        <span>⚡</span>
+        <span>عرض الأعضاء المؤسسين:</span>
+        <span class="spots-badge" id="stickySpots">باقي 73 مكان من 100</span>
+        <span>| مجاني للأبد للمؤسسين</span>
+    </div>
+
     <div class="content">
         <!-- Header -->
         <header class="header">
@@ -640,12 +878,12 @@
             </div>
         </header>
         
-        <!-- URGENCY BAR -->
+        <!-- URGENCY BAR (inline version) -->
         <div class="urgency-bar">
             <span class="icon">⚡</span>
             <span class="text">عرض الأعضاء المؤسسين - باقي</span>
-            <span class="count" id="spotsLeft">37 مكان</span>
-            <span class="text">من 100</span>
+            <span class="count" id="spotsLeft">73 مكان</span>
+            <span class="text">من 100 | مجاني للأبد للمؤسسين</span>
         </div>
         
         <!-- HERO -->
@@ -724,57 +962,192 @@
                 <p style="text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 20px;">
                     * بناءً على متوسط 70% سلات متروكة و 15% معدل استرداد (يمكن أن يرتفع أكثر)
                 </p>
+
+                <div style="text-align: center;">
+                    <a href="/calculator.html" class="calc-cta-link">
+                        احسب كم تخسر يومياً ←
+                    </a>
+                </div>
             </div>
         </section>
         
         <!-- VALUE STACK -->
         <section class="value-section">
-            <h2 class="section-title">💎 ماذا تحصل مع رِبح؟</h2>
-            
+            <h2 class="section-title">💎 ماذا تحصل مجاناً؟</h2>
+
             <div class="value-stack">
                 <div class="value-item">
-                    <span class="desc">🛒 استرداد السلات المتروكة تلقائياً</span>
-                    <span class="amount">50,000 ر.س</span>
+                    <span class="desc">✅ استرداد السلات بالواتساب</span>
+                    <span class="amount">50,000+ ر.س/سنة</span>
                     <span class="tag">مشمول ✓</span>
                 </div>
-                
+
                 <div class="value-item">
-                    <span class="desc">🔄 إعادة تنشيط العملاء النائمين</span>
-                    <span class="amount">30,000 ر.س</span>
+                    <span class="desc">✅ عروض ما بعد الشراء</span>
+                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Zipify يأخذ 8$/شهر + عمولة</span>
                     <span class="tag">مشمول ✓</span>
                 </div>
-                
+
                 <div class="value-item">
-                    <span class="desc">🌙 عروض المواسم (رمضان، العيد، اليوم الوطني)</span>
-                    <span class="amount">10,000 ر.س</span>
+                    <span class="desc">✅ جمع التقييمات تلقائياً</span>
+                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Klaviyo يأخذ 25$/شهر</span>
                     <span class="tag">مشمول ✓</span>
                 </div>
-                
+
                 <div class="value-item">
-                    <span class="desc">🛡️ حماية السمعة ومراقبة البلوك</span>
-                    <span class="amount">لا يُقدّر</span>
+                    <span class="desc">✅ تحليلات ذكية</span>
+                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Klaviyo يأخذ 100$+/شهر</span>
                     <span class="tag">مشمول ✓</span>
                 </div>
-                
+
+                <div class="value-item">
+                    <span class="desc">✅ تصنيف العملاء RFM</span>
+                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">الخطط المدفوعة فقط عند المنافسين</span>
+                    <span class="tag">مشمول ✓</span>
+                </div>
+
+                <div class="value-item">
+                    <span class="desc">✅ حماية السمعة والبلوك</span>
+                    <span class="amount">لا يقدر بثمن</span>
+                    <span class="tag">مشمول ✓</span>
+                </div>
+
                 <div class="value-total">
                     <span class="label">القيمة الإجمالية سنوياً:</span>
                     <span class="amount">90,000+ ر.س</span>
                 </div>
-                
+
                 <div class="value-price">
                     <div class="label">أنت تدفع:</div>
-                    <div class="amount">30% فقط من المبيعات المستردة</div>
+                    <div class="amount">10% فقط من المبيعات المستردة</div>
                     <div class="sub">لا نتائج = لا رسوم. صفر مخاطرة.</div>
                 </div>
             </div>
         </section>
         
+        <!-- PRICING SECTION -->
+        <section class="pricing-section">
+            <h2 class="section-title">💰 الأسعار</h2>
+
+            <div class="pricing-grid">
+                <!-- Founding Member Card -->
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">🔥 عرض الأعضاء المؤسسين — أول 100 متجر</div>
+                    <h3>العضوية التأسيسية</h3>
+                    <div class="price" style="color: var(--success);">
+                        <span class="currency">SAR</span> 0<span class="currency">/شهر</span>
+                    </div>
+                    <div class="price-sub">مجاني بالكامل — ادفع فقط <strong style="color: var(--primary);">10%</strong> من الإيرادات المستردة</div>
+
+                    <div class="spots-remaining">
+                        🔴 <span id="pricingSpots">73</span> مكان متبقي من 100
+                    </div>
+
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> استرداد سلات بالواتساب (ذكاء اصطناعي)</li>
+                        <li><span class="check">✓</span> عروض ما بعد الشراء</li>
+                        <li><span class="check">✓</span> جمع تقييمات تلقائي</li>
+                        <li><span class="check">✓</span> تحليلات ذكية + تصنيف RFM</li>
+                        <li><span class="check">✓</span> حماية السمعة والبلوك</li>
+                        <li><span class="check">✓</span> ضمان 2x ROI أو مجاني للأبد</li>
+                    </ul>
+
+                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button-sm">
+                        ← فعّل مجاناً الآن
+                    </a>
+                </div>
+
+                <!-- Regular Pricing Card -->
+                <div class="pricing-card">
+                    <h3 style="color: var(--text-muted);">بعد انتهاء العرض</h3>
+                    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 20px;">الأسعار العادية بعد اكتمال 100 عضو مؤسس</p>
+
+                    <div class="regular-tiers">
+                        <div class="tier-item">
+                            <span class="tier-name">🟢 Starter</span>
+                            <span class="tier-price">SAR 199/شهر + 10%</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-name">🔵 Growth</span>
+                            <span class="tier-price">SAR 499/شهر + 5%</span>
+                        </div>
+                        <div class="tier-item">
+                            <span class="tier-name">🟣 Pro</span>
+                            <span class="tier-price">SAR 999/شهر + 3%</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; padding: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; text-align: center;">
+                        <p style="font-size: 14px; color: var(--gold);">
+                            ⚡ المؤسسون يحتفظون بسعر SAR 0/شهر <strong>للأبد</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COMPETITIVE COMPARISON TABLE -->
+        <section class="comparison-section">
+            <h2 class="section-title">📊 لماذا رِبح أفضل؟</h2>
+
+            <div class="comparison-table-wrap">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>الميزة</th>
+                            <th>Klaviyo</th>
+                            <th>LetsBot</th>
+                            <th class="ribh-col">رِبح 💚</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>السعر</td>
+                            <td>$150+/شهر</td>
+                            <td>119 ر.س/شهر</td>
+                            <td class="ribh-col winner">مجاني ✨</td>
+                        </tr>
+                        <tr>
+                            <td>واتساب</td>
+                            <td>❌</td>
+                            <td>✅ بسيط</td>
+                            <td class="ribh-col winner">✅ ذكاء اصطناعي</td>
+                        </tr>
+                        <tr>
+                            <td>عروض بعد الشراء</td>
+                            <td>❌</td>
+                            <td>❌</td>
+                            <td class="ribh-col winner">✅</td>
+                        </tr>
+                        <tr>
+                            <td>تقييمات</td>
+                            <td>$25/شهر إضافي</td>
+                            <td>❌</td>
+                            <td class="ribh-col winner">✅</td>
+                        </tr>
+                        <tr>
+                            <td>تحليلات تنبؤية</td>
+                            <td>$100+/شهر</td>
+                            <td>❌</td>
+                            <td class="ribh-col winner">✅</td>
+                        </tr>
+                        <tr>
+                            <td>ضمان</td>
+                            <td>❌</td>
+                            <td>❌</td>
+                            <td class="ribh-col winner">2x أو مجاني</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- MAIN GUARANTEE -->
         <section class="main-guarantee">
             <div class="icon">🛡️</div>
-            <h2>ضمان 2X أو مجاني للأبد</h2>
+            <h2>ضمان مضاعفة الأرباح</h2>
             <p>
-                إذا ما ضاعفنا أرباحك خلال 60 يوم، تحصل على كل شي مجاناً. للأبد.
+                إذا ما ضاعفنا أرباحك في 60 يوم، كل شي مجاني للأبد.
                 <br>
                 <strong>لا أسئلة. لا شروط. نحن نتحمل المخاطرة.</strong>
             </p>
@@ -783,16 +1156,40 @@
         <!-- GUARANTEE GRID -->
         <section class="guarantee-section">
             <h2 class="section-title">🔒 ضماناتك - بدون أي مخاطرة</h2>
-            
+
             <div class="guarantee-grid">
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">🛡️</div>
+                    <div class="guarantee-content">
+                        <h3>ضمان مضاعفة الأرباح</h3>
+                        <p>إذا ما ضاعفنا أرباحك في 60 يوم، كل شي مجاني للأبد. بدون أسئلة.</p>
+                    </div>
+                </div>
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">⏱️</div>
+                    <div class="guarantee-content">
+                        <h3>إلغاء فوري بضغطة واحدة</h3>
+                        <p>لا عقود. لا التزامات. ألغِ في أي وقت بضغطة زر فورية.</p>
+                    </div>
+                </div>
+
                 <div class="guarantee-card">
                     <div class="guarantee-icon">💳</div>
                     <div class="guarantee-content">
-                        <h3>ادفع فقط على النتائج</h3>
-                        <p>لا استرداد = لا رسوم. نأخذ نسبة فقط من المبيعات المستردة فعلياً.</p>
+                        <h3>تدفع فقط على النتائج</h3>
+                        <p>لا استرداد = لا رسوم. نأخذ 10% فقط من المبيعات المستردة فعلياً.</p>
                     </div>
                 </div>
-                
+
+                <div class="guarantee-card">
+                    <div class="guarantee-icon">🔒</div>
+                    <div class="guarantee-content">
+                        <h3>بياناتك ملكك بالكامل</h3>
+                        <p>لا نبيع ولا نشارك بياناتك. تُحذف فوراً عند إلغاء الاشتراك.</p>
+                    </div>
+                </div>
+
                 <div class="guarantee-card">
                     <div class="guarantee-icon">👀</div>
                     <div class="guarantee-content">
@@ -800,36 +1197,12 @@
                         <p>تحكم كامل. تشوف الرسائل، توافق أو تعدل. لا شيء يُرسل بدون علمك.</p>
                     </div>
                 </div>
-                
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">🏷️</div>
-                    <div class="guarantee-content">
-                        <h3>باسم متجرك 100%</h3>
-                        <p>العميل يستلم الرسالة من متجرك مباشرة. لا "رِبح"، لا طرف ثالث.</p>
-                    </div>
-                </div>
-                
+
                 <div class="guarantee-card">
                     <div class="guarantee-icon">🚫</div>
                     <div class="guarantee-content">
                         <h3>حماية ضد البلوك</h3>
                         <p>نراقب معدلات الحظر. لو ارتفعت، نوقف تلقائياً ونبلغك.</p>
-                    </div>
-                </div>
-                
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">⏱️</div>
-                    <div class="guarantee-content">
-                        <h3>إلغاء بضغطة واحدة</h3>
-                        <p>لا عقود. لا التزامات. ألغِ في أي وقت بضغطة زر فورية.</p>
-                    </div>
-                </div>
-                
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">🔒</div>
-                    <div class="guarantee-content">
-                        <h3>بياناتك ملكك فقط</h3>
-                        <p>لا نبيع ولا نشارك بياناتك. تُحذف فوراً عند إلغاء الاشتراك.</p>
                     </div>
                 </div>
             </div>
