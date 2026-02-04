@@ -245,6 +245,16 @@ try {
     reviewEngine = null;
 }
 
+// COD Confirmation - WhatsApp order confirmation before dispatch
+let codConfirmation;
+try {
+    codConfirmation = require('./codConfirmation');
+    console.log('✅ COD Confirmation loaded - Order verification & prepaid conversion enabled!');
+} catch (e) {
+    console.log('⚠️ COD Confirmation not available:', e.message);
+    codConfirmation = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -5941,6 +5951,64 @@ app.get('/api/reviews/:merchantId/stats', async (req, res) => {
     if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
     try {
         const stats = await reviewEngine.getReviewStats(req.params.merchantId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// COD CONFIRMATION API
+// ==========================================
+
+// Confirm a COD order (send WhatsApp confirmation)
+app.post('/api/cod/confirm', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const { merchantId, orderId, customerPhone, customerName, storeName, orderValue, items, paymentLink } = req.body;
+        if (!merchantId || !orderId || !customerPhone) {
+            return res.status(400).json({ error: 'merchantId, orderId, and customerPhone are required' });
+        }
+        const result = await codConfirmation.confirmCODOrder(merchantId, orderId, customerPhone, {
+            customerName, storeName, orderValue, items, paymentLink
+        });
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Handle customer reply to COD confirmation
+app.post('/api/cod/reply', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const { merchantId, orderId, reply } = req.body;
+        if (!merchantId || !orderId || !reply) {
+            return res.status(400).json({ error: 'merchantId, orderId, and reply are required' });
+        }
+        const result = await codConfirmation.handleCODReply(merchantId, orderId, reply);
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Schedule reminder for unconfirmed COD order
+app.post('/api/cod/reminder/:merchantId/:orderId', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const result = await codConfirmation.scheduleReminder(req.params.merchantId, req.params.orderId);
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get COD confirmation stats for a merchant
+app.get('/api/cod/stats/:merchantId', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const stats = await codConfirmation.getCODStats(req.params.merchantId);
         res.json({ success: true, stats });
     } catch (e) {
         res.status(500).json({ error: e.message });
