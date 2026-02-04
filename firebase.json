@@ -66,9 +66,6 @@
             ]
         }
     ],
-    "firestore": {
-        "rules": "firestore.rules"
-    },
     "emulators": {
         "functions": {
             "port": 5001
