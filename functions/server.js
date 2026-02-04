@@ -185,6 +185,16 @@ try {
     campaignLauncher = null;
 }
 
+// Customer Import - CSV/POS data import with Saudi phone normalization
+let customerImport;
+try {
+    customerImport = require('./lib/customerImport');
+    console.log('✅ Customer Import loaded - CSV/POS import with smart dedup enabled!');
+} catch (e) {
+    console.log('⚠️ Customer Import not available:', e.message);
+    customerImport = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -5541,6 +5551,100 @@ app.get('/api/campaigns/:campaignId/export', async (req, res) => {
         res.json({ success: true, results });
     } catch (e) {
         res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// CUSTOMER IMPORT API
+// ==========================================
+
+/**
+ * Preview import - detect columns, show sample data
+ * POST /api/customers/import/preview
+ * Body: { data: "csv text or json string", format: "csv|json|foodics|marn|qoyod" }
+ */
+app.post('/api/customers/import/preview', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { data, format } = req.body;
+        if (!data) {
+            return res.status(400).json({ success: false, error: 'No data provided' });
+        }
+        const preview = customerImport.previewImport(data, format || 'csv');
+        res.json({ success: true, ...preview });
+    } catch (e) {
+        console.error('[CustomerImport] Preview error:', e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Import customers from file data
+ * POST /api/customers/import
+ * Body: { storeId, data: "csv text or json string", format, mapping?, source? }
+ */
+app.post('/api/customers/import', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { storeId, data, format, mapping, source } = req.body;
+
+        if (!storeId) {
+            return res.status(400).json({ success: false, error: 'Store ID is required' });
+        }
+        if (!data) {
+            return res.status(400).json({ success: false, error: 'No data provided' });
+        }
+
+        // Parse the data
+        let headers, rows;
+        if (format && format !== 'csv') {
+            const posSystem = ['foodics', 'marn', 'qoyod'].includes(format) ? format : 'generic';
+            const parsed = customerImport.parsePOSData(data, posSystem);
+            headers = parsed.headers;
+            rows = parsed.rows;
+        } else {
+            const parsed = customerImport.parseCSV(data);
+            headers = parsed.headers;
+            rows = parsed.rows;
+        }
+
+        if (!rows || rows.length === 0) {
+            return res.status(400).json({ success: false, error: 'No valid rows found in data' });
+        }
+
+        // Use provided mapping or auto-detect
+        const columnMapping = mapping || customerImport.autoDetectColumns(headers);
+
+        // Run import
+        const stats = await customerImport.importCustomers(storeId, rows, columnMapping, source || 'imported');
+
+        res.json({
+            success: true,
+            stats,
+            message: `Imported ${stats.newCustomers} new customers, merged ${stats.duplicatesMerged} duplicates`
+        });
+    } catch (e) {
+        console.error('[CustomerImport] Import error:', e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Get customer stats for a store
+ * GET /api/customers/stats/:storeId
+ */
+app.get('/api/customers/stats/:storeId', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { storeId } = req.params;
+        if (!storeId) {
+            return res.status(400).json({ success: false, error: 'Store ID is required' });
+        }
+        const stats = await customerImport.getCustomerStats(storeId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        console.error('[CustomerImport] Stats error:', e);
+        res.status(500).json({ success: false, error: e.message });
     }
 });
 
