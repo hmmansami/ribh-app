@@ -185,6 +185,76 @@ try {
     campaignLauncher = null;
 }
 
+// Customer Import - CSV/POS data import with Saudi phone normalization
+let customerImport;
+try {
+    customerImport = require('./lib/customerImport');
+    console.log('✅ Customer Import loaded - CSV/POS import with smart dedup enabled!');
+} catch (e) {
+    console.log('⚠️ Customer Import not available:', e.message);
+    customerImport = null;
+}
+
+// Salla Scraper - Store discovery and lead generation
+let sallaScraper;
+try {
+    sallaScraper = require('./sallaScraper');
+    console.log('✅ Salla Scraper loaded - Store discovery & lead generation enabled!');
+} catch (e) {
+    console.log('⚠️ Salla Scraper not available:', e.message);
+    sallaScraper = null;
+}
+
+// Outreach Automation - Cold outreach pipeline (Hormozi 100M Leads framework)
+let outreachAutomation;
+try {
+    outreachAutomation = require('./outreachAutomation');
+    console.log('✅ Outreach Automation loaded - Multi-step cold outreach enabled!');
+} catch (e) {
+    console.log('⚠️ Outreach Automation not available:', e.message);
+    outreachAutomation = null;
+}
+
+// Campaign Engine - Template-based campaign system
+let campaignEngine;
+try {
+    campaignEngine = require('./campaignEngine');
+    console.log('✅ Campaign Engine loaded - Template campaigns & revenue tracking enabled!');
+} catch (e) {
+    console.log('⚠️ Campaign Engine not available:', e.message);
+    campaignEngine = null;
+}
+
+// Loyalty Engine - Points, tiers, and referrals
+let loyaltyEngine;
+try {
+    loyaltyEngine = require('./loyaltyEngine');
+    console.log('✅ Loyalty Engine loaded - Points & rewards system enabled!');
+} catch (e) {
+    console.log('⚠️ Loyalty Engine not available:', e.message);
+    loyaltyEngine = null;
+}
+
+// Review Engine - Post-purchase review collection
+let reviewEngine;
+try {
+    reviewEngine = require('./reviewEngine');
+    console.log('✅ Review Engine loaded - Review collection & stats enabled!');
+} catch (e) {
+    console.log('⚠️ Review Engine not available:', e.message);
+    reviewEngine = null;
+}
+
+// COD Confirmation - WhatsApp order confirmation before dispatch
+let codConfirmation;
+try {
+    codConfirmation = require('./codConfirmation');
+    console.log('✅ COD Confirmation loaded - Order verification & prepaid conversion enabled!');
+} catch (e) {
+    console.log('⚠️ COD Confirmation not available:', e.message);
+    codConfirmation = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -5539,6 +5609,407 @@ app.get('/api/campaigns/:campaignId/export', async (req, res) => {
     try {
         const results = await campaignLauncher.exportResults(req.params.campaignId);
         res.json({ success: true, results });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// CUSTOMER IMPORT API
+// ==========================================
+
+/**
+ * Preview import - detect columns, show sample data
+ * POST /api/customers/import/preview
+ * Body: { data: "csv text or json string", format: "csv|json|foodics|marn|qoyod" }
+ */
+app.post('/api/customers/import/preview', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { data, format } = req.body;
+        if (!data) {
+            return res.status(400).json({ success: false, error: 'No data provided' });
+        }
+        const preview = customerImport.previewImport(data, format || 'csv');
+        res.json({ success: true, ...preview });
+    } catch (e) {
+        console.error('[CustomerImport] Preview error:', e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Import customers from file data
+ * POST /api/customers/import
+ * Body: { storeId, data: "csv text or json string", format, mapping?, source? }
+ */
+app.post('/api/customers/import', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { storeId, data, format, mapping, source } = req.body;
+
+        if (!storeId) {
+            return res.status(400).json({ success: false, error: 'Store ID is required' });
+        }
+        if (!data) {
+            return res.status(400).json({ success: false, error: 'No data provided' });
+        }
+
+        // Parse the data
+        let headers, rows;
+        if (format && format !== 'csv') {
+            const posSystem = ['foodics', 'marn', 'qoyod'].includes(format) ? format : 'generic';
+            const parsed = customerImport.parsePOSData(data, posSystem);
+            headers = parsed.headers;
+            rows = parsed.rows;
+        } else {
+            const parsed = customerImport.parseCSV(data);
+            headers = parsed.headers;
+            rows = parsed.rows;
+        }
+
+        if (!rows || rows.length === 0) {
+            return res.status(400).json({ success: false, error: 'No valid rows found in data' });
+        }
+
+        // Use provided mapping or auto-detect
+        const columnMapping = mapping || customerImport.autoDetectColumns(headers);
+
+        // Run import
+        const stats = await customerImport.importCustomers(storeId, rows, columnMapping, source || 'imported');
+
+        res.json({
+            success: true,
+            stats,
+            message: `Imported ${stats.newCustomers} new customers, merged ${stats.duplicatesMerged} duplicates`
+        });
+    } catch (e) {
+        console.error('[CustomerImport] Import error:', e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+/**
+ * Get customer stats for a store
+ * GET /api/customers/stats/:storeId
+ */
+app.get('/api/customers/stats/:storeId', async (req, res) => {
+    if (!customerImport) return res.status(503).json({ success: false, error: 'Customer Import not available' });
+    try {
+        const { storeId } = req.params;
+        if (!storeId) {
+            return res.status(400).json({ success: false, error: 'Store ID is required' });
+        }
+        const stats = await customerImport.getCustomerStats(storeId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        console.error('[CustomerImport] Stats error:', e);
+        res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+// ==========================================
+// CAMPAIGN ENGINE API (Template-based campaigns)
+// ==========================================
+
+// Get campaign templates
+app.get('/api/campaigns/templates', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        res.json({ success: true, templates: campaignEngine.getTemplates() });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Create campaign from template
+app.post('/api/campaigns/engine/create', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.createFromTemplate(req.body.merchantId, req.body.templateId, req.body);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Launch a campaign
+app.post('/api/campaigns/engine/:id/launch', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.launchCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get campaign stats
+app.get('/api/campaigns/engine/:id/stats', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const stats = await campaignEngine.getCampaignStats(req.params.id);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get campaign revenue
+app.get('/api/campaigns/revenue', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const revenue = await campaignEngine.getCampaignRevenue(req.query.merchantId);
+        res.json({ success: true, revenue });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Pause a campaign
+app.put('/api/campaigns/engine/:id/pause', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.pauseCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// SALLA SCRAPER API
+// ==========================================
+
+// Start a scrape job
+app.post('/api/scraper/start', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const result = await sallaScraper.startScrapeJob(req.body.urls, req.body.options);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get leads
+app.get('/api/scraper/leads', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const leads = await sallaScraper.getLeads(req.query);
+        res.json({ success: true, leads });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Update lead status
+app.put('/api/scraper/leads/:id', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const result = await sallaScraper.updateLeadStatus(req.params.id, req.body.status);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// OUTREACH AUTOMATION API
+// ==========================================
+
+// Create outreach campaign
+app.post('/api/outreach/auto/campaigns', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.createOutreachCampaign(req.body.name, req.body.filters, req.body.sequenceId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Start outreach campaign
+app.post('/api/outreach/auto/campaigns/:id/start', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.startOutreachCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get outreach campaign stats
+app.get('/api/outreach/auto/campaigns/:id/stats', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const stats = await outreachAutomation.getOutreachStats(req.params.id);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Pause outreach campaign
+app.put('/api/outreach/auto/campaigns/:id/pause', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.pauseOutreach(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get outreach templates
+app.get('/api/outreach/auto/templates', (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        res.json({ success: true, templates: outreachAutomation.OUTREACH_TEMPLATES });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// LOYALTY ENGINE API
+// ==========================================
+
+// Initialize loyalty program for merchant
+app.post('/api/loyalty/init', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.initLoyalty(req.body.merchantId, req.body.config);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Earn points
+app.post('/api/loyalty/earn', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.earnPoints(req.body.merchantId, req.body.customerId, req.body.orderValue);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Redeem points
+app.post('/api/loyalty/redeem', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.redeemPoints(req.body.merchantId, req.body.customerId, req.body.points);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get loyalty balance
+app.get('/api/loyalty/balance/:merchantId/:customerId', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const balance = await loyaltyEngine.getBalance(req.params.merchantId, req.params.customerId);
+        res.json({ success: true, balance });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// REVIEW ENGINE API
+// ==========================================
+
+// Request a review from customer
+app.post('/api/reviews/request', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const result = await reviewEngine.requestReview(req.body.merchantId, req.body.customerId, req.body.orderId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Submit a review
+app.post('/api/reviews/submit', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const result = await reviewEngine.submitReview(req.body.merchantId, req.body.customerId, req.body.productId, req.body);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get review stats for merchant
+app.get('/api/reviews/:merchantId/stats', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const stats = await reviewEngine.getReviewStats(req.params.merchantId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// COD CONFIRMATION API
+// ==========================================
+
+// Confirm a COD order (send WhatsApp confirmation)
+app.post('/api/cod/confirm', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const { merchantId, orderId, customerPhone, customerName, storeName, orderValue, items, paymentLink } = req.body;
+        if (!merchantId || !orderId || !customerPhone) {
+            return res.status(400).json({ error: 'merchantId, orderId, and customerPhone are required' });
+        }
+        const result = await codConfirmation.confirmCODOrder(merchantId, orderId, customerPhone, {
+            customerName, storeName, orderValue, items, paymentLink
+        });
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Handle customer reply to COD confirmation
+app.post('/api/cod/reply', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const { merchantId, orderId, reply } = req.body;
+        if (!merchantId || !orderId || !reply) {
+            return res.status(400).json({ error: 'merchantId, orderId, and reply are required' });
+        }
+        const result = await codConfirmation.handleCODReply(merchantId, orderId, reply);
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Schedule reminder for unconfirmed COD order
+app.post('/api/cod/reminder/:merchantId/:orderId', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const result = await codConfirmation.scheduleReminder(req.params.merchantId, req.params.orderId);
+        res.json({ success: true, ...result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get COD confirmation stats for a merchant
+app.get('/api/cod/stats/:merchantId', async (req, res) => {
+    if (!codConfirmation) return res.status(503).json({ error: 'COD Confirmation not available' });
+    try {
+        const stats = await codConfirmation.getCODStats(req.params.merchantId);
+        res.json({ success: true, stats });
     } catch (e) {
         res.status(500).json({ error: e.message });
     }

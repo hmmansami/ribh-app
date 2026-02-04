@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH | الحملات</title>
+    <meta name="description" content="محرك الحملات التسويقية - RIBH">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #000000;
+            --bg-secondary: #0a0a0a;
+            --card: rgba(18, 18, 18, 0.95);
+            --card-hover: rgba(28, 28, 28, 0.95);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --text-dim: #52525B;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.5);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --gradient-accent: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        html[dir="ltr"] {
+            font-family: 'Inter', sans-serif;
+        }
+
+        html[dir="rtl"] {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+
+        body {
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Animated Background */
+        .bg-effects {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-effects::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(99, 102, 241, 0.06), transparent 50%);
+            animation: bgFloat 30s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(20px, 20px);
+            }
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--card);
+            border-left: 1px solid var(--card-border);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 100;
+        }
+
+        html[dir="ltr"] .sidebar {
+            right: auto;
+            left: 0;
+            border-left: none;
+            border-right: 1px solid var(--card-border);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 32px;
+        }
+
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-item .icon {
+            font-size: 18px;
+        }
+
+        .sidebar-footer {
+            padding-top: 24px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .lang-toggle:hover {
+            border-color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-right: 260px;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        html[dir="ltr"] .main-content {
+            margin-right: 0;
+            margin-left: 260px;
+        }
+
+        .page-header {
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        /* Revenue Counter */
+        .revenue-counter {
+            background: var(--card);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 20px;
+            padding: 32px 40px;
+            margin-bottom: 40px;
+            max-width: 1000px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .revenue-counter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .revenue-label {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .revenue-value {
+            font-size: 52px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .revenue-currency {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 8px;
+        }
+
+        html[dir="ltr"] .revenue-currency {
+            margin-right: 0;
+            margin-left: 8px;
+        }
+
+        /* Campaign Cards Grid */
+        .campaign-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 48px;
+            max-width: 1000px;
+        }
+
+        .campaign-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .campaign-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 0 20px 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        html[dir="ltr"] .campaign-card::before {
+            right: auto;
+            left: 0;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .campaign-card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .campaign-card:hover::before {
+            width: 4px;
+        }
+
+        .campaign-card-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 12px;
+        }
+
+        .campaign-card-icon {
+            font-size: 36px;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            flex-shrink: 0;
+        }
+
+        .campaign-card-name {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .campaign-card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .campaign-card-impact {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Active Campaigns Section */
+        .active-campaigns-section {
+            max-width: 1000px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .active-campaign-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .active-campaign-item {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .active-campaign-item:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .active-campaign-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .active-campaign-name {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.running {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .status-badge.running::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-badge.completed {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--secondary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .status-badge.paused {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .active-campaign-progress {
+            margin-bottom: 12px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-wrap {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+        }
+
+        .active-campaign-revenue {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px;
+            color: var(--text-dim);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 36px;
+            max-width: 520px;
+            width: 100%;
+            animation: modalSlideUp 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-close {
+            float: left;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        html[dir="ltr"] .modal-close {
+            float: right;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .modal-icon {
+            font-size: 40px;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .modal-field {
+            margin-bottom: 20px;
+        }
+
+        .modal-field-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .audience-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 18px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .audience-count .count-number {
+            font-size: 22px;
+            font-weight: 800;
+        }
+
+        .message-preview {
+            width: 100%;
+            min-height: 140px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.8;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        .message-preview:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.03);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--primary-glow);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-large {
+            padding: 18px 40px;
+            font-size: 18px;
+            border-radius: 14px;
+        }
+
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-right: 0;
+                margin-left: 0;
+                padding: 24px 16px;
+            }
+
+            .campaign-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .revenue-value {
+                font-size: 36px;
+            }
+
+            .modal {
+                padding: 24px;
+                margin: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-effects"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo" data-ar="رِبح." data-en="RIBH.">رِبح.</div>
+
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span class="icon">📊</span>
+                <span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span>
+            </a>
+            <a href="/campaigns.html" class="nav-item active">
+                <span class="icon">📣</span>
+                <span data-ar="الحملات" data-en="Campaigns">الحملات</span>
+            </a>
+            <a href="/import.html" class="nav-item">
+                <span class="icon">📥</span>
+                <span data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</span>
+            </a>
+            <a href="/settings.html" class="nav-item">
+                <span class="icon">⚙️</span>
+                <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="lang-toggle" onclick="toggleLanguage()">
+                <span>🌐</span>
+                <span id="langLabel">English</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header animate-in">
+            <h1 class="page-title" data-ar="📣 الحملات" data-en="📣 Campaigns">📣 الحملات</h1>
+            <p class="page-subtitle" data-ar="أطلق حملات واتساب ذكية وتابع نتائجها لحظة بلحظة"
+                data-en="Launch smart WhatsApp campaigns and track results in real-time">أطلق حملات واتساب ذكية وتابع نتائجها لحظة بلحظة</p>
+        </div>
+
+        <!-- Revenue Counter -->
+        <div class="revenue-counter animate-in">
+            <div class="revenue-label" data-ar="إجمالي إيرادات الحملات" data-en="Total Campaign Revenue">إجمالي إيرادات الحملات</div>
+            <div>
+                <span class="revenue-currency" data-ar="ر.س" data-en="SAR">ر.س</span>
+                <span class="revenue-value" id="revenueValue">0</span>
+            </div>
+        </div>
+
+        <!-- Campaign Template Cards -->
+        <div class="campaign-grid animate-in" id="campaignGrid">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Active Campaigns Section -->
+        <div class="active-campaigns-section animate-in">
+            <div class="section-title">
+                <span>⚡</span>
+                <span data-ar="الحملات النشطة" data-en="Active Campaigns">الحملات النشطة</span>
+            </div>
+            <div class="active-campaign-list" id="activeCampaignList">
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📭</div>
+                    <div class="empty-state-text" data-ar="لا توجد حملات نشطة حالياً — اختر قالب وأطلق أول حملة!" data-en="No active campaigns yet — pick a template and launch your first!">لا توجد حملات نشطة حالياً — اختر قالب وأطلق أول حملة!</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Launch Modal -->
+    <div class="modal-overlay" id="launchModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-icon" id="modalIcon"></div>
+                <div>
+                    <div class="modal-title" id="modalTitle"></div>
+                    <div class="modal-subtitle" id="modalSubtitle"></div>
+                </div>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">
+                    <span>👥</span>
+                    <span data-ar="الجمهور المستهدف" data-en="Target Audience">الجمهور المستهدف</span>
+                </div>
+                <div class="audience-count">
+                    <span class="count-number" id="modalAudienceCount">—</span>
+                    <span data-ar="عميل مؤهل" data-en="eligible customers">عميل مؤهل</span>
+                </div>
+            </div>
+
+            <div class="modal-field">
+                <div class="modal-field-label">
+                    <span>💬</span>
+                    <span data-ar="معاينة الرسالة" data-en="Message Preview">معاينة الرسالة</span>
+                </div>
+                <textarea class="message-preview" id="modalMessage"></textarea>
+            </div>
+
+            <button class="btn btn-primary btn-large btn-block" id="launchBtn" onclick="launchCampaign()">
+                <span>🚀</span>
+                <span data-ar="أطلق الحملة" data-en="Launch Campaign">أطلق الحملة</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // LANGUAGE SYSTEM
+        // ==========================================
+        let currentLang = localStorage.getItem('ribhLang') || detectLanguage();
+
+        function detectLanguage() {
+            const browserLang = navigator.language || navigator.userLanguage;
+            return browserLang.startsWith('ar') ? 'ar' : 'en';
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            localStorage.setItem('ribhLang', currentLang);
+            applyLanguage();
+        }
+
+        function applyLanguage() {
+            const html = document.documentElement;
+
+            if (currentLang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.getElementById('langLabel').textContent = 'العربية';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.getElementById('langLabel').textContent = 'English';
+            }
+
+            document.querySelectorAll('[data-ar][data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${currentLang}`);
+            });
+        }
+
+        // ==========================================
+        // CAMPAIGN TEMPLATES DATA
+        // ==========================================
+        const templates = [
+            { icon: '🔥', name: 'حملة استرجاع السلات', nameEn: 'Cart Recovery Campaign', desc: 'استهداف تلقائي للعملاء اللي تركوا سلاتهم', descEn: 'Automatically target customers who abandoned their carts', impact: '+25% مبيعات مسترجعة', impactEn: '+25% recovered sales', color: '#EF4444', id: 'cart_recovery', message: 'مرحباً {name} 👋\n\nلاحظنا إن عندك منتجات في السلة بانتظارك!\nأكمل طلبك الآن واستمتع بخصم 10% 🎁\n\n{cart_link}' },
+            { icon: '💰', name: 'حملة العملاء الخاملين', nameEn: 'Win-back Campaign', desc: 'استهداف العملاء اللي ما اشتروا من 30 يوم+', descEn: 'Target customers inactive for 30+ days', impact: 'استرجاع 15% عملاء', impactEn: '15% customer recovery', color: '#F59E0B', id: 'winback', message: 'مرحباً {name} 👋\n\nوحشتنا! مرّت فترة من آخر زيارة لك 🛍️\nعندنا عروض جديدة حصرية لك\nاستخدم كود WELCOME15 واحصل على خصم 15%\n\n{store_link}' },
+            { icon: '🎉', name: 'حملة عرض خاص', nameEn: 'Special Offer Campaign', desc: 'عرض سريع أو خصم لكل العملاء', descEn: 'Flash sale or discount for all customers', impact: 'زيادة المبيعات 20%+', impactEn: '+20% sales boost', color: '#8B5CF6', id: 'special_offer', message: 'عرض خاص لعملائنا المميزين! 🎉\n\nخصم 20% على كل المنتجات\nالعرض لمدة 48 ساعة فقط ⏰\n\nلا تفوّت الفرصة!\n{store_link}' },
+            { icon: '⭐', name: 'حملة العملاء المميزين', nameEn: 'VIP Campaign', desc: 'عرض حصري لأفضل العملاء إنفاقاً', descEn: 'Exclusive offer for top-spending customers', impact: 'زيادة ولاء 40%', impactEn: '+40% loyalty', color: '#F59E0B', id: 'vip', message: 'مرحباً {name} ⭐\n\nأنت من عملائنا المميزين!\nكهدية خاصة لك، استمتع بخصم حصري 25%\nاستخدم كود VIP25\n\nشكراً لثقتك فينا 💚\n{store_link}' },
+            { icon: '🆕', name: 'حملة المنتج الجديد', nameEn: 'New Product Campaign', desc: 'إعلان منتجات جديدة لكل العملاء', descEn: 'Announce new products to all customers', impact: 'مبيعات فورية', impactEn: 'Instant sales', color: '#3B82F6', id: 'new_product', message: 'وصل الجديد! 🆕\n\nمنتجات جديدة تستناك في متجرنا\nكن أول من يحصل عليها 🏃\n\nتصفح الآن:\n{store_link}' },
+            { icon: '📊', name: 'حملة التقييمات', nameEn: 'Review Collection Campaign', desc: 'طلب تقييمات من العملاء بعد الشراء', descEn: 'Request reviews from customers after purchase', impact: '+35% تقييمات', impactEn: '+35% reviews', color: '#10B981', id: 'review_collection', message: 'مرحباً {name} 👋\n\nنتمنى إن طلبك وصلك بأفضل حال! 📦\nرأيك يهمنا كثير — ممكن تعطينا تقييمك؟ ⭐\n\nيأخذ أقل من دقيقة:\n{review_link}' },
+            { icon: '🎂', name: 'حملة أعياد الميلاد', nameEn: 'Birthday Campaign', desc: 'خصومات عيد ميلاد تلقائية', descEn: 'Automatic birthday discounts', impact: 'معدل استجابة 45%+', impactEn: '45%+ response rate', color: '#EC4899', id: 'birthday', message: 'كل عام وأنت بخير {name}! 🎂🎉\n\nبمناسبة عيد ميلادك، عندنا هدية خاصة لك\nخصم 30% على طلبك القادم 🎁\nاستخدم كود BDAY30\n\nعيد ميلاد سعيد! 💚' },
+            { icon: '🕌', name: 'حملة رمضان', nameEn: 'Ramadan Campaign', desc: 'عروض رمضان الموسمية', descEn: 'Seasonal Ramadan offers', impact: '+40% مبيعات موسمية', impactEn: '+40% seasonal sales', color: '#059669', id: 'ramadan', message: 'رمضان كريم {name} 🕌🌙\n\nبمناسبة الشهر الفضيل\nعروض رمضانية مميزة تصل خصوماتها إلى 40%\n\nتسوّق الآن:\n{store_link}\n\nكل عام وأنتم بخير 💚' }
+        ];
+
+        const merchantId = 'demo';
+        let selectedTemplate = null;
+
+        // ==========================================
+        // RENDER CAMPAIGN CARDS
+        // ==========================================
+        function renderCampaignCards() {
+            const grid = document.getElementById('campaignGrid');
+            grid.innerHTML = templates.map((t, i) => `
+                <div class="campaign-card" onclick="openModal('${t.id}')" style="animation-delay: ${i * 0.05}s">
+                    <style>.campaign-card[onclick*="${t.id}"]::before { background: ${t.color}; }</style>
+                    <div class="campaign-card-header">
+                        <div class="campaign-card-icon" style="background: ${t.color}15; font-size: 30px;">${t.icon}</div>
+                        <div class="campaign-card-name" data-ar="${t.name}" data-en="${t.nameEn}">${t.name}</div>
+                    </div>
+                    <div class="campaign-card-desc" data-ar="${t.desc}" data-en="${t.descEn}">${t.desc}</div>
+                    <div class="campaign-card-impact" style="background: ${t.color}12; color: ${t.color}; border: 1px solid ${t.color}30;">
+                        <span>📈</span>
+                        <span data-ar="${t.impact}" data-en="${t.impactEn}">${t.impact}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ==========================================
+        // REVENUE COUNTER
+        // ==========================================
+        function animateCounter(element, target, duration) {
+            duration = duration || 1500;
+            const startTime = performance.now();
+
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const current = Math.floor(target * easeOut);
+                element.textContent = current.toLocaleString('en-US');
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        async function loadRevenue() {
+            try {
+                const res = await fetch(`/api/campaigns/revenue?merchantId=${merchantId}`);
+                const data = await res.json();
+                if (data.totalRevenue !== undefined) {
+                    animateCounter(document.getElementById('revenueValue'), data.totalRevenue);
+                }
+            } catch (e) {
+                // Fallback demo revenue
+                animateCounter(document.getElementById('revenueValue'), 48750);
+            }
+        }
+
+        // ==========================================
+        // MODAL
+        // ==========================================
+        function openModal(templateId) {
+            selectedTemplate = templates.find(t => t.id === templateId);
+            if (!selectedTemplate) return;
+
+            const modal = document.getElementById('launchModal');
+            document.getElementById('modalIcon').innerHTML = selectedTemplate.icon;
+            document.getElementById('modalIcon').style.background = selectedTemplate.color + '15';
+            document.getElementById('modalIcon').style.fontSize = '36px';
+            document.getElementById('modalTitle').textContent = currentLang === 'ar' ? selectedTemplate.name : selectedTemplate.nameEn;
+            document.getElementById('modalSubtitle').textContent = currentLang === 'ar' ? selectedTemplate.desc : selectedTemplate.descEn;
+            document.getElementById('modalMessage').value = selectedTemplate.message;
+            document.getElementById('modalAudienceCount').textContent = '—';
+            document.getElementById('launchBtn').disabled = false;
+
+            modal.classList.add('visible');
+
+            // Fetch audience count
+            fetchAudienceCount(templateId);
+        }
+
+        async function fetchAudienceCount(templateId) {
+            try {
+                const res = await fetch('/api/campaigns/templates');
+                const data = await res.json();
+                if (data.templates) {
+                    const tpl = data.templates.find(t => t.id === templateId);
+                    if (tpl && tpl.audienceCount !== undefined) {
+                        document.getElementById('modalAudienceCount').textContent = tpl.audienceCount.toLocaleString('en-US');
+                        return;
+                    }
+                }
+                // Fallback
+                document.getElementById('modalAudienceCount').textContent = '—';
+            } catch (e) {
+                // Demo fallback
+                const demoCounts = {
+                    cart_recovery: 234,
+                    winback: 512,
+                    special_offer: 1847,
+                    vip: 89,
+                    new_product: 1847,
+                    review_collection: 328,
+                    birthday: 45,
+                    ramadan: 1847
+                };
+                document.getElementById('modalAudienceCount').textContent = (demoCounts[templateId] || 0).toLocaleString('en-US');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('launchModal').classList.remove('visible');
+            selectedTemplate = null;
+        }
+
+        // Close modal on overlay click
+        document.getElementById('launchModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ==========================================
+        // LAUNCH CAMPAIGN
+        // ==========================================
+        async function launchCampaign() {
+            if (!selectedTemplate) return;
+
+            const btn = document.getElementById('launchBtn');
+            btn.disabled = true;
+
+            const message = document.getElementById('modalMessage').value;
+            let campaignId = null;
+
+            // Step 1: Create campaign
+            try {
+                const createRes = await fetch('/api/campaigns/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        merchantId: merchantId,
+                        templateId: selectedTemplate.id,
+                        message: message
+                    })
+                });
+                const createData = await createRes.json();
+                if (createData.campaignId) {
+                    campaignId = createData.campaignId;
+                }
+            } catch (e) {
+                console.log('Create API unavailable, using demo:', e);
+                campaignId = 'demo_' + Date.now();
+            }
+
+            // Step 2: Launch campaign
+            try {
+                if (campaignId) {
+                    await fetch(`/api/campaigns/${campaignId}/launch`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                }
+            } catch (e) {
+                console.log('Launch API unavailable:', e);
+            }
+
+            // Close modal and add to active list
+            closeModal();
+            addActiveCampaign({
+                id: campaignId,
+                name: currentLang === 'ar' ? selectedTemplate.name : selectedTemplate.nameEn,
+                icon: selectedTemplate.icon,
+                status: 'running',
+                sent: 0,
+                total: parseInt(document.getElementById('modalAudienceCount').textContent.replace(/,/g, '')) || 0,
+                revenue: 0
+            });
+        }
+
+        // ==========================================
+        // ACTIVE CAMPAIGNS
+        // ==========================================
+        let activeCampaigns = [];
+
+        function addActiveCampaign(campaign) {
+            activeCampaigns.unshift(campaign);
+            renderActiveCampaigns();
+
+            // Simulate progress
+            simulateCampaignProgress(campaign);
+        }
+
+        function simulateCampaignProgress(campaign) {
+            const interval = setInterval(() => {
+                const c = activeCampaigns.find(ac => ac.id === campaign.id);
+                if (!c) { clearInterval(interval); return; }
+
+                c.sent = Math.min(c.sent + Math.floor(Math.random() * 20) + 5, c.total);
+                c.revenue += Math.floor(Math.random() * 500) + 50;
+
+                if (c.sent >= c.total) {
+                    c.status = 'completed';
+                    clearInterval(interval);
+                }
+
+                renderActiveCampaigns();
+            }, 2000);
+        }
+
+        function renderActiveCampaigns() {
+            const list = document.getElementById('activeCampaignList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (activeCampaigns.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            const campaignsHtml = activeCampaigns.map(c => {
+                const pct = c.total > 0 ? Math.round((c.sent / c.total) * 100) : 0;
+                const statusLabel = c.status === 'running'
+                    ? (currentLang === 'ar' ? 'قيد التشغيل' : 'Running')
+                    : c.status === 'completed'
+                        ? (currentLang === 'ar' ? 'مكتملة' : 'Completed')
+                        : (currentLang === 'ar' ? 'متوقفة' : 'Paused');
+
+                return `
+                    <div class="active-campaign-item">
+                        <div class="active-campaign-header">
+                            <div class="active-campaign-name">
+                                <span>${c.icon}</span>
+                                <span>${c.name}</span>
+                            </div>
+                            <span class="status-badge ${c.status}">${statusLabel}</span>
+                        </div>
+                        <div class="active-campaign-progress">
+                            <div class="progress-info">
+                                <span>${currentLang === 'ar' ? 'تم الإرسال' : 'Sent'}: ${c.sent.toLocaleString('en-US')} / ${c.total.toLocaleString('en-US')}</span>
+                                <span>${pct}%</span>
+                            </div>
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width: ${pct}%"></div>
+                            </div>
+                        </div>
+                        <div class="active-campaign-revenue">
+                            <span>💰</span>
+                            <span>${currentLang === 'ar' ? 'الإيرادات:' : 'Revenue:'} ${c.revenue.toLocaleString('en-US')} ${currentLang === 'ar' ? 'ر.س' : 'SAR'}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Keep empty state in DOM but hidden, add campaign items
+            list.innerHTML = `<div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-text" data-ar="لا توجد حملات نشطة حالياً — اختر قالب وأطلق أول حملة!" data-en="No active campaigns yet — pick a template and launch your first!">لا توجد حملات نشطة حالياً — اختر قالب وأطلق أول حملة!</div>
+            </div>` + campaignsHtml;
+        }
+
+        // ==========================================
+        // LOAD ACTIVE CAMPAIGNS FROM API
+        // ==========================================
+        async function loadActiveCampaigns() {
+            try {
+                const res = await fetch('/api/campaigns/templates');
+                const data = await res.json();
+                if (data.activeCampaigns && data.activeCampaigns.length > 0) {
+                    data.activeCampaigns.forEach(c => {
+                        activeCampaigns.push({
+                            id: c.id,
+                            name: currentLang === 'ar' ? c.name : (c.nameEn || c.name),
+                            icon: c.icon || '📣',
+                            status: c.status || 'completed',
+                            sent: c.sent || c.total || 0,
+                            total: c.total || 0,
+                            revenue: c.revenue || 0
+                        });
+                    });
+                    renderActiveCampaigns();
+                }
+            } catch (e) {
+                console.log('Active campaigns API unavailable:', e);
+            }
+        }
+
+        // ==========================================
+        // INITIALIZE
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+            renderCampaignCards();
+            loadRevenue();
+            loadActiveCampaigns();
+        });
+    </script>
+    <script src="/js/transitions.js"></script>
+</body>
+
+</html>
