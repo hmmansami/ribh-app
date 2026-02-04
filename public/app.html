@@ -34,7 +34,6 @@
         .sb-logo-mark svg{color:white}
         .sb-logo-text{font-size:18px;font-weight:700;letter-spacing:-0.02em}
         .sb-section{margin-bottom:20px}
-        .sb-section-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 12px;margin-bottom:6px}
         .sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;text-decoration:none}
         .sb-item:hover{background:var(--bg-raised);color:var(--text)}
         .sb-item.active{background:var(--primary-muted);color:var(--primary)}
@@ -55,16 +54,13 @@
         .main{padding:24px 28px 80px;position:relative;min-height:100vh}
         html[dir="rtl"] .main{margin-right:var(--sidebar-w)}
         html[dir="ltr"] .main{margin-left:var(--sidebar-w)}
-        .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
-        .page-title{font-size:22px;font-weight:700;letter-spacing:-0.02em}
-        .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px}
-        .section{margin-bottom:32px;scroll-margin-top:20px}
+        .section{margin-bottom:40px;scroll-margin-top:20px}
         .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
         .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em}
         .section-title svg{width:18px;height:18px;color:var(--text-muted)}
 
         /* ===== BUTTONS ===== */
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;border:none;text-decoration:none}
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;border:none;text-decoration:none}
         .btn-primary{background:var(--primary);color:white}
         .btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px)}
         .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
@@ -72,60 +68,55 @@
         .btn-ghost{background:transparent;color:var(--text-secondary);padding:8px}
         .btn-ghost:hover{background:var(--bg-raised);color:var(--text)}
         .btn svg{width:16px;height:16px}
-        .btn-big{padding:14px 32px;font-size:16px;font-weight:600;border-radius:var(--radius);gap:10px}
-        .btn-big svg{width:20px;height:20px}
 
-        /* ===== HERO MONEY CARD ===== */
-        .hero{background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(99,102,241,0.04));border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden}
-        .hero::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(16,185,129,0.03) 0%,transparent 70%);pointer-events:none}
-        .hero-label{font-size:14px;font-weight:500;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
-        .hero-label svg{width:20px;height:20px;color:var(--primary)}
-        .hero-total{font-size:48px;font-weight:700;color:var(--primary);letter-spacing:-0.03em;margin-bottom:4px;line-height:1.1}
-        .hero-total .curr{font-size:20px;font-weight:500;color:var(--text-muted)}
-        .hero-sub{font-size:13px;color:var(--text-muted);margin-bottom:24px}
-        .hero-breakdown{display:flex;flex-direction:column;gap:10px;max-width:440px;margin:0 auto 28px;text-align:right}
-        .hero-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.04);transition:all .2s}
-        .hero-row:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08)}
-        .hero-row-right{display:flex;align-items:center;gap:10px}
-        .hero-row-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
-        .hero-row-info{text-align:right}
-        .hero-row-count{font-size:13px;font-weight:600}
-        .hero-row-desc{font-size:11px;color:var(--text-muted)}
-        .hero-row-val{font-size:14px;font-weight:700;color:var(--primary)}
-        .hero-cta{margin-bottom:20px}
-        .hero-checks{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
-        .hero-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
-        .hero-check svg{width:14px;height:14px;color:var(--primary)}
-        @keyframes heroPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.3)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
-        .btn-hero{animation:heroPulse 2.5s ease-in-out infinite}
+        /* ===== HERO — THE MACHINE ===== */
+        .hero{background:var(--bg);border-radius:var(--radius-lg);padding:48px 32px;text-align:center;margin-bottom:32px;position:relative;overflow:hidden}
+        .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 70%);pointer-events:none;transition:opacity .6s}
+        .hero-amount{font-size:56px;font-weight:700;color:var(--text);letter-spacing:-0.04em;line-height:1;margin-bottom:4px;opacity:0;animation:heroReveal .8s ease-out .2s forwards}
+        .hero-amount .curr{font-size:22px;font-weight:500;color:var(--text-muted);margin:0 4px}
+        .hero-amount .money{color:var(--primary)}
+        .hero-subtitle{font-size:15px;color:var(--text-muted);margin-bottom:36px;opacity:0;animation:heroReveal .8s ease-out .4s forwards}
+        @keyframes heroReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ===== STATS ROW ===== */
-        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .2s}
+        .hero-cta{margin-bottom:40px;opacity:0;animation:heroReveal .8s ease-out .6s forwards}
+        .btn-machine{padding:18px 48px;font-size:18px;font-weight:700;border-radius:14px;gap:12px;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;box-shadow:0 0 0 0 rgba(16,185,129,0.4)}
+        .btn-machine:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(16,185,129,0.3)}
+        .btn-machine:active{transform:translateY(0);box-shadow:0 2px 10px rgba(16,185,129,0.2)}
+        .btn-machine svg{width:22px;height:22px}
+        .btn-machine-pulse{animation:machinePulse 3s ease-in-out infinite}
+        @keyframes machinePulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
+        .btn-machine .shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:none}
+        .btn-machine:hover .shine{left:100%;transition:left .6s}
+
+        .hero-breakdown{display:flex;gap:12px;max-width:600px;margin:0 auto;opacity:0;animation:heroReveal .8s ease-out .8s forwards}
+        .hero-pill{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .25s;cursor:default}
+        .hero-pill:hover{border-color:var(--border-hover);background:var(--card-hover)}
+        .hero-pill-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        .hero-pill-info{text-align:start;min-width:0}
+        .hero-pill-val{font-size:15px;font-weight:700;color:var(--text)}
+        .hero-pill-label{font-size:11px;color:var(--text-muted);white-space:nowrap}
+
+        /* ===== STATS — PROGRESSIVE ===== */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .3s;opacity:0;transform:translateY(12px)}
+        .stat.visible{opacity:1;transform:translateY(0)}
         .stat:hover{border-color:var(--border-hover)}
-        .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-        .stat-label{font-size:13px;font-weight:500;color:var(--text-secondary)}
-        .stat-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center}
-        .stat-icon svg{width:18px;height:18px}
-        .stat-icon.green{background:var(--primary-muted);color:var(--primary)}
-        .stat-icon.blue{background:rgba(59,130,246,0.15);color:#3B82F6}
-        .stat-icon.purple{background:var(--secondary-muted);color:var(--secondary)}
-        .stat-icon.orange{background:rgba(245,158,11,0.15);color:var(--warning)}
-        .stat-val{font-size:26px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:6px}
-        .stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;border-radius:20px;padding:2px 8px}
-        .stat-trend.up{color:var(--success);background:rgba(34,197,94,0.1)}
-        .stat-trend svg{width:12px;height:12px}
-        .stat-sparkline{display:flex;align-items:flex-end;gap:2px;height:32px;margin-top:10px}
-        .stat-sparkline .bar{flex:1;border-radius:2px;min-height:3px;transition:height .3s}
+        .stat-label{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px}
+        .stat-val{font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1}
+        .stat-val .unit{font-size:13px;font-weight:500;color:var(--text-muted)}
 
-        /* ===== GRID & CARDS ===== */
+        .stats-empty{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:28px;color:var(--text-muted);font-size:13px}
+        .stats-empty svg{width:24px;height:24px;margin-bottom:8px;opacity:0.4}
+
+        /* ===== GRID ===== */
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
         .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
 
         /* ===== CHART ===== */
         .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;overflow:hidden}
-        .chart-title{font-size:15px;font-weight:600}
-        .chart-value{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px}
+        .chart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;color:var(--text-muted)}
+        .chart-empty svg{width:32px;height:32px;margin-bottom:10px;opacity:0.3}
+        .chart-empty-text{font-size:13px}
         .chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
         .chart-bars .c-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:all .4s;min-height:4px}
         .chart-bars .c-bar:hover{opacity:0.8}
@@ -136,9 +127,14 @@
 
         /* ===== ACTIVITY ===== */
         .activity-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-        .activity-item{display:flex;align-items:center;gap:12px;padding:12px 16px;transition:background .15s;border-bottom:1px solid var(--border)}
+        .activity-header{padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+        .activity-item{display:flex;align-items:center;gap:12px;padding:12px 16px;transition:all .3s;border-bottom:1px solid var(--border);opacity:0;transform:translateX(20px)}
+        html[dir="ltr"] .activity-item{transform:translateX(-20px)}
+        .activity-item.slide-in{opacity:1;transform:translateX(0)}
         .activity-item:last-child{border-bottom:none}
         .activity-item:hover{background:var(--card-hover)}
+        .activity-item.flash{animation:actFlash .6s ease-out}
+        @keyframes actFlash{0%{background:rgba(16,185,129,0.15)}100%{background:transparent}}
         .act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
         .act-dot.green{background:var(--success)}
         .act-dot.blue{background:#3B82F6}
@@ -147,28 +143,38 @@
         .act-msg{font-size:13px;font-weight:500}
         .act-time{font-size:11px;color:var(--text-muted)}
         .act-amount{font-size:13px;font-weight:600;color:var(--success);white-space:nowrap}
+        .activity-empty{padding:40px 16px;text-align:center;color:var(--text-muted)}
+        .activity-empty svg{width:28px;height:28px;margin-bottom:8px;opacity:0.3}
 
         /* ===== FLOW CARDS ===== */
         .flow-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .25s;position:relative}
-        .flow-card:hover{border-color:var(--border-hover)}
-        .flow-card.active{border-right:3px solid var(--primary)}
-        html[dir="ltr"] .flow-card.active{border-left:3px solid var(--primary);border-right:1px solid var(--border)}
+        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .35s;position:relative;overflow:hidden;opacity:0;transform:translateY(16px)}
+        .flow-card.entered{opacity:1;transform:translateY(0)}
+        .flow-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
+        .flow-card.entered:hover{transform:translateY(-2px)}
+        .flow-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .35s}
+        .flow-card.active::before{opacity:1}
+        .flow-card.active{border-color:rgba(16,185,129,0.3);box-shadow:0 0 20px rgba(16,185,129,0.05)}
         .flow-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
-        .flow-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .flow-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .35s}
         .flow-ico svg{width:18px;height:18px}
+        .flow-card.active .flow-ico{transform:scale(1.05)}
         .flow-info{flex:1;min-width:0}
-        .flow-name{font-size:13px;font-weight:600;margin-bottom:2px}
+        .flow-name{font-size:14px;font-weight:600;margin-bottom:2px}
         .flow-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
         .flow-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
         .flow-toggle input{opacity:0;width:0;height:0;position:absolute}
         .flow-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:24px;transition:all .3s}
         .flow-toggle .slider::before{content:'';position:absolute;height:18px;width:18px;border-radius:50%;background:white;bottom:3px;right:3px;transition:all .3s}
         html[dir="ltr"] .flow-toggle .slider::before{left:3px;right:auto}
-        .flow-toggle input:checked+.slider{background:var(--primary)}
+        .flow-toggle input:checked+.slider{background:var(--primary);box-shadow:0 0 10px rgba(16,185,129,0.3)}
         .flow-toggle input:checked+.slider::before{transform:translateX(-20px)}
         html[dir="ltr"] .flow-toggle input:checked+.slider::before{transform:translateX(20px)}
-        .flow-stats{display:flex;gap:16px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+        .flow-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+        .flow-estimate{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+        .flow-estimate svg{width:12px;height:12px;color:var(--primary)}
+        .flow-estimate strong{color:var(--primary);font-weight:600}
+        .flow-stats-row{display:flex;gap:14px}
         .flow-stat{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
         .flow-stat svg{width:12px;height:12px}
         .flow-stat strong{color:var(--text-secondary);font-weight:600}
@@ -176,29 +182,37 @@
         /* ===== CHAT CAMPAIGN CREATOR ===== */
         .chat-creator{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px}
         .chat-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-        .chat-header svg{width:18px;height:18px;color:var(--text-muted)}
+        .chat-header svg{width:18px;height:18px;color:var(--primary)}
         .chat-header-title{font-size:14px;font-weight:600}
-        .chat-body{padding:16px}
+        .chat-body{padding:16px;min-height:60px}
+        .chat-bubbles{margin-bottom:16px}
+        .chat-bubble{max-width:80%;padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6;margin-bottom:8px;opacity:0;transform:translateY(8px);animation:bubbleIn .3s ease-out forwards}
+        @keyframes bubbleIn{to{opacity:1;transform:translateY(0)}}
+        .chat-bubble.user{background:var(--primary);color:white;border-radius:16px 16px 4px 16px;margin-left:auto}
+        html[dir="ltr"] .chat-bubble.user{border-radius:16px 16px 16px 4px;margin-right:auto;margin-left:0}
+        .chat-bubble.ai{background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);border-radius:16px 16px 16px 4px;white-space:pre-wrap}
+        html[dir="ltr"] .chat-bubble.ai{border-radius:16px 16px 4px 16px}
+        .typing-dots{display:flex;gap:4px;padding:12px 16px;max-width:70px}
+        .typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:typeBounce 1.4s infinite}
+        .typing-dots span:nth-child(2){animation-delay:.2s}
+        .typing-dots span:nth-child(3){animation-delay:.4s}
+        @keyframes typeBounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-6px);opacity:1}}
         .chat-input-wrap{display:flex;gap:8px}
-        .chat-input{flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:inherit;transition:border-color .15s}
-        .chat-input:focus{outline:none;border-color:var(--primary)}
+        .chat-input{flex:1;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:inherit;transition:all .2s}
+        .chat-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}
         .chat-input::placeholder{color:var(--text-muted)}
-        .chat-send{background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center}
-        .chat-send:hover{background:var(--primary-hover)}
+        .chat-send{background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:12px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center}
+        .chat-send:hover{background:var(--primary-hover);transform:scale(1.05)}
+        .chat-send:active{transform:scale(0.95)}
         .chat-send svg{width:16px;height:16px}
-        .chat-result{display:none;margin-top:16px;animation:slideUp .3s ease-out}
-        .chat-result.show{display:block}
-        .chat-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap}
-        .chat-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}
-        .chat-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);padding:6px 12px;background:var(--bg);border-radius:20px;border:1px solid var(--border)}
-        .chat-meta-item svg{width:14px;height:14px;color:var(--primary)}
-        .chat-actions{display:flex;gap:8px;justify-content:flex-end}
+        .chat-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;opacity:0;animation:bubbleIn .3s ease-out forwards}
 
         /* ===== SETTINGS ===== */
         .settings-grid{display:flex;flex-direction:column;gap:16px}
-        .settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+        .settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .3s}
+        .settings-card:hover{border-color:var(--border-hover)}
         .settings-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-        .settings-card-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .settings-card-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .settings-card-ico svg{width:18px;height:18px}
         .settings-card-title{font-size:14px;font-weight:600}
         .settings-card-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
@@ -206,19 +220,41 @@
         .connect-status.connected{background:rgba(34,197,94,0.08);color:var(--success);border:1px solid rgba(34,197,94,0.15)}
         .connect-status.disconnected{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.15)}
         .connect-status svg{width:16px;height:16px}
-        .wa-info{padding:12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.7;margin-top:12px}
-        .wa-info strong{color:var(--text-secondary);font-weight:600}
+        .connect-checkmark{display:inline-flex;width:16px;height:16px;border-radius:50%;background:var(--success);align-items:center;justify-content:center;animation:checkPop .4s ease-out}
+        .connect-checkmark svg{width:10px;height:10px;color:white}
+        @keyframes checkPop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+        .wa-info-toggle{display:flex;align-items:center;gap:6px;padding:8px 0;cursor:pointer;font-size:12px;color:var(--text-muted);margin-top:12px;transition:color .15s;background:none;border:none;font-family:inherit}
+        .wa-info-toggle:hover{color:var(--text-secondary)}
+        .wa-info-toggle svg{width:14px;height:14px;transition:transform .2s}
+        .wa-info-toggle.open svg{transform:rotate(90deg)}
+        html[dir="ltr"] .wa-info-toggle.open svg{transform:rotate(90deg)}
+        .wa-info{max-height:0;overflow:hidden;transition:max-height .3s ease-out,opacity .3s;opacity:0}
+        .wa-info.open{max-height:200px;opacity:1}
+        .wa-info-inner{padding:12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.8}
         .import-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-        .import-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-secondary)}
-        .import-btn:hover{border-color:var(--primary);background:var(--primary-muted);color:var(--text)}
+        .import-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .25s;text-decoration:none;color:var(--text-secondary)}
+        .import-btn:hover{border-color:var(--primary);background:var(--primary-muted);color:var(--text);transform:translateY(-2px)}
         .import-btn-logo{font-size:24px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700}
         .import-btn-name{font-size:11px;font-weight:500}
-        .upload-mini{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-top:10px}
+        .upload-mini{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .25s;margin-top:10px}
         .upload-mini:hover{border-color:var(--primary);background:var(--primary-muted)}
         .upload-mini svg{width:24px;height:24px;color:var(--text-muted);margin-bottom:6px}
+
+        /* ===== BADGE ===== */
         .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
         .badge-success{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
         .badge-success::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:dotPulse 1.5s infinite}
+
+        /* ===== TOAST ===== */
+        .toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+        .toast{padding:12px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(-12px);animation:toastIn .3s ease-out forwards;box-shadow:0 8px 30px rgba(0,0,0,0.3);pointer-events:auto}
+        .toast.success{border-color:rgba(34,197,94,0.3);background:rgba(16,185,129,0.1)}
+        .toast svg{width:16px;height:16px;color:var(--primary);flex-shrink:0}
+        @keyframes toastIn{to{opacity:1;transform:translateY(0)}}
+        @keyframes toastOut{to{opacity:0;transform:translateY(-12px)}}
+
+        /* ===== CONFETTI CANVAS ===== */
+        #confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
 
         /* ===== MOBILE NAV ===== */
         .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
@@ -227,14 +263,6 @@
         .mn.active{color:var(--primary)}
         .mn svg{width:20px;height:20px}
         .mn.active svg{color:var(--primary)}
-
-        /* ===== ANIMATIONS ===== */
-        .fade-in{opacity:0;animation:fadeIn .4s ease-out forwards}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
         /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar{width:5px}
@@ -246,31 +274,33 @@
             .stats-row{grid-template-columns:repeat(2,1fr)}
             .flow-grid{grid-template-columns:1fr}
             .grid-2{grid-template-columns:1fr}
-            .import-grid{grid-template-columns:repeat(3,1fr)}
+            .hero-breakdown{flex-direction:column}
         }
         @media(max-width:768px){
             .sidebar{display:none}
             .main{margin-right:0!important;margin-left:0!important;padding:16px 16px 80px;overflow-x:hidden}
-            .page-title{font-size:18px}
-            .page-header{flex-wrap:wrap;gap:8px}
-            .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+            .stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
             .stat{padding:14px}
             .stat-val{font-size:20px}
-            .stat-sparkline{height:24px}
-            .hero{padding:24px 16px}
-            .hero-total{font-size:36px}
-            .hero-breakdown{max-width:100%}
-            .hero-checks{gap:12px}
+            .hero{padding:36px 20px}
+            .hero-amount{font-size:40px}
+            .btn-machine{padding:16px 36px;font-size:16px}
+            .hero-breakdown{flex-direction:column;gap:8px}
+            .hero-pill{padding:12px}
             .flow-grid{grid-template-columns:1fr}
             .grid-2{grid-template-columns:1fr}
-            .chart-bars{height:60px}
-            .chart-value{font-size:24px}
             .mob-nav{display:block}
             .import-grid{grid-template-columns:repeat(2,1fr)}
         }
     </style>
 </head>
 <body>
+    <!-- Confetti Canvas -->
+    <canvas id="confetti"></canvas>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toasts"></div>
+
     <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sb-logo">
@@ -291,122 +321,108 @@
     <!-- ===== MAIN CONTENT ===== -->
     <main class="main">
 
-        <!-- ===== DASHBOARD SECTION ===== -->
+        <!-- ===== DASHBOARD ===== -->
         <div id="dashboard">
-            <div class="page-header fade-in">
-                <div>
-                    <div class="page-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</div>
-                    <div class="page-subtitle" data-ar="أموالك في مكان واحد" data-en="Your money in one place">أموالك في مكان واحد</div>
-                </div>
-            </div>
 
-            <!-- HERO: Money Waiting -->
-            <div class="hero fade-in d1" id="heroCard">
-                <div class="hero-label"><i data-lucide="coins"></i><span data-ar="أموال تنتظرك" data-en="Money waiting for you">أموال تنتظرك</span></div>
-                <div class="hero-total"><span id="heroTotal">0</span> <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                <div class="hero-sub" data-ar="مبلغ تقديري بناءً على بيانات متجرك" data-en="Estimated based on your store data">مبلغ تقديري بناءً على بيانات متجرك</div>
-
-                <div class="hero-breakdown">
-                    <div class="hero-row">
-                        <div class="hero-row-right">
-                            <div class="hero-row-icon" style="background:rgba(239,68,68,0.12)">🛒</div>
-                            <div class="hero-row-info">
-                                <div class="hero-row-count"><span id="heroCarts">0</span> <span data-ar="سلة متروكة" data-en="abandoned carts">سلة متروكة</span></div>
-                                <div class="hero-row-desc" data-ar="عملاء ما كملوا الشراء" data-en="Customers who didn't finish buying">عملاء ما كملوا الشراء</div>
-                            </div>
-                        </div>
-                        <div class="hero-row-val"><span id="heroCartVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    </div>
-                    <div class="hero-row">
-                        <div class="hero-row-right">
-                            <div class="hero-row-icon" style="background:rgba(245,158,11,0.12)">😴</div>
-                            <div class="hero-row-info">
-                                <div class="hero-row-count"><span id="heroDormant">0</span> <span data-ar="عميل خامل" data-en="dormant customers">عميل خامل</span></div>
-                                <div class="hero-row-desc" data-ar="ما اشتروا من أكثر من 30 يوم" data-en="Haven't bought in 30+ days">ما اشتروا من أكثر من 30 يوم</div>
-                            </div>
-                        </div>
-                        <div class="hero-row-val"><span id="heroDormantVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    </div>
-                    <div class="hero-row">
-                        <div class="hero-row-right">
-                            <div class="hero-row-icon" style="background:rgba(99,102,241,0.12)">🛍️</div>
-                            <div class="hero-row-info">
-                                <div class="hero-row-count"><span id="heroUpsell">0</span> <span data-ar="فرصة بيع إضافي" data-en="upsell opportunities">فرصة بيع إضافي</span></div>
-                                <div class="hero-row-desc" data-ar="عملاء اشتروا مؤخراً" data-en="Customers who recently bought">عملاء اشتروا مؤخراً</div>
-                            </div>
-                        </div>
-                        <div class="hero-row-val"><span id="heroUpsellVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    </div>
+            <!-- HERO: The Machine -->
+            <div class="hero">
+                <div class="hero-glow"></div>
+                <div class="hero-amount">
+                    <span class="money" id="heroTotal">0</span>
+                    <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span>
                 </div>
+                <div class="hero-subtitle" data-ar="تنتظرك في متجرك الآن" data-en="waiting in your store right now">تنتظرك في متجرك الآن</div>
 
                 <div class="hero-cta">
-                    <button class="btn btn-primary btn-big btn-hero" onclick="activateAll()">
-                        <i data-lucide="rocket"></i>
+                    <button class="btn-machine btn-machine-pulse" id="heroBtn" onclick="activateAll()">
+                        <div class="shine"></div>
+                        <i data-lucide="zap"></i>
                         <span data-ar="استرجع أموالك" data-en="Recover your money">استرجع أموالك</span>
                     </button>
                 </div>
 
-                <div class="hero-checks">
-                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="الرسائل جاهزة" data-en="Messages ready">الرسائل جاهزة</span></div>
-                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="التوقيت محسّن" data-en="Timing optimized">التوقيت محسّن</span></div>
-                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="الحماية مفعلة" data-en="Protection active">الحماية مفعلة</span></div>
+                <div class="hero-breakdown">
+                    <div class="hero-pill">
+                        <div class="hero-pill-icon" style="background:rgba(239,68,68,0.12)">🛒</div>
+                        <div class="hero-pill-info">
+                            <div class="hero-pill-val"><span id="heroCarts">0</span> <span data-ar="سلة" data-en="carts">سلة</span></div>
+                            <div class="hero-pill-label" data-ar="متروكة" data-en="abandoned">متروكة</div>
+                        </div>
+                    </div>
+                    <div class="hero-pill">
+                        <div class="hero-pill-icon" style="background:rgba(245,158,11,0.12)">😴</div>
+                        <div class="hero-pill-info">
+                            <div class="hero-pill-val"><span id="heroDormant">0</span> <span data-ar="عميل" data-en="customers">عميل</span></div>
+                            <div class="hero-pill-label" data-ar="خامل" data-en="dormant">خامل</div>
+                        </div>
+                    </div>
+                    <div class="hero-pill">
+                        <div class="hero-pill-icon" style="background:rgba(99,102,241,0.12)">🛍️</div>
+                        <div class="hero-pill-info">
+                            <div class="hero-pill-val"><span id="heroUpsell">0</span> <span data-ar="فرصة" data-en="opportunities">فرصة</span></div>
+                            <div class="hero-pill-label" data-ar="بيع إضافي" data-en="upsell">بيع إضافي</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Stats Row -->
-            <div class="stats-row fade-in d2">
-                <div class="stat">
-                    <div class="stat-top"><span class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</span><div class="stat-icon green"><i data-lucide="banknote"></i></div></div>
-                    <div class="stat-val"><span id="totalRevenue">0</span> <span style="font-size:14px;font-weight:500;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    <div class="stat-sparkline" id="revSparkline"></div>
+            <!-- Stats — Hidden until flows active -->
+            <div id="statsEmpty" class="stats-empty">
+                <i data-lucide="bar-chart-3"></i>
+                <div data-ar="فعّل التدفقات وستظهر الإحصائيات" data-en="Activate flows to see your stats">فعّل التدفقات وستظهر الإحصائيات</div>
+            </div>
+            <div class="stats-row" id="statsRow" style="display:none">
+                <div class="stat" id="stat0">
+                    <div class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</div>
+                    <div class="stat-val"><span id="totalRevenue">0</span> <span class="unit" data-ar="ر.س" data-en="SAR">ر.س</span></div>
                 </div>
-                <div class="stat">
-                    <div class="stat-top"><span class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</span><div class="stat-icon blue"><i data-lucide="send"></i></div></div>
+                <div class="stat" id="stat1">
+                    <div class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</div>
                     <div class="stat-val" id="messagesSent">0</div>
-                    <div class="stat-sparkline" id="msgSparkline"></div>
                 </div>
-                <div class="stat">
-                    <div class="stat-top"><span class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</span><div class="stat-icon orange"><i data-lucide="percent"></i></div></div>
-                    <div class="stat-val" id="recoveryRate">0%</div>
-                    <div class="stat-sparkline" id="rateSparkline"></div>
+                <div class="stat" id="stat2">
+                    <div class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</div>
+                    <div class="stat-val" id="recoveryRate">0<span class="unit">%</span></div>
                 </div>
-                <div class="stat">
-                    <div class="stat-top"><span class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</span><div class="stat-icon purple"><i data-lucide="workflow"></i></div></div>
+                <div class="stat" id="stat3">
+                    <div class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</div>
                     <div class="stat-val" id="activeFlowCount">0</div>
-                    <div class="stat-sparkline" id="flowSparkline"></div>
                 </div>
             </div>
 
             <!-- Chart + Activity -->
-            <div class="grid-2 fade-in d3" style="margin-bottom:24px">
-                <div class="chart-card">
-                    <div style="margin-bottom:20px">
-                        <div class="chart-title" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div>
-                        <div class="chart-value" id="chartTotal">0 <span style="font-size:16px;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+            <div class="grid-2" style="margin-bottom:24px">
+                <div class="chart-card" id="chartCard">
+                    <div style="margin-bottom:16px">
+                        <div style="font-size:14px;font-weight:600;color:var(--text-secondary)" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div>
                     </div>
-                    <div class="chart-bars" id="revenueChart"></div>
-                    <div class="chart-labels" id="revenueLabels"></div>
+                    <div class="chart-empty" id="chartEmpty">
+                        <i data-lucide="trending-up"></i>
+                        <div class="chart-empty-text" data-ar="ستظهر إيراداتك هنا" data-en="Your revenue will appear here">ستظهر إيراداتك هنا</div>
+                    </div>
+                    <div class="chart-bars" id="revenueChart" style="display:none"></div>
+                    <div class="chart-labels" id="revenueLabels" style="display:none"></div>
                 </div>
                 <div class="activity-card">
-                    <div style="padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
-                        <span style="font-size:14px;font-weight:600" data-ar="آخر النشاطات" data-en="Recent Activity">آخر النشاطات</span>
+                    <div class="activity-header">
+                        <span style="font-size:14px;font-weight:600" data-ar="النشاطات" data-en="Activity">النشاطات</span>
                         <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
                     </div>
                     <div id="activityList">
-                        <div class="empty" id="activityEmpty" style="padding:32px 16px;text-align:center;color:var(--text-muted)">
-                            <i data-lucide="activity" style="width:32px;height:32px;margin-bottom:8px;opacity:0.4"></i>
-                            <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:4px" data-ar="النظام جاهز" data-en="System Ready">النظام جاهز</div>
-                            <div style="font-size:12px" data-ar="فعّل التدفقات وستظهر النشاطات هنا" data-en="Activate flows and activities will appear here">فعّل التدفقات وستظهر النشاطات هنا</div>
+                        <div class="activity-empty" id="activityEmpty">
+                            <i data-lucide="activity"></i>
+                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px" data-ar="جاهز" data-en="Ready">جاهز</div>
+                            <div style="font-size:12px" data-ar="فعّل التدفقات وستظهر النشاطات" data-en="Activate flows to see activity">فعّل التدفقات وستظهر النشاطات</div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== FLOWS SECTION ===== -->
-        <div class="section fade-in d4" id="flows">
+        <!-- ===== FLOWS ===== -->
+        <div class="section" id="flows">
             <div class="section-head">
-                <div class="section-title"><i data-lucide="workflow"></i><span data-ar="التدفقات التلقائية" data-en="Automated Flows">التدفقات التلقائية</span></div>
+                <div class="section-title"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></div>
                 <div class="badge badge-success" id="flowsBadge" style="font-size:10px"><span data-ar="0 نشط" data-en="0 active" id="flowsBadgeText">0 نشط</span></div>
             </div>
 
@@ -415,30 +431,21 @@
             <!-- Chat Campaign Creator -->
             <div class="chat-creator">
                 <div class="chat-header">
-                    <i data-lucide="message-square-plus"></i>
-                    <div>
-                        <div class="chat-header-title" data-ar="حملة مخصصة" data-en="Custom Campaign">حملة مخصصة</div>
-                    </div>
+                    <i data-lucide="sparkles"></i>
+                    <div class="chat-header-title" data-ar="حملة مخصصة" data-en="Custom Campaign">حملة مخصصة</div>
                 </div>
                 <div class="chat-body">
+                    <div class="chat-bubbles" id="chatBubbles"></div>
                     <div class="chat-input-wrap">
-                        <input type="text" class="chat-input" id="chatInput" data-placeholder-ar="اكتب هدف حملتك... مثال: عرض رمضان، تخفيضات الجمعة البيضاء" data-placeholder-en="Type your campaign goal... e.g. Ramadan offer, Black Friday sale" placeholder="اكتب هدف حملتك... مثال: عرض رمضان، تخفيضات الجمعة البيضاء">
-                        <button class="chat-send" onclick="generateCampaign()"><i data-lucide="sparkles"></i></button>
-                    </div>
-                    <div class="chat-result" id="chatResult">
-                        <div class="chat-preview" id="chatPreview"></div>
-                        <div class="chat-meta" id="chatMeta"></div>
-                        <div class="chat-actions">
-                            <button class="btn btn-outline" onclick="closeChatResult()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-                            <button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span data-ar="أطلق الحملة" data-en="Launch">أطلق الحملة</span></button>
-                        </div>
+                        <input type="text" class="chat-input" id="chatInput" data-placeholder-ar="اكتب هدفك... مثال: عرض رمضان" data-placeholder-en="Type your goal... e.g. Ramadan offer" placeholder="اكتب هدفك... مثال: عرض رمضان">
+                        <button class="chat-send" onclick="generateCampaign()"><i data-lucide="send"></i></button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== SETTINGS SECTION ===== -->
-        <div class="section fade-in d5" id="settings">
+        <!-- ===== SETTINGS ===== -->
+        <div class="section" id="settings">
             <div class="section-head">
                 <div class="section-title"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></div>
             </div>
@@ -449,24 +456,27 @@
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(34,197,94,0.12);color:var(--success)"><i data-lucide="message-circle"></i></div>
                         <div>
-                            <div class="settings-card-title" data-ar="اتصال واتساب" data-en="WhatsApp Connection">اتصال واتساب</div>
-                            <div class="settings-card-desc" data-ar="ربط رقم الواتساب لإرسال الرسائل" data-en="Connect your WhatsApp to send messages">ربط رقم الواتساب لإرسال الرسائل</div>
+                            <div class="settings-card-title" data-ar="واتساب" data-en="WhatsApp">واتساب</div>
+                            <div class="settings-card-desc" data-ar="ربط رقمك لإرسال الرسائل" data-en="Connect your number to send messages">ربط رقمك لإرسال الرسائل</div>
                         </div>
                     </div>
                     <div class="connect-status connected" id="waStatus">
-                        <i data-lucide="check-circle-2"></i>
-                        <span data-ar="متصل - جاهز للإرسال" data-en="Connected - Ready to send">متصل - جاهز للإرسال</span>
+                        <span class="connect-checkmark"><i data-lucide="check"></i></span>
+                        <span data-ar="متصل" data-en="Connected">متصل</span>
                     </div>
                     <div style="display:flex;gap:8px;margin-top:12px">
-                        <button class="btn btn-outline" onclick="window.location.href='/whatsapp.html'" data-ar="إعادة ربط QR" data-en="Reconnect QR">إعادة ربط QR</button>
-                        <button class="btn btn-outline" data-ar="ربط API رسمي" data-en="Connect Official API">ربط API رسمي</button>
+                        <button class="btn btn-outline" onclick="window.location.href='/whatsapp.html'" data-ar="إعادة ربط" data-en="Reconnect">إعادة ربط</button>
+                        <button class="btn btn-outline" data-ar="API رسمي" data-en="Official API">API رسمي</button>
                     </div>
-                    <div class="wa-info">
-                        <span data-ar="نستخدم واتساب غير رسمي. نحميك بالتالي:" data-en="We use unofficial WhatsApp. We protect you by:">نستخدم واتساب غير رسمي. نحميك بالتالي:</span><br>
-                        <span data-ar="✅ إرسال تدريجي مو دفعة وحدة" data-en="✅ Gradual sending, not all at once">✅ إرسال تدريجي مو دفعة وحدة</span><br>
-                        <span data-ar="✅ فترات راحة بين الرسائل" data-en="✅ Pauses between messages">✅ فترات راحة بين الرسائل</span><br>
-                        <span data-ar="✅ رقمك يسخن تدريجياً" data-en="✅ Your number warms up gradually">✅ رقمك يسخن تدريجياً</span><br>
-                        <span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span>
+                    <button class="wa-info-toggle" id="waInfoToggle" onclick="toggleWaInfo()">
+                        <i data-lucide="chevron-left"></i>
+                        <span data-ar="كيف نحمي رقمك؟" data-en="How do we protect your number?">كيف نحمي رقمك؟</span>
+                    </button>
+                    <div class="wa-info" id="waInfo">
+                        <div class="wa-info-inner">
+                            <span data-ar="إرسال تدريجي، فترات راحة، تسخين تلقائي" data-en="Gradual sending, pauses, auto warm-up">إرسال تدريجي، فترات راحة، تسخين تلقائي</span><br>
+                            <span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span>
+                        </div>
                     </div>
                 </div>
 
@@ -475,12 +485,12 @@
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(59,130,246,0.12);color:#3B82F6"><i data-lucide="store"></i></div>
                         <div>
-                            <div class="settings-card-title" data-ar="ربط المتجر" data-en="Store Connection">ربط المتجر</div>
-                            <div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات تلقائياً" data-en="Connect your store to pull data automatically">اربط متجرك لسحب البيانات تلقائياً</div>
+                            <div class="settings-card-title" data-ar="المتجر" data-en="Store">المتجر</div>
+                            <div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات" data-en="Connect your store to pull data">اربط متجرك لسحب البيانات</div>
                         </div>
                     </div>
                     <div class="connect-status connected" id="storeStatus">
-                        <i data-lucide="check-circle-2"></i>
+                        <span class="connect-checkmark"><i data-lucide="check"></i></span>
                         <span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span>
                     </div>
                 </div>
@@ -491,7 +501,7 @@
                         <div class="settings-card-ico" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i data-lucide="users"></i></div>
                         <div>
                             <div class="settings-card-title" data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</div>
-                            <div class="settings-card-desc" data-ar="استورد عملاءك من أي مصدر" data-en="Import your customers from any source">استورد عملاءك من أي مصدر</div>
+                            <div class="settings-card-desc" data-ar="من أي مصدر" data-en="From any source">من أي مصدر</div>
                         </div>
                     </div>
                     <div class="import-grid">
@@ -541,14 +551,16 @@
     // ===== STATE =====
     const merchantId='demo';
     let lang=localStorage.getItem('ribhLang')||'ar';
+    let flowsActivated=false;
+    let hasRealData=false;
 
     const FLOWS=[
-        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'رسالة تلقائية لمن ترك سلة التسوق',descEn:'Auto-message when a cart is abandoned',color:'#EF4444',active:false,sent:0,revenue:0},
-        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',desc:'رسالة للعملاء اللي ما اشتروا من 30 يوم',descEn:'Message customers inactive for 30+ days',color:'#F59E0B',active:false,sent:0,revenue:0},
-        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',desc:'عرض منتجات مكملة بعد كل شراء',descEn:'Suggest products after each purchase',color:'#6366F1',active:false,sent:0,revenue:0},
-        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',desc:'طلب تقييم بعد توصيل الطلب',descEn:'Ask for a review after delivery',color:'#10B981',active:false,sent:0,revenue:0},
-        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',desc:'رسالة لمن تصفح بدون ما يشتري',descEn:'Message browsers who didn\'t buy',color:'#3B82F6',active:false,sent:0,revenue:0},
-        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',desc:'تأكيد الطلب قبل الشحن لتقليل المرتجعات',descEn:'Confirm order before shipping to reduce returns',color:'#8B5CF6',active:false,sent:0,revenue:0}
+        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'رسالة لمن ترك سلة التسوق',descEn:'Message when a cart is abandoned',color:'#EF4444',gradient:'linear-gradient(135deg,#EF4444,#DC2626)',estimate:12000,active:false,sent:0,revenue:0},
+        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',desc:'رسالة للعملاء الخاملين',descEn:'Message inactive customers',color:'#F59E0B',gradient:'linear-gradient(135deg,#F59E0B,#D97706)',estimate:8900,active:false,sent:0,revenue:0},
+        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',desc:'عرض منتجات بعد كل شراء',descEn:'Suggest products after purchase',color:'#6366F1',gradient:'linear-gradient(135deg,#6366F1,#4F46E5)',estimate:6500,active:false,sent:0,revenue:0},
+        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',desc:'طلب تقييم بعد التوصيل',descEn:'Ask for review after delivery',color:'#10B981',gradient:'linear-gradient(135deg,#10B981,#059669)',estimate:3200,active:false,sent:0,revenue:0},
+        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',desc:'رسالة لمن تصفح بدون شراء',descEn:'Message browsers who didn\'t buy',color:'#3B82F6',gradient:'linear-gradient(135deg,#3B82F6,#2563EB)',estimate:5400,active:false,sent:0,revenue:0},
+        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',desc:'تأكيد الطلب لتقليل المرتجعات',descEn:'Confirm order to reduce returns',color:'#8B5CF6',gradient:'linear-gradient(135deg,#8B5CF6,#7C3AED)',estimate:4100,active:false,sent:0,revenue:0}
     ];
 
     // ===== NAVIGATION =====
@@ -582,7 +594,6 @@
         document.querySelectorAll('[data-ar]').forEach(el=>{
             el.textContent=el.getAttribute('data-'+lang)||el.textContent;
         });
-        // Update placeholders
         document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{
             el.placeholder=el.getAttribute('data-placeholder-'+lang)||el.placeholder;
         });
@@ -604,11 +615,91 @@
         requestAnimationFrame(update);
     }
 
-    // ===== SPARKLINES =====
-    function renderSparkline(id,data,color){
-        const el=document.getElementById(id);if(!el)return;
-        const mx=Math.max(...data);
-        el.innerHTML=data.map(v=>`<div class="bar" style="height:${Math.max(8,(v/mx)*100)}%;background:${color}"></div>`).join('');
+    // ===== TOAST NOTIFICATIONS =====
+    function showToast(msg,type='success'){
+        const c=document.getElementById('toasts');
+        const t=document.createElement('div');
+        t.className='toast '+type;
+        t.innerHTML=`<i data-lucide="check-circle-2"></i><span>${msg}</span>`;
+        c.appendChild(t);
+        lucide.createIcons({nodes:[t]});
+        setTimeout(()=>{
+            t.style.animation='toastOut .3s ease-out forwards';
+            setTimeout(()=>t.remove(),300);
+        },3000);
+    }
+
+    // ===== CONFETTI =====
+    function launchConfetti(){
+        const canvas=document.getElementById('confetti');
+        const ctx=canvas.getContext('2d');
+        canvas.width=window.innerWidth;
+        canvas.height=window.innerHeight;
+        const particles=[];
+        const colors=['#10B981','#22C55E','#6366F1','#F59E0B','#3B82F6','#EF4444','#FAFAFA'];
+        for(let i=0;i<120;i++){
+            particles.push({
+                x:canvas.width/2+(Math.random()-0.5)*200,
+                y:canvas.height/2,
+                vx:(Math.random()-0.5)*12,
+                vy:Math.random()*-16-4,
+                w:Math.random()*8+4,
+                h:Math.random()*6+2,
+                color:colors[Math.floor(Math.random()*colors.length)],
+                rotation:Math.random()*360,
+                rv:(Math.random()-0.5)*12,
+                gravity:0.3,
+                opacity:1
+            });
+        }
+        let frame=0;
+        function draw(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            let alive=false;
+            particles.forEach(p=>{
+                p.x+=p.vx;
+                p.vy+=p.gravity;
+                p.y+=p.vy;
+                p.rotation+=p.rv;
+                if(frame>40) p.opacity-=0.015;
+                if(p.opacity<=0) return;
+                alive=true;
+                ctx.save();
+                ctx.translate(p.x,p.y);
+                ctx.rotate(p.rotation*Math.PI/180);
+                ctx.globalAlpha=p.opacity;
+                ctx.fillStyle=p.color;
+                ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+                ctx.restore();
+            });
+            frame++;
+            if(alive) requestAnimationFrame(draw);
+            else ctx.clearRect(0,0,canvas.width,canvas.height);
+        }
+        requestAnimationFrame(draw);
+    }
+
+    // ===== PROGRESSIVE STATS =====
+    function showStats(){
+        if(flowsActivated) return;
+        flowsActivated=true;
+        document.getElementById('statsEmpty').style.display='none';
+        document.getElementById('statsRow').style.display='grid';
+        // Staggered reveal
+        for(let i=0;i<4;i++){
+            setTimeout(()=>{
+                const s=document.getElementById('stat'+i);
+                if(s) s.classList.add('visible');
+            },i*100);
+        }
+    }
+
+    function showChart(){
+        if(hasRealData) return;
+        hasRealData=true;
+        document.getElementById('chartEmpty').style.display='none';
+        document.getElementById('revenueChart').style.display='flex';
+        document.getElementById('revenueLabels').style.display='flex';
     }
 
     // ===== CHART =====
@@ -620,7 +711,6 @@
             return`<div class="c-bar" style="height:0%;background:${i===data.length-1?'var(--primary)':'var(--border-hover)'}" data-h="${h}"><div class="c-tip">${v.toLocaleString()}</div></div>`;
         }).join('');
         l.innerHTML=labels.map(x=>`<span>${x}</span>`).join('');
-        // Animate bars growing
         setTimeout(()=>{
             c.querySelectorAll('.c-bar').forEach((bar,i)=>{
                 setTimeout(()=>{bar.style.height=bar.dataset.h+'%';},i*60);
@@ -631,14 +721,16 @@
     // ===== FLOWS =====
     function renderFlows(){
         const g=document.getElementById('flowGrid');
-        g.innerHTML=FLOWS.map(f=>{
+        g.innerHTML=FLOWS.map((f,idx)=>{
             const name=lang==='ar'?f.name:f.nameEn;
             const desc=lang==='ar'?f.desc:f.descEn;
             const sentLabel=lang==='ar'?'رسالة':'sent';
             const revLabel=lang==='ar'?'ر.س':'SAR';
-            return`<div class="flow-card ${f.active?'active':''}" id="flow_${f.id}">
+            const estLabel=lang==='ar'?'ر.س/شهر تقريباً':'SAR/mo est.';
+            return`<div class="flow-card ${f.active?'active':''}" id="flow_${f.id}" style="transition-delay:${idx*0.06}s">
+                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${f.gradient};border-radius:3px 3px 0 0"></div>
                 <div class="flow-top">
-                    <div class="flow-ico" style="background:${f.color}15;color:${f.color}"><i data-lucide="${f.icon}"></i></div>
+                    <div class="flow-ico" style="background:${f.color}18;color:${f.color}"><i data-lucide="${f.icon}"></i></div>
                     <div class="flow-info">
                         <div class="flow-name">${name}</div>
                         <div class="flow-desc">${desc}</div>
@@ -648,13 +740,22 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="flow-stats">
-                    <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
-                    <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
+                <div class="flow-bottom">
+                    <div class="flow-estimate"><i data-lucide="trending-up"></i> ~<strong>${f.estimate.toLocaleString()}</strong> ${estLabel}</div>
+                    <div class="flow-stats-row">
+                        <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
+                        <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
+                    </div>
                 </div>
             </div>`;
         }).join('');
         lucide.createIcons();
+        // Stagger entrance
+        setTimeout(()=>{
+            g.querySelectorAll('.flow-card').forEach((c,i)=>{
+                setTimeout(()=>c.classList.add('entered'),i*80);
+            });
+        },100);
     }
 
     function toggleFlow(id,on){
@@ -664,7 +765,10 @@
         const card=document.getElementById('flow_'+id);
         if(on){
             card.classList.add('active');
+            showStats();
             simulateFlow(f);
+            const name=lang==='ar'?f.name:f.nameEn;
+            showToast(lang==='ar'?`${name} مفعّل`:`${name} activated`);
         }else{
             card.classList.remove('active');
         }
@@ -679,6 +783,21 @@
     }
 
     function activateAll(){
+        // Launch confetti celebration
+        launchConfetti();
+        showToast(lang==='ar'?'تم تفعيل جميع التدفقات!':'All flows activated!');
+
+        // Stop the pulse animation — machine is running now
+        const btn=document.getElementById('heroBtn');
+        btn.classList.remove('btn-machine-pulse');
+        btn.innerHTML='<i data-lucide="check-circle-2"></i><span>'+(lang==='ar'?'التدفقات تعمل':'Flows running')+'</span>';
+        btn.style.background='linear-gradient(135deg,#059669,#047857)';
+        btn.onclick=null;
+        btn.style.cursor='default';
+        lucide.createIcons({nodes:[btn]});
+
+        // Activate all flows
+        showStats();
         FLOWS.forEach(f=>{
             if(!f.active){
                 f.active=true;
@@ -687,11 +806,22 @@
         });
         renderFlows();
         updateFlowBadge();
-        // Scroll to flows
-        setTimeout(()=>nav('flows'),300);
+
+        // Scroll to flows after a beat
+        setTimeout(()=>nav('flows'),800);
     }
 
     function simulateFlow(flow){
+        const addActivity=(f)=>{
+            const msgs=lang==='ar'?
+                [`استرجاع سلة — ${f.name}`,`رسالة مرسلة — ${f.name}`,`تحويل ناجح — ${f.name}`]:
+                [`Cart recovered — ${f.nameEn}`,`Message sent — ${f.nameEn}`,`Conversion — ${f.nameEn}`];
+            const types=['green','blue','orange'];
+            const idx=Math.floor(Math.random()*3);
+            const amount=idx===0?Math.floor(Math.random()*500)+100:0;
+            addActivityItem(msgs[idx],types[idx],amount);
+        };
+
         const iv=setInterval(()=>{
             if(!flow.active){clearInterval(iv);return;}
             flow.sent+=Math.floor(Math.random()*8)+2;
@@ -703,7 +833,43 @@
                 if(stats[1]) stats[1].textContent=flow.revenue.toLocaleString();
             }
             updateDashboardStats();
+            // Show chart data once we have some
+            if(!hasRealData && FLOWS.some(f=>f.revenue>0)){
+                showChart();
+                const totalRev=FLOWS.reduce((a,f)=>a+f.revenue,0);
+                renderChart([Math.floor(totalRev*0.1),Math.floor(totalRev*0.15),Math.floor(totalRev*0.2),Math.floor(totalRev*0.3),Math.floor(totalRev*0.5),Math.floor(totalRev*0.7),totalRev],
+                    lang==='ar'?['س','أح','إث','ثل','أر','خم','جم']:['Sa','Su','Mo','Tu','We','Th','Fr']);
+            }
+            // Random activity
+            if(Math.random()>0.5) addActivity(flow);
         },3000+Math.random()*2000);
+    }
+
+    function addActivityItem(msg,dotColor,amount){
+        const list=document.getElementById('activityList');
+        const empty=document.getElementById('activityEmpty');
+        if(empty) empty.style.display='none';
+
+        const item=document.createElement('div');
+        item.className='activity-item';
+        const amtHtml=amount?`<span class="act-amount">+${amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';
+        item.innerHTML=`<span class="act-dot ${dotColor}"></span><div class="act-body"><div class="act-msg">${msg}</div><div class="act-time">${lang==='ar'?'الآن':'Now'}</div></div>${amtHtml}`;
+
+        // Insert at top
+        if(list.firstChild) list.insertBefore(item,list.firstChild);
+        else list.appendChild(item);
+
+        // Slide in animation
+        requestAnimationFrame(()=>{
+            requestAnimationFrame(()=>{
+                item.classList.add('slide-in');
+                item.classList.add('flash');
+            });
+        });
+
+        // Keep max 8 items
+        while(list.children.length>8) list.removeChild(list.lastChild);
+        lucide.createIcons({nodes:[item]});
     }
 
     function updateDashboardStats(){
@@ -712,7 +878,7 @@
         const rate=totalSent>0?Math.min(Math.round((totalRev/Math.max(totalSent*100,1))*100),38):0;
         document.getElementById('totalRevenue').textContent=totalRev.toLocaleString();
         document.getElementById('messagesSent').textContent=totalSent.toLocaleString();
-        document.getElementById('recoveryRate').textContent=rate+'%';
+        document.getElementById('recoveryRate').textContent=rate;
     }
 
     // ===== CHAT CAMPAIGN CREATOR =====
@@ -721,65 +887,74 @@
         const goal=input.value.trim();
         if(!goal) return;
 
-        const result=document.getElementById('chatResult');
-        const preview=document.getElementById('chatPreview');
-        const meta=document.getElementById('chatMeta');
+        const bubbles=document.getElementById('chatBubbles');
 
-        const audience=Math.floor(Math.random()*800)+200;
-        const bestTime=lang==='ar'?'الخميس 8 مساءً':'Thursday 8 PM';
+        // User bubble
+        const userBubble=document.createElement('div');
+        userBubble.className='chat-bubble user';
+        userBubble.textContent=goal;
+        bubbles.appendChild(userBubble);
+        input.value='';
 
-        const msgAr=`مرحباً {customer_name} 👋
+        // AI typing dots
+        const typing=document.createElement('div');
+        typing.className='chat-bubble ai';
+        typing.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';
+        typing.style.animationDelay='.2s';
+        bubbles.appendChild(typing);
 
-عندنا لك عرض خاص: ${goal}
+        // Scroll to bottom
+        bubbles.scrollTop=bubbles.scrollHeight;
 
-خصم 15% على كل المنتجات 🎉
-الكود: RIBH15
+        // Simulate AI response
+        setTimeout(()=>{
+            typing.remove();
 
-🛒 {store_url}
+            const audience=Math.floor(Math.random()*800)+200;
+            const bestTime=lang==='ar'?'الخميس 8 مساءً':'Thursday 8 PM';
 
-العرض لفترة محدودة ⏰`;
+            const msgAr=`مرحباً {customer_name} 👋\n\nعندنا لك عرض خاص: ${goal}\n\nخصم 15% على كل المنتجات 🎉\nالكود: RIBH15\n\n🛒 {store_url}\n\nالعرض لفترة محدودة ⏰`;
+            const msgEn=`Hi {customer_name} 👋\n\nSpecial offer: ${goal}\n\n15% off everything 🎉\nCode: RIBH15\n\n🛒 {store_url}\n\nLimited time only ⏰`;
 
-        const msgEn=`Hi {customer_name} 👋
+            const aiBubble=document.createElement('div');
+            aiBubble.className='chat-bubble ai';
+            aiBubble.textContent=lang==='ar'?msgAr:msgEn;
+            aiBubble.style.animationDelay='.1s';
+            bubbles.appendChild(aiBubble);
 
-Special offer for you: ${goal}
-
-15% off everything 🎉
-Code: RIBH15
-
-🛒 {store_url}
-
-Limited time only ⏰`;
-
-        preview.textContent=lang==='ar'?msgAr:msgEn;
-
-        const audienceLabel=lang==='ar'?'الجمهور':'Audience';
-        const timeLabel=lang==='ar'?'أفضل وقت':'Best time';
-        const offerLabel=lang==='ar'?'العرض':'Offer';
-
-        meta.innerHTML=`
-            <div class="chat-meta-item"><i data-lucide="users"></i>${audienceLabel}: <strong>${audience}</strong></div>
-            <div class="chat-meta-item"><i data-lucide="clock"></i>${timeLabel}: <strong>${bestTime}</strong></div>
-            <div class="chat-meta-item"><i data-lucide="tag"></i>${offerLabel}: <strong>15%</strong></div>
-        `;
-        lucide.createIcons();
-        result.classList.add('show');
+            // Meta + actions
+            const actions=document.createElement('div');
+            actions.className='chat-actions';
+            actions.innerHTML=`
+                <span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:12px;flex:1">
+                    <span><i data-lucide="users" style="width:12px;height:12px;display:inline"></i> ${audience}</span>
+                    <span><i data-lucide="clock" style="width:12px;height:12px;display:inline"></i> ${bestTime}</span>
+                </span>
+                <button class="btn btn-outline" onclick="clearChat()" data-ar="مسح" data-en="Clear">${lang==='ar'?'مسح':'Clear'}</button>
+                <button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span data-ar="أطلق" data-en="Launch">${lang==='ar'?'أطلق':'Launch'}</span></button>
+            `;
+            bubbles.appendChild(actions);
+            lucide.createIcons({nodes:[aiBubble,actions]});
+            bubbles.scrollTop=bubbles.scrollHeight;
+        },1500+Math.random()*1000);
     }
 
-    function closeChatResult(){
-        document.getElementById('chatResult').classList.remove('show');
-        document.getElementById('chatInput').value='';
+    function clearChat(){
+        document.getElementById('chatBubbles').innerHTML='';
     }
 
     function launchCustom(){
-        closeChatResult();
-        const msg=lang==='ar'?'تم إطلاق الحملة بنجاح! 🚀':'Campaign launched! 🚀';
-        // Brief success feedback
-        const input=document.getElementById('chatInput');
-        input.value='';
-        input.placeholder=msg;
-        setTimeout(()=>{
-            input.placeholder=input.getAttribute('data-placeholder-'+lang);
-        },3000);
+        clearChat();
+        showToast(lang==='ar'?'تم إطلاق الحملة بنجاح!':'Campaign launched!');
+        launchConfetti();
+    }
+
+    // ===== WHATSAPP INFO TOGGLE =====
+    function toggleWaInfo(){
+        const toggle=document.getElementById('waInfoToggle');
+        const info=document.getElementById('waInfo');
+        toggle.classList.toggle('open');
+        info.classList.toggle('open');
     }
 
     // ===== IMPORT =====
@@ -787,36 +962,28 @@ Limited time only ⏰`;
         if(platform==='salla'){
             window.location.href='/setup.html';
         }else{
-            const msg=lang==='ar'?`ربط ${platform} قريباً`:`${platform} integration coming soon`;
-            alert(msg);
+            showToast(lang==='ar'?`ربط ${platform} قريباً`:`${platform} coming soon`);
         }
     }
 
     function handleFile(e){
         if(!e.target.files[0]) return;
         const f=e.target.files[0];
-        if(f.size>10*1024*1024){alert(lang==='ar'?'حجم كبير جداً':'File too large');return;}
-        const msg=lang==='ar'?`تم استيراد العملاء من ${f.name}`:`Imported customers from ${f.name}`;
-        alert(msg);
+        if(f.size>10*1024*1024){showToast(lang==='ar'?'حجم كبير جداً':'File too large');return;}
+        showToast(lang==='ar'?`تم استيراد العملاء من ${f.name}`:`Imported from ${f.name}`);
     }
 
     // ===== HERO DATA =====
     function loadHeroData(){
-        // Demo data - in production this comes from API
-        const carts=347,cartVal=42000;
-        const dormant=891,dormantVal=89000;
-        const upsell=156,upsellVal=23000;
-        const total=cartVal+dormantVal+upsellVal;
+        const carts=347,dormant=891,upsell=156;
+        const total=154000;
 
         setTimeout(()=>{
             animateValue(document.getElementById('heroTotal'),total,1800);
             animateValue(document.getElementById('heroCarts'),carts,1200);
-            animateValue(document.getElementById('heroCartVal'),cartVal,1400);
             animateValue(document.getElementById('heroDormant'),dormant,1200);
-            animateValue(document.getElementById('heroDormantVal'),dormantVal,1400);
             animateValue(document.getElementById('heroUpsell'),upsell,1200);
-            animateValue(document.getElementById('heroUpsellVal'),upsellVal,1400);
-        },400);
+        },600);
     }
 
     // ===== API CALLS =====
@@ -825,8 +992,9 @@ Limited time only ⏰`;
             const r=await fetch('/api/ribh/stats');
             const d=await r.json();
             if(d.success){
+                showStats();
                 document.getElementById('totalRevenue').textContent=(d.totalRevenue||0).toLocaleString();
-                document.getElementById('recoveryRate').textContent=(d.recoveryRate||0)+'%';
+                document.getElementById('recoveryRate').textContent=(d.recoveryRate||0);
             }
         }catch(e){}
     }
@@ -839,16 +1007,20 @@ Limited time only ⏰`;
                 const list=document.getElementById('activityList');
                 const empty=document.getElementById('activityEmpty');
                 if(empty) empty.style.display='none';
-                list.innerHTML=d.activities.slice(0,8).map(a=>{
-                    const dc=a.type==='recovered'?'green':a.type==='sent'?'blue':'orange';
-                    const amt=a.amount?`<span class="act-amount">+${a.amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';
-                    return`<div class="activity-item"><span class="act-dot ${dc}"></span><div class="act-body"><div class="act-msg">${a.message||a.title}</div><div class="act-time">${a.time||(lang==='ar'?'الآن':'Now')}</div></div>${amt}</div>`;
-                }).join('');
+                d.activities.slice(0,8).forEach((a,i)=>{
+                    setTimeout(()=>{
+                        addActivityItem(
+                            a.message||a.title,
+                            a.type==='recovered'?'green':a.type==='sent'?'blue':'orange',
+                            a.amount||0
+                        );
+                    },i*100);
+                });
             }
         }catch(e){}
     }
 
-    // ===== ENTER KEY FOR CHAT =====
+    // ===== ENTER KEY =====
     document.addEventListener('keydown',e=>{
         if(e.key==='Enter'&&document.activeElement===document.getElementById('chatInput')){
             generateCampaign();
@@ -865,30 +1037,11 @@ Limited time only ⏰`;
         loadStats();
         loadActivity();
 
-        // Observe sections
         ['dashboard','flows','settings'].forEach(id=>{
             const el=document.getElementById(id);
             if(el) obs.observe(el);
         });
 
-        // Sparklines
-        renderSparkline('revSparkline',[30,45,28,55,42,68,75,60,85,72,90,95],'var(--primary)');
-        renderSparkline('msgSparkline',[12,18,15,22,19,28,25,30,27,35,32,38],'rgba(59,130,246,0.6)');
-        renderSparkline('rateSparkline',[10,12,11,14,13,16,15,18,17,20,19,22],'rgba(245,158,11,0.6)');
-        renderSparkline('flowSparkline',[1,1,2,2,3,3,4,4,5,5,6,6],'rgba(99,102,241,0.6)');
-
-        // Chart
-        const months=lang==='ar'?['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const now=new Date().getMonth();
-        const d7=[],l7=[];
-        for(let i=6;i>=0;i--){
-            d7.push(Math.floor(Math.random()*8000)+2000);
-            l7.push(months[(now-i+12)%12]);
-        }
-        renderChart(d7,l7);
-        document.getElementById('chartTotal').innerHTML=d7.reduce((a,b)=>a+b,0).toLocaleString()+` <span style="font-size:16px;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;
-
-        // Poll
         setInterval(()=>{loadStats();loadActivity();},30000);
     });
     </script>
