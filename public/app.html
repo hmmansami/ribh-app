@@ -16,7 +16,6 @@
             --primary:#10B981;--primary-hover:#059669;--primary-muted:rgba(16,185,129,0.15);
             --secondary:#6366F1;--secondary-muted:rgba(99,102,241,0.15);
             --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
-            --ring:rgba(16,185,129,0.3);
             --radius:12px;--radius-sm:8px;--radius-lg:16px;
             --sidebar-w:220px;
         }
@@ -45,7 +44,6 @@
         .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
         .sb-dot.green{background:var(--success)}
         .sb-dot.pulse{animation:dotPulse 2s infinite}
-        .sb-dot.red{background:var(--danger)}
         @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
         .sb-lang{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text-muted);transition:all .15s}
         .sb-lang:hover{background:var(--bg-raised);color:var(--text-secondary)}
@@ -56,7 +54,7 @@
         html[dir="ltr"] .main{margin-left:var(--sidebar-w)}
         .section{margin-bottom:40px;scroll-margin-top:20px}
         .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
-        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em}
+        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
         .section-title svg{width:18px;height:18px;color:var(--text-muted)}
 
         /* ===== BUTTONS ===== */
@@ -65,13 +63,11 @@
         .btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px)}
         .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
         .btn-outline:hover{background:var(--bg-raised);border-color:var(--border-hover);color:var(--text)}
-        .btn-ghost{background:transparent;color:var(--text-secondary);padding:8px}
-        .btn-ghost:hover{background:var(--bg-raised);color:var(--text)}
         .btn svg{width:16px;height:16px}
 
-        /* ===== HERO — THE MACHINE ===== */
+        /* ===== HERO ===== */
         .hero{background:var(--bg);border-radius:var(--radius-lg);padding:48px 32px;text-align:center;margin-bottom:32px;position:relative;overflow:hidden}
-        .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 70%);pointer-events:none;transition:opacity .6s}
+        .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 70%);pointer-events:none}
         .hero-amount{font-size:56px;font-weight:700;color:var(--text);letter-spacing:-0.04em;line-height:1;margin-bottom:4px;opacity:0;animation:heroReveal .8s ease-out .2s forwards}
         .hero-amount .curr{font-size:22px;font-weight:500;color:var(--text-muted);margin:0 4px}
         .hero-amount .money{color:var(--primary)}
@@ -79,38 +75,39 @@
         @keyframes heroReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
         .hero-cta{margin-bottom:40px;opacity:0;animation:heroReveal .8s ease-out .6s forwards}
-        .btn-machine{padding:18px 48px;font-size:18px;font-weight:700;border-radius:14px;gap:12px;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;cursor:pointer;position:relative;overflow:hidden;transition:all .3s;box-shadow:0 0 0 0 rgba(16,185,129,0.4)}
+        .btn-machine{padding:18px 48px;font-size:18px;font-weight:700;border-radius:14px;gap:12px;display:inline-flex;align-items:center;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;cursor:pointer;position:relative;overflow:hidden;transition:all .3s}
         .btn-machine:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(16,185,129,0.3)}
-        .btn-machine:active{transform:translateY(0);box-shadow:0 2px 10px rgba(16,185,129,0.2)}
+        .btn-machine:active{transform:translateY(0)}
         .btn-machine svg{width:22px;height:22px}
         .btn-machine-pulse{animation:machinePulse 3s ease-in-out infinite}
         @keyframes machinePulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
         .btn-machine .shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:none}
         .btn-machine:hover .shine{left:100%;transition:left .6s}
+        .btn-machine-pause{background:linear-gradient(135deg,var(--border-hover),var(--border));animation:none;box-shadow:none}
+        .btn-machine-pause:hover{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 8px 30px rgba(239,68,68,0.2)}
 
-        .hero-breakdown{display:flex;gap:12px;max-width:600px;margin:0 auto;opacity:0;animation:heroReveal .8s ease-out .8s forwards}
-        .hero-pill{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .25s;cursor:default}
-        .hero-pill:hover{border-color:var(--border-hover);background:var(--card-hover)}
+        .hero-breakdown{display:flex;gap:12px;max-width:620px;margin:0 auto;opacity:0;animation:heroReveal .8s ease-out .8s forwards}
+        .hero-pill{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .25s;cursor:pointer}
+        .hero-pill:hover{border-color:var(--primary);background:var(--primary-muted);transform:translateY(-2px)}
         .hero-pill-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
         .hero-pill-info{text-align:start;min-width:0}
         .hero-pill-val{font-size:15px;font-weight:700;color:var(--text)}
         .hero-pill-label{font-size:11px;color:var(--text-muted);white-space:nowrap}
+        .hero-pill-sar{font-size:12px;color:var(--primary);font-weight:600;margin-top:2px}
 
-        /* ===== STATS — PROGRESSIVE ===== */
+        /* ===== STATS ===== */
         .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .3s;opacity:0;transform:translateY(12px)}
+        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .4s;opacity:0;transform:translateY(12px)}
         .stat.visible{opacity:1;transform:translateY(0)}
         .stat:hover{border-color:var(--border-hover)}
         .stat-label{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px}
         .stat-val{font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1}
         .stat-val .unit{font-size:13px;font-weight:500;color:var(--text-muted)}
-
         .stats-empty{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:28px;color:var(--text-muted);font-size:13px}
         .stats-empty svg{width:24px;height:24px;margin-bottom:8px;opacity:0.4}
 
         /* ===== GRID ===== */
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-        .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
 
         /* ===== CHART ===== */
         .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;overflow:hidden}
@@ -136,9 +133,7 @@
         .activity-item.flash{animation:actFlash .6s ease-out}
         @keyframes actFlash{0%{background:rgba(16,185,129,0.15)}100%{background:transparent}}
         .act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-        .act-dot.green{background:var(--success)}
-        .act-dot.blue{background:#3B82F6}
-        .act-dot.orange{background:var(--warning)}
+        .act-dot.green{background:var(--success)}.act-dot.blue{background:#3B82F6}.act-dot.orange{background:var(--warning)}
         .act-body{flex:1;min-width:0}
         .act-msg{font-size:13px;font-weight:500}
         .act-time{font-size:11px;color:var(--text-muted)}
@@ -148,14 +143,13 @@
 
         /* ===== FLOW CARDS ===== */
         .flow-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .35s;position:relative;overflow:hidden;opacity:0;transform:translateY(16px)}
+        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .35s;position:relative;overflow:hidden;opacity:0;transform:translateY(16px)}
         .flow-card.entered{opacity:1;transform:translateY(0)}
-        .flow-card:hover{border-color:var(--border-hover);transform:translateY(-2px)}
-        .flow-card.entered:hover{transform:translateY(-2px)}
-        .flow-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .35s}
-        .flow-card.active::before{opacity:1}
+        .flow-card:hover{border-color:var(--border-hover)}
+        .flow-card.entered:hover{transform:translateY(-1px)}
         .flow-card.active{border-color:rgba(16,185,129,0.3);box-shadow:0 0 20px rgba(16,185,129,0.05)}
-        .flow-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+        .flow-card-top-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
+        .flow-head{display:flex;align-items:center;gap:12px;padding:18px 18px 14px;cursor:pointer}
         .flow-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .35s}
         .flow-ico svg{width:18px;height:18px}
         .flow-card.active .flow-ico{transform:scale(1.05)}
@@ -170,14 +164,33 @@
         .flow-toggle input:checked+.slider{background:var(--primary);box-shadow:0 0 10px rgba(16,185,129,0.3)}
         .flow-toggle input:checked+.slider::before{transform:translateX(-20px)}
         html[dir="ltr"] .flow-toggle input:checked+.slider::before{transform:translateX(20px)}
-        .flow-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-        .flow-estimate{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+        .flow-summary{display:flex;align-items:center;justify-content:space-between;padding:0 18px 14px;font-size:11px;color:var(--text-muted)}
+        .flow-estimate{display:flex;align-items:center;gap:4px}
         .flow-estimate svg{width:12px;height:12px;color:var(--primary)}
         .flow-estimate strong{color:var(--primary);font-weight:600}
-        .flow-stats-row{display:flex;gap:14px}
-        .flow-stat{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
+        .flow-estimate-math{color:var(--text-muted);margin-right:4px;font-size:10px}
+        html[dir="ltr"] .flow-estimate-math{margin-left:4px;margin-right:0}
+        .flow-expand-hint{display:flex;align-items:center;gap:4px;color:var(--text-muted);font-size:11px;cursor:pointer}
+        .flow-expand-hint svg{width:12px;height:12px;transition:transform .2s}
+        .flow-card.expanded .flow-expand-hint svg{transform:rotate(90deg)}
+
+        /* Flow Detail (expandable) */
+        .flow-detail{max-height:0;overflow:hidden;transition:max-height .4s ease-out,opacity .3s;opacity:0;border-top:0 solid var(--border)}
+        .flow-detail.open{max-height:500px;opacity:1;border-top-width:1px}
+        .flow-detail-inner{padding:16px 18px}
+        .flow-detail-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;font-size:12px;color:var(--text-secondary)}
+        .flow-detail-row svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0;margin-top:1px}
+        .flow-detail-label{font-weight:600;color:var(--text-muted);font-size:11px;margin-bottom:2px}
+        .flow-msg-preview{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);border-radius:12px 12px 4px 12px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap;margin:8px 0 16px;max-width:320px}
+        html[dir="ltr"] .flow-msg-preview{border-radius:12px 12px 12px 4px}
+        .flow-active-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--primary);padding:8px 12px;background:var(--primary-muted);border-radius:var(--radius-sm);margin-top:8px}
+        .flow-active-status svg{width:14px;height:14px}
+        .flow-stats-bar{display:flex;gap:16px;padding:12px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)}
+        .flow-stat{display:flex;align-items:center;gap:4px}
         .flow-stat svg{width:12px;height:12px}
         .flow-stat strong{color:var(--text-secondary);font-weight:600}
+        .flow-card.highlight{animation:flowHighlight 1.5s ease-out}
+        @keyframes flowHighlight{0%{box-shadow:0 0 0 3px rgba(16,185,129,0.4)}100%{box-shadow:none}}
 
         /* ===== CHAT CAMPAIGN CREATOR ===== */
         .chat-creator{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px}
@@ -192,7 +205,7 @@
         html[dir="ltr"] .chat-bubble.user{border-radius:16px 16px 16px 4px;margin-right:auto;margin-left:0}
         .chat-bubble.ai{background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);border-radius:16px 16px 16px 4px;white-space:pre-wrap}
         html[dir="ltr"] .chat-bubble.ai{border-radius:16px 16px 4px 16px}
-        .typing-dots{display:flex;gap:4px;padding:12px 16px;max-width:70px}
+        .typing-dots{display:flex;gap:4px;padding:4px 0}
         .typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:typeBounce 1.4s infinite}
         .typing-dots span:nth-child(2){animation-delay:.2s}
         .typing-dots span:nth-child(3){animation-delay:.4s}
@@ -206,6 +219,9 @@
         .chat-send:active{transform:scale(0.95)}
         .chat-send svg{width:16px;height:16px}
         .chat-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;opacity:0;animation:bubbleIn .3s ease-out forwards}
+        .chat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+        .chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
+        .chip:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-muted)}
 
         /* ===== SETTINGS ===== */
         .settings-grid{display:flex;flex-direction:column;gap:16px}
@@ -218,16 +234,17 @@
         .settings-card-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
         .connect-status{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500}
         .connect-status.connected{background:rgba(34,197,94,0.08);color:var(--success);border:1px solid rgba(34,197,94,0.15)}
-        .connect-status.disconnected{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.15)}
         .connect-status svg{width:16px;height:16px}
         .connect-checkmark{display:inline-flex;width:16px;height:16px;border-radius:50%;background:var(--success);align-items:center;justify-content:center;animation:checkPop .4s ease-out}
         .connect-checkmark svg{width:10px;height:10px;color:white}
         @keyframes checkPop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+        .connect-detail{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--text-muted)}
+        .connect-detail-item{display:flex;align-items:center;gap:4px}
+        .connect-detail-item svg{width:12px;height:12px}
         .wa-info-toggle{display:flex;align-items:center;gap:6px;padding:8px 0;cursor:pointer;font-size:12px;color:var(--text-muted);margin-top:12px;transition:color .15s;background:none;border:none;font-family:inherit}
         .wa-info-toggle:hover{color:var(--text-secondary)}
         .wa-info-toggle svg{width:14px;height:14px;transition:transform .2s}
         .wa-info-toggle.open svg{transform:rotate(90deg)}
-        html[dir="ltr"] .wa-info-toggle.open svg{transform:rotate(90deg)}
         .wa-info{max-height:0;overflow:hidden;transition:max-height .3s ease-out,opacity .3s;opacity:0}
         .wa-info.open{max-height:200px;opacity:1}
         .wa-info-inner{padding:12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.8}
@@ -253,7 +270,6 @@
         @keyframes toastIn{to{opacity:1;transform:translateY(0)}}
         @keyframes toastOut{to{opacity:0;transform:translateY(-12px)}}
 
-        /* ===== CONFETTI CANVAS ===== */
         #confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
 
         /* ===== MOBILE NAV ===== */
@@ -264,12 +280,10 @@
         .mn svg{width:20px;height:20px}
         .mn.active svg{color:var(--primary)}
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar{width:5px}
         ::-webkit-scrollbar-track{background:transparent}
         ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
 
-        /* ===== RESPONSIVE ===== */
         @media(max-width:1024px){
             .stats-row{grid-template-columns:repeat(2,1fr)}
             .flow-grid{grid-template-columns:1fr}
@@ -280,28 +294,24 @@
             .sidebar{display:none}
             .main{margin-right:0!important;margin-left:0!important;padding:16px 16px 80px;overflow-x:hidden}
             .stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
-            .stat{padding:14px}
-            .stat-val{font-size:20px}
+            .stat{padding:14px}.stat-val{font-size:20px}
             .hero{padding:36px 20px}
             .hero-amount{font-size:40px}
             .btn-machine{padding:16px 36px;font-size:16px}
             .hero-breakdown{flex-direction:column;gap:8px}
-            .hero-pill{padding:12px}
             .flow-grid{grid-template-columns:1fr}
             .grid-2{grid-template-columns:1fr}
             .mob-nav{display:block}
             .import-grid{grid-template-columns:repeat(2,1fr)}
+            .flow-msg-preview{max-width:100%}
         }
     </style>
 </head>
 <body>
-    <!-- Confetti Canvas -->
     <canvas id="confetti"></canvas>
-
-    <!-- Toast Container -->
     <div class="toast-container" id="toasts"></div>
 
-    <!-- ===== SIDEBAR ===== -->
+    <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sb-logo">
             <div class="sb-logo-mark"><i data-lucide="zap" style="width:18px;height:18px;color:white"></i></div>
@@ -313,93 +323,72 @@
             <a class="sb-item" data-section="settings" onclick="nav('settings')"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a>
         </div>
         <div class="sb-spacer"></div>
-        <div class="sb-status" id="sbWhatsapp"><span class="sb-dot green pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
-        <div class="sb-status" id="sbStore"><span class="sb-dot green pulse"></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
+        <div class="sb-status"><span class="sb-dot green pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
+        <div class="sb-status"><span class="sb-dot green pulse"></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
         <div class="sb-lang" onclick="toggleLang()"><i data-lucide="globe" style="width:14px;height:14px"></i><span id="langLabel">English</span></div>
     </aside>
 
-    <!-- ===== MAIN CONTENT ===== -->
+    <!-- MAIN -->
     <main class="main">
 
-        <!-- ===== DASHBOARD ===== -->
+        <!-- DASHBOARD -->
         <div id="dashboard">
-
-            <!-- HERO: The Machine -->
             <div class="hero">
                 <div class="hero-glow"></div>
-                <div class="hero-amount">
-                    <span class="money" id="heroTotal">0</span>
-                    <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span>
-                </div>
+                <div class="hero-amount"><span class="money" id="heroTotal">0</span> <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span></div>
                 <div class="hero-subtitle" data-ar="تنتظرك في متجرك الآن" data-en="waiting in your store right now">تنتظرك في متجرك الآن</div>
-
                 <div class="hero-cta">
-                    <button class="btn-machine btn-machine-pulse" id="heroBtn" onclick="activateAll()">
+                    <button class="btn-machine btn-machine-pulse" id="heroBtn" onclick="toggleAllFlows()">
                         <div class="shine"></div>
                         <i data-lucide="zap"></i>
                         <span data-ar="استرجع أموالك" data-en="Recover your money">استرجع أموالك</span>
                     </button>
                 </div>
-
                 <div class="hero-breakdown">
-                    <div class="hero-pill">
+                    <div class="hero-pill" onclick="scrollToFlow('cart_recovery')">
                         <div class="hero-pill-icon" style="background:rgba(239,68,68,0.12)">🛒</div>
                         <div class="hero-pill-info">
                             <div class="hero-pill-val"><span id="heroCarts">0</span> <span data-ar="سلة" data-en="carts">سلة</span></div>
                             <div class="hero-pill-label" data-ar="متروكة" data-en="abandoned">متروكة</div>
+                            <div class="hero-pill-sar" id="heroCartVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
                         </div>
                     </div>
-                    <div class="hero-pill">
+                    <div class="hero-pill" onclick="scrollToFlow('winback')">
                         <div class="hero-pill-icon" style="background:rgba(245,158,11,0.12)">😴</div>
                         <div class="hero-pill-info">
                             <div class="hero-pill-val"><span id="heroDormant">0</span> <span data-ar="عميل" data-en="customers">عميل</span></div>
                             <div class="hero-pill-label" data-ar="خامل" data-en="dormant">خامل</div>
+                            <div class="hero-pill-sar" id="heroDormantVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
                         </div>
                     </div>
-                    <div class="hero-pill">
+                    <div class="hero-pill" onclick="scrollToFlow('post_purchase')">
                         <div class="hero-pill-icon" style="background:rgba(99,102,241,0.12)">🛍️</div>
                         <div class="hero-pill-info">
                             <div class="hero-pill-val"><span id="heroUpsell">0</span> <span data-ar="فرصة" data-en="opportunities">فرصة</span></div>
                             <div class="hero-pill-label" data-ar="بيع إضافي" data-en="upsell">بيع إضافي</div>
+                            <div class="hero-pill-sar" id="heroUpsellVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats — Hidden until flows active -->
+            <!-- Stats -->
             <div id="statsEmpty" class="stats-empty">
                 <i data-lucide="bar-chart-3"></i>
                 <div data-ar="فعّل التدفقات وستظهر الإحصائيات" data-en="Activate flows to see your stats">فعّل التدفقات وستظهر الإحصائيات</div>
             </div>
             <div class="stats-row" id="statsRow" style="display:none">
-                <div class="stat" id="stat0">
-                    <div class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</div>
-                    <div class="stat-val"><span id="totalRevenue">0</span> <span class="unit" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                </div>
-                <div class="stat" id="stat1">
-                    <div class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</div>
-                    <div class="stat-val" id="messagesSent">0</div>
-                </div>
-                <div class="stat" id="stat2">
-                    <div class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</div>
-                    <div class="stat-val" id="recoveryRate">0<span class="unit">%</span></div>
-                </div>
-                <div class="stat" id="stat3">
-                    <div class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</div>
-                    <div class="stat-val" id="activeFlowCount">0</div>
-                </div>
+                <div class="stat" id="stat0"><div class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</div><div class="stat-val"><span id="totalRevenue">0</span> <span class="unit" data-ar="ر.س" data-en="SAR">ر.س</span></div></div>
+                <div class="stat" id="stat1"><div class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</div><div class="stat-val" id="messagesSent">0</div></div>
+                <div class="stat" id="stat2"><div class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</div><div class="stat-val" id="recoveryRate">0<span class="unit">%</span></div></div>
+                <div class="stat" id="stat3"><div class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</div><div class="stat-val" id="activeFlowCount">0</div></div>
             </div>
 
             <!-- Chart + Activity -->
             <div class="grid-2" style="margin-bottom:24px">
-                <div class="chart-card" id="chartCard">
-                    <div style="margin-bottom:16px">
-                        <div style="font-size:14px;font-weight:600;color:var(--text-secondary)" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div>
-                    </div>
-                    <div class="chart-empty" id="chartEmpty">
-                        <i data-lucide="trending-up"></i>
-                        <div class="chart-empty-text" data-ar="ستظهر إيراداتك هنا" data-en="Your revenue will appear here">ستظهر إيراداتك هنا</div>
-                    </div>
+                <div class="chart-card">
+                    <div style="margin-bottom:16px"><div style="font-size:14px;font-weight:600;color:var(--text-secondary)" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div></div>
+                    <div class="chart-empty" id="chartEmpty"><i data-lucide="trending-up"></i><div class="chart-empty-text" data-ar="ستظهر إيراداتك هنا بعد أول استرجاع" data-en="Revenue appears here after first recovery">ستظهر إيراداتك هنا بعد أول استرجاع</div></div>
                     <div class="chart-bars" id="revenueChart" style="display:none"></div>
                     <div class="chart-labels" id="revenueLabels" style="display:none"></div>
                 </div>
@@ -409,23 +398,18 @@
                         <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
                     </div>
                     <div id="activityList">
-                        <div class="activity-empty" id="activityEmpty">
-                            <i data-lucide="activity"></i>
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px" data-ar="جاهز" data-en="Ready">جاهز</div>
-                            <div style="font-size:12px" data-ar="فعّل التدفقات وستظهر النشاطات" data-en="Activate flows to see activity">فعّل التدفقات وستظهر النشاطات</div>
-                        </div>
+                        <div class="activity-empty" id="activityEmpty"><i data-lucide="activity"></i><div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px" data-ar="جاهز" data-en="Ready">جاهز</div><div style="font-size:12px" data-ar="النشاطات تظهر فوراً عند أول رسالة" data-en="Activity appears instantly with first message">النشاطات تظهر فوراً عند أول رسالة</div></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ===== FLOWS ===== -->
+        <!-- FLOWS -->
         <div class="section" id="flows">
             <div class="section-head">
                 <div class="section-title"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></div>
-                <div class="badge badge-success" id="flowsBadge" style="font-size:10px"><span data-ar="0 نشط" data-en="0 active" id="flowsBadgeText">0 نشط</span></div>
+                <div class="badge badge-success" id="flowsBadge" style="font-size:10px"><span id="flowsBadgeText">0 نشط</span></div>
             </div>
-
             <div class="flow-grid" id="flowGrid"></div>
 
             <!-- Chat Campaign Creator -->
@@ -435,6 +419,7 @@
                     <div class="chat-header-title" data-ar="حملة مخصصة" data-en="Custom Campaign">حملة مخصصة</div>
                 </div>
                 <div class="chat-body">
+                    <div class="chat-chips" id="chatChips"></div>
                     <div class="chat-bubbles" id="chatBubbles"></div>
                     <div class="chat-input-wrap">
                         <input type="text" class="chat-input" id="chatInput" data-placeholder-ar="اكتب هدفك... مثال: عرض رمضان" data-placeholder-en="Type your goal... e.g. Ramadan offer" placeholder="اكتب هدفك... مثال: عرض رمضان">
@@ -444,103 +429,64 @@
             </div>
         </div>
 
-        <!-- ===== SETTINGS ===== -->
+        <!-- SETTINGS -->
         <div class="section" id="settings">
             <div class="section-head">
                 <div class="section-title"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></div>
             </div>
-
             <div class="settings-grid">
-                <!-- WhatsApp Connection -->
+                <!-- WhatsApp -->
                 <div class="settings-card">
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(34,197,94,0.12);color:var(--success)"><i data-lucide="message-circle"></i></div>
-                        <div>
-                            <div class="settings-card-title" data-ar="واتساب" data-en="WhatsApp">واتساب</div>
-                            <div class="settings-card-desc" data-ar="ربط رقمك لإرسال الرسائل" data-en="Connect your number to send messages">ربط رقمك لإرسال الرسائل</div>
-                        </div>
+                        <div><div class="settings-card-title" data-ar="واتساب" data-en="WhatsApp">واتساب</div><div class="settings-card-desc" data-ar="ربط رقمك لإرسال الرسائل" data-en="Connect your number to send messages">ربط رقمك لإرسال الرسائل</div></div>
                     </div>
-                    <div class="connect-status connected" id="waStatus">
-                        <span class="connect-checkmark"><i data-lucide="check"></i></span>
-                        <span data-ar="متصل" data-en="Connected">متصل</span>
+                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span data-ar="متصل" data-en="Connected">متصل</span></div>
+                    <div class="connect-detail">
+                        <div class="connect-detail-item"><i data-lucide="phone"></i><span>+966 5XX XXX XXXX</span></div>
+                        <div class="connect-detail-item"><i data-lucide="clock"></i><span data-ar="آخر نشاط: قبل 3 دقائق" data-en="Last active: 3 min ago">آخر نشاط: قبل 3 دقائق</span></div>
                     </div>
                     <div style="display:flex;gap:8px;margin-top:12px">
                         <button class="btn btn-outline" onclick="window.location.href='/whatsapp.html'" data-ar="إعادة ربط" data-en="Reconnect">إعادة ربط</button>
                         <button class="btn btn-outline" data-ar="API رسمي" data-en="Official API">API رسمي</button>
                     </div>
-                    <button class="wa-info-toggle" id="waInfoToggle" onclick="toggleWaInfo()">
-                        <i data-lucide="chevron-left"></i>
-                        <span data-ar="كيف نحمي رقمك؟" data-en="How do we protect your number?">كيف نحمي رقمك؟</span>
-                    </button>
-                    <div class="wa-info" id="waInfo">
-                        <div class="wa-info-inner">
-                            <span data-ar="إرسال تدريجي، فترات راحة، تسخين تلقائي" data-en="Gradual sending, pauses, auto warm-up">إرسال تدريجي، فترات راحة، تسخين تلقائي</span><br>
-                            <span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span>
-                        </div>
-                    </div>
+                    <button class="wa-info-toggle" id="waInfoToggle" onclick="toggleWaInfo()"><i data-lucide="chevron-left"></i><span data-ar="كيف نحمي رقمك؟" data-en="How do we protect your number?">كيف نحمي رقمك؟</span></button>
+                    <div class="wa-info" id="waInfo"><div class="wa-info-inner"><span data-ar="إرسال تدريجي، فترات راحة، تسخين تلقائي" data-en="Gradual sending, pauses, auto warm-up">إرسال تدريجي، فترات راحة، تسخين تلقائي</span><br><span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span></div></div>
                 </div>
-
-                <!-- Store Connection -->
+                <!-- Store -->
                 <div class="settings-card">
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(59,130,246,0.12);color:#3B82F6"><i data-lucide="store"></i></div>
-                        <div>
-                            <div class="settings-card-title" data-ar="المتجر" data-en="Store">المتجر</div>
-                            <div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات" data-en="Connect your store to pull data">اربط متجرك لسحب البيانات</div>
-                        </div>
+                        <div><div class="settings-card-title" data-ar="المتجر" data-en="Store">المتجر</div><div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات" data-en="Connect your store to pull data">اربط متجرك لسحب البيانات</div></div>
                     </div>
-                    <div class="connect-status connected" id="storeStatus">
-                        <span class="connect-checkmark"><i data-lucide="check"></i></span>
-                        <span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span>
+                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
+                    <div class="connect-detail">
+                        <div class="connect-detail-item"><i data-lucide="shopping-bag"></i><span data-ar="متجر النخبة" data-en="Al Nukhba Store">متجر النخبة</span></div>
+                        <div class="connect-detail-item"><i data-lucide="users"></i><span data-ar="1,234 عميل" data-en="1,234 customers">1,234 عميل</span></div>
+                        <div class="connect-detail-item"><i data-lucide="refresh-cw"></i><span data-ar="آخر مزامنة: قبل 5 دقائق" data-en="Last sync: 5 min ago">آخر مزامنة: قبل 5 دقائق</span></div>
                     </div>
                 </div>
-
-                <!-- Customer Import -->
+                <!-- Import -->
                 <div class="settings-card">
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i data-lucide="users"></i></div>
-                        <div>
-                            <div class="settings-card-title" data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</div>
-                            <div class="settings-card-desc" data-ar="من أي مصدر" data-en="From any source">من أي مصدر</div>
-                        </div>
+                        <div><div class="settings-card-title" data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</div><div class="settings-card-desc" data-ar="من أي مصدر" data-en="From any source">من أي مصدر</div></div>
                     </div>
                     <div class="import-grid">
-                        <div class="import-btn" onclick="connectImport('salla')">
-                            <div class="import-btn-logo" style="color:#6C63FF">سلة</div>
-                            <div class="import-btn-name">Salla</div>
-                        </div>
-                        <div class="import-btn" onclick="connectImport('foodics')">
-                            <div class="import-btn-logo" style="color:#FF6B35">F</div>
-                            <div class="import-btn-name">Foodics</div>
-                        </div>
-                        <div class="import-btn" onclick="connectImport('zid')">
-                            <div class="import-btn-logo" style="color:#5B5FC7">زد</div>
-                            <div class="import-btn-name">Zid</div>
-                        </div>
-                        <div class="import-btn" onclick="connectImport('marn')">
-                            <div class="import-btn-logo" style="color:#00C9A7">مرن</div>
-                            <div class="import-btn-name">Marn</div>
-                        </div>
-                        <div class="import-btn" onclick="connectImport('shopify')">
-                            <div class="import-btn-logo" style="color:#96BF48">S</div>
-                            <div class="import-btn-name">Shopify</div>
-                        </div>
-                        <div class="import-btn" onclick="connectImport('loyverse')">
-                            <div class="import-btn-logo" style="color:#8E44AD">L</div>
-                            <div class="import-btn-name">Loyverse</div>
-                        </div>
+                        <div class="import-btn" onclick="connectImport('salla')"><div class="import-btn-logo" style="color:#6C63FF">سلة</div><div class="import-btn-name">Salla</div></div>
+                        <div class="import-btn" onclick="connectImport('foodics')"><div class="import-btn-logo" style="color:#FF6B35">F</div><div class="import-btn-name">Foodics</div></div>
+                        <div class="import-btn" onclick="connectImport('zid')"><div class="import-btn-logo" style="color:#5B5FC7">زد</div><div class="import-btn-name">Zid</div></div>
+                        <div class="import-btn" onclick="connectImport('marn')"><div class="import-btn-logo" style="color:#00C9A7">مرن</div><div class="import-btn-name">Marn</div></div>
+                        <div class="import-btn" onclick="connectImport('shopify')"><div class="import-btn-logo" style="color:#96BF48">S</div><div class="import-btn-name">Shopify</div></div>
+                        <div class="import-btn" onclick="connectImport('loyverse')"><div class="import-btn-logo" style="color:#8E44AD">L</div><div class="import-btn-name">Loyverse</div></div>
                     </div>
-                    <div class="upload-mini" onclick="document.getElementById('fileInput').click()">
-                        <i data-lucide="upload-cloud"></i>
-                        <div style="font-size:12px;color:var(--text-secondary)" data-ar="أو ارفع ملف CSV / Excel" data-en="Or upload CSV / Excel file">أو ارفع ملف CSV / Excel</div>
-                    </div>
+                    <div class="upload-mini" onclick="document.getElementById('fileInput').click()"><i data-lucide="upload-cloud"></i><div style="font-size:12px;color:var(--text-secondary)" data-ar="أو ارفع ملف CSV / Excel" data-en="Or upload CSV / Excel file">أو ارفع ملف CSV / Excel</div></div>
                     <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="handleFile(event)" style="display:none">
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- ===== MOBILE NAV ===== -->
     <nav class="mob-nav"><div class="mob-nav-inner">
         <a class="mn active" data-section="dashboard" onclick="nav('dashboard')"><i data-lucide="layout-dashboard"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
         <a class="mn" data-section="flows" onclick="nav('flows')"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></a>
@@ -548,500 +494,373 @@
     </div></nav>
 
     <script>
-    // ===== STATE =====
     const merchantId='demo';
     let lang=localStorage.getItem('ribhLang')||'ar';
-    let flowsActivated=false;
-    let hasRealData=false;
+    let allActive=false;
 
     const FLOWS=[
-        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'رسالة لمن ترك سلة التسوق',descEn:'Message when a cart is abandoned',color:'#EF4444',gradient:'linear-gradient(135deg,#EF4444,#DC2626)',estimate:12000,active:false,sent:0,revenue:0},
-        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',desc:'رسالة للعملاء الخاملين',descEn:'Message inactive customers',color:'#F59E0B',gradient:'linear-gradient(135deg,#F59E0B,#D97706)',estimate:8900,active:false,sent:0,revenue:0},
-        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',desc:'عرض منتجات بعد كل شراء',descEn:'Suggest products after purchase',color:'#6366F1',gradient:'linear-gradient(135deg,#6366F1,#4F46E5)',estimate:6500,active:false,sent:0,revenue:0},
-        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',desc:'طلب تقييم بعد التوصيل',descEn:'Ask for review after delivery',color:'#10B981',gradient:'linear-gradient(135deg,#10B981,#059669)',estimate:3200,active:false,sent:0,revenue:0},
-        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',desc:'رسالة لمن تصفح بدون شراء',descEn:'Message browsers who didn\'t buy',color:'#3B82F6',gradient:'linear-gradient(135deg,#3B82F6,#2563EB)',estimate:5400,active:false,sent:0,revenue:0},
-        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',desc:'تأكيد الطلب لتقليل المرتجعات',descEn:'Confirm order to reduce returns',color:'#8B5CF6',gradient:'linear-gradient(135deg,#8B5CF6,#7C3AED)',estimate:4100,active:false,sent:0,revenue:0}
+        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',
+         desc:'رسالة لمن ترك سلة التسوق',descEn:'Message when a cart is abandoned',
+         color:'#EF4444',gradient:'linear-gradient(135deg,#EF4444,#DC2626)',
+         estimate:12000,mathAr:'347 سلة × 35% استرجاع × 99 ر.س',mathEn:'347 carts × 35% recovery × 99 SAR',
+         timingAr:'بعد ساعة من ترك السلة',timingEn:'1 hour after cart abandonment',
+         audienceAr:'كل عميل ترك سلة بقيمة أكثر من 50 ر.س',audienceEn:'Customers with abandoned carts worth 50+ SAR',
+         triggerAr:'أول رسالة عند ترك سلة',triggerEn:'First message when a cart is abandoned',
+         msgAr:'مرحباً {name} 👋\n\nلاحظنا إنك ما كملت طلبك!\nمنتجاتك لسا في السلة 🛒\n\nكمّل طلبك الحين:\n{cart_link}',
+         msgEn:'Hi {name} 👋\n\nYou left items in your cart!\nThey\'re still waiting for you 🛒\n\nComplete your order:\n{cart_link}',
+         active:false,sent:0,revenue:0},
+        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',
+         desc:'رسالة للعملاء الخاملين',descEn:'Message inactive customers',
+         color:'#F59E0B',gradient:'linear-gradient(135deg,#F59E0B,#D97706)',
+         estimate:8900,mathAr:'891 عميل × 10% عودة × 100 ر.س',mathEn:'891 customers × 10% return × 100 SAR',
+         timingAr:'بعد 30 يوم من آخر شراء',timingEn:'30 days after last purchase',
+         audienceAr:'عملاء ما اشتروا من 30 يوم أو أكثر',audienceEn:'Customers inactive for 30+ days',
+         triggerAr:'أول رسالة لعميل خامل 30 يوم',triggerEn:'First message for 30-day inactive customer',
+         msgAr:'أهلاً {name}!\n\nوحشتنا 😊\nعندنا منتجات جديدة تناسبك.\n\nخصم 10% خاص فيك:\n{store_link}',
+         msgEn:'Hey {name}!\n\nWe miss you 😊\nCheck out what\'s new.\n\n10% off just for you:\n{store_link}',
+         active:false,sent:0,revenue:0},
+        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',
+         desc:'عرض منتجات بعد كل شراء',descEn:'Suggest products after purchase',
+         color:'#6366F1',gradient:'linear-gradient(135deg,#6366F1,#4F46E5)',
+         estimate:6500,mathAr:'156 طلب × 42% نقر × 100 ر.س',mathEn:'156 orders × 42% click × 100 SAR',
+         timingAr:'بعد يومين من الشراء',timingEn:'2 days after purchase',
+         audienceAr:'كل عميل أكمل طلب',audienceEn:'Every customer who completed an order',
+         triggerAr:'أول رسالة بعد طلب جديد',triggerEn:'First message after a new order',
+         msgAr:'شكراً {name} على طلبك! 🎉\n\nعملاء اشتروا نفس المنتج أعجبهم أيضاً:\n{recommendations}\n\n{store_link}',
+         msgEn:'Thanks for your order {name}! 🎉\n\nCustomers who bought the same also loved:\n{recommendations}\n\n{store_link}',
+         active:false,sent:0,revenue:0},
+        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',
+         desc:'طلب تقييم بعد التوصيل',descEn:'Ask for review after delivery',
+         color:'#10B981',gradient:'linear-gradient(135deg,#10B981,#059669)',
+         estimate:3200,mathAr:'تقييمات أعلى = مبيعات أكثر',mathEn:'More reviews = more sales',
+         timingAr:'بعد 3 أيام من التوصيل',timingEn:'3 days after delivery',
+         audienceAr:'كل عميل تم توصيل طلبه',audienceEn:'Every customer with a delivered order',
+         triggerAr:'أول طلب تقييم بعد التوصيل',triggerEn:'First review request after delivery',
+         msgAr:'مرحباً {name}\n\nنتمنى عجبك طلبك! ⭐\nرأيك يهمنا كثير.\n\nقيّم تجربتك:\n{review_link}',
+         msgEn:'Hi {name}\n\nHope you loved your order! ⭐\nYour feedback means a lot.\n\nRate your experience:\n{review_link}',
+         active:false,sent:0,revenue:0},
+        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',
+         desc:'رسالة لمن تصفح بدون شراء',descEn:'Message browsers who didn\'t buy',
+         color:'#3B82F6',gradient:'linear-gradient(135deg,#3B82F6,#2563EB)',
+         estimate:5400,mathAr:'زوار × 8% تحويل × 85 ر.س',mathEn:'Visitors × 8% conversion × 85 SAR',
+         timingAr:'بعد 4 ساعات من التصفح',timingEn:'4 hours after browsing',
+         audienceAr:'زوار تصفحوا منتجات بدون إضافة للسلة',audienceEn:'Visitors who browsed without adding to cart',
+         triggerAr:'أول رسالة لمتصفح بدون شراء',triggerEn:'First message for browser without purchase',
+         msgAr:'أهلاً {name}!\n\nلاحظنا إنك تتصفح {product_name}.\nلسا متوفر! 🔥\n\n{product_link}',
+         msgEn:'Hey {name}!\n\nWe noticed you were browsing {product_name}.\nStill available! 🔥\n\n{product_link}',
+         active:false,sent:0,revenue:0},
+        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',
+         desc:'تأكيد الطلب لتقليل المرتجعات',descEn:'Confirm order to reduce returns',
+         color:'#8B5CF6',gradient:'linear-gradient(135deg,#8B5CF6,#7C3AED)',
+         estimate:4100,mathAr:'تقليل 40% من المرتجعات',mathEn:'40% reduction in returns',
+         timingAr:'فوراً بعد الطلب',timingEn:'Immediately after order',
+         audienceAr:'كل طلب دفع عند الاستلام',audienceEn:'Every COD order',
+         triggerAr:'أول تأكيد عند طلب COD',triggerEn:'First confirmation for COD order',
+         msgAr:'مرحباً {name}\n\nتم استلام طلبك #{order_id} ✅\n\nهل تأكد الطلب؟\n\n1️⃣ نعم، أكد الطلب\n2️⃣ لا، ألغِ الطلب',
+         msgEn:'Hi {name}\n\nOrder #{order_id} received ✅\n\nPlease confirm:\n\n1️⃣ Yes, confirm\n2️⃣ No, cancel',
+         active:false,sent:0,revenue:0}
     ];
 
-    // ===== NAVIGATION =====
+    const CHIPS_AR=['عرض رمضان','الجمعة البيضاء','عيد الفطر','تصفيات نهاية الموسم'];
+    const CHIPS_EN=['Ramadan Offer','Black Friday','Eid Sale','End of Season'];
+
+    // === NAV ===
     function nav(s){
         const el=document.getElementById(s);
         if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
         document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));
         document.querySelectorAll(`[data-section="${s}"]`).forEach(i=>i.classList.add('active'));
     }
+    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));}});},{threshold:0.2,rootMargin:'-80px 0px -50% 0px'});
 
-    const obs=new IntersectionObserver(es=>{
-        es.forEach(e=>{
-            if(e.isIntersecting){
-                document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));
-                document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));
-            }
-        });
-    },{threshold:0.2,rootMargin:'-80px 0px -50% 0px'});
-
-    // ===== LANGUAGE =====
-    function toggleLang(){
-        lang=lang==='ar'?'en':'ar';
-        localStorage.setItem('ribhLang',lang);
-        applyLang();
-    }
+    // === LANG ===
+    function toggleLang(){lang=lang==='ar'?'en':'ar';localStorage.setItem('ribhLang',lang);applyLang();}
     function applyLang(){
         const r=document.documentElement;
         r.setAttribute('dir',lang==='ar'?'rtl':'ltr');
         r.setAttribute('lang',lang);
         document.getElementById('langLabel').textContent=lang==='ar'?'English':'العربية';
-        document.querySelectorAll('[data-ar]').forEach(el=>{
-            el.textContent=el.getAttribute('data-'+lang)||el.textContent;
-        });
-        document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{
-            el.placeholder=el.getAttribute('data-placeholder-'+lang)||el.placeholder;
-        });
-        renderFlows();
-        updateFlowBadge();
+        document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)||el.textContent;});
+        document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+lang)||el.placeholder;});
+        renderFlows();renderChips();updateFlowBadge();renderHeroButton();
     }
 
-    // ===== COUNTER ANIMATION =====
+    // === COUNTER ===
     function animateValue(el,end,duration=1200){
-        const start=0;
-        const startTime=performance.now();
+        const start=0,startTime=performance.now();
         function update(now){
-            const elapsed=now-startTime;
-            const progress=Math.min(elapsed/duration,1);
-            const eased=1-Math.pow(1-progress,3);
+            const p=Math.min((now-startTime)/duration,1);
+            const eased=1-Math.pow(1-p,3);
             el.textContent=Math.floor(start+(end-start)*eased).toLocaleString();
-            if(progress<1) requestAnimationFrame(update);
+            if(p<1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
     }
 
-    // ===== TOAST NOTIFICATIONS =====
-    function showToast(msg,type='success'){
-        const c=document.getElementById('toasts');
-        const t=document.createElement('div');
-        t.className='toast '+type;
+    // === TOAST ===
+    function showToast(msg){
+        const c=document.getElementById('toasts'),t=document.createElement('div');
+        t.className='toast success';
         t.innerHTML=`<i data-lucide="check-circle-2"></i><span>${msg}</span>`;
-        c.appendChild(t);
-        lucide.createIcons({nodes:[t]});
-        setTimeout(()=>{
-            t.style.animation='toastOut .3s ease-out forwards';
-            setTimeout(()=>t.remove(),300);
-        },3000);
+        c.appendChild(t);lucide.createIcons({nodes:[t]});
+        setTimeout(()=>{t.style.animation='toastOut .3s ease-out forwards';setTimeout(()=>t.remove(),300);},3000);
     }
 
-    // ===== CONFETTI =====
+    // === CONFETTI ===
     function launchConfetti(){
-        const canvas=document.getElementById('confetti');
-        const ctx=canvas.getContext('2d');
-        canvas.width=window.innerWidth;
-        canvas.height=window.innerHeight;
-        const particles=[];
-        const colors=['#10B981','#22C55E','#6366F1','#F59E0B','#3B82F6','#EF4444','#FAFAFA'];
-        for(let i=0;i<120;i++){
-            particles.push({
-                x:canvas.width/2+(Math.random()-0.5)*200,
-                y:canvas.height/2,
-                vx:(Math.random()-0.5)*12,
-                vy:Math.random()*-16-4,
-                w:Math.random()*8+4,
-                h:Math.random()*6+2,
-                color:colors[Math.floor(Math.random()*colors.length)],
-                rotation:Math.random()*360,
-                rv:(Math.random()-0.5)*12,
-                gravity:0.3,
-                opacity:1
-            });
-        }
-        let frame=0;
+        const cv=document.getElementById('confetti'),ctx=cv.getContext('2d');
+        cv.width=window.innerWidth;cv.height=window.innerHeight;
+        const ps=[],colors=['#10B981','#22C55E','#6366F1','#F59E0B','#3B82F6','#EF4444','#FAFAFA'];
+        for(let i=0;i<120;i++) ps.push({x:cv.width/2+(Math.random()-.5)*200,y:cv.height/2,vx:(Math.random()-.5)*12,vy:Math.random()*-16-4,w:Math.random()*8+4,h:Math.random()*6+2,c:colors[Math.floor(Math.random()*colors.length)],r:Math.random()*360,rv:(Math.random()-.5)*12,g:.3,o:1});
+        let f=0;
         function draw(){
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            let alive=false;
-            particles.forEach(p=>{
-                p.x+=p.vx;
-                p.vy+=p.gravity;
-                p.y+=p.vy;
-                p.rotation+=p.rv;
-                if(frame>40) p.opacity-=0.015;
-                if(p.opacity<=0) return;
-                alive=true;
-                ctx.save();
-                ctx.translate(p.x,p.y);
-                ctx.rotate(p.rotation*Math.PI/180);
-                ctx.globalAlpha=p.opacity;
-                ctx.fillStyle=p.color;
-                ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
-                ctx.restore();
-            });
-            frame++;
-            if(alive) requestAnimationFrame(draw);
-            else ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.clearRect(0,0,cv.width,cv.height);let alive=false;
+            ps.forEach(p=>{p.x+=p.vx;p.vy+=p.g;p.y+=p.vy;p.r+=p.rv;if(f>40)p.o-=.015;if(p.o<=0)return;alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.globalAlpha=p.o;ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
+            f++;if(alive)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
         }
         requestAnimationFrame(draw);
     }
 
-    // ===== PROGRESSIVE STATS =====
+    // === STATS ===
+    let statsShown=false;
     function showStats(){
-        if(flowsActivated) return;
-        flowsActivated=true;
+        if(statsShown) return;statsShown=true;
         document.getElementById('statsEmpty').style.display='none';
         document.getElementById('statsRow').style.display='grid';
-        // Staggered reveal
-        for(let i=0;i<4;i++){
-            setTimeout(()=>{
-                const s=document.getElementById('stat'+i);
-                if(s) s.classList.add('visible');
-            },i*100);
+        for(let i=0;i<4;i++) setTimeout(()=>{const s=document.getElementById('stat'+i);if(s)s.classList.add('visible');},i*100);
+    }
+
+    // === HERO BUTTON: TOGGLE ===
+    function renderHeroButton(){
+        const btn=document.getElementById('heroBtn');
+        if(allActive){
+            btn.className='btn-machine btn-machine-pause';
+            btn.innerHTML=`<i data-lucide="pause-circle"></i><span>${lang==='ar'?'إيقاف الكل':'Pause All'}</span>`;
+        }else{
+            btn.className='btn-machine btn-machine-pulse';
+            btn.innerHTML=`<div class="shine"></div><i data-lucide="zap"></i><span>${lang==='ar'?'استرجع أموالك':'Recover your money'}</span>`;
+        }
+        lucide.createIcons({nodes:[btn]});
+    }
+
+    function toggleAllFlows(){
+        if(allActive){
+            // PAUSE ALL
+            FLOWS.forEach(f=>f.active=false);
+            allActive=false;
+            renderFlows();updateFlowBadge();renderHeroButton();
+            showToast(lang==='ar'?'تم إيقاف جميع التدفقات':'All flows paused');
+        }else{
+            // ACTIVATE ALL
+            launchConfetti();
+            FLOWS.forEach(f=>f.active=true);
+            allActive=true;
+            showStats();
+            renderFlows();updateFlowBadge();renderHeroButton();
+            showToast(lang==='ar'?'تم تفعيل جميع التدفقات!':'All flows activated!');
+            // Add activation activity
+            FLOWS.forEach(f=>{
+                const name=lang==='ar'?f.name:f.nameEn;
+                const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
+                addActivityItem(`${name}: ${trigger}`,'green',0);
+            });
+            setTimeout(()=>nav('flows'),800);
         }
     }
 
-    function showChart(){
-        if(hasRealData) return;
-        hasRealData=true;
-        document.getElementById('chartEmpty').style.display='none';
-        document.getElementById('revenueChart').style.display='flex';
-        document.getElementById('revenueLabels').style.display='flex';
-    }
-
-    // ===== CHART =====
-    function renderChart(data,labels){
-        const c=document.getElementById('revenueChart'),l=document.getElementById('revenueLabels');
-        const mx=Math.max(...data);
-        c.innerHTML=data.map((v,i)=>{
-            const h=Math.max(4,(v/mx)*100);
-            return`<div class="c-bar" style="height:0%;background:${i===data.length-1?'var(--primary)':'var(--border-hover)'}" data-h="${h}"><div class="c-tip">${v.toLocaleString()}</div></div>`;
-        }).join('');
-        l.innerHTML=labels.map(x=>`<span>${x}</span>`).join('');
+    // === SCROLL TO FLOW FROM HERO PILL ===
+    function scrollToFlow(flowId){
+        nav('flows');
         setTimeout(()=>{
-            c.querySelectorAll('.c-bar').forEach((bar,i)=>{
-                setTimeout(()=>{bar.style.height=bar.dataset.h+'%';},i*60);
-            });
-        },200);
+            const card=document.getElementById('flow_'+flowId);
+            if(card){
+                card.scrollIntoView({behavior:'smooth',block:'center'});
+                card.classList.add('highlight');
+                setTimeout(()=>card.classList.remove('highlight'),1500);
+                expandFlow(flowId);
+            }
+        },400);
     }
 
-    // ===== FLOWS =====
+    // === EXPAND FLOW ===
+    function expandFlow(id){
+        const detail=document.getElementById('detail_'+id);
+        if(!detail) return;
+        const isOpen=detail.classList.contains('open');
+        // Close all
+        document.querySelectorAll('.flow-detail.open').forEach(d=>d.classList.remove('open'));
+        document.querySelectorAll('.flow-card.expanded').forEach(c=>c.classList.remove('expanded'));
+        if(!isOpen){
+            detail.classList.add('open');
+            document.getElementById('flow_'+id).classList.add('expanded');
+        }
+    }
+
+    // === RENDER FLOWS ===
     function renderFlows(){
         const g=document.getElementById('flowGrid');
         g.innerHTML=FLOWS.map((f,idx)=>{
             const name=lang==='ar'?f.name:f.nameEn;
             const desc=lang==='ar'?f.desc:f.descEn;
+            const math=lang==='ar'?f.mathAr:f.mathEn;
+            const estLabel=lang==='ar'?'ر.س/شهر':'SAR/mo';
+            const msg=lang==='ar'?f.msgAr:f.msgEn;
+            const timing=lang==='ar'?f.timingAr:f.timingEn;
+            const audience=lang==='ar'?f.audienceAr:f.audienceEn;
+            const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
             const sentLabel=lang==='ar'?'رسالة':'sent';
             const revLabel=lang==='ar'?'ر.س':'SAR';
-            const estLabel=lang==='ar'?'ر.س/شهر تقريباً':'SAR/mo est.';
+            const detailsLabel=lang==='ar'?'تفاصيل':'Details';
+            const msgLabel=lang==='ar'?'رسالة العميل':'Customer message';
+            const timingLabel=lang==='ar'?'التوقيت':'Timing';
+            const audienceLabel=lang==='ar'?'الجمهور':'Audience';
+            const activeStatusHtml=f.active?`<div class="flow-active-status"><i data-lucide="radio"></i><span>${trigger}</span></div>`:'';
+
             return`<div class="flow-card ${f.active?'active':''}" id="flow_${f.id}" style="transition-delay:${idx*0.06}s">
-                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${f.gradient};border-radius:3px 3px 0 0"></div>
-                <div class="flow-top">
+                <div class="flow-card-top-bar" style="background:${f.gradient}"></div>
+                <div class="flow-head" onclick="expandFlow('${f.id}')">
                     <div class="flow-ico" style="background:${f.color}18;color:${f.color}"><i data-lucide="${f.icon}"></i></div>
-                    <div class="flow-info">
-                        <div class="flow-name">${name}</div>
-                        <div class="flow-desc">${desc}</div>
-                    </div>
-                    <label class="flow-toggle">
+                    <div class="flow-info"><div class="flow-name">${name}</div><div class="flow-desc">${desc}</div></div>
+                    <label class="flow-toggle" onclick="event.stopPropagation()">
                         <input type="checkbox" ${f.active?'checked':''} onchange="toggleFlow('${f.id}',this.checked)">
                         <span class="slider"></span>
                     </label>
                 </div>
-                <div class="flow-bottom">
-                    <div class="flow-estimate"><i data-lucide="trending-up"></i> ~<strong>${f.estimate.toLocaleString()}</strong> ${estLabel}</div>
-                    <div class="flow-stats-row">
-                        <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
-                        <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
+                <div class="flow-summary" onclick="expandFlow('${f.id}')">
+                    <div class="flow-estimate"><i data-lucide="trending-up"></i> ~<strong>${f.estimate.toLocaleString()}</strong> ${estLabel} <span class="flow-estimate-math">(${math})</span></div>
+                    <div class="flow-expand-hint"><span>${detailsLabel}</span><i data-lucide="chevron-left"></i></div>
+                </div>
+                <div class="flow-detail" id="detail_${f.id}">
+                    <div class="flow-detail-inner">
+                        <div class="flow-detail-row"><i data-lucide="message-circle"></i><div><div class="flow-detail-label">${msgLabel}</div><div class="flow-msg-preview">${msg}</div></div></div>
+                        <div class="flow-detail-row"><i data-lucide="clock"></i><div><div class="flow-detail-label">${timingLabel}</div><div>${timing}</div></div></div>
+                        <div class="flow-detail-row"><i data-lucide="users"></i><div><div class="flow-detail-label">${audienceLabel}</div><div>${audience}</div></div></div>
+                        ${activeStatusHtml}
                     </div>
+                </div>
+                <div class="flow-stats-bar">
+                    <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
+                    <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
                 </div>
             </div>`;
         }).join('');
         lucide.createIcons();
-        // Stagger entrance
-        setTimeout(()=>{
-            g.querySelectorAll('.flow-card').forEach((c,i)=>{
-                setTimeout(()=>c.classList.add('entered'),i*80);
-            });
-        },100);
+        setTimeout(()=>{g.querySelectorAll('.flow-card').forEach((c,i)=>{setTimeout(()=>c.classList.add('entered'),i*80);});},100);
     }
 
     function toggleFlow(id,on){
-        const f=FLOWS.find(x=>x.id===id);
-        if(!f) return;
+        const f=FLOWS.find(x=>x.id===id);if(!f) return;
         f.active=on;
         const card=document.getElementById('flow_'+id);
         if(on){
             card.classList.add('active');
             showStats();
-            simulateFlow(f);
             const name=lang==='ar'?f.name:f.nameEn;
+            const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
             showToast(lang==='ar'?`${name} مفعّل`:`${name} activated`);
+            addActivityItem(`${name}: ${trigger}`,'green',0);
         }else{
             card.classList.remove('active');
         }
+        allActive=FLOWS.every(f=>f.active);
+        renderHeroButton();
         updateFlowBadge();
+        // Re-render to update active status in detail
+        renderFlows();
     }
 
     function updateFlowBadge(){
         const count=FLOWS.filter(f=>f.active).length;
-        const text=lang==='ar'?`${count} نشط`:`${count} active`;
-        document.getElementById('flowsBadgeText').textContent=text;
+        document.getElementById('flowsBadgeText').textContent=lang==='ar'?`${count} نشط`:`${count} active`;
         document.getElementById('activeFlowCount').textContent=count;
     }
 
-    function activateAll(){
-        // Launch confetti celebration
-        launchConfetti();
-        showToast(lang==='ar'?'تم تفعيل جميع التدفقات!':'All flows activated!');
-
-        // Stop the pulse animation — machine is running now
-        const btn=document.getElementById('heroBtn');
-        btn.classList.remove('btn-machine-pulse');
-        btn.innerHTML='<i data-lucide="check-circle-2"></i><span>'+(lang==='ar'?'التدفقات تعمل':'Flows running')+'</span>';
-        btn.style.background='linear-gradient(135deg,#059669,#047857)';
-        btn.onclick=null;
-        btn.style.cursor='default';
-        lucide.createIcons({nodes:[btn]});
-
-        // Activate all flows
-        showStats();
-        FLOWS.forEach(f=>{
-            if(!f.active){
-                f.active=true;
-                simulateFlow(f);
-            }
-        });
-        renderFlows();
-        updateFlowBadge();
-
-        // Scroll to flows after a beat
-        setTimeout(()=>nav('flows'),800);
-    }
-
-    function simulateFlow(flow){
-        const addActivity=(f)=>{
-            const msgs=lang==='ar'?
-                [`استرجاع سلة — ${f.name}`,`رسالة مرسلة — ${f.name}`,`تحويل ناجح — ${f.name}`]:
-                [`Cart recovered — ${f.nameEn}`,`Message sent — ${f.nameEn}`,`Conversion — ${f.nameEn}`];
-            const types=['green','blue','orange'];
-            const idx=Math.floor(Math.random()*3);
-            const amount=idx===0?Math.floor(Math.random()*500)+100:0;
-            addActivityItem(msgs[idx],types[idx],amount);
-        };
-
-        const iv=setInterval(()=>{
-            if(!flow.active){clearInterval(iv);return;}
-            flow.sent+=Math.floor(Math.random()*8)+2;
-            flow.revenue+=Math.floor(Math.random()*300)+50;
-            const card=document.getElementById('flow_'+flow.id);
-            if(card){
-                const stats=card.querySelectorAll('.flow-stat strong');
-                if(stats[0]) stats[0].textContent=flow.sent.toLocaleString();
-                if(stats[1]) stats[1].textContent=flow.revenue.toLocaleString();
-            }
-            updateDashboardStats();
-            // Show chart data once we have some
-            if(!hasRealData && FLOWS.some(f=>f.revenue>0)){
-                showChart();
-                const totalRev=FLOWS.reduce((a,f)=>a+f.revenue,0);
-                renderChart([Math.floor(totalRev*0.1),Math.floor(totalRev*0.15),Math.floor(totalRev*0.2),Math.floor(totalRev*0.3),Math.floor(totalRev*0.5),Math.floor(totalRev*0.7),totalRev],
-                    lang==='ar'?['س','أح','إث','ثل','أر','خم','جم']:['Sa','Su','Mo','Tu','We','Th','Fr']);
-            }
-            // Random activity
-            if(Math.random()>0.5) addActivity(flow);
-        },3000+Math.random()*2000);
-    }
-
+    // === ACTIVITY ===
     function addActivityItem(msg,dotColor,amount){
         const list=document.getElementById('activityList');
         const empty=document.getElementById('activityEmpty');
         if(empty) empty.style.display='none';
-
         const item=document.createElement('div');
         item.className='activity-item';
         const amtHtml=amount?`<span class="act-amount">+${amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';
         item.innerHTML=`<span class="act-dot ${dotColor}"></span><div class="act-body"><div class="act-msg">${msg}</div><div class="act-time">${lang==='ar'?'الآن':'Now'}</div></div>${amtHtml}`;
-
-        // Insert at top
-        if(list.firstChild) list.insertBefore(item,list.firstChild);
-        else list.appendChild(item);
-
-        // Slide in animation
-        requestAnimationFrame(()=>{
-            requestAnimationFrame(()=>{
-                item.classList.add('slide-in');
-                item.classList.add('flash');
-            });
-        });
-
-        // Keep max 8 items
+        if(list.firstChild) list.insertBefore(item,list.firstChild);else list.appendChild(item);
+        requestAnimationFrame(()=>{requestAnimationFrame(()=>{item.classList.add('slide-in');item.classList.add('flash');});});
         while(list.children.length>8) list.removeChild(list.lastChild);
         lucide.createIcons({nodes:[item]});
     }
 
-    function updateDashboardStats(){
-        const totalRev=FLOWS.reduce((a,f)=>a+f.revenue,0);
-        const totalSent=FLOWS.reduce((a,f)=>a+f.sent,0);
-        const rate=totalSent>0?Math.min(Math.round((totalRev/Math.max(totalSent*100,1))*100),38):0;
-        document.getElementById('totalRevenue').textContent=totalRev.toLocaleString();
-        document.getElementById('messagesSent').textContent=totalSent.toLocaleString();
-        document.getElementById('recoveryRate').textContent=rate;
+    // === CHAT ===
+    function renderChips(){
+        const chips=lang==='ar'?CHIPS_AR:CHIPS_EN;
+        document.getElementById('chatChips').innerHTML=chips.map(c=>`<button class="chip" onclick="fillChat('${c}')">${c}</button>`).join('');
     }
+    function fillChat(text){document.getElementById('chatInput').value=text;generateCampaign();}
 
-    // ===== CHAT CAMPAIGN CREATOR =====
     function generateCampaign(){
         const input=document.getElementById('chatInput');
-        const goal=input.value.trim();
-        if(!goal) return;
-
+        const goal=input.value.trim();if(!goal) return;
         const bubbles=document.getElementById('chatBubbles');
 
-        // User bubble
-        const userBubble=document.createElement('div');
-        userBubble.className='chat-bubble user';
-        userBubble.textContent=goal;
-        bubbles.appendChild(userBubble);
+        const userB=document.createElement('div');
+        userB.className='chat-bubble user';userB.textContent=goal;bubbles.appendChild(userB);
         input.value='';
 
-        // AI typing dots
         const typing=document.createElement('div');
         typing.className='chat-bubble ai';
         typing.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';
-        typing.style.animationDelay='.2s';
-        bubbles.appendChild(typing);
-
-        // Scroll to bottom
+        typing.style.animationDelay='.2s';bubbles.appendChild(typing);
         bubbles.scrollTop=bubbles.scrollHeight;
 
-        // Simulate AI response
         setTimeout(()=>{
             typing.remove();
-
             const audience=Math.floor(Math.random()*800)+200;
             const bestTime=lang==='ar'?'الخميس 8 مساءً':'Thursday 8 PM';
-
             const msgAr=`مرحباً {customer_name} 👋\n\nعندنا لك عرض خاص: ${goal}\n\nخصم 15% على كل المنتجات 🎉\nالكود: RIBH15\n\n🛒 {store_url}\n\nالعرض لفترة محدودة ⏰`;
             const msgEn=`Hi {customer_name} 👋\n\nSpecial offer: ${goal}\n\n15% off everything 🎉\nCode: RIBH15\n\n🛒 {store_url}\n\nLimited time only ⏰`;
+            const aiB=document.createElement('div');
+            aiB.className='chat-bubble ai';aiB.textContent=lang==='ar'?msgAr:msgEn;bubbles.appendChild(aiB);
 
-            const aiBubble=document.createElement('div');
-            aiBubble.className='chat-bubble ai';
-            aiBubble.textContent=lang==='ar'?msgAr:msgEn;
-            aiBubble.style.animationDelay='.1s';
-            bubbles.appendChild(aiBubble);
-
-            // Meta + actions
-            const actions=document.createElement('div');
-            actions.className='chat-actions';
-            actions.innerHTML=`
-                <span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:12px;flex:1">
-                    <span><i data-lucide="users" style="width:12px;height:12px;display:inline"></i> ${audience}</span>
-                    <span><i data-lucide="clock" style="width:12px;height:12px;display:inline"></i> ${bestTime}</span>
-                </span>
-                <button class="btn btn-outline" onclick="clearChat()" data-ar="مسح" data-en="Clear">${lang==='ar'?'مسح':'Clear'}</button>
-                <button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span data-ar="أطلق" data-en="Launch">${lang==='ar'?'أطلق':'Launch'}</span></button>
-            `;
+            const actions=document.createElement('div');actions.className='chat-actions';
+            actions.innerHTML=`<span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:12px;flex:1"><span><i data-lucide="users" style="width:12px;height:12px;display:inline"></i> ${audience}</span><span><i data-lucide="clock" style="width:12px;height:12px;display:inline"></i> ${bestTime}</span></span><button class="btn btn-outline" onclick="clearChat()">${lang==='ar'?'مسح':'Clear'}</button><button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span>${lang==='ar'?'أطلق':'Launch'}</span></button>`;
             bubbles.appendChild(actions);
-            lucide.createIcons({nodes:[aiBubble,actions]});
-            bubbles.scrollTop=bubbles.scrollHeight;
+            lucide.createIcons({nodes:[aiB,actions]});bubbles.scrollTop=bubbles.scrollHeight;
         },1500+Math.random()*1000);
     }
+    function clearChat(){document.getElementById('chatBubbles').innerHTML='';}
+    function launchCustom(){clearChat();showToast(lang==='ar'?'تم إطلاق الحملة!':'Campaign launched!');launchConfetti();}
 
-    function clearChat(){
-        document.getElementById('chatBubbles').innerHTML='';
-    }
+    // === SETTINGS ===
+    function toggleWaInfo(){document.getElementById('waInfoToggle').classList.toggle('open');document.getElementById('waInfo').classList.toggle('open');}
+    function connectImport(p){if(p==='salla'){window.location.href='/setup.html';}else{showToast(lang==='ar'?`ربط ${p} قريباً`:`${p} coming soon`);}}
+    function handleFile(e){if(!e.target.files[0]) return;const f=e.target.files[0];if(f.size>10*1024*1024){showToast(lang==='ar'?'حجم كبير':'File too large');return;}showToast(lang==='ar'?`تم استيراد ${f.name}`:`Imported ${f.name}`);}
 
-    function launchCustom(){
-        clearChat();
-        showToast(lang==='ar'?'تم إطلاق الحملة بنجاح!':'Campaign launched!');
-        launchConfetti();
-    }
-
-    // ===== WHATSAPP INFO TOGGLE =====
-    function toggleWaInfo(){
-        const toggle=document.getElementById('waInfoToggle');
-        const info=document.getElementById('waInfo');
-        toggle.classList.toggle('open');
-        info.classList.toggle('open');
-    }
-
-    // ===== IMPORT =====
-    function connectImport(platform){
-        if(platform==='salla'){
-            window.location.href='/setup.html';
-        }else{
-            showToast(lang==='ar'?`ربط ${platform} قريباً`:`${platform} coming soon`);
-        }
-    }
-
-    function handleFile(e){
-        if(!e.target.files[0]) return;
-        const f=e.target.files[0];
-        if(f.size>10*1024*1024){showToast(lang==='ar'?'حجم كبير جداً':'File too large');return;}
-        showToast(lang==='ar'?`تم استيراد العملاء من ${f.name}`:`Imported from ${f.name}`);
-    }
-
-    // ===== HERO DATA =====
+    // === HERO DATA ===
     function loadHeroData(){
-        const carts=347,dormant=891,upsell=156;
-        const total=154000;
-
+        const carts=347,cartVal=42000,dormant=891,dormantVal=89000,upsell=156,upsellVal=23000,total=cartVal+dormantVal+upsellVal;
         setTimeout(()=>{
             animateValue(document.getElementById('heroTotal'),total,1800);
             animateValue(document.getElementById('heroCarts'),carts,1200);
             animateValue(document.getElementById('heroDormant'),dormant,1200);
             animateValue(document.getElementById('heroUpsell'),upsell,1200);
+            // Show SAR values in pills
+            document.getElementById('heroCartVal').innerHTML=cartVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
+            document.getElementById('heroDormantVal').innerHTML=dormantVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
+            document.getElementById('heroUpsellVal').innerHTML=upsellVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
         },600);
     }
 
-    // ===== API CALLS =====
-    async function loadStats(){
-        try{
-            const r=await fetch('/api/ribh/stats');
-            const d=await r.json();
-            if(d.success){
-                showStats();
-                document.getElementById('totalRevenue').textContent=(d.totalRevenue||0).toLocaleString();
-                document.getElementById('recoveryRate').textContent=(d.recoveryRate||0);
-            }
-        }catch(e){}
-    }
+    // === API ===
+    async function loadStats(){try{const r=await fetch('/api/ribh/stats');const d=await r.json();if(d.success){showStats();document.getElementById('totalRevenue').textContent=(d.totalRevenue||0).toLocaleString();document.getElementById('recoveryRate').textContent=(d.recoveryRate||0);}}catch(e){}}
+    async function loadActivity(){try{const r=await fetch('/api/ribh/activity');const d=await r.json();if(d.success&&d.activities?.length>0){d.activities.slice(0,8).forEach((a,i)=>{setTimeout(()=>{addActivityItem(a.message||a.title,a.type==='recovered'?'green':a.type==='sent'?'blue':'orange',a.amount||0);},i*100);});}}catch(e){}}
 
-    async function loadActivity(){
-        try{
-            const r=await fetch('/api/ribh/activity');
-            const d=await r.json();
-            if(d.success&&d.activities?.length>0){
-                const list=document.getElementById('activityList');
-                const empty=document.getElementById('activityEmpty');
-                if(empty) empty.style.display='none';
-                d.activities.slice(0,8).forEach((a,i)=>{
-                    setTimeout(()=>{
-                        addActivityItem(
-                            a.message||a.title,
-                            a.type==='recovered'?'green':a.type==='sent'?'blue':'orange',
-                            a.amount||0
-                        );
-                    },i*100);
-                });
-            }
-        }catch(e){}
-    }
+    // === ENTER KEY ===
+    document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('chatInput'))generateCampaign();});
 
-    // ===== ENTER KEY =====
-    document.addEventListener('keydown',e=>{
-        if(e.key==='Enter'&&document.activeElement===document.getElementById('chatInput')){
-            generateCampaign();
-        }
-    });
-
-    // ===== INIT =====
+    // === INIT ===
     document.addEventListener('DOMContentLoaded',()=>{
-        lucide.createIcons();
-        applyLang();
-        renderFlows();
-        updateFlowBadge();
-        loadHeroData();
-        loadStats();
-        loadActivity();
-
-        ['dashboard','flows','settings'].forEach(id=>{
-            const el=document.getElementById(id);
-            if(el) obs.observe(el);
-        });
-
+        lucide.createIcons();applyLang();renderFlows();renderChips();updateFlowBadge();loadHeroData();loadStats();loadActivity();
+        ['dashboard','flows','settings'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
         setInterval(()=>{loadStats();loadActivity();},30000);
     });
     </script>
