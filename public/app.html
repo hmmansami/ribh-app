@@ -324,7 +324,7 @@
         </div>
         <div class="sb-spacer"></div>
         <div class="sb-status"><span class="sb-dot green pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
-        <div class="sb-status"><span class="sb-dot green pulse"></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
+        <div class="sb-status" id="sbSallaStatus"><span class="sb-dot" id="sbSallaDot"></span><span id="sbSallaText" data-ar="سلة غير متصلة" data-en="Salla not connected">سلة غير متصلة</span></div>
         <div class="sb-lang" onclick="toggleLang()"><i data-lucide="globe" style="width:14px;height:14px"></i><span id="langLabel">English</span></div>
     </aside>
 
@@ -454,16 +454,18 @@
                     <div class="wa-info" id="waInfo"><div class="wa-info-inner"><span data-ar="إرسال تدريجي، فترات راحة، تسخين تلقائي" data-en="Gradual sending, pauses, auto warm-up">إرسال تدريجي، فترات راحة، تسخين تلقائي</span><br><span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span></div></div>
                 </div>
                 <!-- Store -->
-                <div class="settings-card">
+                <div class="settings-card" id="sallaCard">
                     <div class="settings-card-head">
                         <div class="settings-card-ico" style="background:rgba(59,130,246,0.12);color:#3B82F6"><i data-lucide="store"></i></div>
                         <div><div class="settings-card-title" data-ar="المتجر" data-en="Store">المتجر</div><div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات" data-en="Connect your store to pull data">اربط متجرك لسحب البيانات</div></div>
                     </div>
-                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
-                    <div class="connect-detail">
-                        <div class="connect-detail-item"><i data-lucide="shopping-bag"></i><span data-ar="متجر النخبة" data-en="Al Nukhba Store">متجر النخبة</span></div>
-                        <div class="connect-detail-item"><i data-lucide="users"></i><span data-ar="1,234 عميل" data-en="1,234 customers">1,234 عميل</span></div>
-                        <div class="connect-detail-item"><i data-lucide="refresh-cw"></i><span data-ar="آخر مزامنة: قبل 5 دقائق" data-en="Last sync: 5 min ago">آخر مزامنة: قبل 5 دقائق</span></div>
+                    <div id="sallaStatus">
+                        <!-- Default: not connected -->
+                        <a href="/salla/install" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:14px;margin-bottom:8px">
+                            <i data-lucide="plug"></i>
+                            <span data-ar="ربط متجر سلة" data-en="Connect Salla Store">ربط متجر سلة</span>
+                        </a>
+                        <div style="font-size:11px;color:var(--text-muted);text-align:center" data-ar="يتم التثبيت من متجر تطبيقات سلة" data-en="Installs via Salla App Store">يتم التثبيت من متجر تطبيقات سلة</div>
                     </div>
                 </div>
                 <!-- Import -->
@@ -837,21 +839,91 @@
 
     // === HERO DATA ===
     function loadHeroData(){
-        const carts=347,cartVal=42000,dormant=891,dormantVal=89000,upsell=156,upsellVal=23000,total=cartVal+dormantVal+upsellVal;
-        setTimeout(()=>{
-            animateValue(document.getElementById('heroTotal'),total,1800);
-            animateValue(document.getElementById('heroCarts'),carts,1200);
-            animateValue(document.getElementById('heroDormant'),dormant,1200);
-            animateValue(document.getElementById('heroUpsell'),upsell,1200);
-            // Show SAR values in pills
-            document.getElementById('heroCartVal').innerHTML=cartVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
-            document.getElementById('heroDormantVal').innerHTML=dormantVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
-            document.getElementById('heroUpsellVal').innerHTML=upsellVal.toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${lang==='ar'?'ر.س':'SAR'}</span>`;
-        },600);
+        // Placeholder until API loads — show zeroes, API call below will fill real data
     }
 
-    // === API ===
-    async function loadStats(){try{const r=await fetch('/api/ribh/stats');const d=await r.json();if(d.success){showStats();document.getElementById('totalRevenue').textContent=(d.totalRevenue||0).toLocaleString();document.getElementById('recoveryRate').textContent=(d.recoveryRate||0);}}catch(e){}}
+    // === API: LOAD REAL DATA ===
+    async function loadRibhStats(){
+        try{
+            const r=await fetch('/api/ribh/stats');
+            const d=await r.json();
+            if(!d.success) return;
+
+            // --- Hero ---
+            const h=d.hero||{};
+            const total=h.total||0;
+            animateValue(document.getElementById('heroTotal'),total,1800);
+            animateValue(document.getElementById('heroCarts'),h.abandonedCarts||0,1200);
+            animateValue(document.getElementById('heroDormant'),h.dormantCustomers||0,1200);
+            animateValue(document.getElementById('heroUpsell'),h.upsellOpportunities||0,1200);
+            const sar=lang==='ar'?'ر.س':'SAR';
+            document.getElementById('heroCartVal').innerHTML=(h.abandonedValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
+            document.getElementById('heroDormantVal').innerHTML=(h.dormantValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
+            document.getElementById('heroUpsellVal').innerHTML=(h.upsellValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
+
+            // --- Stats row ---
+            const s=d.stats||{};
+            if(s.totalRevenue||s.messagesSent){
+                showStats();
+                document.getElementById('totalRevenue').textContent=(s.totalRevenue||0).toLocaleString();
+                document.getElementById('messagesSent').textContent=(s.messagesSent||0).toLocaleString();
+                document.getElementById('recoveryRate').textContent=(s.recoveryRate||0);
+                document.getElementById('activeFlowCount').textContent=(s.activeFlowCount||0);
+            }
+
+            // --- Flow stats ---
+            const fl=d.flows||{};
+            FLOWS.forEach(f=>{
+                const api=fl[f.id];
+                if(api){
+                    f.sent=api.sent||0;
+                    f.revenue=api.revenue||0;
+                }
+            });
+            renderFlows();
+
+            // --- Salla connection status ---
+            const m=d.merchant;
+            const dot=document.getElementById('sbSallaDot');
+            const txt=document.getElementById('sbSallaText');
+            const card=document.getElementById('sallaStatus');
+            if(m && m.status==='active'){
+                dot.className='sb-dot green pulse';
+                txt.setAttribute('data-ar','سلة متصلة');
+                txt.setAttribute('data-en','Salla connected');
+                txt.textContent=lang==='ar'?'سلة متصلة':'Salla connected';
+                // Update settings card
+                const storeName=m.storeName||(lang==='ar'?'متجرك':'Your Store');
+                const custCount=d.customerCount||0;
+                const syncText=m.lastSync?formatRelativeTime(m.lastSync):(lang==='ar'?'—':'—');
+                card.innerHTML=`
+                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span>${lang==='ar'?'سلة متصلة':'Salla connected'}</span></div>
+                    <div class="connect-detail">
+                        <div class="connect-detail-item"><i data-lucide="shopping-bag"></i><span>${storeName}</span></div>
+                        <div class="connect-detail-item"><i data-lucide="users"></i><span>${custCount.toLocaleString()} ${lang==='ar'?'عميل':'customers'}</span></div>
+                        <div class="connect-detail-item"><i data-lucide="refresh-cw"></i><span>${lang==='ar'?'آخر مزامنة:':'Last sync:'} ${syncText}</span></div>
+                    </div>`;
+                lucide.createIcons({nodes:[card]});
+            }else{
+                dot.className='sb-dot';
+                txt.setAttribute('data-ar','سلة غير متصلة');
+                txt.setAttribute('data-en','Salla not connected');
+                txt.textContent=lang==='ar'?'سلة غير متصلة':'Salla not connected';
+            }
+        }catch(e){console.error('Stats load error:',e);}
+    }
+
+    function formatRelativeTime(iso){
+        const diff=Date.now()-new Date(iso).getTime();
+        const mins=Math.floor(diff/60000);
+        if(mins<1) return lang==='ar'?'الآن':'now';
+        if(mins<60) return lang==='ar'?`قبل ${mins} دقيقة`:`${mins} min ago`;
+        const hrs=Math.floor(mins/60);
+        if(hrs<24) return lang==='ar'?`قبل ${hrs} ساعة`:`${hrs}h ago`;
+        const days=Math.floor(hrs/24);
+        return lang==='ar'?`قبل ${days} يوم`:`${days}d ago`;
+    }
+
     async function loadActivity(){try{const r=await fetch('/api/ribh/activity');const d=await r.json();if(d.success&&d.activities?.length>0){d.activities.slice(0,8).forEach((a,i)=>{setTimeout(()=>{addActivityItem(a.message||a.title,a.type==='recovered'?'green':a.type==='sent'?'blue':'orange',a.amount||0);},i*100);});}}catch(e){}}
 
     // === ENTER KEY ===
@@ -859,9 +931,9 @@
 
     // === INIT ===
     document.addEventListener('DOMContentLoaded',()=>{
-        lucide.createIcons();applyLang();renderFlows();renderChips();updateFlowBadge();loadHeroData();loadStats();loadActivity();
+        lucide.createIcons();applyLang();renderFlows();renderChips();updateFlowBadge();loadHeroData();loadRibhStats();loadActivity();
         ['dashboard','flows','settings'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
-        setInterval(()=>{loadStats();loadActivity();},30000);
+        setInterval(()=>{loadRibhStats();loadActivity();},30000);
     });
     </script>
 </body>

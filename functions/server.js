@@ -492,6 +492,15 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Salla Routes (OAuth + Webhooks)
+try {
+    const sallaRoutes = require('./routes/salla');
+    app.use('/salla', sallaRoutes);
+    console.log('✅ Salla routes loaded - /salla/install, /salla/callback, /salla/webhooks');
+} catch (e) {
+    console.log('⚠️ Salla routes not loaded:', e.message);
+}
+
 // Shopify Routes (OAuth + Webhooks)
 try {
     const shopifyRoutes = require('./routes/shopify');
@@ -4454,6 +4463,129 @@ app.get('/api/analytics/v2', async (req, res) => {
 });
 
 // ==========================================
+// RIBH DASHBOARD STATS ENDPOINT
+// ==========================================
+
+app.get('/api/ribh/stats', async (req, res) => {
+    try {
+        // 1. Merchant info from salla_merchants
+        let merchant = null;
+        const merchantSnap = await db.collection('salla_merchants')
+            .where('status', 'in', ['active', 'installed'])
+            .limit(1).get();
+        if (!merchantSnap.empty) {
+            const d = merchantSnap.docs[0].data();
+            merchant = {
+                id: d.merchantId,
+                storeName: d.storeName || null,
+                ownerName: d.ownerName || null,
+                status: d.status,
+                lastSync: d.updatedAt ? (d.updatedAt.toDate ? d.updatedAt.toDate().toISOString() : d.updatedAt) : null
+            };
+        }
+
+        // 2. Abandoned carts from abandoned_carts collection
+        const cartsSnap = await db.collection('abandoned_carts').get();
+        const carts = cartsSnap.docs.map(d => d.data());
+
+        const activeCarts = carts.filter(c => c.status !== 'recovered' && c.status !== 'purchased');
+        const recoveredCarts = carts.filter(c => c.status === 'recovered' || c.status === 'purchased');
+        const sentCarts = carts.filter(c => c.whatsappSent === true);
+
+        const abandonedTotal = activeCarts.reduce((s, c) => s + (c.total || 0), 0);
+        const recoveredTotal = recoveredCarts.reduce((s, c) => s + (c.total || 0), 0);
+
+        // 3. Legacy carts collection (for orders/revenue log)
+        const legacyCarts = await readDB(DB_FILE);
+        const legacyRecovered = legacyCarts.filter(c => c.status === 'recovered');
+        const legacySent = legacyCarts.filter(c => c.status === 'sent');
+        const legacyRevenue = legacyRecovered.reduce((s, c) => s + (c.total || 0), 0);
+
+        // Combine stats from both sources
+        const totalRevenue = recoveredTotal + legacyRevenue;
+        const totalSent = sentCarts.length + legacySent.length;
+        const totalRecovered = recoveredCarts.length + legacyRecovered.length;
+        const recoveryRate = totalSent > 0 ? Math.round((totalRecovered / totalSent) * 100) : 0;
+
+        // 4. Customer count from salla API data (or fallback estimate)
+        let customerCount = 0;
+        if (merchant) {
+            // Unique customers from abandoned carts
+            const customerIds = new Set();
+            carts.forEach(c => { if (c.customer?.id) customerIds.add(c.customer.id); });
+            legacyCarts.forEach(c => { if (c.customerId) customerIds.add(c.customerId); });
+            customerCount = customerIds.size;
+        }
+
+        // 5. Flow-level stats
+        const flowStats = {
+            cart_recovery: { sent: sentCarts.length + legacySent.length, revenue: totalRevenue },
+            winback: { sent: 0, revenue: 0 },
+            post_purchase: { sent: 0, revenue: 0 },
+            review: { sent: 0, revenue: 0 },
+            browse: { sent: 0, revenue: 0 },
+            cod: { sent: 0, revenue: 0 }
+        };
+
+        // Check browse_abandonments collection
+        try {
+            const browseSnap = await db.collection('browse_abandonments')
+                .where('messageSent', '==', true).get();
+            flowStats.browse.sent = browseSnap.size;
+        } catch (e) { /* collection may not exist */ }
+
+        // Check review_requests collection
+        try {
+            const reviewSnap = await db.collection('review_requests').get();
+            flowStats.review.sent = reviewSnap.docs.filter(d => d.data().sent === true).length;
+        } catch (e) { /* collection may not exist */ }
+
+        // 6. Active flows count (from Firestore config or default)
+        let activeFlowCount = 0;
+        try {
+            const configDoc = await db.collection('config').doc('flows').get();
+            if (configDoc.exists) {
+                const flows = configDoc.data();
+                activeFlowCount = Object.values(flows).filter(v => v === true).length;
+            }
+        } catch (e) { /* no config yet */ }
+
+        res.json({
+            success: true,
+            merchant,
+            hero: {
+                abandonedCarts: activeCarts.length,
+                abandonedValue: Math.round(abandonedTotal),
+                dormantCustomers: 0,
+                dormantValue: 0,
+                upsellOpportunities: 0,
+                upsellValue: 0,
+                total: Math.round(abandonedTotal)
+            },
+            stats: {
+                totalRevenue: Math.round(totalRevenue),
+                messagesSent: totalSent,
+                recoveryRate,
+                activeFlowCount
+            },
+            flows: flowStats,
+            customerCount
+        });
+
+    } catch (error) {
+        console.error('[RIBH Stats] Error:', error);
+        res.json({
+            success: false,
+            merchant: null,
+            hero: { abandonedCarts: 0, abandonedValue: 0, dormantCustomers: 0, dormantValue: 0, upsellOpportunities: 0, upsellValue: 0, total: 0 },
+            stats: { totalRevenue: 0, messagesSent: 0, recoveryRate: 0, activeFlowCount: 0 },
+            flows: { cart_recovery: { sent: 0, revenue: 0 }, winback: { sent: 0, revenue: 0 }, post_purchase: { sent: 0, revenue: 0 }, review: { sent: 0, revenue: 0 }, browse: { sent: 0, revenue: 0 }, cod: { sent: 0, revenue: 0 } },
+            customerCount: 0
+        });
+    }
+});
+
+// ==========================================
 // ACTIVITY FEED ENDPOINT
 // ==========================================
 
@@ -6416,14 +6548,6 @@ app.post('/api/test/whatsapp', async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
-
-// Finally, start the server if not running as a function
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`\n🚀 RIBH Backend running on http://localhost:${PORT}`);
-        console.log(`💚 Ready to recover revenue!\n`);
-    });
-}
 
 module.exports = { app };
 
