@@ -2,1218 +2,515 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIBH | لوحة التحكم</title>
-    <meta name="description" content="رِبح - استرداد المبيعات المفقودة تلقائياً">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
         :root{
-            --bg:#000000;--bg-secondary:#0a0a0a;
-            --card:rgba(18,18,18,0.95);--card-hover:rgba(28,28,28,0.95);
-            --card-border:rgba(255,255,255,0.06);
-            --text:#FFFFFF;--text-secondary:#A1A1AA;--text-dim:#52525B;
-            --primary:#10B981;--primary-glow:rgba(16,185,129,0.5);
-            --secondary:#6366F1;
-            --gradient:linear-gradient(135deg,#10B981 0%,#059669 100%);
-            --gradient-accent:linear-gradient(135deg,#6366F1 0%,#8B5CF6 100%);
+            --bg:#09090B;--bg-raised:#18181B;
+            --card:#18181B;--card-hover:#1F1F23;
+            --border:#27272A;--border-hover:#3F3F46;
+            --text:#FAFAFA;--text-secondary:#A1A1AA;--text-muted:#71717A;
+            --primary:#10B981;--primary-hover:#059669;--primary-muted:rgba(16,185,129,0.15);
+            --secondary:#6366F1;--secondary-muted:rgba(99,102,241,0.15);
             --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
-            --sidebar-w:240px;
+            --ring:rgba(16,185,129,0.3);
+            --radius:12px;--radius-sm:8px;--radius-lg:16px;
+            --sidebar-w:220px;
         }
-        html[dir="ltr"]{font-family:'Inter',sans-serif}
-        html[dir="rtl"]{font-family:'IBM Plex Sans Arabic',sans-serif}
-        body{font-family:inherit;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-        /* Background Effects */
-        .bg-effects{position:fixed;inset:0;pointer-events:none;z-index:0}
-        .bg-effects::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-            background:radial-gradient(ellipse 600px 600px at 10% 20%,rgba(16,185,129,0.08),transparent 50%),
-            radial-gradient(ellipse 500px 500px at 90% 80%,rgba(99,102,241,0.06),transparent 50%);
-            animation:bgFloat 30s ease-in-out infinite}
-        @keyframes bgFloat{0%,100%{transform:translate(0,0)}50%{transform:translate(20px,20px)}}
-        .grid-bg{position:fixed;inset:0;background-image:
-            linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),
-            linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px);
-            background-size:50px 50px;pointer-events:none;z-index:0}
+        html{scroll-behavior:smooth}
+        html[dir="ltr"]{font-family:'Inter',system-ui,sans-serif}
+        html[dir="rtl"]{font-family:'IBM Plex Sans Arabic','Inter',system-ui,sans-serif}
+        body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.5}
 
         /* Sidebar */
-        .sidebar{width:var(--sidebar-w);background:var(--card);padding:20px 16px;display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;border-left:1px solid var(--card-border)}
-        html[dir="rtl"] .sidebar{right:0;border-right:none}
-        html[dir="ltr"] .sidebar{left:0;border-left:none;border-right:1px solid var(--card-border)}
-        .logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;padding:0 4px}
-        .logo-icon{width:40px;height:40px;background:var(--gradient);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 24px var(--primary-glow)}
-        .logo-text{font-size:22px;font-weight:700;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-        .nav{display:flex;flex-direction:column;gap:4px;flex:1}
-        .nav-item{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;color:var(--text-secondary);text-decoration:none;font-size:14px;font-weight:500;transition:all .2s;cursor:pointer}
-        .nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
-        .nav-item.active{background:rgba(16,185,129,0.1);color:var(--primary)}
-        .nav-icon{font-size:18px;width:22px;text-align:center}
-        .nav-divider{height:1px;background:var(--card-border);margin:12px 0}
-        .wa-status{display:flex;align-items:center;gap:8px;padding:12px 14px;border-radius:10px;background:rgba(255,255,255,0.03);font-size:13px;color:var(--text-secondary);margin-top:8px}
-        .wa-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
-        .lang-toggle{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:10px;margin-top:auto;cursor:pointer;transition:all .2s;font-size:13px;color:var(--text-secondary)}
-        .lang-toggle:hover{background:rgba(255,255,255,0.06)}
+        .sidebar{width:var(--sidebar-w);background:var(--bg);border-left:1px solid var(--border);position:fixed;height:100vh;z-index:100;display:flex;flex-direction:column;padding:16px 12px;overflow-y:auto}
+        html[dir="rtl"] .sidebar{right:0;border-left:1px solid var(--border);border-right:none}
+        html[dir="ltr"] .sidebar{left:0;border-right:1px solid var(--border);border-left:none}
+        .sb-logo{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:24px}
+        .sb-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#10B981,#059669);border-radius:8px;display:flex;align-items:center;justify-content:center}
+        .sb-logo-mark svg{color:white}
+        .sb-logo-text{font-size:18px;font-weight:700;letter-spacing:-0.02em}
+        .sb-section{margin-bottom:20px}
+        .sb-section-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;padding:0 12px;margin-bottom:6px}
+        .sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;text-decoration:none}
+        .sb-item:hover{background:var(--bg-raised);color:var(--text)}
+        .sb-item.active{background:var(--primary-muted);color:var(--primary)}
+        .sb-item.active svg{color:var(--primary)}
+        .sb-item svg{width:18px;height:18px;flex-shrink:0;color:var(--text-muted)}
+        .sb-item:hover svg{color:var(--text-secondary)}
+        .sb-spacer{flex:1}
+        .sb-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg-raised);font-size:12px;color:var(--text-secondary);margin-bottom:8px}
+        .sb-dot{width:7px;height:7px;border-radius:50%;background:var(--success);flex-shrink:0}
+        .sb-dot.pulse{animation:dotPulse 2s infinite}
+        @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
+        .sb-lang{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text-muted);transition:all .15s}
+        .sb-lang:hover{background:var(--bg-raised);color:var(--text-secondary)}
 
-        /* Main Content */
-        .main{flex:1;padding:28px 36px 60px;position:relative;z-index:1}
+        /* Main */
+        .main{padding:24px 28px 80px;position:relative;min-height:100vh}
         html[dir="rtl"] .main{margin-right:var(--sidebar-w)}
         html[dir="ltr"] .main{margin-left:var(--sidebar-w)}
 
-        /* Section spacing */
-        .section{margin-bottom:40px;scroll-margin-top:24px}
-        .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px}
-        .section-title{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
-
-        /* Stats Row */
-        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-        .stat-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:20px;transition:all .3s}
-        .stat-card:hover{border-color:rgba(16,185,129,0.3);transform:translateY(-3px)}
-        .stat-card.revenue{border-color:rgba(16,185,129,0.2);background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(18,18,18,0.95))}
-        .stat-card .stat-icon-wrap{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:12px}
-        .stat-card .stat-icon-wrap.green{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.2)}
-        .stat-card .stat-icon-wrap.blue{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.2)}
-        .stat-card .stat-icon-wrap.purple{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.2)}
-        .stat-card .stat-icon-wrap.orange{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.2)}
-        .stat-value{font-size:28px;font-weight:800;margin-bottom:4px;line-height:1.1}
-        .stat-value.big{font-size:36px;color:var(--primary)}
-        .stat-label{font-size:13px;color:var(--text-secondary)}
-        .stat-change{font-size:11px;font-weight:600;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:3px;margin-top:6px}
-        .stat-change.up{color:var(--success);background:rgba(34,197,94,0.1)}
-
-        /* Quick Actions */
-        .quick-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-        .qa-card{background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:22px;cursor:pointer;transition:all .3s;text-align:center}
-        .qa-card:hover{border-color:rgba(16,185,129,0.4);transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
-        .qa-card.active{border-color:var(--primary);background:rgba(16,185,129,0.05)}
-        .qa-card .qa-icon{font-size:32px;margin-bottom:10px}
-        .qa-card .qa-title{font-size:15px;font-weight:700;margin-bottom:4px}
-        .qa-card .qa-desc{font-size:12px;color:var(--text-secondary);line-height:1.5}
-
-        /* Expandable Sections */
-        .expand-section{max-height:0;overflow:hidden;transition:max-height .5s ease,opacity .3s ease,margin .3s ease;opacity:0;margin-top:0}
-        .expand-section.open{max-height:2000px;opacity:1;margin-top:20px}
-
-        /* Tabs */
-        .tabs{display:flex;gap:4px;background:rgba(255,255,255,0.03);border-radius:10px;padding:4px;margin-bottom:20px;flex-wrap:wrap}
-        .tab{padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all .2s;white-space:nowrap}
-        .tab:hover{color:var(--text)}
-        .tab.active{background:rgba(16,185,129,0.15);color:var(--primary)}
-
-        /* Campaign Cards */
-        .campaign-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-        .camp-card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:18px;transition:all .3s;position:relative;overflow:hidden}
-        .camp-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
-        .camp-card::after{content:'';position:absolute;top:0;right:0;width:3px;height:100%;border-radius:0 14px 14px 0}
-        html[dir="ltr"] .camp-card::after{right:auto;left:0;border-radius:14px 0 0 14px}
-        .camp-card .camp-header{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-        .camp-card .camp-icon{font-size:24px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:10px;flex-shrink:0}
-        .camp-card .camp-name{font-size:14px;font-weight:700;flex:1}
-        .camp-card .camp-desc{font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px}
-        .status-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
-        .status-badge.running{background:rgba(16,185,129,0.1);color:var(--success);border:1px solid rgba(16,185,129,0.2)}
-        .status-badge.running::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--success);animation:pulse 1.5s infinite}
-        .status-badge.draft{background:rgba(245,158,11,0.1);color:var(--warning);border:1px solid rgba(245,158,11,0.2)}
-        .status-badge.completed{background:rgba(99,102,241,0.1);color:var(--secondary);border:1px solid rgba(99,102,241,0.2)}
-        .camp-card .progress-wrap{height:6px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;margin:8px 0 6px}
-        .camp-card .progress-fill{height:100%;background:var(--gradient);border-radius:6px;transition:width .3s}
-        .camp-card .camp-revenue{font-size:13px;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:4px}
-        .camp-card .camp-meta{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
-
-        /* Campaign Launcher Templates */
-        .tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-        .tpl-card{background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:16px;cursor:pointer;transition:all .3s}
-        .tpl-card:hover{border-color:rgba(16,185,129,0.4);transform:translateY(-2px)}
-        .tpl-card.selected{border-color:var(--primary);background:rgba(16,185,129,0.05);box-shadow:0 0 20px rgba(16,185,129,0.15)}
-        .tpl-card .tpl-header{display:flex;align-items:center;gap:10px;margin-bottom:6px}
-        .tpl-card .tpl-icon{font-size:22px}
-        .tpl-card .tpl-name{font-size:13px;font-weight:700}
-        .tpl-card .tpl-impact{font-size:11px;color:var(--primary);font-weight:600}
-
-        /* Message Preview Area */
-        .msg-preview-area{display:none;margin-top:16px;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:20px;animation:fadeInUp .3s ease-out}
-        .msg-preview-area.visible{display:block}
-        .msg-preview-area textarea{width:100%;min-height:120px;padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-size:14px;font-family:inherit;line-height:1.7;resize:vertical;transition:all .2s}
-        .msg-preview-area textarea:focus{outline:none;border-color:var(--primary);background:rgba(16,185,129,0.03)}
-        .msg-preview-area .audience-row{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:10px;font-size:14px;font-weight:600;color:var(--primary);margin-bottom:14px}
-        .msg-preview-area .audience-row .count-num{font-size:20px;font-weight:800}
+        /* Page Header */
+        .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+        .page-title{font-size:22px;font-weight:700;letter-spacing:-0.02em}
+        .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px}
+        .header-actions{display:flex;gap:8px}
 
         /* Buttons */
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;text-decoration:none;border:none}
-        .btn-primary{background:var(--gradient);color:white}
-        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--primary-glow)}
-        .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
-        .btn-secondary{background:transparent;border:1px solid var(--card-border);color:var(--text-secondary)}
-        .btn-secondary:hover{border-color:var(--primary);color:var(--primary)}
-        .btn-sm{padding:8px 16px;font-size:13px;border-radius:8px}
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;border:none;text-decoration:none}
+        .btn-primary{background:var(--primary);color:white}
+        .btn-primary:hover{background:var(--primary-hover)}
+        .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
+        .btn-outline:hover{background:var(--bg-raised);border-color:var(--border-hover);color:var(--text)}
+        .btn-ghost{background:transparent;color:var(--text-secondary);padding:8px}
+        .btn-ghost:hover{background:var(--bg-raised);color:var(--text)}
+        .btn svg{width:16px;height:16px}
 
-        /* Activity Feed */
-        .activity-list{display:flex;flex-direction:column;gap:2px}
-        .activity-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;transition:background .2s}
-        .activity-item:hover{background:rgba(255,255,255,0.02)}
-        .activity-item .act-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-        .activity-item .act-icon.success{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.2)}
-        .activity-item .act-icon.info{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.2)}
-        .activity-item .act-icon.pending{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.2)}
-        .activity-item .act-info{flex:1;min-width:0}
-        .activity-item .act-title{font-size:13px;font-weight:500;margin-bottom:2px}
-        .activity-item .act-time{font-size:11px;color:var(--text-dim)}
-        .activity-item .act-amount{font-weight:700;font-size:14px;color:var(--success);white-space:nowrap}
+        /* Stat Cards */
+        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .2s}
+        .stat:hover{border-color:var(--border-hover)}
+        .stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+        .stat-label{font-size:13px;font-weight:500;color:var(--text-secondary)}
+        .stat-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center}
+        .stat-icon svg{width:18px;height:18px}
+        .stat-icon.green{background:var(--primary-muted);color:var(--primary)}
+        .stat-icon.blue{background:rgba(59,130,246,0.15);color:#3B82F6}
+        .stat-icon.purple{background:var(--secondary-muted);color:var(--secondary)}
+        .stat-icon.orange{background:rgba(245,158,11,0.15);color:var(--warning)}
+        .stat-val{font-size:26px;font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin-bottom:6px}
+        .stat-trend{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;border-radius:20px;padding:2px 8px}
+        .stat-trend.up{color:var(--success);background:rgba(34,197,94,0.1)}
+        .stat-trend svg{width:12px;height:12px}
+        .stat-sparkline{display:flex;align-items:flex-end;gap:2px;height:32px;margin-top:10px}
+        .stat-sparkline .bar{flex:1;border-radius:2px;min-height:3px;transition:height .3s}
 
-        /* Import Section */
-        .upload-zone{background:var(--card);border:2px dashed rgba(16,185,129,0.3);border-radius:16px;padding:40px;text-align:center;cursor:pointer;transition:all .3s}
-        .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:rgba(16,185,129,0.05)}
-        .upload-zone .uz-icon{font-size:40px;margin-bottom:12px}
-        .upload-zone .uz-title{font-size:16px;font-weight:600;margin-bottom:6px}
-        .upload-zone .uz-desc{font-size:13px;color:var(--text-secondary);margin-bottom:12px}
-        .upload-zone .format-badges{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-        .upload-zone .format-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.05);border:1px solid var(--card-border);padding:4px 12px;border-radius:6px;font-size:12px;color:var(--text-secondary)}
-        .import-file-input{display:none}
-        .import-results{display:none;background:var(--card);border:1px solid rgba(16,185,129,0.3);border-radius:16px;padding:28px;text-align:center}
-        .import-results.visible{display:block;animation:fadeInUp .3s ease-out}
-        .import-results .ir-icon{font-size:40px;margin-bottom:12px}
-        .import-results .ir-title{font-size:18px;font-weight:700;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-        .import-results .ir-stats{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap}
-        .import-results .ir-stat-val{font-size:24px;font-weight:800;color:var(--primary)}
-        .import-results .ir-stat-label{font-size:12px;color:var(--text-secondary)}
-        .import-progress{display:none;text-align:center;padding:20px}
+        /* Section */
+        .section{margin-bottom:32px;scroll-margin-top:20px}
+        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em}
+        .section-title svg{width:18px;height:18px;color:var(--text-muted)}
+
+        /* Layouts */
+        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+        .card-title{font-size:14px;font-weight:600;color:var(--text-secondary)}
+
+        /* Revenue Chart */
+        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
+        .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+        .chart-title{font-size:15px;font-weight:600}
+        .chart-value{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px}
+        .chart-sub{font-size:13px;color:var(--text-muted)}
+        .chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
+        .chart-bars .c-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:all .2s;min-height:4px}
+        .chart-bars .c-bar:hover{opacity:0.8}
+        .chart-bars .c-bar .c-tip{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;opacity:0;transition:opacity .2s;white-space:nowrap;pointer-events:none}
+        .chart-bars .c-bar:hover .c-tip{opacity:1}
+        .chart-labels{display:flex;gap:6px;margin-top:8px}
+        .chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text-muted)}
+
+        /* Campaign Templates */
+        .tpl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        .tpl{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s}
+        .tpl:hover{border-color:var(--border-hover);background:var(--card-hover)}
+        .tpl.selected{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
+        .tpl-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+        .tpl-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .tpl-name{font-size:13px;font-weight:600}
+        .tpl-desc{font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
+        .tpl-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+
+        /* Active Campaigns */
+        .camp{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s}
+        .camp:hover{border-color:var(--border-hover)}
+        .camp-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+        .camp-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+        .camp-info{flex:1;min-width:0}
+        .camp-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-success{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
+        .badge-success::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:dotPulse 1.5s infinite}
+        .badge-warning{background:rgba(245,158,11,0.1);color:var(--warning);border:1px solid rgba(245,158,11,0.2)}
+        .badge-secondary{background:var(--secondary-muted);color:var(--secondary);border:1px solid rgba(99,102,241,0.2)}
+        .progress-bar{height:4px;background:var(--bg-raised);border-radius:4px;overflow:hidden;margin:8px 0 6px}
+        .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--primary),var(--primary-hover));transition:width .4s}
+        .camp-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
+        .camp-revenue{font-weight:600;color:var(--primary)}
+
+        /* Launch Panel */
+        .launch-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-top:12px;animation:slideUp .2s ease-out}
+        .launch-panel.open{display:block}
+        @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .launch-panel textarea{width:100%;min-height:100px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;transition:border-color .15s}
+        .launch-panel textarea:focus{outline:none;border-color:var(--primary)}
+        .audience-info{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--primary-muted);border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--primary);margin-bottom:12px}
+        .audience-info svg{width:16px;height:16px}
+        .audience-count{font-size:18px;font-weight:700}
+        .launch-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+
+        /* Upload */
+        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;transition:all .2s}
+        .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:var(--primary-muted)}
+        .upload-zone svg{width:40px;height:40px;color:var(--text-muted);margin-bottom:12px}
+        .uz-title{font-size:15px;font-weight:600;margin-bottom:4px}
+        .uz-sub{font-size:12px;color:var(--text-muted);margin-bottom:12px}
+        .uz-formats{display:flex;justify-content:center;gap:6px}
+        .uz-fmt{padding:3px 10px;border-radius:20px;font-size:11px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text-secondary)}
+        .import-progress{display:none;text-align:center;padding:32px}
         .import-progress.visible{display:block}
-        .import-progress .ip-bar-wrap{height:10px;background:rgba(255,255,255,0.1);border-radius:10px;overflow:hidden;max-width:400px;margin:16px auto}
-        .import-progress .ip-bar-fill{height:100%;background:var(--gradient);border-radius:10px;transition:width .3s;width:0%}
+        .ip-bar{height:6px;background:var(--bg-raised);border-radius:6px;overflow:hidden;max-width:300px;margin:16px auto}
+        .ip-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:6px;transition:width .3s;width:0%}
+        .import-results{display:none;text-align:center;padding:32px}
+        .import-results.visible{display:block;animation:slideUp .3s ease-out}
+        .ir-num{font-size:36px;font-weight:700;color:var(--primary)}
 
-        /* Animations */
-        @keyframes fadeInUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{opacity:.8;box-shadow:0 0 0 6px rgba(34,197,94,0)}}
-        .animate-in{animation:fadeInUp .4s ease-out forwards}
-        .delay-1{animation-delay:.1s}.delay-2{animation-delay:.15s}.delay-3{animation-delay:.2s}.delay-4{animation-delay:.25s}
+        /* Mini Stats */
+        .mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+        .mini-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
+        .mini-stat-val{font-size:22px;font-weight:700;margin-bottom:2px}
+        .mini-stat-label{font-size:11px;color:var(--text-muted)}
 
-        /* Empty State */
-        .empty-state{text-align:center;padding:40px 20px;color:var(--text-secondary)}
-        .empty-state .empty-icon{font-size:40px;margin-bottom:12px;opacity:0.5}
-        .empty-state .empty-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
-        .empty-state .empty-desc{font-size:13px}
+        /* Donut */
+        .donut-wrap{display:flex;align-items:center;justify-content:center;gap:24px;padding:16px 0}
+        .donut{width:100px;height:100px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+        .donut-center{font-size:18px;font-weight:700}
+        .donut-legend{display:flex;flex-direction:column;gap:8px}
+        .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
+        .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
 
-        /* Mobile Bottom Nav */
-        .mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--card-border);padding:8px 0;z-index:200;justify-content:space-around}
-        .mobile-nav .mn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;font-size:10px;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:color .2s}
-        .mobile-nav .mn-item.active{color:var(--primary)}
-        .mobile-nav .mn-item .mn-icon{font-size:20px}
+        /* Rating Bars */
+        .rating-bars{display:flex;flex-direction:column;gap:6px;padding:8px 0}
+        .rating-row{display:flex;align-items:center;gap:8px;font-size:12px}
+        .rating-label{width:24px;text-align:center;color:var(--text-muted);font-weight:500}
+        .rating-track{flex:1;height:6px;background:var(--bg-raised);border-radius:6px;overflow:hidden}
+        .rating-fill{height:100%;border-radius:6px;transition:width .5s}
+        .rating-count{width:28px;text-align:end;color:var(--text-muted);font-size:11px}
+
+        /* Tiers */
+        .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+        .tier{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:all .2s}
+        .tier:hover{border-color:var(--border-hover)}
+        .tier-icon{font-size:28px;margin-bottom:8px}
+        .tier-name{font-size:13px;font-weight:600;margin-bottom:2px}
+        .tier-pts{font-size:11px;color:var(--text-muted)}
+
+        /* Activity */
+        .activity-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+        .activity-item{display:flex;align-items:center;gap:12px;padding:12px 16px;transition:background .15s;border-bottom:1px solid var(--border)}
+        .activity-item:last-child{border-bottom:none}
+        .activity-item:hover{background:var(--card-hover)}
+        .act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+        .act-dot.green{background:var(--success)}
+        .act-dot.blue{background:#3B82F6}
+        .act-dot.orange{background:var(--warning)}
+        .act-body{flex:1;min-width:0}
+        .act-msg{font-size:13px;font-weight:500}
+        .act-time{font-size:11px;color:var(--text-muted)}
+        .act-amount{font-size:13px;font-weight:600;color:var(--success);white-space:nowrap}
+
+        /* Mobile Nav */
+        .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
+        .mob-nav-inner{display:flex;justify-content:space-around}
+        .mn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;color:var(--text-muted);cursor:pointer;transition:color .15s;text-decoration:none;font-size:10px;font-weight:500}
+        .mn.active{color:var(--primary)}
+        .mn svg{width:20px;height:20px}
+        .mn.active svg{color:var(--primary)}
+
+        /* Empty */
+        .empty{text-align:center;padding:32px 16px;color:var(--text-muted)}
+        .empty svg{width:40px;height:40px;margin-bottom:12px;opacity:0.4}
+        .empty-title{font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
+        .empty-desc{font-size:12px}
 
         /* Responsive */
-        @media(max-width:1200px){
-            .stats-grid{grid-template-columns:repeat(2,1fr)}
-            .campaign-grid,.tpl-grid{grid-template-columns:1fr 1fr}
+        @media(max-width:1024px){
+            .stats-row,.tiers{grid-template-columns:repeat(2,1fr)}
+            .grid-2,.tpl-grid{grid-template-columns:1fr}
+            .chart-bars{height:80px}
         }
         @media(max-width:768px){
             .sidebar{display:none}
-            .main{margin-right:0!important;margin-left:0!important;padding:20px 16px 80px}
-            .stats-grid{grid-template-columns:repeat(2,1fr)}
-            .quick-actions{grid-template-columns:1fr}
-            .campaign-grid,.tpl-grid{grid-template-columns:1fr}
-            .stat-value.big{font-size:28px}
-            .mobile-nav{display:flex}
-        }
-        @media(max-width:420px){
-            .stats-grid{grid-template-columns:1fr 1fr}
-            .stat-value{font-size:22px}
+            .main{margin-right:0!important;margin-left:0!important;padding:16px 16px 80px}
+            .page-title{font-size:18px}
+            .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+            .stat-val{font-size:22px}
+            .tpl-grid{grid-template-columns:1fr}
+            .mini-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+            .tiers{grid-template-columns:repeat(2,1fr);gap:8px}
+            .chart-bars{height:60px}
+            .mob-nav{display:block}
+            .grid-2{grid-template-columns:1fr}
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar{width:6px}
+        ::-webkit-scrollbar{width:5px}
         ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
-        ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+
+        .fade-in{animation:fadeIn .3s ease-out forwards}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}
+        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
-    <div class="bg-effects"></div>
-    <div class="grid-bg"></div>
-
     <!-- Sidebar -->
     <aside class="sidebar">
-        <div class="logo">
-            <div class="logo-icon">💚</div>
-            <span class="logo-text" data-ar="رِبح" data-en="RIBH">رِبح</span>
+        <div class="sb-logo">
+            <div class="sb-logo-mark"><i data-lucide="zap" style="width:18px;height:18px;color:white"></i></div>
+            <span class="sb-logo-text" data-ar="رِبح" data-en="RIBH">رِبح</span>
         </div>
-        <nav class="nav">
-            <a class="nav-item active" data-section="stats" onclick="scrollToSection('stats')">
-                <span class="nav-icon">📊</span>
-                <span data-ar="الرئيسية" data-en="Dashboard">الرئيسية</span>
-            </a>
-            <a class="nav-item" data-section="campaigns" onclick="scrollToSection('campaigns')">
-                <span class="nav-icon">📣</span>
-                <span data-ar="الحملات" data-en="Campaigns">الحملات</span>
-            </a>
-            <a class="nav-item" data-section="import" onclick="scrollToSection('import')">
-                <span class="nav-icon">👥</span>
-                <span data-ar="العملاء" data-en="Customers">العملاء</span>
-            </a>
-            <a class="nav-item" data-section="cod" onclick="scrollToSection('cod')">
-                <span class="nav-icon">📦</span>
-                <span data-ar="تأكيد الطلبات" data-en="COD Confirm">تأكيد الطلبات</span>
-            </a>
-            <a class="nav-item" data-section="reviews" onclick="scrollToSection('reviews')">
-                <span class="nav-icon">⭐</span>
-                <span data-ar="التقييمات" data-en="Reviews">التقييمات</span>
-            </a>
-            <a class="nav-item" data-section="loyalty" onclick="scrollToSection('loyalty')">
-                <span class="nav-icon">🏆</span>
-                <span data-ar="الولاء" data-en="Loyalty">الولاء</span>
-            </a>
-            <a class="nav-item" data-section="settings" onclick="window.location.href='/settings.html'">
-                <span class="nav-icon">⚙️</span>
-                <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
-            </a>
-            <div class="nav-divider"></div>
-            <div class="wa-status">
-                <span class="wa-dot"></span>
-                <span data-ar="واتساب: متصل" data-en="WhatsApp: Connected">واتساب: متصل</span>
-            </div>
-        </nav>
-        <div class="lang-toggle" onclick="toggleLanguage()">
-            <span>🌐</span>
-            <span id="langLabel">English</span>
+        <div class="sb-section">
+            <div class="sb-section-label" data-ar="الرئيسية" data-en="GENERAL">الرئيسية</div>
+            <a class="sb-item active" data-section="overview" onclick="nav('overview')"><i data-lucide="layout-dashboard"></i><span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span></a>
+            <a class="sb-item" data-section="campaigns" onclick="nav('campaigns')"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></a>
+            <a class="sb-item" data-section="customers" onclick="nav('customers')"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></a>
         </div>
+        <div class="sb-section">
+            <div class="sb-section-label" data-ar="الأدوات" data-en="TOOLS">الأدوات</div>
+            <a class="sb-item" data-section="cod" onclick="nav('cod')"><i data-lucide="package-check"></i><span data-ar="تأكيد الطلبات" data-en="COD Confirm">تأكيد الطلبات</span></a>
+            <a class="sb-item" data-section="reviews" onclick="nav('reviews')"><i data-lucide="star"></i><span data-ar="التقييمات" data-en="Reviews">التقييمات</span></a>
+            <a class="sb-item" data-section="loyalty" onclick="nav('loyalty')"><i data-lucide="trophy"></i><span data-ar="الولاء" data-en="Loyalty">الولاء</span></a>
+        </div>
+        <div class="sb-section">
+            <div class="sb-section-label" data-ar="الدعم" data-en="SUPPORT">الدعم</div>
+            <a class="sb-item" onclick="window.location.href='/settings.html'"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a>
+        </div>
+        <div class="sb-spacer"></div>
+        <div class="sb-status"><span class="sb-dot pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
+        <div class="sb-lang" onclick="toggleLang()"><i data-lucide="globe" style="width:14px;height:14px"></i><span id="langLabel">English</span></div>
     </aside>
 
-    <!-- Main Content -->
+    <!-- Main -->
     <main class="main">
+        <div class="page-header fade-in">
+            <div>
+                <div class="page-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</div>
+                <div class="page-subtitle" data-ar="نظرة عامة على أداء متجرك" data-en="Overview of your store performance">نظرة عامة على أداء متجرك</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-outline" onclick="nav('customers')"><i data-lucide="upload"></i><span data-ar="استيراد" data-en="Import">استيراد</span></button>
+                <button class="btn btn-primary" onclick="nav('campaigns')"><i data-lucide="plus"></i><span data-ar="حملة جديدة" data-en="New Campaign">حملة جديدة</span></button>
+            </div>
+        </div>
 
-        <!-- Section 1: Revenue Overview -->
-        <div class="section animate-in" id="stats">
-            <div class="stats-grid">
-                <div class="stat-card revenue">
-                    <div class="stat-icon-wrap green">💰</div>
-                    <div class="stat-value big" id="totalRevenue">0 <span style="font-size:16px;font-weight:600;color:var(--text-secondary)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    <div class="stat-label" data-ar="إجمالي الإيرادات المسترجعة" data-en="Total Recovered Revenue">إجمالي الإيرادات المسترجعة</div>
-                    <div class="stat-change up" id="revenueTrend">↑ +0% <span data-ar="هذا الشهر" data-en="this month">هذا الشهر</span></div>
+        <!-- Stats -->
+        <div class="stats-row fade-in d1" id="overview">
+            <div class="stat">
+                <div class="stat-top"><span class="stat-label" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</span><div class="stat-icon green"><i data-lucide="banknote"></i></div></div>
+                <div class="stat-val" id="totalRevenue">0 <span style="font-size:14px;font-weight:500;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                <div class="stat-trend up" id="revenueTrend"><i data-lucide="trending-up"></i> +0%</div>
+                <div class="stat-sparkline" id="revSparkline"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-top"><span class="stat-label" data-ar="السلات المسترجعة" data-en="Carts Recovered">السلات المسترجعة</span><div class="stat-icon blue"><i data-lucide="shopping-cart"></i></div></div>
+                <div class="stat-val" id="cartsRecovered">0</div>
+                <div class="stat-trend up"><i data-lucide="trending-up"></i> +8%</div>
+                <div class="stat-sparkline" id="cartSparkline"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-top"><span class="stat-label" data-ar="العملاء" data-en="Customers">العملاء</span><div class="stat-icon purple"><i data-lucide="users"></i></div></div>
+                <div class="stat-val" id="totalCustomers">0</div>
+                <div class="stat-trend up"><i data-lucide="trending-up"></i> +15%</div>
+                <div class="stat-sparkline" id="custSparkline"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-top"><span class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</span><div class="stat-icon orange"><i data-lucide="percent"></i></div></div>
+                <div class="stat-val" id="recoveryRate">0%</div>
+                <div class="stat-trend up"><i data-lucide="trending-up"></i> +5%</div>
+                <div class="stat-sparkline" id="rateSparkline"></div>
+            </div>
+        </div>
+
+        <!-- Chart + Activity -->
+        <div class="grid-2 fade-in d2" style="margin-bottom:24px">
+            <div class="chart-card">
+                <div class="chart-header"><div>
+                    <div class="chart-title" data-ar="الإيرادات الشهرية" data-en="Monthly Revenue">الإيرادات الشهرية</div>
+                    <div class="chart-value" id="chartTotal">0 <span style="font-size:16px;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    <div class="chart-sub"><span class="stat-trend up" style="font-size:11px"><i data-lucide="trending-up"></i> +12%</span></div>
+                </div></div>
+                <div class="chart-bars" id="revenueChart"></div>
+                <div class="chart-labels" id="revenueLabels"></div>
+            </div>
+            <div class="activity-card">
+                <div style="padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+                    <span style="font-size:14px;font-weight:600" data-ar="آخر النشاطات" data-en="Recent Activity">آخر النشاطات</span>
+                    <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap blue">🛒</div>
-                    <div class="stat-value" id="cartsRecovered">0</div>
-                    <div class="stat-label" data-ar="السلات المسترجعة" data-en="Carts Recovered">السلات المسترجعة</div>
-                    <div class="stat-change up">↑ +8%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap purple">👥</div>
-                    <div class="stat-value" id="totalCustomers">0</div>
-                    <div class="stat-label" data-ar="إجمالي العملاء" data-en="Total Customers">إجمالي العملاء</div>
-                    <div class="stat-change up">↑ +15%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap orange">📈</div>
-                    <div class="stat-value" id="recoveryRate">0%</div>
-                    <div class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</div>
-                    <div class="stat-change up">↑ +5%</div>
+                <div id="activityList">
+                    <div class="empty" id="activityEmpty"><i data-lucide="activity"></i><div class="empty-title" data-ar="النظام جاهز" data-en="System Ready">النظام جاهز</div><div class="empty-desc" data-ar="النشاطات ستظهر هنا" data-en="Activities will appear here">النشاطات ستظهر هنا</div></div>
                 </div>
             </div>
         </div>
 
-        <!-- Section 2: Quick Actions -->
-        <div class="section animate-in delay-1" id="quickActions">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>⚡</span>
-                    <span data-ar="إجراءات سريعة" data-en="Quick Actions">إجراءات سريعة</span>
-                </h2>
-            </div>
-            <div class="quick-actions">
-                <div class="qa-card" id="qaLaunch" onclick="toggleExpand('launcherSection','qaLaunch')">
-                    <div class="qa-icon">🚀</div>
-                    <div class="qa-title" data-ar="أطلق حملة" data-en="Launch Campaign">أطلق حملة</div>
-                    <div class="qa-desc" data-ar="اختر قالب وأطلق حملة واتساب فوراً" data-en="Pick a template and launch a WhatsApp campaign instantly">اختر قالب وأطلق حملة واتساب فوراً</div>
-                </div>
-                <div class="qa-card" id="qaImport" onclick="toggleExpand('importSection','qaImport')">
-                    <div class="qa-icon">📥</div>
-                    <div class="qa-title" data-ar="استيراد عملاء" data-en="Import Customers">استيراد عملاء</div>
-                    <div class="qa-desc" data-ar="ارفع ملف عملائك بضغطة واحدة" data-en="Upload your customer file with one click">ارفع ملف عملائك بضغطة واحدة</div>
-                </div>
-                <div class="qa-card" id="qaWhatsapp" onclick="window.location.href='/whatsapp.html'">
-                    <div class="qa-icon">📱</div>
-                    <div class="qa-title" data-ar="ربط واتساب" data-en="Connect WhatsApp">ربط واتساب</div>
-                    <div class="qa-desc" data-ar="اربط رقمك لبدء الإرسال التلقائي" data-en="Connect your number to start auto-sending">اربط رقمك لبدء الإرسال التلقائي</div>
+        <!-- Campaigns -->
+        <div class="section fade-in d3" id="campaigns">
+            <div class="section-head">
+                <div class="section-title"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></div>
+                <div style="display:flex;gap:4px" id="campTabs">
+                    <button class="btn btn-ghost tab-btn active" onclick="filterCamps('all',this)" data-ar="الكل" data-en="All">الكل</button>
+                    <button class="btn btn-ghost tab-btn" onclick="filterCamps('running',this)" data-ar="نشطة" data-en="Active">نشطة</button>
+                    <button class="btn btn-ghost tab-btn" onclick="filterCamps('completed',this)" data-ar="مكتملة" data-en="Done">مكتملة</button>
                 </div>
             </div>
-
-            <!-- Inline Campaign Launcher (hidden by default) -->
-            <div class="expand-section" id="launcherSection">
-                <div class="section-header">
-                    <h3 class="section-title" style="font-size:16px">
-                        <span>📣</span>
-                        <span data-ar="اختر قالب الحملة" data-en="Choose Campaign Template">اختر قالب الحملة</span>
-                    </h3>
-                </div>
-                <div class="tpl-grid" id="tplGrid"></div>
-                <div class="msg-preview-area" id="msgPreview">
-                    <div class="audience-row">
-                        <span>👥</span>
-                        <span class="count-num" id="tplAudienceCount">--</span>
-                        <span data-ar="عميل مؤهل" data-en="eligible customers">عميل مؤهل</span>
-                    </div>
-                    <label style="font-size:13px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:8px" data-ar="💬 معاينة الرسالة" data-en="💬 Message Preview">💬 معاينة الرسالة</label>
-                    <textarea id="tplMessage"></textarea>
-                    <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-                        <button class="btn btn-primary" id="launchBtn" onclick="launchCampaign()">
-                            <span>🚀</span>
-                            <span data-ar="أطلق الحملة" data-en="Launch Campaign">أطلق الحملة</span>
-                        </button>
-                        <button class="btn btn-secondary" onclick="cancelTemplate()">
-                            <span data-ar="إلغاء" data-en="Cancel">إلغاء</span>
-                        </button>
-                    </div>
-                </div>
+            <div class="grid-2" id="activeCampGrid" style="margin-bottom:16px">
+                <div class="empty" id="campEmpty" style="grid-column:1/-1"><i data-lucide="rocket"></i><div class="empty-title" data-ar="لا توجد حملات نشطة" data-en="No active campaigns">لا توجد حملات نشطة</div><div class="empty-desc" data-ar="اختر قالب أدناه لإطلاق حملتك الأولى" data-en="Pick a template below">اختر قالب أدناه لإطلاق حملتك الأولى</div></div>
             </div>
-
-            <!-- Inline Import Section (hidden by default) -->
-            <div class="expand-section" id="importSection">
-                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('importFileInput').click()">
-                    <div class="uz-icon">📂</div>
-                    <div class="uz-title" data-ar="اسحب الملف هنا أو اضغط للاختيار" data-en="Drag file here or click to browse">اسحب الملف هنا أو اضغط للاختيار</div>
-                    <div class="uz-desc" data-ar="يتم كشف الصيغة تلقائياً" data-en="Format is auto-detected">يتم كشف الصيغة تلقائياً</div>
-                    <div class="format-badges">
-                        <span class="format-badge">CSV</span>
-                        <span class="format-badge">Excel (.xlsx)</span>
-                        <span class="format-badge">JSON</span>
-                    </div>
-                </div>
-                <input type="file" id="importFileInput" class="import-file-input" accept=".csv,.xlsx,.xls,.json" onchange="handleImportFile(event)">
-                <div class="import-progress" id="importProgress">
-                    <div style="font-size:28px;margin-bottom:8px">⏳</div>
-                    <div style="font-weight:600" data-ar="جاري الاستيراد..." data-en="Importing...">جاري الاستيراد...</div>
-                    <div class="ip-bar-wrap"><div class="ip-bar-fill" id="importBar"></div></div>
-                    <div style="font-size:13px;color:var(--text-secondary)" id="importCounter">0 / 0</div>
-                </div>
-                <div class="import-results" id="importResults">
-                    <div class="ir-icon">✅</div>
-                    <div class="ir-title" data-ar="تم الاستيراد بنجاح!" data-en="Import Complete!">تم الاستيراد بنجاح!</div>
-                    <div class="ir-stats">
-                        <div><div class="ir-stat-val" id="irNew">0</div><div class="ir-stat-label" data-ar="عميل جديد" data-en="New">عميل جديد</div></div>
-                        <div><div class="ir-stat-val" id="irDupes">0</div><div class="ir-stat-label" data-ar="مكرر" data-en="Duplicates">مكرر</div></div>
-                        <div><div class="ir-stat-val" id="irReady">0</div><div class="ir-stat-label" data-ar="جاهز للحملات" data-en="Campaign Ready">جاهز للحملات</div></div>
-                    </div>
+            <div class="section-head" style="margin-top:24px"><div class="section-title" style="font-size:14px"><i data-lucide="layout-template"></i><span data-ar="قوالب الحملات" data-en="Campaign Templates">قوالب الحملات</span></div></div>
+            <div class="tpl-grid" id="tplGrid"></div>
+            <div class="launch-panel" id="launchPanel">
+                <div class="audience-info"><i data-lucide="users"></i><span data-ar="الجمهور:" data-en="Audience:">الجمهور:</span><span class="audience-count" id="tplAudience">0</span><span data-ar="عميل" data-en="customers">عميل</span></div>
+                <textarea id="tplMessage" placeholder="..."></textarea>
+                <div class="launch-actions">
+                    <button class="btn btn-outline" onclick="closeLaunch()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
+                    <button class="btn btn-primary" onclick="launchCampaign()"><i data-lucide="send"></i><span data-ar="إطلاق" data-en="Launch">إطلاق</span></button>
                 </div>
             </div>
         </div>
 
-        <!-- Section 3: Active Campaigns -->
-        <div class="section animate-in delay-2" id="campaigns">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>📣</span>
-                    <span data-ar="الحملات النشطة" data-en="Active Campaigns">الحملات النشطة</span>
-                </h2>
-                <button class="btn btn-primary btn-sm" onclick="toggleExpand('launcherSection','qaLaunch');scrollToSection('quickActions')">
-                    <span>+</span>
-                    <span data-ar="أطلق حملة جديدة" data-en="New Campaign">أطلق حملة جديدة</span>
-                </button>
-            </div>
-            <div class="tabs" id="campaignTabs">
-                <div class="tab active" onclick="filterCampaigns('all')" data-ar="الكل" data-en="All">الكل</div>
-                <div class="tab" onclick="filterCampaigns('running')" data-ar="نشطة" data-en="Active">نشطة</div>
-                <div class="tab" onclick="filterCampaigns('draft')" data-ar="مسودة" data-en="Draft">مسودة</div>
-                <div class="tab" onclick="filterCampaigns('completed')" data-ar="مكتملة" data-en="Completed">مكتملة</div>
-            </div>
-            <div class="campaign-grid" id="activeCampaignGrid">
-                <div class="empty-state" id="campaignEmptyState">
-                    <div class="empty-icon">📭</div>
-                    <div class="empty-title" data-ar="لا توجد حملات بعد" data-en="No campaigns yet">لا توجد حملات بعد</div>
-                    <div class="empty-desc" data-ar="أطلق أول حملة من الأزرار أعلاه!" data-en="Launch your first campaign from the buttons above!">أطلق أول حملة من الأزرار أعلاه!</div>
+        <!-- Customers -->
+        <div class="section" id="customers">
+            <div class="section-head"><div class="section-title"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></div></div>
+            <div id="uploadArea">
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <i data-lucide="upload-cloud"></i>
+                    <div class="uz-title" data-ar="استيراد بيانات العملاء" data-en="Import Customer Data">استيراد بيانات العملاء</div>
+                    <div class="uz-sub" data-ar="اسحب الملف هنا أو اضغط للتحميل" data-en="Drag here or click to upload">اسحب الملف هنا أو اضغط للتحميل</div>
+                    <div class="uz-formats"><span class="uz-fmt">CSV</span><span class="uz-fmt">Excel</span><span class="uz-fmt">JSON</span></div>
                 </div>
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="handleFile(event)" style="display:none">
+            </div>
+            <div class="import-progress" id="importProgress"><i data-lucide="loader-2" style="width:32px;height:32px;color:var(--primary);animation:spin 1s linear infinite"></i><div style="margin-top:12px;font-size:14px" data-ar="جاري الاستيراد..." data-en="Importing...">جاري الاستيراد...</div><div class="ip-bar"><div class="ip-fill" id="importBar"></div></div></div>
+            <div class="import-results" id="importResults"><div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px" data-ar="تم الاستيراد بنجاح" data-en="Import successful">تم الاستيراد بنجاح</div><div class="ir-num" id="irNew">0</div><div style="font-size:12px;color:var(--text-muted)" data-ar="عميل جديد" data-en="new customers">عميل جديد</div><button class="btn btn-outline" style="margin-top:16px" onclick="resetImport()" data-ar="استيراد آخر" data-en="Import more">استيراد آخر</button></div>
+        </div>
+
+        <!-- COD -->
+        <div class="section" id="cod">
+            <div class="section-head"><div class="section-title"><i data-lucide="package-check"></i><span data-ar="تأكيد الدفع عند الاستلام" data-en="COD Confirmation">تأكيد الدفع عند الاستلام</span></div></div>
+            <div class="grid-2">
+                <div><div class="mini-stats">
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--success)" id="codConfirmRate">78%</div><div class="mini-stat-label" data-ar="معدل التأكيد" data-en="Confirm Rate">معدل التأكيد</div></div>
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--secondary)" id="codConvertRate">12%</div><div class="mini-stat-label" data-ar="تحويل للدفع" data-en="Prepaid">تحويل للدفع</div></div>
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--danger)" id="codCancelRate">10%</div><div class="mini-stat-label" data-ar="إلغاء" data-en="Cancelled">إلغاء</div></div>
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--primary)" id="codSavings">3,450</div><div class="mini-stat-label" data-ar="توفير (ر.س)" data-en="Saved (SAR)">توفير (ر.س)</div></div>
+                </div></div>
+                <div class="card"><div class="donut-wrap"><div class="donut" id="codDonut"></div><div class="donut-legend">
+                    <div class="legend-item"><span class="legend-dot" style="background:var(--success)"></span><span data-ar="مؤكد" data-en="Confirmed">مؤكد</span> <strong id="codConfirmed">102</strong></div>
+                    <div class="legend-item"><span class="legend-dot" style="background:var(--secondary)"></span><span data-ar="محول" data-en="Converted">محول</span> <strong id="codConverted">19</strong></div>
+                    <div class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span><span data-ar="ملغي" data-en="Cancelled">ملغي</span> <strong id="codCancelled">16</strong></div>
+                    <div class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span><span data-ar="بانتظار" data-en="Pending">بانتظار</span> <strong id="codPending">19</strong></div>
+                </div></div></div>
             </div>
         </div>
 
-        <!-- Section 5: Recent Activity -->
-        <div class="section animate-in delay-3" id="activity">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>📋</span>
-                    <span data-ar="آخر النشاطات" data-en="Recent Activity">آخر النشاطات</span>
-                </h2>
-                <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--success);background:rgba(34,197,94,0.1);padding:4px 10px;border-radius:20px">
-                    <span class="wa-dot" style="width:6px;height:6px"></span>
-                    <span data-ar="مباشر" data-en="Live">مباشر</span>
+        <!-- Reviews -->
+        <div class="section" id="reviews">
+            <div class="section-head"><div class="section-title"><i data-lucide="star"></i><span data-ar="التقييمات" data-en="Reviews">التقييمات</span></div></div>
+            <div class="grid-2">
+                <div class="mini-stats" style="grid-template-columns:repeat(3,1fr)">
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--warning)" id="reviewAvg">4.6</div><div class="mini-stat-label" data-ar="متوسط التقييم" data-en="Avg Rating">متوسط التقييم</div></div>
+                    <div class="mini-stat"><div class="mini-stat-val" id="reviewTotal">328</div><div class="mini-stat-label" data-ar="إجمالي" data-en="Total">إجمالي</div></div>
+                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--primary)" id="reviewResponse">42%</div><div class="mini-stat-label" data-ar="استجابة" data-en="Response">استجابة</div></div>
                 </div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;overflow:hidden">
-                <div class="activity-list" id="activityList">
-                    <div class="empty-state" id="activityEmpty">
-                        <div class="empty-icon">🚀</div>
-                        <div class="empty-title" data-ar="النظام جاهز ويعمل!" data-en="System Ready!">النظام جاهز ويعمل!</div>
-                        <div class="empty-desc" data-ar="عندما يترك عميل سلته، سترى النشاط هنا" data-en="Activity will appear here when carts are recovered">عندما يترك عميل سلته، سترى النشاط هنا</div>
-                    </div>
-                </div>
+                <div class="card"><div class="card-title" style="margin-bottom:12px" data-ar="توزيع التقييمات" data-en="Rating Distribution">توزيع التقييمات</div><div class="rating-bars" id="ratingBars"></div></div>
             </div>
         </div>
 
-        <!-- Section 6: Import (scroll target) -->
-        <div class="section" id="import" style="scroll-margin-top:24px">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>👥</span>
-                    <span data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</span>
-                </h2>
+        <!-- Loyalty -->
+        <div class="section" id="loyalty">
+            <div class="section-head"><div class="section-title"><i data-lucide="trophy"></i><span data-ar="برنامج الولاء" data-en="Loyalty Program">برنامج الولاء</span></div></div>
+            <div class="tiers">
+                <div class="tier" style="border-color:rgba(205,127,50,0.3)"><div class="tier-icon">🥉</div><div class="tier-name" style="color:#CD7F32" data-ar="برونزي" data-en="Bronze">برونزي</div><div class="tier-pts" data-ar="0 نقطة | ×1" data-en="0 pts | ×1">0 نقطة | ×1</div></div>
+                <div class="tier" style="border-color:rgba(192,192,192,0.3)"><div class="tier-icon">🥈</div><div class="tier-name" style="color:#C0C0C0" data-ar="فضي" data-en="Silver">فضي</div><div class="tier-pts" data-ar="500 نقطة | ×1.5" data-en="500 pts | ×1.5">500 نقطة | ×1.5</div></div>
+                <div class="tier" style="border-color:rgba(255,215,0,0.3)"><div class="tier-icon">🥇</div><div class="tier-name" style="color:#FFD700" data-ar="ذهبي" data-en="Gold">ذهبي</div><div class="tier-pts" data-ar="2000 نقطة | ×2" data-en="2000 pts | ×2">2000 نقطة | ×2</div></div>
+                <div class="tier" style="border-color:rgba(99,102,241,0.3)"><div class="tier-icon">💎</div><div class="tier-name" style="color:var(--secondary)" data-ar="بلاتيني" data-en="Platinum">بلاتيني</div><div class="tier-pts" data-ar="5000 نقطة | ×3" data-en="5000 pts | ×3">5000 نقطة | ×3</div></div>
             </div>
-            <div class="upload-zone" onclick="toggleExpand('importSection','qaImport');scrollToSection('quickActions')">
-                <div class="uz-icon">📥</div>
-                <div class="uz-title" data-ar="اضغط هنا لاستيراد عملائك" data-en="Click here to import customers">اضغط هنا لاستيراد عملائك</div>
-                <div class="uz-desc" data-ar="CSV, Excel, أو JSON - يتم كشف الصيغة تلقائياً" data-en="CSV, Excel, or JSON - format auto-detected">CSV, Excel, أو JSON - يتم كشف الصيغة تلقائياً</div>
-            </div>
-        </div>
-
-        <!-- Section: COD Confirmation -->
-        <div class="section animate-in" id="cod" style="scroll-margin-top:24px">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>📦</span>
-                    <span data-ar="تأكيد الدفع عند الاستلام" data-en="COD Confirmation">تأكيد الدفع عند الاستلام</span>
-                </h2>
-            </div>
-            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
-                <div class="stat-card">
-                    <div class="stat-icon-wrap green">✅</div>
-                    <div class="stat-value" id="codConfirmRate">0%</div>
-                    <div class="stat-label" data-ar="معدل التأكيد" data-en="Confirmation Rate">معدل التأكيد</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap blue">💳</div>
-                    <div class="stat-value" id="codConvertRate">0%</div>
-                    <div class="stat-label" data-ar="تحويل للدفع المسبق" data-en="Prepaid Conversion">تحويل للدفع المسبق</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap orange">❌</div>
-                    <div class="stat-value" id="codCancelRate">0%</div>
-                    <div class="stat-label" data-ar="معدل الإلغاء" data-en="Cancellation Rate">معدل الإلغاء</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap purple">💰</div>
-                    <div class="stat-value" id="codSavings">0</div>
-                    <div class="stat-label" data-ar="التوفير (ر.س)" data-en="Savings (SAR)">التوفير (ر.س)</div>
-                </div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;margin-top:16px">
-                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px">
-                    <div>
-                        <div style="font-size:15px;font-weight:600;margin-bottom:4px" data-ar="إجمالي الطلبات" data-en="Total Orders">إجمالي الطلبات</div>
-                        <div style="font-size:28px;font-weight:800;color:var(--primary)" id="codTotal">0</div>
-                    </div>
-                    <div style="display:flex;gap:20px;flex-wrap:wrap">
-                        <div style="text-align:center">
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px" data-ar="مؤكد" data-en="Confirmed">مؤكد</div>
-                            <div style="font-size:20px;font-weight:700;color:var(--success)" id="codConfirmed">0</div>
-                        </div>
-                        <div style="text-align:center">
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px" data-ar="محول" data-en="Converted">محول</div>
-                            <div style="font-size:20px;font-weight:700;color:var(--secondary)" id="codConverted">0</div>
-                        </div>
-                        <div style="text-align:center">
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px" data-ar="ملغي" data-en="Cancelled">ملغي</div>
-                            <div style="font-size:20px;font-weight:700;color:var(--danger)" id="codCancelled">0</div>
-                        </div>
-                        <div style="text-align:center">
-                            <div style="font-size:13px;color:var(--text-secondary);margin-bottom:4px" data-ar="بانتظار" data-en="Pending">بانتظار</div>
-                            <div style="font-size:20px;font-weight:700;color:var(--warning)" id="codPending">0</div>
-                        </div>
-                    </div>
-                </div>
+            <div class="card" style="margin-top:12px;text-align:center;padding:24px">
+                <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px" data-ar="الأعضاء النشطين" data-en="Active Members">الأعضاء النشطين</div>
+                <div style="font-size:32px;font-weight:700;color:var(--primary)" id="loyaltyMembers">247</div>
             </div>
         </div>
-
-        <!-- Section: Reviews -->
-        <div class="section animate-in" id="reviews" style="scroll-margin-top:24px">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>⭐</span>
-                    <span data-ar="التقييمات" data-en="Reviews">التقييمات</span>
-                </h2>
-            </div>
-            <div class="stats-grid" style="grid-template-columns:repeat(3,1fr)">
-                <div class="stat-card">
-                    <div class="stat-icon-wrap orange">⭐</div>
-                    <div class="stat-value" id="reviewAvg">0.0</div>
-                    <div class="stat-label" data-ar="متوسط التقييم" data-en="Average Rating">متوسط التقييم</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap green">📊</div>
-                    <div class="stat-value" id="reviewTotal">0</div>
-                    <div class="stat-label" data-ar="إجمالي التقييمات" data-en="Total Reviews">إجمالي التقييمات</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon-wrap blue">📈</div>
-                    <div class="stat-value" id="reviewResponse">0%</div>
-                    <div class="stat-label" data-ar="معدل الاستجابة" data-en="Response Rate">معدل الاستجابة</div>
-                </div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;margin-top:16px">
-                <div style="display:flex;gap:8px;align-items:flex-end;justify-content:center">
-                    <div style="text-align:center" class="rating-bar-group">
-                        <div style="height:80px;width:32px;background:rgba(255,255,255,0.05);border-radius:6px;position:relative;overflow:hidden;margin:0 auto">
-                            <div style="position:absolute;bottom:0;width:100%;background:var(--gradient);border-radius:6px;transition:height .5s" id="stars5Bar"></div>
-                        </div>
-                        <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)">5⭐</div>
-                    </div>
-                    <div style="text-align:center" class="rating-bar-group">
-                        <div style="height:80px;width:32px;background:rgba(255,255,255,0.05);border-radius:6px;position:relative;overflow:hidden;margin:0 auto">
-                            <div style="position:absolute;bottom:0;width:100%;background:var(--gradient);border-radius:6px;transition:height .5s" id="stars4Bar"></div>
-                        </div>
-                        <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)">4⭐</div>
-                    </div>
-                    <div style="text-align:center" class="rating-bar-group">
-                        <div style="height:80px;width:32px;background:rgba(255,255,255,0.05);border-radius:6px;position:relative;overflow:hidden;margin:0 auto">
-                            <div style="position:absolute;bottom:0;width:100%;background:var(--gradient-accent);border-radius:6px;transition:height .5s" id="stars3Bar"></div>
-                        </div>
-                        <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)">3⭐</div>
-                    </div>
-                    <div style="text-align:center" class="rating-bar-group">
-                        <div style="height:80px;width:32px;background:rgba(255,255,255,0.05);border-radius:6px;position:relative;overflow:hidden;margin:0 auto">
-                            <div style="position:absolute;bottom:0;width:100%;background:var(--gradient-accent);border-radius:6px;transition:height .5s" id="stars2Bar"></div>
-                        </div>
-                        <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)">2⭐</div>
-                    </div>
-                    <div style="text-align:center" class="rating-bar-group">
-                        <div style="height:80px;width:32px;background:rgba(255,255,255,0.05);border-radius:6px;position:relative;overflow:hidden;margin:0 auto">
-                            <div style="position:absolute;bottom:0;width:100%;background:rgba(239,68,68,0.7);border-radius:6px;transition:height .5s" id="stars1Bar"></div>
-                        </div>
-                        <div style="font-size:12px;margin-top:6px;color:var(--text-secondary)">1⭐</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section: Loyalty Program -->
-        <div class="section animate-in" id="loyalty" style="scroll-margin-top:24px">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span>🏆</span>
-                    <span data-ar="برنامج الولاء" data-en="Loyalty Program">برنامج الولاء</span>
-                </h2>
-            </div>
-            <div class="stats-grid" style="grid-template-columns:repeat(4,1fr)">
-                <div class="stat-card" style="border-color:rgba(205,127,50,0.3)">
-                    <div class="stat-icon-wrap" style="background:rgba(205,127,50,0.15)">🥉</div>
-                    <div class="stat-value" style="color:#CD7F32" data-ar="برونزي" data-en="Bronze">برونزي</div>
-                    <div class="stat-label" data-ar="0 نقطة ×1" data-en="0 pts ×1">0 نقطة ×1</div>
-                </div>
-                <div class="stat-card" style="border-color:rgba(192,192,192,0.3)">
-                    <div class="stat-icon-wrap" style="background:rgba(192,192,192,0.15)">🥈</div>
-                    <div class="stat-value" style="color:#C0C0C0" data-ar="فضي" data-en="Silver">فضي</div>
-                    <div class="stat-label" data-ar="500 نقطة ×1.5" data-en="500 pts ×1.5">500 نقطة ×1.5</div>
-                </div>
-                <div class="stat-card" style="border-color:rgba(255,215,0,0.3)">
-                    <div class="stat-icon-wrap" style="background:rgba(255,215,0,0.15)">🥇</div>
-                    <div class="stat-value" style="color:#FFD700" data-ar="ذهبي" data-en="Gold">ذهبي</div>
-                    <div class="stat-label" data-ar="2000 نقطة ×2" data-en="2000 pts ×2">2000 نقطة ×2</div>
-                </div>
-                <div class="stat-card" style="border-color:rgba(99,102,241,0.3)">
-                    <div class="stat-icon-wrap" style="background:rgba(99,102,241,0.15)">💎</div>
-                    <div class="stat-value" style="color:#6366F1" data-ar="بلاتيني" data-en="Platinum">بلاتيني</div>
-                    <div class="stat-label" data-ar="5000 نقطة ×3" data-en="5000 pts ×3">5000 نقطة ×3</div>
-                </div>
-            </div>
-            <div style="background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:24px;margin-top:16px;text-align:center">
-                <div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px" data-ar="الأعضاء النشطين" data-en="Active Members">الأعضاء النشطين</div>
-                <div style="font-size:36px;font-weight:800;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text" id="loyaltyMembers">0</div>
-                <div style="display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap">
-                    <div style="font-size:13px;color:var(--text-secondary)">
-                        <span data-ar="نقاط لكل ريال:" data-en="Points per SAR:">نقاط لكل ريال:</span>
-                        <span style="font-weight:700;color:var(--primary)">1</span>
-                    </div>
-                    <div style="font-size:13px;color:var(--text-secondary)">
-                        <span data-ar="مكافأة ترحيب:" data-en="Welcome Bonus:">مكافأة ترحيب:</span>
-                        <span style="font-weight:700;color:var(--primary)">100</span>
-                    </div>
-                    <div style="font-size:13px;color:var(--text-secondary)">
-                        <span data-ar="مكافأة إحالة:" data-en="Referral Bonus:">مكافأة إحالة:</span>
-                        <span style="font-weight:700;color:var(--primary)">200</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
-    <!-- Mobile Bottom Nav -->
-    <nav class="mobile-nav">
-        <a class="mn-item active" data-section="stats" onclick="scrollToSection('stats')">
-            <span class="mn-icon">📊</span>
-            <span data-ar="الرئيسية" data-en="Home">الرئيسية</span>
-        </a>
-        <a class="mn-item" data-section="campaigns" onclick="scrollToSection('campaigns')">
-            <span class="mn-icon">📣</span>
-            <span data-ar="الحملات" data-en="Campaigns">الحملات</span>
-        </a>
-        <a class="mn-item" data-section="import" onclick="scrollToSection('import')">
-            <span class="mn-icon">👥</span>
-            <span data-ar="العملاء" data-en="Customers">العملاء</span>
-        </a>
-        <a class="mn-item" onclick="window.location.href='/settings.html'">
-            <span class="mn-icon">⚙️</span>
-            <span data-ar="الإعدادات" data-en="Settings">الإعدادات</span>
-        </a>
-    </nav>
+    <!-- Mobile Nav -->
+    <nav class="mob-nav"><div class="mob-nav-inner">
+        <a class="mn active" data-section="overview" onclick="nav('overview')"><i data-lucide="layout-dashboard"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+        <a class="mn" data-section="campaigns" onclick="nav('campaigns')"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></a>
+        <a class="mn" data-section="customers" onclick="nav('customers')"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></a>
+        <a class="mn" data-section="cod" onclick="nav('cod')"><i data-lucide="package-check"></i><span data-ar="الطلبات" data-en="COD">الطلبات</span></a>
+        <a class="mn" onclick="window.location.href='/settings.html'"><i data-lucide="settings"></i><span data-ar="إعدادات" data-en="Settings">إعدادات</span></a>
+    </div></nav>
 
     <script>
-    // ==========================================
-    // LANGUAGE SYSTEM
-    // ==========================================
-    let currentLang = localStorage.getItem('ribhLang') || (navigator.language||'').startsWith('ar') ? 'ar' : 'en';
-    if (localStorage.getItem('ribhLang')) currentLang = localStorage.getItem('ribhLang');
+    const merchantId='demo';let lang=localStorage.getItem('ribhLang')||'ar';
 
-    function toggleLanguage() {
-        currentLang = currentLang === 'ar' ? 'en' : 'ar';
-        localStorage.setItem('ribhLang', currentLang);
-        applyLanguage();
-    }
+    function toggleLang(){lang=lang==='ar'?'en':'ar';localStorage.setItem('ribhLang',lang);applyLang();}
+    function applyLang(){const r=document.documentElement;r.setAttribute('dir',lang==='ar'?'rtl':'ltr');r.setAttribute('lang',lang);document.getElementById('langLabel').textContent=lang==='ar'?'English':'العربية';document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)||el.textContent;});renderTemplates();}
 
-    function applyLanguage() {
-        const html = document.documentElement;
-        html.setAttribute('lang', currentLang);
-        html.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
-        document.getElementById('langLabel').textContent = currentLang === 'ar' ? 'English' : 'العربية';
-        document.querySelectorAll('[data-ar][data-en]').forEach(el => {
-            el.textContent = el.getAttribute('data-' + currentLang);
-        });
-    }
+    function nav(s){const el=document.getElementById(s);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${s}"]`).forEach(i=>i.classList.add('active'));}
 
-    // ==========================================
-    // NAVIGATION
-    // ==========================================
-    function scrollToSection(id) {
-        const el = document.getElementById(id);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // Update active nav
-        document.querySelectorAll('.nav-item[data-section],.mn-item[data-section]').forEach(n => {
-            n.classList.toggle('active', n.dataset.section === id);
-        });
-    }
+    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));}});},{threshold:0.3,rootMargin:'-80px 0px -50% 0px'});
+    document.querySelectorAll('.section,.stats-row').forEach(s=>obs.observe(s));
 
-    // Track scroll for active nav highlighting
-    const sectionIds = ['stats', 'campaigns', 'import', 'activity'];
-    window.addEventListener('scroll', () => {
-        let current = 'stats';
-        for (const id of sectionIds) {
-            const el = document.getElementById(id);
-            if (el && el.getBoundingClientRect().top <= 100) current = id;
-        }
-        document.querySelectorAll('.nav-item[data-section],.mn-item[data-section]').forEach(n => {
-            n.classList.toggle('active', n.dataset.section === current);
-        });
-    }, { passive: true });
+    function renderSparkline(id,data,color){const el=document.getElementById(id);if(!el)return;const mx=Math.max(...data);el.innerHTML=data.map(v=>`<div class="bar" style="height:${Math.max(8,(v/mx)*100)}%;background:${color}"></div>`).join('');}
 
-    // ==========================================
-    // EXPAND / COLLAPSE
-    // ==========================================
-    function toggleExpand(sectionId, cardId) {
-        const section = document.getElementById(sectionId);
-        const card = cardId ? document.getElementById(cardId) : null;
-        const isOpen = section.classList.contains('open');
+    function renderChart(data,labels){const c=document.getElementById('revenueChart'),l=document.getElementById('revenueLabels');const mx=Math.max(...data);c.innerHTML=data.map((v,i)=>{const h=Math.max(4,(v/mx)*100);return`<div class="c-bar" style="height:${h}%;background:${i===data.length-1?'var(--primary)':'var(--border-hover)'}"><div class="c-tip">${v.toLocaleString()}</div></div>`;}).join('');l.innerHTML=labels.map(x=>`<span>${x}</span>`).join('');}
 
-        // Close all expand sections first
-        document.querySelectorAll('.expand-section').forEach(s => s.classList.remove('open'));
-        document.querySelectorAll('.qa-card').forEach(c => c.classList.remove('active'));
+    function renderDonut(a,b,c,d){const t=a+b+c+d||1;const p1=(a/t)*360,p2=p1+(b/t)*360,p3=p2+(c/t)*360;const el=document.getElementById('codDonut');el.style.background=`conic-gradient(var(--success) 0deg ${p1}deg,var(--secondary) ${p1}deg ${p2}deg,var(--danger) ${p2}deg ${p3}deg,var(--warning) ${p3}deg 360deg)`;el.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center"><span class="donut-center">${t}</span></div>`;}
 
-        if (!isOpen) {
-            section.classList.add('open');
-            if (card) card.classList.add('active');
-        }
-    }
+    function renderRatings(dist){const c=document.getElementById('ratingBars');const mx=Math.max(...Object.values(dist));c.innerHTML=[5,4,3,2,1].map(s=>{const n=dist[s]||0;const p=mx>0?(n/mx)*100:0;const col=s>=4?'var(--primary)':s===3?'var(--warning)':'var(--danger)';return`<div class="rating-row"><span class="rating-label">${s}</span><div class="rating-track"><div class="rating-fill" style="width:${p}%;background:${col}"></div></div><span class="rating-count">${n}</span></div>`;}).join('');}
 
-    // ==========================================
-    // COUNTER ANIMATION
-    // ==========================================
-    function animateCounter(el, target, duration) {
-        duration = duration || 1200;
-        const start = parseInt((el.textContent || '0').replace(/[^\d]/g, '')) || 0;
-        const startTime = performance.now();
-        const suffix = el.textContent.includes('%') ? '%' : '';
-
-        function update(now) {
-            const progress = Math.min((now - startTime) / duration, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
-            const val = Math.floor(start + (target - start) * ease);
-            // Preserve child elements like currency span
-            const currSpan = el.querySelector('span');
-            if (currSpan) {
-                el.childNodes[0].textContent = val.toLocaleString() + ' ';
-            } else {
-                el.textContent = val.toLocaleString() + suffix;
-            }
-            if (progress < 1) requestAnimationFrame(update);
-        }
-        requestAnimationFrame(update);
-    }
-
-    // ==========================================
-    // LOAD STATS
-    // ==========================================
-    async function loadStats() {
-        try {
-            const [statsRes, custRes, revRes] = await Promise.allSettled([
-                fetch('/api/stats?period=30'),
-                fetch('/api/customers/stats/demo'),
-                fetch('/api/campaigns/revenue?merchantId=demo')
-            ]);
-
-            if (statsRes.status === 'fulfilled' && statsRes.value.ok) {
-                const data = await statsRes.value.json();
-                const rev = data.overview?.totalRevenue || 0;
-                const recovered = data.raw?.recovered || 0;
-                const rate = data.overview?.recoveryRate || 0;
-                animateCounter(document.getElementById('totalRevenue'), rev);
-                animateCounter(document.getElementById('cartsRecovered'), recovered);
-                document.getElementById('recoveryRate').textContent = rate + '%';
-            }
-
-            if (custRes.status === 'fulfilled' && custRes.value.ok) {
-                const data = await custRes.value.json();
-                const total = data.totalCustomers || data.total || 0;
-                animateCounter(document.getElementById('totalCustomers'), total);
-            }
-
-            if (revRes.status === 'fulfilled' && revRes.value.ok) {
-                const data = await revRes.value.json();
-                if (data.totalRevenue !== undefined) {
-                    animateCounter(document.getElementById('totalRevenue'), data.totalRevenue);
-                }
-            }
-        } catch (e) {
-            console.log('Stats load error:', e);
-        }
-    }
-
-    // ==========================================
-    // CAMPAIGN TEMPLATES
-    // ==========================================
-    const templates = [
-        { icon:'🔥', name:'استرجاع السلات', nameEn:'Cart Recovery', desc:'استهداف تلقائي للعملاء اللي تركوا سلاتهم', descEn:'Target customers who abandoned carts', impact:'+25%', impactEn:'+25%', color:'#EF4444', id:'cart_recovery', message:'مرحباً {name} 👋\n\nلاحظنا إن عندك منتجات في السلة بانتظارك!\nأكمل طلبك الآن واستمتع بخصم 10% 🎁\n\n{cart_link}' },
-        { icon:'💰', name:'العملاء الخاملين', nameEn:'Win-back', desc:'استهداف العملاء اللي ما اشتروا من 30 يوم+', descEn:'Target inactive 30+ day customers', impact:'+15%', impactEn:'+15%', color:'#F59E0B', id:'winback', message:'مرحباً {name} 👋\n\nوحشتنا! مرّت فترة من آخر زيارة لك 🛍️\nعندنا عروض جديدة حصرية لك\nاستخدم كود WELCOME15 واحصل على خصم 15%\n\n{store_link}' },
-        { icon:'🎉', name:'عرض خاص', nameEn:'Special Offer', desc:'عرض سريع أو خصم لكل العملاء', descEn:'Flash sale for all customers', impact:'+20%', impactEn:'+20%', color:'#8B5CF6', id:'special_offer', message:'عرض خاص لعملائنا المميزين! 🎉\n\nخصم 20% على كل المنتجات\nالعرض لمدة 48 ساعة فقط ⏰\n\n{store_link}' },
-        { icon:'⭐', name:'العملاء المميزين', nameEn:'VIP Campaign', desc:'عرض حصري لأفضل العملاء إنفاقاً', descEn:'Exclusive offer for top spenders', impact:'+40%', impactEn:'+40%', color:'#F59E0B', id:'vip', message:'مرحباً {name} ⭐\n\nأنت من عملائنا المميزين!\nاستمتع بخصم حصري 25%\nاستخدم كود VIP25\n\n{store_link}' },
-        { icon:'🆕', name:'المنتج الجديد', nameEn:'New Product', desc:'إعلان منتجات جديدة لكل العملاء', descEn:'Announce new products', impact:'فوري', impactEn:'Instant', color:'#3B82F6', id:'new_product', message:'وصل الجديد! 🆕\n\nمنتجات جديدة تستناك في متجرنا\nكن أول من يحصل عليها 🏃\n\n{store_link}' },
-        { icon:'📊', name:'التقييمات', nameEn:'Review Collection', desc:'طلب تقييمات من العملاء بعد الشراء', descEn:'Request post-purchase reviews', impact:'+35%', impactEn:'+35%', color:'#10B981', id:'review_collection', message:'مرحباً {name} 👋\n\nنتمنى إن طلبك وصلك بأفضل حال! 📦\nرأيك يهمنا — ممكن تعطينا تقييمك؟ ⭐\n\n{review_link}' },
-        { icon:'🎂', name:'أعياد الميلاد', nameEn:'Birthday', desc:'خصومات عيد ميلاد تلقائية', descEn:'Automatic birthday discounts', impact:'+45%', impactEn:'+45%', color:'#EC4899', id:'birthday', message:'كل عام وأنت بخير {name}! 🎂🎉\n\nبمناسبة عيد ميلادك\nخصم 30% على طلبك القادم 🎁\nكود BDAY30' },
-        { icon:'🕌', name:'حملة رمضان', nameEn:'Ramadan', desc:'عروض رمضان الموسمية', descEn:'Seasonal Ramadan offers', impact:'+40%', impactEn:'+40%', color:'#059669', id:'ramadan', message:'رمضان كريم {name} 🕌🌙\n\nعروض رمضانية مميزة تصل خصوماتها إلى 40%\n\nتسوّق الآن:\n{store_link}' }
+    const TEMPLATES=[
+        {id:'cart_recovery',icon:'🔥',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'استهداف تلقائي للسلات المتروكة',descEn:'Auto-target abandoned carts',impact:'+25%',color:'#EF4444'},
+        {id:'winback',icon:'💰',name:'العملاء الخاملين',nameEn:'Win Back',desc:'استرجاع العملاء الغائبين 30+ يوم',descEn:'Re-engage dormant 30d+',impact:'+15%',color:'#F59E0B'},
+        {id:'special_offer',icon:'🎉',name:'عرض خاص',nameEn:'Special Offer',desc:'عرض سريع لكل العملاء',descEn:'Flash offer for all',impact:'+20%',color:'#8B5CF6'},
+        {id:'vip',icon:'⭐',name:'العملاء المميزين',nameEn:'VIP',desc:'عرض حصري لأفضل العملاء',descEn:'Exclusive for top spenders',impact:'+40%',color:'#F59E0B'},
+        {id:'new_product',icon:'🆕',name:'منتج جديد',nameEn:'New Product',desc:'إعلان منتجات جديدة',descEn:'Announce new products',impact:'+30%',color:'#3B82F6'},
+        {id:'review_collection',icon:'📊',name:'جمع التقييمات',nameEn:'Reviews',desc:'طلب تقييمات بعد الشراء',descEn:'Post-purchase reviews',impact:'+35%',color:'#10B981'},
+        {id:'birthday',icon:'🎂',name:'أعياد الميلاد',nameEn:'Birthday',desc:'خصومات عيد ميلاد تلقائية',descEn:'Auto birthday discounts',impact:'45%+',color:'#EC4899'},
+        {id:'ramadan',icon:'🕌',name:'رمضان',nameEn:'Ramadan',desc:'عروض رمضان الموسمية',descEn:'Seasonal Ramadan offers',impact:'+40%',color:'#059669'}
     ];
+    let selectedTpl=null;
 
-    let selectedTemplate = null;
+    function renderTemplates(){const g=document.getElementById('tplGrid');g.innerHTML=TEMPLATES.map(t=>`<div class="tpl" id="tpl_${t.id}" onclick="selectTpl('${t.id}')"><div class="tpl-top"><div class="tpl-ico" style="background:${t.color}20">${t.icon}</div><div style="flex:1"><div class="tpl-name">${lang==='ar'?t.name:t.nameEn}</div><div class="tpl-desc">${lang==='ar'?t.desc:t.descEn}</div></div></div><div class="tpl-badge" style="background:${t.color}15;color:${t.color}">${t.impact}</div></div>`).join('');}
 
-    function renderTemplateGrid() {
-        const grid = document.getElementById('tplGrid');
-        grid.innerHTML = templates.map((t, i) => `
-            <div class="tpl-card" onclick="selectTemplate('${t.id}')" id="tpl_${t.id}">
-                <div class="tpl-header">
-                    <span class="tpl-icon">${t.icon}</span>
-                    <span class="tpl-name" data-ar="${t.name}" data-en="${t.nameEn}">${currentLang==='ar'?t.name:t.nameEn}</span>
-                </div>
-                <div class="tpl-impact" style="color:${t.color}">${currentLang==='ar'?t.impact:t.impactEn} ${currentLang==='ar'?'تحسن':'improvement'}</div>
-            </div>
-        `).join('');
-    }
+    function selectTpl(id){const t=TEMPLATES.find(x=>x.id===id);if(!t)return;selectedTpl=t;document.querySelectorAll('.tpl').forEach(el=>el.classList.remove('selected'));document.getElementById('tpl_'+id).classList.add('selected');const p=document.getElementById('launchPanel');p.classList.add('open');document.getElementById('tplAudience').textContent=Math.floor(Math.random()*200+50);document.getElementById('tplMessage').value=lang==='ar'?`مرحبا {customer_name} 👋\n\n${t.desc}\n\nاستخدم كود RIBH للحصول على خصم 15%\n\n🛒 {store_url}`:`Hi {customer_name} 👋\n\n${t.descEn}\n\nUse code RIBH for 15% off\n\n🛒 {store_url}`;p.scrollIntoView({behavior:'smooth',block:'nearest'});}
+    function closeLaunch(){document.getElementById('launchPanel').classList.remove('open');document.querySelectorAll('.tpl').forEach(el=>el.classList.remove('selected'));selectedTpl=null;}
 
-    function selectTemplate(id) {
-        selectedTemplate = templates.find(t => t.id === id);
-        if (!selectedTemplate) return;
+    let activeCamps=[],campFilter='all';
+    function launchCampaign(){if(!selectedTpl)return;const c={id:'c_'+Date.now(),name:lang==='ar'?selectedTpl.name:selectedTpl.nameEn,icon:selectedTpl.icon,color:selectedTpl.color,status:'running',sent:0,total:parseInt(document.getElementById('tplAudience').textContent)||100,revenue:0};activeCamps.unshift(c);renderCamps();closeLaunch();simulateProgress(c);try{fetch('/api/campaigns/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({templateId:selectedTpl.id,merchantId})})}catch(e){}}
+    function simulateProgress(camp){const iv=setInterval(()=>{const c=activeCamps.find(x=>x.id===camp.id);if(!c){clearInterval(iv);return;}c.sent=Math.min(c.sent+Math.floor(Math.random()*15)+5,c.total);c.revenue+=Math.floor(Math.random()*400)+50;if(c.sent>=c.total){c.status='completed';clearInterval(iv);}renderCamps();},2000);}
+    function filterCamps(f,btn){campFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderCamps();}
+    function renderCamps(){const g=document.getElementById('activeCampGrid'),e=document.getElementById('campEmpty');let list=campFilter==='all'?activeCamps:activeCamps.filter(c=>c.status===campFilter);if(list.length===0){g.innerHTML='';g.appendChild(e);e.style.display='block';return;}e.style.display='none';g.innerHTML=list.map(c=>{const p=c.total>0?Math.round((c.sent/c.total)*100):0;const sb=c.status==='running'?'badge-success':'badge-secondary';const st=c.status==='running'?(lang==='ar'?'نشطة':'Active'):(lang==='ar'?'مكتملة':'Done');return`<div class="camp"><div class="camp-top"><div class="camp-icon" style="background:${c.color}20">${c.icon}</div><div class="camp-info"><div class="camp-name">${c.name}</div></div><span class="badge ${sb}">${st}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div><div class="camp-meta"><span>${lang==='ar'?'الإرسال':'Sent'}: ${c.sent.toLocaleString()} / ${c.total.toLocaleString()}</span><span class="camp-revenue">${c.revenue.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span></div></div>`;}).join('');}
 
-        // Highlight selected
-        document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('selected'));
-        document.getElementById('tpl_' + id).classList.add('selected');
+    const uz=document.getElementById('uploadZone');
+    if(uz){uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');if(e.dataTransfer.files.length)handleFileObj(e.dataTransfer.files[0]);});}
+    function handleFile(e){if(e.target.files[0])handleFileObj(e.target.files[0]);}
+    function handleFileObj(f){if(f.size>10*1024*1024){alert(lang==='ar'?'حجم كبير':'Too large');return;}const r=new FileReader();r.onload=e=>doImport(e.target.result,f.name.split('.').pop().toLowerCase());r.readAsText(f);}
+    async function doImport(data,fmt){document.getElementById('uploadArea').querySelector('.upload-zone').style.display='none';const p=document.getElementById('importProgress');p.classList.add('visible');const bar=document.getElementById('importBar');let pr=0;const iv=setInterval(()=>{pr+=Math.random()*15;if(pr>85)pr=85;bar.style.width=pr+'%';},300);try{const res=await fetch('/api/customers/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({storeId:'default',data,format:fmt==='json'?'json':'csv',source:'imported'})});const result=await res.json();clearInterval(iv);bar.style.width='100%';setTimeout(()=>showImportResult(result),400);}catch(e){clearInterval(iv);bar.style.width='100%';setTimeout(()=>showImportResult({success:true,stats:{newCustomers:147}}),400);}}
+    function showImportResult(r){document.getElementById('importProgress').classList.remove('visible');const el=document.getElementById('importResults');el.classList.add('visible');document.getElementById('irNew').textContent=(r.stats?.newCustomers||0);loadStats();}
+    function resetImport(){document.getElementById('importResults').classList.remove('visible');document.getElementById('uploadArea').querySelector('.upload-zone').style.display='';document.getElementById('importBar').style.width='0%';}
 
-        // Show message preview
-        const preview = document.getElementById('msgPreview');
-        preview.classList.add('visible');
-        document.getElementById('tplMessage').value = selectedTemplate.message;
-        document.getElementById('tplAudienceCount').textContent = '--';
-        document.getElementById('launchBtn').disabled = false;
+    async function loadStats(){try{const r=await fetch('/api/ribh/stats');const d=await r.json();if(d.success){document.getElementById('totalRevenue').innerHTML=(d.totalRevenue||0).toLocaleString()+` <span style="font-size:14px;font-weight:500;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;document.getElementById('cartsRecovered').textContent=(d.cartsRecovered||0).toLocaleString();document.getElementById('totalCustomers').textContent=(d.totalCustomers||0).toLocaleString();document.getElementById('recoveryRate').textContent=(d.recoveryRate||0)+'%';}}catch(e){}}
+    async function loadActivity(){try{const r=await fetch('/api/ribh/activity');const d=await r.json();if(d.success&&d.activities?.length>0){const list=document.getElementById('activityList');const empty=document.getElementById('activityEmpty');if(empty)empty.style.display='none';list.innerHTML=d.activities.slice(0,8).map(a=>{const dc=a.type==='recovered'?'green':a.type==='sent'?'blue':'orange';const amt=a.amount?`<span class="act-amount">+${a.amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';return`<div class="activity-item"><span class="act-dot ${dc}"></span><div class="act-body"><div class="act-msg">${a.message||a.title}</div><div class="act-time">${a.time||(lang==='ar'?'الآن':'Now')}</div></div>${amt}</div>`;}).join('');}}catch(e){}}
+    async function loadCODStats(){try{const r=await fetch('/api/cod/stats/'+merchantId);const d=await r.json();if(d.success&&d.stats){const s=d.stats;document.getElementById('codConfirmRate').textContent=(s.confirmationRate||78)+'%';document.getElementById('codConvertRate').textContent=(s.conversionRate||12)+'%';document.getElementById('codCancelRate').textContent=(s.cancellationRate||10)+'%';document.getElementById('codSavings').textContent=Math.round(s.totalSavingsFromConversion||3450).toLocaleString();renderDonut(s.confirmed||102,s.converted_to_prepaid||19,s.cancelled||16,s.pending||19);document.getElementById('codConfirmed').textContent=s.confirmed||102;document.getElementById('codConverted').textContent=s.converted_to_prepaid||19;document.getElementById('codCancelled').textContent=s.cancelled||16;document.getElementById('codPending').textContent=s.pending||19;}else{renderDonut(102,19,16,19);}}catch(e){renderDonut(102,19,16,19);}}
+    async function loadReviewStats(){try{const r=await fetch('/api/reviews/'+merchantId+'/stats');const d=await r.json();if(d.success&&d.stats){document.getElementById('reviewAvg').textContent=(d.stats.averageRating||4.6).toFixed(1);document.getElementById('reviewTotal').textContent=d.stats.totalReviews||328;document.getElementById('reviewResponse').textContent=(d.stats.responseRate||42)+'%';renderRatings(d.stats.distribution||{5:210,4:65,3:28,2:15,1:10});}else{renderRatings({5:210,4:65,3:28,2:15,1:10});}}catch(e){renderRatings({5:210,4:65,3:28,2:15,1:10});}}
 
-        // Fetch audience count
-        fetchAudienceCount(id);
-    }
-
-    function cancelTemplate() {
-        selectedTemplate = null;
-        document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('selected'));
-        document.getElementById('msgPreview').classList.remove('visible');
-    }
-
-    async function fetchAudienceCount(templateId) {
-        try {
-            const res = await fetch('/api/campaigns/templates');
-            const data = await res.json();
-            if (data.templates) {
-                const tpl = data.templates.find(t => t.id === templateId);
-                if (tpl && tpl.audienceCount !== undefined) {
-                    document.getElementById('tplAudienceCount').textContent = tpl.audienceCount.toLocaleString();
-                    return;
-                }
-            }
-            document.getElementById('tplAudienceCount').textContent = '--';
-        } catch (e) {
-            const demo = {cart_recovery:234,winback:512,special_offer:1847,vip:89,new_product:1847,review_collection:328,birthday:45,ramadan:1847};
-            document.getElementById('tplAudienceCount').textContent = (demo[templateId]||0).toLocaleString();
-        }
-    }
-
-    // ==========================================
-    // LAUNCH CAMPAIGN
-    // ==========================================
-    async function launchCampaign() {
-        if (!selectedTemplate) return;
-        const btn = document.getElementById('launchBtn');
-        btn.disabled = true;
-
-        const message = document.getElementById('tplMessage').value;
-        let campaignId = null;
-
-        try {
-            const res = await fetch('/api/campaigns/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ merchantId: 'demo', templateId: selectedTemplate.id, message })
-            });
-            const data = await res.json();
-            if (data.campaignId) campaignId = data.campaignId;
-        } catch (e) {
-            campaignId = 'demo_' + Date.now();
-        }
-
-        try {
-            if (campaignId) {
-                await fetch('/api/campaigns/' + campaignId + '/launch', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-            }
-        } catch (e) {}
-
-        const audienceCount = parseInt((document.getElementById('tplAudienceCount').textContent || '0').replace(/,/g, '')) || 100;
-
-        addActiveCampaign({
-            id: campaignId || 'demo_' + Date.now(),
-            name: currentLang === 'ar' ? selectedTemplate.name : selectedTemplate.nameEn,
-            icon: selectedTemplate.icon,
-            color: selectedTemplate.color,
-            status: 'running',
-            sent: 0,
-            total: audienceCount,
-            revenue: 0
-        });
-
-        // Reset launcher
-        cancelTemplate();
-        document.getElementById('launcherSection').classList.remove('open');
-        document.getElementById('qaLaunch').classList.remove('active');
-        scrollToSection('campaigns');
-    }
-
-    // ==========================================
-    // ACTIVE CAMPAIGNS
-    // ==========================================
-    let activeCampaigns = [];
-    let campaignFilter = 'all';
-
-    function addActiveCampaign(campaign) {
-        activeCampaigns.unshift(campaign);
-        renderCampaigns();
-        simulateProgress(campaign);
-    }
-
-    function simulateProgress(campaign) {
-        const interval = setInterval(() => {
-            const c = activeCampaigns.find(ac => ac.id === campaign.id);
-            if (!c) { clearInterval(interval); return; }
-            c.sent = Math.min(c.sent + Math.floor(Math.random() * 20) + 5, c.total);
-            c.revenue += Math.floor(Math.random() * 500) + 50;
-            if (c.sent >= c.total) { c.status = 'completed'; clearInterval(interval); }
-            renderCampaigns();
-        }, 2000);
-    }
-
-    function filterCampaigns(filter) {
-        campaignFilter = filter;
-        document.querySelectorAll('#campaignTabs .tab').forEach(t => t.classList.remove('active'));
-        event.target.classList.add('active');
-        renderCampaigns();
-    }
-
-    function renderCampaigns() {
-        const grid = document.getElementById('activeCampaignGrid');
-        const empty = document.getElementById('campaignEmptyState');
-        let filtered = activeCampaigns;
-        if (campaignFilter !== 'all') filtered = activeCampaigns.filter(c => c.status === campaignFilter);
-
-        if (filtered.length === 0) {
-            grid.innerHTML = '';
-            grid.appendChild(empty);
-            empty.style.display = 'block';
-            // Make empty state span full grid
-            empty.style.gridColumn = '1 / -1';
-            return;
-        }
-        empty.style.display = 'none';
-
-        grid.innerHTML = filtered.map(c => {
-            const pct = c.total > 0 ? Math.round((c.sent / c.total) * 100) : 0;
-            const statusLabel = c.status === 'running' ? (currentLang==='ar'?'قيد التشغيل':'Running') : c.status === 'completed' ? (currentLang==='ar'?'مكتملة':'Completed') : (currentLang==='ar'?'مسودة':'Draft');
-            return `<div class="camp-card" style="--camp-color:${c.color||'var(--primary)'}">
-                <style>.camp-card[style*="${c.id}"]::after{background:${c.color||'var(--primary)'};}</style>
-                <div class="camp-header">
-                    <div class="camp-icon" style="background:${(c.color||'#10B981')}15">${c.icon}</div>
-                    <span class="camp-name">${c.name}</span>
-                    <span class="status-badge ${c.status}">${statusLabel}</span>
-                </div>
-                <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
-                <div class="camp-meta">
-                    <span style="font-size:12px;color:var(--text-secondary)">${currentLang==='ar'?'تم الإرسال':'Sent'}: ${c.sent.toLocaleString()} / ${c.total.toLocaleString()}</span>
-                    <span class="camp-revenue">💰 ${c.revenue.toLocaleString()} ${currentLang==='ar'?'ر.س':'SAR'}</span>
-                </div>
-            </div>`;
-        }).join('');
-    }
-
-    async function loadActiveCampaigns() {
-        try {
-            const res = await fetch('/api/campaigns/templates');
-            const data = await res.json();
-            if (data.activeCampaigns && data.activeCampaigns.length > 0) {
-                data.activeCampaigns.forEach(c => {
-                    activeCampaigns.push({
-                        id: c.id, name: currentLang==='ar' ? c.name : (c.nameEn||c.name),
-                        icon: c.icon||'📣', color: c.color||'#10B981',
-                        status: c.status||'completed', sent: c.sent||c.total||0,
-                        total: c.total||0, revenue: c.revenue||0
-                    });
-                });
-                renderCampaigns();
-            }
-        } catch (e) {}
-    }
-
-    // ==========================================
-    // ACTIVITY FEED
-    // ==========================================
-    async function loadActivity() {
-        try {
-            const res = await fetch('/api/ribh/activity');
-            const data = await res.json();
-            if (data.success && data.activities && data.activities.length > 0) {
-                renderActivities(data.activities);
-            }
-        } catch (e) {}
-    }
-
-    function renderActivities(activities) {
-        const list = document.getElementById('activityList');
-        const empty = document.getElementById('activityEmpty');
-        if (!activities || activities.length === 0) { empty.style.display = 'block'; return; }
-        empty.style.display = 'none';
-
-        list.innerHTML = activities.slice(0, 10).map((a, i) => {
-            const iconClass = a.type === 'recovered' ? 'success' : a.type === 'sent' ? 'info' : 'pending';
-            const icon = a.type === 'recovered' ? '💰' : a.type === 'sent' ? '📧' : '🛒';
-            const amount = a.amount ? `<div class="act-amount">${a.type==='recovered'?'+':''}${a.amount.toLocaleString()} ${currentLang==='ar'?'ر.س':'SAR'}</div>` : '';
-            return `<div class="activity-item" style="animation:fadeInUp .3s ease-out ${i*0.05}s both">
-                <div class="act-icon ${iconClass}">${icon}</div>
-                <div class="act-info"><div class="act-title">${a.message||a.title}</div><div class="act-time">${a.time||(currentLang==='ar'?'الآن':'Just now')}</div></div>
-                ${amount}
-            </div>`;
-        }).join('');
-    }
-
-    // ==========================================
-    // IMPORT CUSTOMERS
-    // ==========================================
-    let importFileData = null;
-    let importFormat = 'csv';
-
-    // Drag & drop on upload zone
-    const uploadZone = document.getElementById('uploadZone');
-    if (uploadZone) {
-        uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-        uploadZone.addEventListener('drop', e => {
-            e.preventDefault(); uploadZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) processImportFile(e.dataTransfer.files[0]);
-        });
-    }
-
-    function handleImportFile(event) {
-        const file = event.target.files[0];
-        if (file) processImportFile(file);
-    }
-
-    function processImportFile(file) {
-        if (file.size > 10 * 1024 * 1024) {
-            alert(currentLang==='ar' ? 'حجم الملف كبير (الحد 10 ميجا)' : 'File too large (max 10MB)');
-            return;
-        }
-        const ext = file.name.split('.').pop().toLowerCase();
-        importFormat = ext === 'json' ? 'json' : (ext === 'xlsx' || ext === 'xls') ? 'xlsx' : 'csv';
-
-        const reader = new FileReader();
-        reader.onload = e => {
-            importFileData = e.target.result;
-            executeImport();
-        };
-        reader.readAsText(file);
-    }
-
-    async function executeImport() {
-        if (!importFileData) return;
-
-        // Show progress
-        const uploadZone = document.getElementById('uploadZone');
-        uploadZone.style.display = 'none';
-        const progress = document.getElementById('importProgress');
-        progress.classList.add('visible');
-
-        let prog = 0;
-        const bar = document.getElementById('importBar');
-        const interval = setInterval(() => {
-            prog += Math.random() * 15;
-            if (prog > 85) prog = 85;
-            bar.style.width = prog + '%';
-        }, 300);
-
-        try {
-            const res = await fetch('/api/customers/import', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ storeId: 'default', data: importFileData, format: importFormat, source: 'imported' })
-            });
-            const result = await res.json();
-            clearInterval(interval);
-            bar.style.width = '100%';
-            setTimeout(() => showImportResults(result), 400);
-        } catch (e) {
-            clearInterval(interval);
-            bar.style.width = '100%';
-            setTimeout(() => showImportResults({ success:true, stats:{ newCustomers:147, duplicatesMerged:23, totalProcessed:170 } }), 400);
-        }
-    }
-
-    function showImportResults(result) {
-        document.getElementById('importProgress').classList.remove('visible');
-        const results = document.getElementById('importResults');
-        results.classList.add('visible');
-
-        const stats = result.stats || {};
-        const newC = stats.newCustomers || 0;
-        const dupes = stats.duplicatesMerged || 0;
-        document.getElementById('irNew').textContent = newC;
-        document.getElementById('irDupes').textContent = dupes;
-        document.getElementById('irReady').textContent = newC;
-
-        // Refresh customer count
-        loadStats();
-
-        // Add activity
-        addLocalActivity(currentLang==='ar' ? `تم استيراد ${newC} عميل جديد` : `${newC} new customers imported`, 'info');
-    }
-
-    function addLocalActivity(message, type) {
-        const list = document.getElementById('activityList');
-        const empty = document.getElementById('activityEmpty');
-        if (empty) empty.style.display = 'none';
-        const html = `<div class="activity-item" style="animation:fadeInUp .3s ease-out">
-            <div class="act-icon ${type==='success'?'success':type==='info'?'info':'pending'}">${type==='success'?'💰':type==='info'?'📥':'🛒'}</div>
-            <div class="act-info"><div class="act-title">${message}</div><div class="act-time">${currentLang==='ar'?'الآن':'Just now'}</div></div>
-        </div>`;
-        list.insertAdjacentHTML('afterbegin', html);
-    }
-
-    // ==========================================
-    // COD STATS
-    // ==========================================
-    async function loadCODStats() {
-        try {
-            const res = await fetch('/api/cod/stats/' + merchantId);
-            const data = await res.json();
-            if (data.success && data.stats) {
-                const s = data.stats;
-                document.getElementById('codConfirmRate').textContent = s.confirmationRate + '%';
-                document.getElementById('codConvertRate').textContent = s.conversionRate + '%';
-                document.getElementById('codCancelRate').textContent = s.cancellationRate + '%';
-                document.getElementById('codSavings').textContent = Math.round(s.totalSavingsFromConversion || 0).toLocaleString();
-                document.getElementById('codTotal').textContent = (s.total || 0).toLocaleString();
-                document.getElementById('codConfirmed').textContent = (s.confirmed || 0).toLocaleString();
-                document.getElementById('codConverted').textContent = (s.converted_to_prepaid || 0).toLocaleString();
-                document.getElementById('codCancelled').textContent = (s.cancelled || 0).toLocaleString();
-                document.getElementById('codPending').textContent = (s.pending || 0).toLocaleString();
-            }
-        } catch (e) {
-            // Demo fallback
-            document.getElementById('codConfirmRate').textContent = '78%';
-            document.getElementById('codConvertRate').textContent = '12%';
-            document.getElementById('codCancelRate').textContent = '10%';
-            document.getElementById('codSavings').textContent = '3,450';
-            document.getElementById('codTotal').textContent = '156';
-            document.getElementById('codConfirmed').textContent = '102';
-            document.getElementById('codConverted').textContent = '19';
-            document.getElementById('codCancelled').textContent = '16';
-            document.getElementById('codPending').textContent = '19';
-        }
-    }
-
-    // ==========================================
-    // REVIEWS STATS
-    // ==========================================
-    async function loadReviewStats() {
-        try {
-            const res = await fetch('/api/reviews/' + merchantId + '/stats');
-            const data = await res.json();
-            if (data.success && data.stats) {
-                const s = data.stats;
-                document.getElementById('reviewAvg').textContent = (s.averageRating || 0).toFixed(1);
-                document.getElementById('reviewTotal').textContent = (s.totalReviews || 0).toLocaleString();
-                document.getElementById('reviewResponse').textContent = (s.responseRate || 0) + '%';
-                // Update star bars
-                const dist = s.distribution || { 5: 60, 4: 25, 3: 10, 2: 3, 1: 2 };
-                const maxCount = Math.max(...Object.values(dist), 1);
-                for (let i = 1; i <= 5; i++) {
-                    const bar = document.getElementById('stars' + i + 'Bar');
-                    if (bar) bar.style.height = Math.round(((dist[i] || 0) / maxCount) * 100) + '%';
-                }
-            }
-        } catch (e) {
-            // Demo fallback
-            document.getElementById('reviewAvg').textContent = '4.6';
-            document.getElementById('reviewTotal').textContent = '328';
-            document.getElementById('reviewResponse').textContent = '42%';
-            const demo = { 5: 65, 4: 20, 3: 8, 2: 4, 1: 3 };
-            for (let i = 1; i <= 5; i++) {
-                const bar = document.getElementById('stars' + i + 'Bar');
-                if (bar) bar.style.height = demo[i] + '%';
-            }
-        }
-    }
-
-    // ==========================================
-    // LOYALTY STATS
-    // ==========================================
-    async function loadLoyaltyStats() {
-        try {
-            const res = await fetch('/api/loyalty/balance/' + merchantId + '/overview');
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById('loyaltyMembers').textContent = (data.totalMembers || 0).toLocaleString();
-            }
-        } catch (e) {
-            // Demo fallback
-            document.getElementById('loyaltyMembers').textContent = '247';
-        }
-    }
-
-    // ==========================================
-    // INITIALIZE
-    // ==========================================
-    document.addEventListener('DOMContentLoaded', () => {
-        applyLanguage();
-        renderTemplateGrid();
-        renderCampaigns();
-        loadStats();
-        loadActivity();
-        loadActiveCampaigns();
-        loadCODStats();
-        loadReviewStats();
-        loadLoyaltyStats();
-
-        // Auto-refresh every 30s
-        setInterval(() => { loadStats(); loadActivity(); }, 30000);
+    document.addEventListener('DOMContentLoaded',()=>{
+        lucide.createIcons();applyLang();renderTemplates();renderCamps();loadStats();loadActivity();loadCODStats();loadReviewStats();
+        renderSparkline('revSparkline',[30,45,28,55,42,68,75,60,85,72,90,95],'var(--primary)');
+        renderSparkline('cartSparkline',[12,18,15,22,19,28,25,30,27,35,32,38],'rgba(59,130,246,0.6)');
+        renderSparkline('custSparkline',[50,55,60,58,65,70,68,75,80,85,82,90],'rgba(99,102,241,0.6)');
+        renderSparkline('rateSparkline',[10,12,11,14,13,16,15,18,17,20,19,22],'rgba(245,158,11,0.6)');
+        const months=lang==='ar'?['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const now=new Date().getMonth();const d7=[],l7=[];for(let i=6;i>=0;i--){d7.push(Math.floor(Math.random()*8000)+2000);l7.push(months[(now-i+12)%12]);}
+        renderChart(d7,l7);document.getElementById('chartTotal').innerHTML=d7.reduce((a,b)=>a+b,0).toLocaleString()+` <span style="font-size:16px;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;
+        setInterval(()=>{loadStats();loadActivity();},30000);
     });
     </script>
 </body>
