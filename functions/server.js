@@ -215,6 +215,36 @@ try {
     outreachAutomation = null;
 }
 
+// Campaign Engine - Template-based campaign system
+let campaignEngine;
+try {
+    campaignEngine = require('./campaignEngine');
+    console.log('✅ Campaign Engine loaded - Template campaigns & revenue tracking enabled!');
+} catch (e) {
+    console.log('⚠️ Campaign Engine not available:', e.message);
+    campaignEngine = null;
+}
+
+// Loyalty Engine - Points, tiers, and referrals
+let loyaltyEngine;
+try {
+    loyaltyEngine = require('./loyaltyEngine');
+    console.log('✅ Loyalty Engine loaded - Points & rewards system enabled!');
+} catch (e) {
+    console.log('⚠️ Loyalty Engine not available:', e.message);
+    loyaltyEngine = null;
+}
+
+// Review Engine - Post-purchase review collection
+let reviewEngine;
+try {
+    reviewEngine = require('./reviewEngine');
+    console.log('✅ Review Engine loaded - Review collection & stats enabled!');
+} catch (e) {
+    console.log('⚠️ Review Engine not available:', e.message);
+    reviewEngine = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -5665,6 +5695,255 @@ app.get('/api/customers/stats/:storeId', async (req, res) => {
     } catch (e) {
         console.error('[CustomerImport] Stats error:', e);
         res.status(500).json({ success: false, error: e.message });
+    }
+});
+
+// ==========================================
+// CAMPAIGN ENGINE API (Template-based campaigns)
+// ==========================================
+
+// Get campaign templates
+app.get('/api/campaigns/templates', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        res.json({ success: true, templates: campaignEngine.getTemplates() });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Create campaign from template
+app.post('/api/campaigns/engine/create', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.createFromTemplate(req.body.merchantId, req.body.templateId, req.body);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Launch a campaign
+app.post('/api/campaigns/engine/:id/launch', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.launchCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get campaign stats
+app.get('/api/campaigns/engine/:id/stats', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const stats = await campaignEngine.getCampaignStats(req.params.id);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get campaign revenue
+app.get('/api/campaigns/revenue', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const revenue = await campaignEngine.getCampaignRevenue(req.query.merchantId);
+        res.json({ success: true, revenue });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Pause a campaign
+app.put('/api/campaigns/engine/:id/pause', async (req, res) => {
+    if (!campaignEngine) return res.status(503).json({ error: 'Campaign Engine not available' });
+    try {
+        const result = await campaignEngine.pauseCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// SALLA SCRAPER API
+// ==========================================
+
+// Start a scrape job
+app.post('/api/scraper/start', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const result = await sallaScraper.startScrapeJob(req.body.urls, req.body.options);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get leads
+app.get('/api/scraper/leads', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const leads = await sallaScraper.getLeads(req.query);
+        res.json({ success: true, leads });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Update lead status
+app.put('/api/scraper/leads/:id', async (req, res) => {
+    if (!sallaScraper) return res.status(503).json({ error: 'Salla Scraper not available' });
+    try {
+        const result = await sallaScraper.updateLeadStatus(req.params.id, req.body.status);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// OUTREACH AUTOMATION API
+// ==========================================
+
+// Create outreach campaign
+app.post('/api/outreach/auto/campaigns', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.createOutreachCampaign(req.body.name, req.body.filters, req.body.sequenceId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Start outreach campaign
+app.post('/api/outreach/auto/campaigns/:id/start', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.startOutreachCampaign(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get outreach campaign stats
+app.get('/api/outreach/auto/campaigns/:id/stats', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const stats = await outreachAutomation.getOutreachStats(req.params.id);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Pause outreach campaign
+app.put('/api/outreach/auto/campaigns/:id/pause', async (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        const result = await outreachAutomation.pauseOutreach(req.params.id);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get outreach templates
+app.get('/api/outreach/auto/templates', (req, res) => {
+    if (!outreachAutomation) return res.status(503).json({ error: 'Outreach Automation not available' });
+    try {
+        res.json({ success: true, templates: outreachAutomation.OUTREACH_TEMPLATES });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// LOYALTY ENGINE API
+// ==========================================
+
+// Initialize loyalty program for merchant
+app.post('/api/loyalty/init', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.initLoyalty(req.body.merchantId, req.body.config);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Earn points
+app.post('/api/loyalty/earn', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.earnPoints(req.body.merchantId, req.body.customerId, req.body.orderValue);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Redeem points
+app.post('/api/loyalty/redeem', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const result = await loyaltyEngine.redeemPoints(req.body.merchantId, req.body.customerId, req.body.points);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get loyalty balance
+app.get('/api/loyalty/balance/:merchantId/:customerId', async (req, res) => {
+    if (!loyaltyEngine) return res.status(503).json({ error: 'Loyalty Engine not available' });
+    try {
+        const balance = await loyaltyEngine.getBalance(req.params.merchantId, req.params.customerId);
+        res.json({ success: true, balance });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// ==========================================
+// REVIEW ENGINE API
+// ==========================================
+
+// Request a review from customer
+app.post('/api/reviews/request', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const result = await reviewEngine.requestReview(req.body.merchantId, req.body.customerId, req.body.orderId);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Submit a review
+app.post('/api/reviews/submit', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const result = await reviewEngine.submitReview(req.body.merchantId, req.body.customerId, req.body.productId, req.body);
+        res.json({ success: true, result });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
+// Get review stats for merchant
+app.get('/api/reviews/:merchantId/stats', async (req, res) => {
+    if (!reviewEngine) return res.status(503).json({ error: 'Review Engine not available' });
+    try {
+        const stats = await reviewEngine.getReviewStats(req.params.merchantId);
+        res.json({ success: true, stats });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
     }
 });
 
