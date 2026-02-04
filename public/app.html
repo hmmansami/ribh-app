@@ -25,7 +25,7 @@
         html[dir="rtl"]{font-family:'IBM Plex Sans Arabic','Inter',system-ui,sans-serif}
         body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.5;width:100%;max-width:100vw}
 
-        /* Sidebar */
+        /* ===== SIDEBAR ===== */
         .sidebar{width:var(--sidebar-w);background:var(--bg);border-left:1px solid var(--border);position:fixed;height:100vh;z-index:100;display:flex;flex-direction:column;padding:16px 12px;overflow-y:auto}
         html[dir="rtl"] .sidebar{right:0;border-left:1px solid var(--border);border-right:none}
         html[dir="ltr"] .sidebar{left:0;border-right:1px solid var(--border);border-left:none}
@@ -42,35 +42,64 @@
         .sb-item svg{width:18px;height:18px;flex-shrink:0;color:var(--text-muted)}
         .sb-item:hover svg{color:var(--text-secondary)}
         .sb-spacer{flex:1}
-        .sb-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg-raised);font-size:12px;color:var(--text-secondary);margin-bottom:8px}
-        .sb-dot{width:7px;height:7px;border-radius:50%;background:var(--success);flex-shrink:0}
+        .sb-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg-raised);font-size:12px;color:var(--text-secondary);margin-bottom:4px}
+        .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+        .sb-dot.green{background:var(--success)}
         .sb-dot.pulse{animation:dotPulse 2s infinite}
+        .sb-dot.red{background:var(--danger)}
         @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
         .sb-lang{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text-muted);transition:all .15s}
         .sb-lang:hover{background:var(--bg-raised);color:var(--text-secondary)}
 
-        /* Main */
+        /* ===== MAIN ===== */
         .main{padding:24px 28px 80px;position:relative;min-height:100vh}
         html[dir="rtl"] .main{margin-right:var(--sidebar-w)}
         html[dir="ltr"] .main{margin-left:var(--sidebar-w)}
-
-        /* Page Header */
         .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
         .page-title{font-size:22px;font-weight:700;letter-spacing:-0.02em}
         .page-subtitle{font-size:13px;color:var(--text-muted);margin-top:2px}
-        .header-actions{display:flex;gap:8px}
+        .section{margin-bottom:32px;scroll-margin-top:20px}
+        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
+        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em}
+        .section-title svg{width:18px;height:18px;color:var(--text-muted)}
 
-        /* Buttons */
+        /* ===== BUTTONS ===== */
         .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;font-family:inherit;border:none;text-decoration:none}
         .btn-primary{background:var(--primary);color:white}
-        .btn-primary:hover{background:var(--primary-hover)}
+        .btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px)}
         .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
         .btn-outline:hover{background:var(--bg-raised);border-color:var(--border-hover);color:var(--text)}
         .btn-ghost{background:transparent;color:var(--text-secondary);padding:8px}
         .btn-ghost:hover{background:var(--bg-raised);color:var(--text)}
         .btn svg{width:16px;height:16px}
+        .btn-big{padding:14px 32px;font-size:16px;font-weight:600;border-radius:var(--radius);gap:10px}
+        .btn-big svg{width:20px;height:20px}
 
-        /* Stat Cards */
+        /* ===== HERO MONEY CARD ===== */
+        .hero{background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(99,102,241,0.04));border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius-lg);padding:32px;text-align:center;margin-bottom:24px;position:relative;overflow:hidden}
+        .hero::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(16,185,129,0.03) 0%,transparent 70%);pointer-events:none}
+        .hero-label{font-size:14px;font-weight:500;color:var(--text-secondary);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+        .hero-label svg{width:20px;height:20px;color:var(--primary)}
+        .hero-total{font-size:48px;font-weight:700;color:var(--primary);letter-spacing:-0.03em;margin-bottom:4px;line-height:1.1}
+        .hero-total .curr{font-size:20px;font-weight:500;color:var(--text-muted)}
+        .hero-sub{font-size:13px;color:var(--text-muted);margin-bottom:24px}
+        .hero-breakdown{display:flex;flex-direction:column;gap:10px;max-width:440px;margin:0 auto 28px;text-align:right}
+        .hero-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.04);transition:all .2s}
+        .hero-row:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.08)}
+        .hero-row-right{display:flex;align-items:center;gap:10px}
+        .hero-row-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+        .hero-row-info{text-align:right}
+        .hero-row-count{font-size:13px;font-weight:600}
+        .hero-row-desc{font-size:11px;color:var(--text-muted)}
+        .hero-row-val{font-size:14px;font-weight:700;color:var(--primary)}
+        .hero-cta{margin-bottom:20px}
+        .hero-checks{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+        .hero-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+        .hero-check svg{width:14px;height:14px;color:var(--primary)}
+        @keyframes heroPulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.3)}50%{box-shadow:0 0 0 8px rgba(16,185,129,0)}}
+        .btn-hero{animation:heroPulse 2.5s ease-in-out infinite}
+
+        /* ===== STATS ROW ===== */
         .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
         .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .2s}
         .stat:hover{border-color:var(--border-hover)}
@@ -89,118 +118,23 @@
         .stat-sparkline{display:flex;align-items:flex-end;gap:2px;height:32px;margin-top:10px}
         .stat-sparkline .bar{flex:1;border-radius:2px;min-height:3px;transition:height .3s}
 
-        /* Section */
-        .section{margin-bottom:32px;scroll-margin-top:20px}
-        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
-        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px;letter-spacing:-0.01em}
-        .section-title svg{width:18px;height:18px;color:var(--text-muted)}
-
-        /* Layouts */
+        /* ===== GRID & CARDS ===== */
         .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
         .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
-        .card-title{font-size:14px;font-weight:600;color:var(--text-secondary)}
 
-        /* Revenue Chart */
-        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px}
-        .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+        /* ===== CHART ===== */
+        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;overflow:hidden}
         .chart-title{font-size:15px;font-weight:600}
         .chart-value{font-size:32px;font-weight:700;letter-spacing:-0.03em;margin-bottom:4px}
-        .chart-sub{font-size:13px;color:var(--text-muted)}
         .chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
-        .chart-bars .c-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:all .2s;min-height:4px}
+        .chart-bars .c-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:all .4s;min-height:4px}
         .chart-bars .c-bar:hover{opacity:0.8}
         .chart-bars .c-bar .c-tip{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;opacity:0;transition:opacity .2s;white-space:nowrap;pointer-events:none;z-index:10}
-        .chart-card{overflow:hidden}
         .chart-bars .c-bar:hover .c-tip{opacity:1}
         .chart-labels{display:flex;gap:6px;margin-top:8px}
         .chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text-muted)}
 
-        /* Campaign Templates */
-        .tpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-        .tpl{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s}
-        .tpl:hover{border-color:var(--border-hover);background:var(--card-hover)}
-        .tpl.selected{border-color:var(--primary);box-shadow:0 0 0 1px var(--primary)}
-        .tpl-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-        .tpl-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-        .tpl-name{font-size:13px;font-weight:600}
-        .tpl-desc{font-size:12px;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
-        .tpl-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-
-        /* Active Campaigns */
-        .camp{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .2s}
-        .camp:hover{border-color:var(--border-hover)}
-        .camp-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-        .camp-icon{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-        .camp-info{flex:1;min-width:0}
-        .camp-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-        .badge-success{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
-        .badge-success::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:dotPulse 1.5s infinite}
-        .badge-warning{background:rgba(245,158,11,0.1);color:var(--warning);border:1px solid rgba(245,158,11,0.2)}
-        .badge-secondary{background:var(--secondary-muted);color:var(--secondary);border:1px solid rgba(99,102,241,0.2)}
-        .progress-bar{height:4px;background:var(--bg-raised);border-radius:4px;overflow:hidden;margin:8px 0 6px}
-        .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--primary),var(--primary-hover));transition:width .4s}
-        .camp-meta{display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
-        .camp-revenue{font-weight:600;color:var(--primary)}
-
-        /* Launch Panel */
-        .launch-panel{display:none;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-top:12px;animation:slideUp .2s ease-out}
-        .launch-panel.open{display:block}
-        @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-        .launch-panel textarea{width:100%;min-height:100px;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:13px;font-family:inherit;line-height:1.6;resize:vertical;transition:border-color .15s}
-        .launch-panel textarea:focus{outline:none;border-color:var(--primary)}
-        .audience-info{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--primary-muted);border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--primary);margin-bottom:12px}
-        .audience-info svg{width:16px;height:16px}
-        .audience-count{font-size:18px;font-weight:700}
-        .launch-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
-
-        /* Upload */
-        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;cursor:pointer;transition:all .2s}
-        .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:var(--primary-muted)}
-        .upload-zone svg{width:40px;height:40px;color:var(--text-muted);margin-bottom:12px}
-        .uz-title{font-size:15px;font-weight:600;margin-bottom:4px}
-        .uz-sub{font-size:12px;color:var(--text-muted);margin-bottom:12px}
-        .uz-formats{display:flex;justify-content:center;gap:6px}
-        .uz-fmt{padding:3px 10px;border-radius:20px;font-size:11px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text-secondary)}
-        .import-progress{display:none;text-align:center;padding:32px}
-        .import-progress.visible{display:block}
-        .ip-bar{height:6px;background:var(--bg-raised);border-radius:6px;overflow:hidden;max-width:300px;margin:16px auto}
-        .ip-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:6px;transition:width .3s;width:0%}
-        .import-results{display:none;text-align:center;padding:32px}
-        .import-results.visible{display:block;animation:slideUp .3s ease-out}
-        .ir-num{font-size:36px;font-weight:700;color:var(--primary)}
-
-        /* Mini Stats */
-        .mini-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-        .mini-stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center}
-        .mini-stat-val{font-size:22px;font-weight:700;margin-bottom:2px}
-        .mini-stat-label{font-size:11px;color:var(--text-muted)}
-
-        /* Donut */
-        .donut-wrap{display:flex;align-items:center;justify-content:center;gap:24px;padding:16px 0}
-        .donut{width:100px;height:100px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
-        .donut-center{font-size:18px;font-weight:700}
-        .donut-legend{display:flex;flex-direction:column;gap:8px}
-        .legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary)}
-        .legend-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
-
-        /* Rating Bars */
-        .rating-bars{display:flex;flex-direction:column;gap:6px;padding:8px 0}
-        .rating-row{display:flex;align-items:center;gap:8px;font-size:12px}
-        .rating-label{width:24px;text-align:center;color:var(--text-muted);font-weight:500}
-        .rating-track{flex:1;height:6px;background:var(--bg-raised);border-radius:6px;overflow:hidden}
-        .rating-fill{height:100%;border-radius:6px;transition:width .5s}
-        .rating-count{width:28px;text-align:end;color:var(--text-muted);font-size:11px}
-
-        /* Tiers */
-        .tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-        .tier{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;transition:all .2s}
-        .tier:hover{border-color:var(--border-hover)}
-        .tier-icon{font-size:28px;margin-bottom:8px}
-        .tier-name{font-size:13px;font-weight:600;margin-bottom:2px}
-        .tier-pts{font-size:11px;color:var(--text-muted)}
-
-        /* Activity */
+        /* ===== ACTIVITY ===== */
         .activity-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
         .activity-item{display:flex;align-items:center;gap:12px;padding:12px 16px;transition:background .15s;border-bottom:1px solid var(--border)}
         .activity-item:last-child{border-bottom:none}
@@ -214,7 +148,79 @@
         .act-time{font-size:11px;color:var(--text-muted)}
         .act-amount{font-size:13px;font-weight:600;color:var(--success);white-space:nowrap}
 
-        /* Mobile Nav */
+        /* ===== FLOW CARDS ===== */
+        .flow-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:all .25s;position:relative}
+        .flow-card:hover{border-color:var(--border-hover)}
+        .flow-card.active{border-right:3px solid var(--primary)}
+        html[dir="ltr"] .flow-card.active{border-left:3px solid var(--primary);border-right:1px solid var(--border)}
+        .flow-top{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+        .flow-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .flow-ico svg{width:18px;height:18px}
+        .flow-info{flex:1;min-width:0}
+        .flow-name{font-size:13px;font-weight:600;margin-bottom:2px}
+        .flow-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+        .flow-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
+        .flow-toggle input{opacity:0;width:0;height:0;position:absolute}
+        .flow-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:24px;transition:all .3s}
+        .flow-toggle .slider::before{content:'';position:absolute;height:18px;width:18px;border-radius:50%;background:white;bottom:3px;right:3px;transition:all .3s}
+        html[dir="ltr"] .flow-toggle .slider::before{left:3px;right:auto}
+        .flow-toggle input:checked+.slider{background:var(--primary)}
+        .flow-toggle input:checked+.slider::before{transform:translateX(-20px)}
+        html[dir="ltr"] .flow-toggle input:checked+.slider::before{transform:translateX(20px)}
+        .flow-stats{display:flex;gap:16px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+        .flow-stat{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-muted)}
+        .flow-stat svg{width:12px;height:12px}
+        .flow-stat strong{color:var(--text-secondary);font-weight:600}
+
+        /* ===== CHAT CAMPAIGN CREATOR ===== */
+        .chat-creator{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px}
+        .chat-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+        .chat-header svg{width:18px;height:18px;color:var(--text-muted)}
+        .chat-header-title{font-size:14px;font-weight:600}
+        .chat-body{padding:16px}
+        .chat-input-wrap{display:flex;gap:8px}
+        .chat-input{flex:1;padding:10px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:inherit;transition:border-color .15s}
+        .chat-input:focus{outline:none;border-color:var(--primary)}
+        .chat-input::placeholder{color:var(--text-muted)}
+        .chat-send{background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center}
+        .chat-send:hover{background:var(--primary-hover)}
+        .chat-send svg{width:16px;height:16px}
+        .chat-result{display:none;margin-top:16px;animation:slideUp .3s ease-out}
+        .chat-result.show{display:block}
+        .chat-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;font-size:13px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap}
+        .chat-meta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+        .chat-meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary);padding:6px 12px;background:var(--bg);border-radius:20px;border:1px solid var(--border)}
+        .chat-meta-item svg{width:14px;height:14px;color:var(--primary)}
+        .chat-actions{display:flex;gap:8px;justify-content:flex-end}
+
+        /* ===== SETTINGS ===== */
+        .settings-grid{display:flex;flex-direction:column;gap:16px}
+        .settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px}
+        .settings-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+        .settings-card-ico{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .settings-card-ico svg{width:18px;height:18px}
+        .settings-card-title{font-size:14px;font-weight:600}
+        .settings-card-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
+        .connect-status{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500}
+        .connect-status.connected{background:rgba(34,197,94,0.08);color:var(--success);border:1px solid rgba(34,197,94,0.15)}
+        .connect-status.disconnected{background:rgba(239,68,68,0.08);color:var(--danger);border:1px solid rgba(239,68,68,0.15)}
+        .connect-status svg{width:16px;height:16px}
+        .wa-info{padding:12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.7;margin-top:12px}
+        .wa-info strong{color:var(--text-secondary);font-weight:600}
+        .import-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+        .import-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .2s;text-decoration:none;color:var(--text-secondary)}
+        .import-btn:hover{border-color:var(--primary);background:var(--primary-muted);color:var(--text)}
+        .import-btn-logo{font-size:24px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700}
+        .import-btn-name{font-size:11px;font-weight:500}
+        .upload-mini{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-top:10px}
+        .upload-mini:hover{border-color:var(--primary);background:var(--primary-muted)}
+        .upload-mini svg{width:24px;height:24px;color:var(--text-muted);margin-bottom:6px}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+        .badge-success{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
+        .badge-success::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:dotPulse 1.5s infinite}
+
+        /* ===== MOBILE NAV ===== */
         .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
         .mob-nav-inner{display:flex;justify-content:space-around}
         .mn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;color:var(--text-muted);cursor:pointer;transition:color .15s;text-decoration:none;font-size:10px;font-weight:500}
@@ -222,17 +228,25 @@
         .mn svg{width:20px;height:20px}
         .mn.active svg{color:var(--primary)}
 
-        /* Empty */
-        .empty{text-align:center;padding:32px 16px;color:var(--text-muted)}
-        .empty svg{width:40px;height:40px;margin-bottom:12px;opacity:0.4}
-        .empty-title{font-size:14px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
-        .empty-desc{font-size:12px}
+        /* ===== ANIMATIONS ===== */
+        .fade-in{opacity:0;animation:fadeIn .4s ease-out forwards}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-        /* Responsive */
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar{width:5px}
+        ::-webkit-scrollbar-track{background:transparent}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
+
+        /* ===== RESPONSIVE ===== */
         @media(max-width:1024px){
-            .stats-row,.tiers{grid-template-columns:repeat(2,1fr)}
-            .grid-2,.tpl-grid{grid-template-columns:1fr}
-            .chart-bars{height:80px}
+            .stats-row{grid-template-columns:repeat(2,1fr)}
+            .flow-grid{grid-template-columns:1fr}
+            .grid-2{grid-template-columns:1fr}
+            .import-grid{grid-template-columns:repeat(3,1fr)}
         }
         @media(max-width:768px){
             .sidebar{display:none}
@@ -243,275 +257,638 @@
             .stat{padding:14px}
             .stat-val{font-size:20px}
             .stat-sparkline{height:24px}
-            .tpl-grid{grid-template-columns:1fr}
-            .mini-stats{grid-template-columns:repeat(2,1fr);gap:8px}
-            .tiers{grid-template-columns:repeat(2,1fr);gap:8px}
+            .hero{padding:24px 16px}
+            .hero-total{font-size:36px}
+            .hero-breakdown{max-width:100%}
+            .hero-checks{gap:12px}
+            .flow-grid{grid-template-columns:1fr}
+            .grid-2{grid-template-columns:1fr}
             .chart-bars{height:60px}
             .chart-value{font-size:24px}
-            .donut-wrap{flex-direction:column;gap:16px}
             .mob-nav{display:block}
-            .grid-2{grid-template-columns:1fr}
-            .upgrade-banner{flex-direction:column;text-align:center}
+            .import-grid{grid-template-columns:repeat(2,1fr)}
         }
-
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
-
-        .fade-in{animation:fadeIn .3s ease-out forwards}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}
-        @keyframes spin{to{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sb-logo">
             <div class="sb-logo-mark"><i data-lucide="zap" style="width:18px;height:18px;color:white"></i></div>
             <span class="sb-logo-text" data-ar="رِبح" data-en="RIBH">رِبح</span>
         </div>
         <div class="sb-section">
-            <div class="sb-section-label" data-ar="الرئيسية" data-en="GENERAL">الرئيسية</div>
-            <a class="sb-item active" data-section="overview" onclick="nav('overview')"><i data-lucide="layout-dashboard"></i><span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span></a>
-            <a class="sb-item" data-section="campaigns" onclick="nav('campaigns')"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></a>
-            <a class="sb-item" data-section="customers" onclick="nav('customers')"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></a>
-        </div>
-        <div class="sb-section">
-            <div class="sb-section-label" data-ar="الأدوات" data-en="TOOLS">الأدوات</div>
-            <a class="sb-item" data-section="cod" onclick="nav('cod')"><i data-lucide="package-check"></i><span data-ar="تأكيد الطلبات" data-en="COD Confirm">تأكيد الطلبات</span></a>
-            <a class="sb-item" data-section="reviews" onclick="nav('reviews')"><i data-lucide="star"></i><span data-ar="التقييمات" data-en="Reviews">التقييمات</span></a>
-            <a class="sb-item" data-section="loyalty" onclick="nav('loyalty')"><i data-lucide="trophy"></i><span data-ar="الولاء" data-en="Loyalty">الولاء</span></a>
-        </div>
-        <div class="sb-section">
-            <div class="sb-section-label" data-ar="الدعم" data-en="SUPPORT">الدعم</div>
-            <a class="sb-item" onclick="window.location.href='/settings.html'"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a>
+            <a class="sb-item active" data-section="dashboard" onclick="nav('dashboard')"><i data-lucide="layout-dashboard"></i><span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span></a>
+            <a class="sb-item" data-section="flows" onclick="nav('flows')"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></a>
+            <a class="sb-item" data-section="settings" onclick="nav('settings')"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a>
         </div>
         <div class="sb-spacer"></div>
-        <div class="sb-status"><span class="sb-dot pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
+        <div class="sb-status" id="sbWhatsapp"><span class="sb-dot green pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
+        <div class="sb-status" id="sbStore"><span class="sb-dot green pulse"></span><span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span></div>
         <div class="sb-lang" onclick="toggleLang()"><i data-lucide="globe" style="width:14px;height:14px"></i><span id="langLabel">English</span></div>
     </aside>
 
-    <!-- Main -->
+    <!-- ===== MAIN CONTENT ===== -->
     <main class="main">
-        <div class="page-header fade-in">
-            <div>
-                <div class="page-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</div>
-                <div class="page-subtitle" data-ar="نظرة عامة على أداء متجرك" data-en="Overview of your store performance">نظرة عامة على أداء متجرك</div>
-            </div>
-            <div class="header-actions">
-                <button class="btn btn-outline" onclick="nav('customers')"><i data-lucide="upload"></i><span data-ar="استيراد" data-en="Import">استيراد</span></button>
-                <button class="btn btn-primary" onclick="nav('campaigns')"><i data-lucide="plus"></i><span data-ar="حملة جديدة" data-en="New Campaign">حملة جديدة</span></button>
-            </div>
-        </div>
 
-        <!-- Stats -->
-        <div class="stats-row fade-in d1" id="overview">
-            <div class="stat">
-                <div class="stat-top"><span class="stat-label" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</span><div class="stat-icon green"><i data-lucide="banknote"></i></div></div>
-                <div class="stat-val" id="totalRevenue">0 <span style="font-size:14px;font-weight:500;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                <div class="stat-trend up" id="revenueTrend"><i data-lucide="trending-up"></i> +0%</div>
-                <div class="stat-sparkline" id="revSparkline"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-top"><span class="stat-label" data-ar="السلات المسترجعة" data-en="Carts Recovered">السلات المسترجعة</span><div class="stat-icon blue"><i data-lucide="shopping-cart"></i></div></div>
-                <div class="stat-val" id="cartsRecovered">0</div>
-                <div class="stat-trend up"><i data-lucide="trending-up"></i> +8%</div>
-                <div class="stat-sparkline" id="cartSparkline"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-top"><span class="stat-label" data-ar="العملاء" data-en="Customers">العملاء</span><div class="stat-icon purple"><i data-lucide="users"></i></div></div>
-                <div class="stat-val" id="totalCustomers">0</div>
-                <div class="stat-trend up"><i data-lucide="trending-up"></i> +15%</div>
-                <div class="stat-sparkline" id="custSparkline"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-top"><span class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</span><div class="stat-icon orange"><i data-lucide="percent"></i></div></div>
-                <div class="stat-val" id="recoveryRate">0%</div>
-                <div class="stat-trend up"><i data-lucide="trending-up"></i> +5%</div>
-                <div class="stat-sparkline" id="rateSparkline"></div>
-            </div>
-        </div>
-
-        <!-- Chart + Activity -->
-        <div class="grid-2 fade-in d2" style="margin-bottom:24px">
-            <div class="chart-card">
-                <div class="chart-header"><div>
-                    <div class="chart-title" data-ar="الإيرادات الشهرية" data-en="Monthly Revenue">الإيرادات الشهرية</div>
-                    <div class="chart-value" id="chartTotal">0 <span style="font-size:16px;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                    <div class="chart-sub"><span class="stat-trend up" style="font-size:11px"><i data-lucide="trending-up"></i> +12%</span></div>
-                </div></div>
-                <div class="chart-bars" id="revenueChart"></div>
-                <div class="chart-labels" id="revenueLabels"></div>
-            </div>
-            <div class="activity-card">
-                <div style="padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
-                    <span style="font-size:14px;font-weight:600" data-ar="آخر النشاطات" data-en="Recent Activity">آخر النشاطات</span>
-                    <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
-                </div>
-                <div id="activityList">
-                    <div class="empty" id="activityEmpty"><i data-lucide="activity"></i><div class="empty-title" data-ar="النظام جاهز" data-en="System Ready">النظام جاهز</div><div class="empty-desc" data-ar="النشاطات ستظهر هنا" data-en="Activities will appear here">النشاطات ستظهر هنا</div></div>
+        <!-- ===== DASHBOARD SECTION ===== -->
+        <div id="dashboard">
+            <div class="page-header fade-in">
+                <div>
+                    <div class="page-title" data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</div>
+                    <div class="page-subtitle" data-ar="أموالك في مكان واحد" data-en="Your money in one place">أموالك في مكان واحد</div>
                 </div>
             </div>
+
+            <!-- HERO: Money Waiting -->
+            <div class="hero fade-in d1" id="heroCard">
+                <div class="hero-label"><i data-lucide="coins"></i><span data-ar="أموال تنتظرك" data-en="Money waiting for you">أموال تنتظرك</span></div>
+                <div class="hero-total"><span id="heroTotal">0</span> <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                <div class="hero-sub" data-ar="مبلغ تقديري بناءً على بيانات متجرك" data-en="Estimated based on your store data">مبلغ تقديري بناءً على بيانات متجرك</div>
+
+                <div class="hero-breakdown">
+                    <div class="hero-row">
+                        <div class="hero-row-right">
+                            <div class="hero-row-icon" style="background:rgba(239,68,68,0.12)">🛒</div>
+                            <div class="hero-row-info">
+                                <div class="hero-row-count"><span id="heroCarts">0</span> <span data-ar="سلة متروكة" data-en="abandoned carts">سلة متروكة</span></div>
+                                <div class="hero-row-desc" data-ar="عملاء ما كملوا الشراء" data-en="Customers who didn't finish buying">عملاء ما كملوا الشراء</div>
+                            </div>
+                        </div>
+                        <div class="hero-row-val"><span id="heroCartVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    </div>
+                    <div class="hero-row">
+                        <div class="hero-row-right">
+                            <div class="hero-row-icon" style="background:rgba(245,158,11,0.12)">😴</div>
+                            <div class="hero-row-info">
+                                <div class="hero-row-count"><span id="heroDormant">0</span> <span data-ar="عميل خامل" data-en="dormant customers">عميل خامل</span></div>
+                                <div class="hero-row-desc" data-ar="ما اشتروا من أكثر من 30 يوم" data-en="Haven't bought in 30+ days">ما اشتروا من أكثر من 30 يوم</div>
+                            </div>
+                        </div>
+                        <div class="hero-row-val"><span id="heroDormantVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    </div>
+                    <div class="hero-row">
+                        <div class="hero-row-right">
+                            <div class="hero-row-icon" style="background:rgba(99,102,241,0.12)">🛍️</div>
+                            <div class="hero-row-info">
+                                <div class="hero-row-count"><span id="heroUpsell">0</span> <span data-ar="فرصة بيع إضافي" data-en="upsell opportunities">فرصة بيع إضافي</span></div>
+                                <div class="hero-row-desc" data-ar="عملاء اشتروا مؤخراً" data-en="Customers who recently bought">عملاء اشتروا مؤخراً</div>
+                            </div>
+                        </div>
+                        <div class="hero-row-val"><span id="heroUpsellVal">0</span> <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    </div>
+                </div>
+
+                <div class="hero-cta">
+                    <button class="btn btn-primary btn-big btn-hero" onclick="activateAll()">
+                        <i data-lucide="rocket"></i>
+                        <span data-ar="استرجع أموالك" data-en="Recover your money">استرجع أموالك</span>
+                    </button>
+                </div>
+
+                <div class="hero-checks">
+                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="الرسائل جاهزة" data-en="Messages ready">الرسائل جاهزة</span></div>
+                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="التوقيت محسّن" data-en="Timing optimized">التوقيت محسّن</span></div>
+                    <div class="hero-check"><i data-lucide="check-circle-2"></i><span data-ar="الحماية مفعلة" data-en="Protection active">الحماية مفعلة</span></div>
+                </div>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row fade-in d2">
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</span><div class="stat-icon green"><i data-lucide="banknote"></i></div></div>
+                    <div class="stat-val"><span id="totalRevenue">0</span> <span style="font-size:14px;font-weight:500;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    <div class="stat-sparkline" id="revSparkline"></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</span><div class="stat-icon blue"><i data-lucide="send"></i></div></div>
+                    <div class="stat-val" id="messagesSent">0</div>
+                    <div class="stat-sparkline" id="msgSparkline"></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</span><div class="stat-icon orange"><i data-lucide="percent"></i></div></div>
+                    <div class="stat-val" id="recoveryRate">0%</div>
+                    <div class="stat-sparkline" id="rateSparkline"></div>
+                </div>
+                <div class="stat">
+                    <div class="stat-top"><span class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</span><div class="stat-icon purple"><i data-lucide="workflow"></i></div></div>
+                    <div class="stat-val" id="activeFlowCount">0</div>
+                    <div class="stat-sparkline" id="flowSparkline"></div>
+                </div>
+            </div>
+
+            <!-- Chart + Activity -->
+            <div class="grid-2 fade-in d3" style="margin-bottom:24px">
+                <div class="chart-card">
+                    <div style="margin-bottom:20px">
+                        <div class="chart-title" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div>
+                        <div class="chart-value" id="chartTotal">0 <span style="font-size:16px;color:var(--text-muted)" data-ar="ر.س" data-en="SAR">ر.س</span></div>
+                    </div>
+                    <div class="chart-bars" id="revenueChart"></div>
+                    <div class="chart-labels" id="revenueLabels"></div>
+                </div>
+                <div class="activity-card">
+                    <div style="padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+                        <span style="font-size:14px;font-weight:600" data-ar="آخر النشاطات" data-en="Recent Activity">آخر النشاطات</span>
+                        <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
+                    </div>
+                    <div id="activityList">
+                        <div class="empty" id="activityEmpty" style="padding:32px 16px;text-align:center;color:var(--text-muted)">
+                            <i data-lucide="activity" style="width:32px;height:32px;margin-bottom:8px;opacity:0.4"></i>
+                            <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:4px" data-ar="النظام جاهز" data-en="System Ready">النظام جاهز</div>
+                            <div style="font-size:12px" data-ar="فعّل التدفقات وستظهر النشاطات هنا" data-en="Activate flows and activities will appear here">فعّل التدفقات وستظهر النشاطات هنا</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Campaigns -->
-        <div class="section fade-in d3" id="campaigns">
+        <!-- ===== FLOWS SECTION ===== -->
+        <div class="section fade-in d4" id="flows">
             <div class="section-head">
-                <div class="section-title"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></div>
-                <div style="display:flex;gap:4px" id="campTabs">
-                    <button class="btn btn-ghost tab-btn active" onclick="filterCamps('all',this)" data-ar="الكل" data-en="All">الكل</button>
-                    <button class="btn btn-ghost tab-btn" onclick="filterCamps('running',this)" data-ar="نشطة" data-en="Active">نشطة</button>
-                    <button class="btn btn-ghost tab-btn" onclick="filterCamps('completed',this)" data-ar="مكتملة" data-en="Done">مكتملة</button>
+                <div class="section-title"><i data-lucide="workflow"></i><span data-ar="التدفقات التلقائية" data-en="Automated Flows">التدفقات التلقائية</span></div>
+                <div class="badge badge-success" id="flowsBadge" style="font-size:10px"><span data-ar="0 نشط" data-en="0 active" id="flowsBadgeText">0 نشط</span></div>
+            </div>
+
+            <div class="flow-grid" id="flowGrid"></div>
+
+            <!-- Chat Campaign Creator -->
+            <div class="chat-creator">
+                <div class="chat-header">
+                    <i data-lucide="message-square-plus"></i>
+                    <div>
+                        <div class="chat-header-title" data-ar="حملة مخصصة" data-en="Custom Campaign">حملة مخصصة</div>
+                    </div>
                 </div>
-            </div>
-            <div class="grid-2" id="activeCampGrid" style="margin-bottom:16px">
-                <div class="empty" id="campEmpty" style="grid-column:1/-1"><i data-lucide="rocket"></i><div class="empty-title" data-ar="لا توجد حملات نشطة" data-en="No active campaigns">لا توجد حملات نشطة</div><div class="empty-desc" data-ar="اختر قالب أدناه لإطلاق حملتك الأولى" data-en="Pick a template below">اختر قالب أدناه لإطلاق حملتك الأولى</div></div>
-            </div>
-            <div class="section-head" style="margin-top:24px"><div class="section-title" style="font-size:14px"><i data-lucide="layout-template"></i><span data-ar="قوالب الحملات" data-en="Campaign Templates">قوالب الحملات</span></div></div>
-            <div class="tpl-grid" id="tplGrid"></div>
-            <div class="launch-panel" id="launchPanel">
-                <div class="audience-info"><i data-lucide="users"></i><span data-ar="الجمهور:" data-en="Audience:">الجمهور:</span><span class="audience-count" id="tplAudience">0</span><span data-ar="عميل" data-en="customers">عميل</span></div>
-                <textarea id="tplMessage" placeholder="..."></textarea>
-                <div class="launch-actions">
-                    <button class="btn btn-outline" onclick="closeLaunch()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
-                    <button class="btn btn-primary" onclick="launchCampaign()"><i data-lucide="send"></i><span data-ar="إطلاق" data-en="Launch">إطلاق</span></button>
+                <div class="chat-body">
+                    <div class="chat-input-wrap">
+                        <input type="text" class="chat-input" id="chatInput" data-placeholder-ar="اكتب هدف حملتك... مثال: عرض رمضان، تخفيضات الجمعة البيضاء" data-placeholder-en="Type your campaign goal... e.g. Ramadan offer, Black Friday sale" placeholder="اكتب هدف حملتك... مثال: عرض رمضان، تخفيضات الجمعة البيضاء">
+                        <button class="chat-send" onclick="generateCampaign()"><i data-lucide="sparkles"></i></button>
+                    </div>
+                    <div class="chat-result" id="chatResult">
+                        <div class="chat-preview" id="chatPreview"></div>
+                        <div class="chat-meta" id="chatMeta"></div>
+                        <div class="chat-actions">
+                            <button class="btn btn-outline" onclick="closeChatResult()" data-ar="إلغاء" data-en="Cancel">إلغاء</button>
+                            <button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span data-ar="أطلق الحملة" data-en="Launch">أطلق الحملة</span></button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Customers -->
-        <div class="section" id="customers">
-            <div class="section-head"><div class="section-title"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></div></div>
-            <div id="uploadArea">
-                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-                    <i data-lucide="upload-cloud"></i>
-                    <div class="uz-title" data-ar="استيراد بيانات العملاء" data-en="Import Customer Data">استيراد بيانات العملاء</div>
-                    <div class="uz-sub" data-ar="اسحب الملف هنا أو اضغط للتحميل" data-en="Drag here or click to upload">اسحب الملف هنا أو اضغط للتحميل</div>
-                    <div class="uz-formats"><span class="uz-fmt">CSV</span><span class="uz-fmt">Excel</span><span class="uz-fmt">JSON</span></div>
+        <!-- ===== SETTINGS SECTION ===== -->
+        <div class="section fade-in d5" id="settings">
+            <div class="section-head">
+                <div class="section-title"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></div>
+            </div>
+
+            <div class="settings-grid">
+                <!-- WhatsApp Connection -->
+                <div class="settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-card-ico" style="background:rgba(34,197,94,0.12);color:var(--success)"><i data-lucide="message-circle"></i></div>
+                        <div>
+                            <div class="settings-card-title" data-ar="اتصال واتساب" data-en="WhatsApp Connection">اتصال واتساب</div>
+                            <div class="settings-card-desc" data-ar="ربط رقم الواتساب لإرسال الرسائل" data-en="Connect your WhatsApp to send messages">ربط رقم الواتساب لإرسال الرسائل</div>
+                        </div>
+                    </div>
+                    <div class="connect-status connected" id="waStatus">
+                        <i data-lucide="check-circle-2"></i>
+                        <span data-ar="متصل - جاهز للإرسال" data-en="Connected - Ready to send">متصل - جاهز للإرسال</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:12px">
+                        <button class="btn btn-outline" onclick="window.location.href='/whatsapp.html'" data-ar="إعادة ربط QR" data-en="Reconnect QR">إعادة ربط QR</button>
+                        <button class="btn btn-outline" data-ar="ربط API رسمي" data-en="Connect Official API">ربط API رسمي</button>
+                    </div>
+                    <div class="wa-info">
+                        <span data-ar="نستخدم واتساب غير رسمي. نحميك بالتالي:" data-en="We use unofficial WhatsApp. We protect you by:">نستخدم واتساب غير رسمي. نحميك بالتالي:</span><br>
+                        <span data-ar="✅ إرسال تدريجي مو دفعة وحدة" data-en="✅ Gradual sending, not all at once">✅ إرسال تدريجي مو دفعة وحدة</span><br>
+                        <span data-ar="✅ فترات راحة بين الرسائل" data-en="✅ Pauses between messages">✅ فترات راحة بين الرسائل</span><br>
+                        <span data-ar="✅ رقمك يسخن تدريجياً" data-en="✅ Your number warms up gradually">✅ رقمك يسخن تدريجياً</span><br>
+                        <span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span>
+                    </div>
                 </div>
-                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="handleFile(event)" style="display:none">
-            </div>
-            <div class="import-progress" id="importProgress"><i data-lucide="loader-2" style="width:32px;height:32px;color:var(--primary);animation:spin 1s linear infinite"></i><div style="margin-top:12px;font-size:14px" data-ar="جاري الاستيراد..." data-en="Importing...">جاري الاستيراد...</div><div class="ip-bar"><div class="ip-fill" id="importBar"></div></div></div>
-            <div class="import-results" id="importResults"><div style="font-size:14px;color:var(--text-secondary);margin-bottom:8px" data-ar="تم الاستيراد بنجاح" data-en="Import successful">تم الاستيراد بنجاح</div><div class="ir-num" id="irNew">0</div><div style="font-size:12px;color:var(--text-muted)" data-ar="عميل جديد" data-en="new customers">عميل جديد</div><button class="btn btn-outline" style="margin-top:16px" onclick="resetImport()" data-ar="استيراد آخر" data-en="Import more">استيراد آخر</button></div>
-        </div>
 
-        <!-- COD -->
-        <div class="section" id="cod">
-            <div class="section-head"><div class="section-title"><i data-lucide="package-check"></i><span data-ar="تأكيد الدفع عند الاستلام" data-en="COD Confirmation">تأكيد الدفع عند الاستلام</span></div></div>
-            <div class="grid-2">
-                <div><div class="mini-stats">
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--success)" id="codConfirmRate">78%</div><div class="mini-stat-label" data-ar="معدل التأكيد" data-en="Confirm Rate">معدل التأكيد</div></div>
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--secondary)" id="codConvertRate">12%</div><div class="mini-stat-label" data-ar="تحويل للدفع" data-en="Prepaid">تحويل للدفع</div></div>
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--danger)" id="codCancelRate">10%</div><div class="mini-stat-label" data-ar="إلغاء" data-en="Cancelled">إلغاء</div></div>
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--primary)" id="codSavings">3,450</div><div class="mini-stat-label" data-ar="توفير (ر.س)" data-en="Saved (SAR)">توفير (ر.س)</div></div>
-                </div></div>
-                <div class="card"><div class="donut-wrap"><div class="donut" id="codDonut"></div><div class="donut-legend">
-                    <div class="legend-item"><span class="legend-dot" style="background:var(--success)"></span><span data-ar="مؤكد" data-en="Confirmed">مؤكد</span> <strong id="codConfirmed">102</strong></div>
-                    <div class="legend-item"><span class="legend-dot" style="background:var(--secondary)"></span><span data-ar="محول" data-en="Converted">محول</span> <strong id="codConverted">19</strong></div>
-                    <div class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span><span data-ar="ملغي" data-en="Cancelled">ملغي</span> <strong id="codCancelled">16</strong></div>
-                    <div class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span><span data-ar="بانتظار" data-en="Pending">بانتظار</span> <strong id="codPending">19</strong></div>
-                </div></div></div>
-            </div>
-        </div>
-
-        <!-- Reviews -->
-        <div class="section" id="reviews">
-            <div class="section-head"><div class="section-title"><i data-lucide="star"></i><span data-ar="التقييمات" data-en="Reviews">التقييمات</span></div></div>
-            <div class="grid-2">
-                <div class="mini-stats" style="grid-template-columns:repeat(3,1fr)">
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--warning)" id="reviewAvg">4.6</div><div class="mini-stat-label" data-ar="متوسط التقييم" data-en="Avg Rating">متوسط التقييم</div></div>
-                    <div class="mini-stat"><div class="mini-stat-val" id="reviewTotal">328</div><div class="mini-stat-label" data-ar="إجمالي" data-en="Total">إجمالي</div></div>
-                    <div class="mini-stat"><div class="mini-stat-val" style="color:var(--primary)" id="reviewResponse">42%</div><div class="mini-stat-label" data-ar="استجابة" data-en="Response">استجابة</div></div>
+                <!-- Store Connection -->
+                <div class="settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-card-ico" style="background:rgba(59,130,246,0.12);color:#3B82F6"><i data-lucide="store"></i></div>
+                        <div>
+                            <div class="settings-card-title" data-ar="ربط المتجر" data-en="Store Connection">ربط المتجر</div>
+                            <div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات تلقائياً" data-en="Connect your store to pull data automatically">اربط متجرك لسحب البيانات تلقائياً</div>
+                        </div>
+                    </div>
+                    <div class="connect-status connected" id="storeStatus">
+                        <i data-lucide="check-circle-2"></i>
+                        <span data-ar="سلة متصلة" data-en="Salla connected">سلة متصلة</span>
+                    </div>
                 </div>
-                <div class="card"><div class="card-title" style="margin-bottom:12px" data-ar="توزيع التقييمات" data-en="Rating Distribution">توزيع التقييمات</div><div class="rating-bars" id="ratingBars"></div></div>
-            </div>
-        </div>
 
-        <!-- Loyalty -->
-        <div class="section" id="loyalty">
-            <div class="section-head"><div class="section-title"><i data-lucide="trophy"></i><span data-ar="برنامج الولاء" data-en="Loyalty Program">برنامج الولاء</span></div></div>
-            <div class="tiers">
-                <div class="tier" style="border-color:rgba(205,127,50,0.3)"><div class="tier-icon">🥉</div><div class="tier-name" style="color:#CD7F32" data-ar="برونزي" data-en="Bronze">برونزي</div><div class="tier-pts" data-ar="0 نقطة | ×1" data-en="0 pts | ×1">0 نقطة | ×1</div></div>
-                <div class="tier" style="border-color:rgba(192,192,192,0.3)"><div class="tier-icon">🥈</div><div class="tier-name" style="color:#C0C0C0" data-ar="فضي" data-en="Silver">فضي</div><div class="tier-pts" data-ar="500 نقطة | ×1.5" data-en="500 pts | ×1.5">500 نقطة | ×1.5</div></div>
-                <div class="tier" style="border-color:rgba(255,215,0,0.3)"><div class="tier-icon">🥇</div><div class="tier-name" style="color:#FFD700" data-ar="ذهبي" data-en="Gold">ذهبي</div><div class="tier-pts" data-ar="2000 نقطة | ×2" data-en="2000 pts | ×2">2000 نقطة | ×2</div></div>
-                <div class="tier" style="border-color:rgba(99,102,241,0.3)"><div class="tier-icon">💎</div><div class="tier-name" style="color:var(--secondary)" data-ar="بلاتيني" data-en="Platinum">بلاتيني</div><div class="tier-pts" data-ar="5000 نقطة | ×3" data-en="5000 pts | ×3">5000 نقطة | ×3</div></div>
-            </div>
-            <div class="card" style="margin-top:12px;text-align:center;padding:24px">
-                <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px" data-ar="الأعضاء النشطين" data-en="Active Members">الأعضاء النشطين</div>
-                <div style="font-size:32px;font-weight:700;color:var(--primary)" id="loyaltyMembers">247</div>
+                <!-- Customer Import -->
+                <div class="settings-card">
+                    <div class="settings-card-head">
+                        <div class="settings-card-ico" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i data-lucide="users"></i></div>
+                        <div>
+                            <div class="settings-card-title" data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</div>
+                            <div class="settings-card-desc" data-ar="استورد عملاءك من أي مصدر" data-en="Import your customers from any source">استورد عملاءك من أي مصدر</div>
+                        </div>
+                    </div>
+                    <div class="import-grid">
+                        <div class="import-btn" onclick="connectImport('salla')">
+                            <div class="import-btn-logo" style="color:#6C63FF">سلة</div>
+                            <div class="import-btn-name">Salla</div>
+                        </div>
+                        <div class="import-btn" onclick="connectImport('foodics')">
+                            <div class="import-btn-logo" style="color:#FF6B35">F</div>
+                            <div class="import-btn-name">Foodics</div>
+                        </div>
+                        <div class="import-btn" onclick="connectImport('zid')">
+                            <div class="import-btn-logo" style="color:#5B5FC7">زد</div>
+                            <div class="import-btn-name">Zid</div>
+                        </div>
+                        <div class="import-btn" onclick="connectImport('marn')">
+                            <div class="import-btn-logo" style="color:#00C9A7">مرن</div>
+                            <div class="import-btn-name">Marn</div>
+                        </div>
+                        <div class="import-btn" onclick="connectImport('shopify')">
+                            <div class="import-btn-logo" style="color:#96BF48">S</div>
+                            <div class="import-btn-name">Shopify</div>
+                        </div>
+                        <div class="import-btn" onclick="connectImport('loyverse')">
+                            <div class="import-btn-logo" style="color:#8E44AD">L</div>
+                            <div class="import-btn-name">Loyverse</div>
+                        </div>
+                    </div>
+                    <div class="upload-mini" onclick="document.getElementById('fileInput').click()">
+                        <i data-lucide="upload-cloud"></i>
+                        <div style="font-size:12px;color:var(--text-secondary)" data-ar="أو ارفع ملف CSV / Excel" data-en="Or upload CSV / Excel file">أو ارفع ملف CSV / Excel</div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="handleFile(event)" style="display:none">
+                </div>
             </div>
         </div>
     </main>
 
-    <!-- Mobile Nav -->
+    <!-- ===== MOBILE NAV ===== -->
     <nav class="mob-nav"><div class="mob-nav-inner">
-        <a class="mn active" data-section="overview" onclick="nav('overview')"><i data-lucide="layout-dashboard"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
-        <a class="mn" data-section="campaigns" onclick="nav('campaigns')"><i data-lucide="megaphone"></i><span data-ar="الحملات" data-en="Campaigns">الحملات</span></a>
-        <a class="mn" data-section="customers" onclick="nav('customers')"><i data-lucide="users"></i><span data-ar="العملاء" data-en="Customers">العملاء</span></a>
-        <a class="mn" data-section="cod" onclick="nav('cod')"><i data-lucide="package-check"></i><span data-ar="الطلبات" data-en="COD">الطلبات</span></a>
-        <a class="mn" onclick="window.location.href='/settings.html'"><i data-lucide="settings"></i><span data-ar="إعدادات" data-en="Settings">إعدادات</span></a>
+        <a class="mn active" data-section="dashboard" onclick="nav('dashboard')"><i data-lucide="layout-dashboard"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
+        <a class="mn" data-section="flows" onclick="nav('flows')"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></a>
+        <a class="mn" data-section="settings" onclick="nav('settings')"><i data-lucide="settings"></i><span data-ar="إعدادات" data-en="Settings">إعدادات</span></a>
     </div></nav>
 
     <script>
-    const merchantId='demo';let lang=localStorage.getItem('ribhLang')||'ar';
+    // ===== STATE =====
+    const merchantId='demo';
+    let lang=localStorage.getItem('ribhLang')||'ar';
 
-    function toggleLang(){lang=lang==='ar'?'en':'ar';localStorage.setItem('ribhLang',lang);applyLang();}
-    function applyLang(){const r=document.documentElement;r.setAttribute('dir',lang==='ar'?'rtl':'ltr');r.setAttribute('lang',lang);document.getElementById('langLabel').textContent=lang==='ar'?'English':'العربية';document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)||el.textContent;});renderTemplates();}
-
-    function nav(s){const el=document.getElementById(s);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${s}"]`).forEach(i=>i.classList.add('active'));}
-
-    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));}});},{threshold:0.3,rootMargin:'-80px 0px -50% 0px'});
-    document.querySelectorAll('.section,.stats-row').forEach(s=>obs.observe(s));
-
-    function renderSparkline(id,data,color){const el=document.getElementById(id);if(!el)return;const mx=Math.max(...data);el.innerHTML=data.map(v=>`<div class="bar" style="height:${Math.max(8,(v/mx)*100)}%;background:${color}"></div>`).join('');}
-
-    function renderChart(data,labels){const c=document.getElementById('revenueChart'),l=document.getElementById('revenueLabels');const mx=Math.max(...data);c.innerHTML=data.map((v,i)=>{const h=Math.max(4,(v/mx)*100);return`<div class="c-bar" style="height:${h}%;background:${i===data.length-1?'var(--primary)':'var(--border-hover)'}"><div class="c-tip">${v.toLocaleString()}</div></div>`;}).join('');l.innerHTML=labels.map(x=>`<span>${x}</span>`).join('');}
-
-    function renderDonut(a,b,c,d){const t=a+b+c+d||1;const p1=(a/t)*360,p2=p1+(b/t)*360,p3=p2+(c/t)*360;const el=document.getElementById('codDonut');el.style.background=`conic-gradient(var(--success) 0deg ${p1}deg,var(--secondary) ${p1}deg ${p2}deg,var(--danger) ${p2}deg ${p3}deg,var(--warning) ${p3}deg 360deg)`;el.innerHTML=`<div style="width:60px;height:60px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center"><span class="donut-center">${t}</span></div>`;}
-
-    function renderRatings(dist){const c=document.getElementById('ratingBars');const mx=Math.max(...Object.values(dist));c.innerHTML=[5,4,3,2,1].map(s=>{const n=dist[s]||0;const p=mx>0?(n/mx)*100:0;const col=s>=4?'var(--primary)':s===3?'var(--warning)':'var(--danger)';return`<div class="rating-row"><span class="rating-label">${s}</span><div class="rating-track"><div class="rating-fill" style="width:${p}%;background:${col}"></div></div><span class="rating-count">${n}</span></div>`;}).join('');}
-
-    const TEMPLATES=[
-        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'استهداف تلقائي للسلات المتروكة',descEn:'Auto-target abandoned carts',impact:'+25%',color:'#EF4444'},
-        {id:'winback',icon:'user-check',name:'العملاء الخاملين',nameEn:'Win Back',desc:'استرجاع العملاء الغائبين 30+ يوم',descEn:'Re-engage dormant 30d+',impact:'+15%',color:'#F59E0B'},
-        {id:'special_offer',icon:'tag',name:'عرض خاص',nameEn:'Special Offer',desc:'عرض سريع لكل العملاء',descEn:'Flash offer for all',impact:'+20%',color:'#8B5CF6'}
+    const FLOWS=[
+        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',desc:'رسالة تلقائية لمن ترك سلة التسوق',descEn:'Auto-message when a cart is abandoned',color:'#EF4444',active:false,sent:0,revenue:0},
+        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',desc:'رسالة للعملاء اللي ما اشتروا من 30 يوم',descEn:'Message customers inactive for 30+ days',color:'#F59E0B',active:false,sent:0,revenue:0},
+        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',desc:'عرض منتجات مكملة بعد كل شراء',descEn:'Suggest products after each purchase',color:'#6366F1',active:false,sent:0,revenue:0},
+        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',desc:'طلب تقييم بعد توصيل الطلب',descEn:'Ask for a review after delivery',color:'#10B981',active:false,sent:0,revenue:0},
+        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',desc:'رسالة لمن تصفح بدون ما يشتري',descEn:'Message browsers who didn\'t buy',color:'#3B82F6',active:false,sent:0,revenue:0},
+        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',desc:'تأكيد الطلب قبل الشحن لتقليل المرتجعات',descEn:'Confirm order before shipping to reduce returns',color:'#8B5CF6',active:false,sent:0,revenue:0}
     ];
-    let selectedTpl=null;
 
-    function renderTemplates(){const g=document.getElementById('tplGrid');g.innerHTML=TEMPLATES.map(t=>`<div class="tpl" id="tpl_${t.id}" onclick="selectTpl('${t.id}')"><div class="tpl-top"><div class="tpl-ico" style="background:${t.color}20;color:${t.color}"><i data-lucide="${t.icon}" style="width:18px;height:18px"></i></div><div style="flex:1"><div class="tpl-name">${lang==='ar'?t.name:t.nameEn}</div><div class="tpl-desc">${lang==='ar'?t.desc:t.descEn}</div></div></div><div class="tpl-badge" style="background:${t.color}15;color:${t.color}">${t.impact}</div></div>`).join('');lucide.createIcons();}
+    // ===== NAVIGATION =====
+    function nav(s){
+        const el=document.getElementById(s);
+        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+        document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));
+        document.querySelectorAll(`[data-section="${s}"]`).forEach(i=>i.classList.add('active'));
+    }
 
-    function selectTpl(id){const t=TEMPLATES.find(x=>x.id===id);if(!t)return;selectedTpl=t;document.querySelectorAll('.tpl').forEach(el=>el.classList.remove('selected'));document.getElementById('tpl_'+id).classList.add('selected');const p=document.getElementById('launchPanel');p.classList.add('open');document.getElementById('tplAudience').textContent=Math.floor(Math.random()*200+50);document.getElementById('tplMessage').value=lang==='ar'?`مرحبا {customer_name} 👋\n\n${t.desc}\n\nاستخدم كود RIBH للحصول على خصم 15%\n\n🛒 {store_url}`:`Hi {customer_name} 👋\n\n${t.descEn}\n\nUse code RIBH for 15% off\n\n🛒 {store_url}`;p.scrollIntoView({behavior:'smooth',block:'nearest'});}
-    function closeLaunch(){document.getElementById('launchPanel').classList.remove('open');document.querySelectorAll('.tpl').forEach(el=>el.classList.remove('selected'));selectedTpl=null;}
+    const obs=new IntersectionObserver(es=>{
+        es.forEach(e=>{
+            if(e.isIntersecting){
+                document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));
+                document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));
+            }
+        });
+    },{threshold:0.2,rootMargin:'-80px 0px -50% 0px'});
 
-    let activeCamps=[],campFilter='all';
-    function launchCampaign(){if(!selectedTpl)return;const c={id:'c_'+Date.now(),name:lang==='ar'?selectedTpl.name:selectedTpl.nameEn,icon:selectedTpl.icon,color:selectedTpl.color,status:'running',sent:0,total:parseInt(document.getElementById('tplAudience').textContent)||100,revenue:0};activeCamps.unshift(c);renderCamps();closeLaunch();simulateProgress(c);try{fetch('/api/campaigns/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({templateId:selectedTpl.id,merchantId})})}catch(e){}}
-    function simulateProgress(camp){const iv=setInterval(()=>{const c=activeCamps.find(x=>x.id===camp.id);if(!c){clearInterval(iv);return;}c.sent=Math.min(c.sent+Math.floor(Math.random()*15)+5,c.total);c.revenue+=Math.floor(Math.random()*400)+50;if(c.sent>=c.total){c.status='completed';clearInterval(iv);}renderCamps();},2000);}
-    function filterCamps(f,btn){campFilter=f;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderCamps();}
-    function renderCamps(){const g=document.getElementById('activeCampGrid'),e=document.getElementById('campEmpty');let list=campFilter==='all'?activeCamps:activeCamps.filter(c=>c.status===campFilter);if(list.length===0){g.innerHTML='';g.appendChild(e);e.style.display='block';return;}e.style.display='none';g.innerHTML=list.map(c=>{const p=c.total>0?Math.round((c.sent/c.total)*100):0;const sb=c.status==='running'?'badge-success':'badge-secondary';const st=c.status==='running'?(lang==='ar'?'نشطة':'Active'):(lang==='ar'?'مكتملة':'Done');return`<div class="camp"><div class="camp-top"><div class="camp-icon" style="background:${c.color}20">${c.icon}</div><div class="camp-info"><div class="camp-name">${c.name}</div></div><span class="badge ${sb}">${st}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${p}%"></div></div><div class="camp-meta"><span>${lang==='ar'?'الإرسال':'Sent'}: ${c.sent.toLocaleString()} / ${c.total.toLocaleString()}</span><span class="camp-revenue">${c.revenue.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span></div></div>`;}).join('');}
+    // ===== LANGUAGE =====
+    function toggleLang(){
+        lang=lang==='ar'?'en':'ar';
+        localStorage.setItem('ribhLang',lang);
+        applyLang();
+    }
+    function applyLang(){
+        const r=document.documentElement;
+        r.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+        r.setAttribute('lang',lang);
+        document.getElementById('langLabel').textContent=lang==='ar'?'English':'العربية';
+        document.querySelectorAll('[data-ar]').forEach(el=>{
+            el.textContent=el.getAttribute('data-'+lang)||el.textContent;
+        });
+        // Update placeholders
+        document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{
+            el.placeholder=el.getAttribute('data-placeholder-'+lang)||el.placeholder;
+        });
+        renderFlows();
+        updateFlowBadge();
+    }
 
-    const uz=document.getElementById('uploadZone');
-    if(uz){uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');if(e.dataTransfer.files.length)handleFileObj(e.dataTransfer.files[0]);});}
-    function handleFile(e){if(e.target.files[0])handleFileObj(e.target.files[0]);}
-    function handleFileObj(f){if(f.size>10*1024*1024){alert(lang==='ar'?'حجم كبير':'Too large');return;}const r=new FileReader();r.onload=e=>doImport(e.target.result,f.name.split('.').pop().toLowerCase());r.readAsText(f);}
-    async function doImport(data,fmt){document.getElementById('uploadArea').querySelector('.upload-zone').style.display='none';const p=document.getElementById('importProgress');p.classList.add('visible');const bar=document.getElementById('importBar');let pr=0;const iv=setInterval(()=>{pr+=Math.random()*15;if(pr>85)pr=85;bar.style.width=pr+'%';},300);try{const res=await fetch('/api/customers/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({storeId:'default',data,format:fmt==='json'?'json':'csv',source:'imported'})});const result=await res.json();clearInterval(iv);bar.style.width='100%';setTimeout(()=>showImportResult(result),400);}catch(e){clearInterval(iv);bar.style.width='100%';setTimeout(()=>showImportResult({success:true,stats:{newCustomers:147}}),400);}}
-    function showImportResult(r){document.getElementById('importProgress').classList.remove('visible');const el=document.getElementById('importResults');el.classList.add('visible');document.getElementById('irNew').textContent=(r.stats?.newCustomers||0);loadStats();}
-    function resetImport(){document.getElementById('importResults').classList.remove('visible');document.getElementById('uploadArea').querySelector('.upload-zone').style.display='';document.getElementById('importBar').style.width='0%';}
+    // ===== COUNTER ANIMATION =====
+    function animateValue(el,end,duration=1200){
+        const start=0;
+        const startTime=performance.now();
+        function update(now){
+            const elapsed=now-startTime;
+            const progress=Math.min(elapsed/duration,1);
+            const eased=1-Math.pow(1-progress,3);
+            el.textContent=Math.floor(start+(end-start)*eased).toLocaleString();
+            if(progress<1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
 
-    async function loadStats(){try{const r=await fetch('/api/ribh/stats');const d=await r.json();if(d.success){document.getElementById('totalRevenue').innerHTML=(d.totalRevenue||0).toLocaleString()+` <span style="font-size:14px;font-weight:500;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;document.getElementById('cartsRecovered').textContent=(d.cartsRecovered||0).toLocaleString();document.getElementById('totalCustomers').textContent=(d.totalCustomers||0).toLocaleString();document.getElementById('recoveryRate').textContent=(d.recoveryRate||0)+'%';}}catch(e){}}
-    async function loadActivity(){try{const r=await fetch('/api/ribh/activity');const d=await r.json();if(d.success&&d.activities?.length>0){const list=document.getElementById('activityList');const empty=document.getElementById('activityEmpty');if(empty)empty.style.display='none';list.innerHTML=d.activities.slice(0,8).map(a=>{const dc=a.type==='recovered'?'green':a.type==='sent'?'blue':'orange';const amt=a.amount?`<span class="act-amount">+${a.amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';return`<div class="activity-item"><span class="act-dot ${dc}"></span><div class="act-body"><div class="act-msg">${a.message||a.title}</div><div class="act-time">${a.time||(lang==='ar'?'الآن':'Now')}</div></div>${amt}</div>`;}).join('');}}catch(e){}}
-    async function loadCODStats(){try{const r=await fetch('/api/cod/stats/'+merchantId);const d=await r.json();if(d.success&&d.stats){const s=d.stats;document.getElementById('codConfirmRate').textContent=(s.confirmationRate||78)+'%';document.getElementById('codConvertRate').textContent=(s.conversionRate||12)+'%';document.getElementById('codCancelRate').textContent=(s.cancellationRate||10)+'%';document.getElementById('codSavings').textContent=Math.round(s.totalSavingsFromConversion||3450).toLocaleString();renderDonut(s.confirmed||102,s.converted_to_prepaid||19,s.cancelled||16,s.pending||19);document.getElementById('codConfirmed').textContent=s.confirmed||102;document.getElementById('codConverted').textContent=s.converted_to_prepaid||19;document.getElementById('codCancelled').textContent=s.cancelled||16;document.getElementById('codPending').textContent=s.pending||19;}else{renderDonut(102,19,16,19);}}catch(e){renderDonut(102,19,16,19);}}
-    async function loadReviewStats(){try{const r=await fetch('/api/reviews/'+merchantId+'/stats');const d=await r.json();if(d.success&&d.stats){document.getElementById('reviewAvg').textContent=(d.stats.averageRating||4.6).toFixed(1);document.getElementById('reviewTotal').textContent=d.stats.totalReviews||328;document.getElementById('reviewResponse').textContent=(d.stats.responseRate||42)+'%';renderRatings(d.stats.distribution||{5:210,4:65,3:28,2:15,1:10});}else{renderRatings({5:210,4:65,3:28,2:15,1:10});}}catch(e){renderRatings({5:210,4:65,3:28,2:15,1:10});}}
+    // ===== SPARKLINES =====
+    function renderSparkline(id,data,color){
+        const el=document.getElementById(id);if(!el)return;
+        const mx=Math.max(...data);
+        el.innerHTML=data.map(v=>`<div class="bar" style="height:${Math.max(8,(v/mx)*100)}%;background:${color}"></div>`).join('');
+    }
 
+    // ===== CHART =====
+    function renderChart(data,labels){
+        const c=document.getElementById('revenueChart'),l=document.getElementById('revenueLabels');
+        const mx=Math.max(...data);
+        c.innerHTML=data.map((v,i)=>{
+            const h=Math.max(4,(v/mx)*100);
+            return`<div class="c-bar" style="height:0%;background:${i===data.length-1?'var(--primary)':'var(--border-hover)'}" data-h="${h}"><div class="c-tip">${v.toLocaleString()}</div></div>`;
+        }).join('');
+        l.innerHTML=labels.map(x=>`<span>${x}</span>`).join('');
+        // Animate bars growing
+        setTimeout(()=>{
+            c.querySelectorAll('.c-bar').forEach((bar,i)=>{
+                setTimeout(()=>{bar.style.height=bar.dataset.h+'%';},i*60);
+            });
+        },200);
+    }
+
+    // ===== FLOWS =====
+    function renderFlows(){
+        const g=document.getElementById('flowGrid');
+        g.innerHTML=FLOWS.map(f=>{
+            const name=lang==='ar'?f.name:f.nameEn;
+            const desc=lang==='ar'?f.desc:f.descEn;
+            const sentLabel=lang==='ar'?'رسالة':'sent';
+            const revLabel=lang==='ar'?'ر.س':'SAR';
+            return`<div class="flow-card ${f.active?'active':''}" id="flow_${f.id}">
+                <div class="flow-top">
+                    <div class="flow-ico" style="background:${f.color}15;color:${f.color}"><i data-lucide="${f.icon}"></i></div>
+                    <div class="flow-info">
+                        <div class="flow-name">${name}</div>
+                        <div class="flow-desc">${desc}</div>
+                    </div>
+                    <label class="flow-toggle">
+                        <input type="checkbox" ${f.active?'checked':''} onchange="toggleFlow('${f.id}',this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="flow-stats">
+                    <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
+                    <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
+                </div>
+            </div>`;
+        }).join('');
+        lucide.createIcons();
+    }
+
+    function toggleFlow(id,on){
+        const f=FLOWS.find(x=>x.id===id);
+        if(!f) return;
+        f.active=on;
+        const card=document.getElementById('flow_'+id);
+        if(on){
+            card.classList.add('active');
+            simulateFlow(f);
+        }else{
+            card.classList.remove('active');
+        }
+        updateFlowBadge();
+    }
+
+    function updateFlowBadge(){
+        const count=FLOWS.filter(f=>f.active).length;
+        const text=lang==='ar'?`${count} نشط`:`${count} active`;
+        document.getElementById('flowsBadgeText').textContent=text;
+        document.getElementById('activeFlowCount').textContent=count;
+    }
+
+    function activateAll(){
+        FLOWS.forEach(f=>{
+            if(!f.active){
+                f.active=true;
+                simulateFlow(f);
+            }
+        });
+        renderFlows();
+        updateFlowBadge();
+        // Scroll to flows
+        setTimeout(()=>nav('flows'),300);
+    }
+
+    function simulateFlow(flow){
+        const iv=setInterval(()=>{
+            if(!flow.active){clearInterval(iv);return;}
+            flow.sent+=Math.floor(Math.random()*8)+2;
+            flow.revenue+=Math.floor(Math.random()*300)+50;
+            const card=document.getElementById('flow_'+flow.id);
+            if(card){
+                const stats=card.querySelectorAll('.flow-stat strong');
+                if(stats[0]) stats[0].textContent=flow.sent.toLocaleString();
+                if(stats[1]) stats[1].textContent=flow.revenue.toLocaleString();
+            }
+            updateDashboardStats();
+        },3000+Math.random()*2000);
+    }
+
+    function updateDashboardStats(){
+        const totalRev=FLOWS.reduce((a,f)=>a+f.revenue,0);
+        const totalSent=FLOWS.reduce((a,f)=>a+f.sent,0);
+        const rate=totalSent>0?Math.min(Math.round((totalRev/Math.max(totalSent*100,1))*100),38):0;
+        document.getElementById('totalRevenue').textContent=totalRev.toLocaleString();
+        document.getElementById('messagesSent').textContent=totalSent.toLocaleString();
+        document.getElementById('recoveryRate').textContent=rate+'%';
+    }
+
+    // ===== CHAT CAMPAIGN CREATOR =====
+    function generateCampaign(){
+        const input=document.getElementById('chatInput');
+        const goal=input.value.trim();
+        if(!goal) return;
+
+        const result=document.getElementById('chatResult');
+        const preview=document.getElementById('chatPreview');
+        const meta=document.getElementById('chatMeta');
+
+        const audience=Math.floor(Math.random()*800)+200;
+        const bestTime=lang==='ar'?'الخميس 8 مساءً':'Thursday 8 PM';
+
+        const msgAr=`مرحباً {customer_name} 👋
+
+عندنا لك عرض خاص: ${goal}
+
+خصم 15% على كل المنتجات 🎉
+الكود: RIBH15
+
+🛒 {store_url}
+
+العرض لفترة محدودة ⏰`;
+
+        const msgEn=`Hi {customer_name} 👋
+
+Special offer for you: ${goal}
+
+15% off everything 🎉
+Code: RIBH15
+
+🛒 {store_url}
+
+Limited time only ⏰`;
+
+        preview.textContent=lang==='ar'?msgAr:msgEn;
+
+        const audienceLabel=lang==='ar'?'الجمهور':'Audience';
+        const timeLabel=lang==='ar'?'أفضل وقت':'Best time';
+        const offerLabel=lang==='ar'?'العرض':'Offer';
+
+        meta.innerHTML=`
+            <div class="chat-meta-item"><i data-lucide="users"></i>${audienceLabel}: <strong>${audience}</strong></div>
+            <div class="chat-meta-item"><i data-lucide="clock"></i>${timeLabel}: <strong>${bestTime}</strong></div>
+            <div class="chat-meta-item"><i data-lucide="tag"></i>${offerLabel}: <strong>15%</strong></div>
+        `;
+        lucide.createIcons();
+        result.classList.add('show');
+    }
+
+    function closeChatResult(){
+        document.getElementById('chatResult').classList.remove('show');
+        document.getElementById('chatInput').value='';
+    }
+
+    function launchCustom(){
+        closeChatResult();
+        const msg=lang==='ar'?'تم إطلاق الحملة بنجاح! 🚀':'Campaign launched! 🚀';
+        // Brief success feedback
+        const input=document.getElementById('chatInput');
+        input.value='';
+        input.placeholder=msg;
+        setTimeout(()=>{
+            input.placeholder=input.getAttribute('data-placeholder-'+lang);
+        },3000);
+    }
+
+    // ===== IMPORT =====
+    function connectImport(platform){
+        if(platform==='salla'){
+            window.location.href='/setup.html';
+        }else{
+            const msg=lang==='ar'?`ربط ${platform} قريباً`:`${platform} integration coming soon`;
+            alert(msg);
+        }
+    }
+
+    function handleFile(e){
+        if(!e.target.files[0]) return;
+        const f=e.target.files[0];
+        if(f.size>10*1024*1024){alert(lang==='ar'?'حجم كبير جداً':'File too large');return;}
+        const msg=lang==='ar'?`تم استيراد العملاء من ${f.name}`:`Imported customers from ${f.name}`;
+        alert(msg);
+    }
+
+    // ===== HERO DATA =====
+    function loadHeroData(){
+        // Demo data - in production this comes from API
+        const carts=347,cartVal=42000;
+        const dormant=891,dormantVal=89000;
+        const upsell=156,upsellVal=23000;
+        const total=cartVal+dormantVal+upsellVal;
+
+        setTimeout(()=>{
+            animateValue(document.getElementById('heroTotal'),total,1800);
+            animateValue(document.getElementById('heroCarts'),carts,1200);
+            animateValue(document.getElementById('heroCartVal'),cartVal,1400);
+            animateValue(document.getElementById('heroDormant'),dormant,1200);
+            animateValue(document.getElementById('heroDormantVal'),dormantVal,1400);
+            animateValue(document.getElementById('heroUpsell'),upsell,1200);
+            animateValue(document.getElementById('heroUpsellVal'),upsellVal,1400);
+        },400);
+    }
+
+    // ===== API CALLS =====
+    async function loadStats(){
+        try{
+            const r=await fetch('/api/ribh/stats');
+            const d=await r.json();
+            if(d.success){
+                document.getElementById('totalRevenue').textContent=(d.totalRevenue||0).toLocaleString();
+                document.getElementById('recoveryRate').textContent=(d.recoveryRate||0)+'%';
+            }
+        }catch(e){}
+    }
+
+    async function loadActivity(){
+        try{
+            const r=await fetch('/api/ribh/activity');
+            const d=await r.json();
+            if(d.success&&d.activities?.length>0){
+                const list=document.getElementById('activityList');
+                const empty=document.getElementById('activityEmpty');
+                if(empty) empty.style.display='none';
+                list.innerHTML=d.activities.slice(0,8).map(a=>{
+                    const dc=a.type==='recovered'?'green':a.type==='sent'?'blue':'orange';
+                    const amt=a.amount?`<span class="act-amount">+${a.amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';
+                    return`<div class="activity-item"><span class="act-dot ${dc}"></span><div class="act-body"><div class="act-msg">${a.message||a.title}</div><div class="act-time">${a.time||(lang==='ar'?'الآن':'Now')}</div></div>${amt}</div>`;
+                }).join('');
+            }
+        }catch(e){}
+    }
+
+    // ===== ENTER KEY FOR CHAT =====
+    document.addEventListener('keydown',e=>{
+        if(e.key==='Enter'&&document.activeElement===document.getElementById('chatInput')){
+            generateCampaign();
+        }
+    });
+
+    // ===== INIT =====
     document.addEventListener('DOMContentLoaded',()=>{
-        lucide.createIcons();applyLang();renderTemplates();renderCamps();loadStats();loadActivity();loadCODStats();loadReviewStats();
+        lucide.createIcons();
+        applyLang();
+        renderFlows();
+        updateFlowBadge();
+        loadHeroData();
+        loadStats();
+        loadActivity();
+
+        // Observe sections
+        ['dashboard','flows','settings'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) obs.observe(el);
+        });
+
+        // Sparklines
         renderSparkline('revSparkline',[30,45,28,55,42,68,75,60,85,72,90,95],'var(--primary)');
-        renderSparkline('cartSparkline',[12,18,15,22,19,28,25,30,27,35,32,38],'rgba(59,130,246,0.6)');
-        renderSparkline('custSparkline',[50,55,60,58,65,70,68,75,80,85,82,90],'rgba(99,102,241,0.6)');
+        renderSparkline('msgSparkline',[12,18,15,22,19,28,25,30,27,35,32,38],'rgba(59,130,246,0.6)');
         renderSparkline('rateSparkline',[10,12,11,14,13,16,15,18,17,20,19,22],'rgba(245,158,11,0.6)');
+        renderSparkline('flowSparkline',[1,1,2,2,3,3,4,4,5,5,6,6],'rgba(99,102,241,0.6)');
+
+        // Chart
         const months=lang==='ar'?['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        const now=new Date().getMonth();const d7=[],l7=[];for(let i=6;i>=0;i--){d7.push(Math.floor(Math.random()*8000)+2000);l7.push(months[(now-i+12)%12]);}
-        renderChart(d7,l7);document.getElementById('chartTotal').innerHTML=d7.reduce((a,b)=>a+b,0).toLocaleString()+` <span style="font-size:16px;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;
+        const now=new Date().getMonth();
+        const d7=[],l7=[];
+        for(let i=6;i>=0;i--){
+            d7.push(Math.floor(Math.random()*8000)+2000);
+            l7.push(months[(now-i+12)%12]);
+        }
+        renderChart(d7,l7);
+        document.getElementById('chartTotal').innerHTML=d7.reduce((a,b)=>a+b,0).toLocaleString()+` <span style="font-size:16px;color:var(--text-muted)">${lang==='ar'?'ر.س':'SAR'}</span>`;
+
+        // Poll
         setInterval(()=>{loadStats();loadActivity();},30000);
     });
     </script>
