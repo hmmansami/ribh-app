@@ -195,6 +195,26 @@ try {
     customerImport = null;
 }
 
+// Salla Scraper - Store discovery and lead generation
+let sallaScraper;
+try {
+    sallaScraper = require('./sallaScraper');
+    console.log('✅ Salla Scraper loaded - Store discovery & lead generation enabled!');
+} catch (e) {
+    console.log('⚠️ Salla Scraper not available:', e.message);
+    sallaScraper = null;
+}
+
+// Outreach Automation - Cold outreach pipeline (Hormozi 100M Leads framework)
+let outreachAutomation;
+try {
+    outreachAutomation = require('./outreachAutomation');
+    console.log('✅ Outreach Automation loaded - Multi-step cold outreach enabled!');
+} catch (e) {
+    console.log('⚠️ Outreach Automation not available:', e.message);
+    outreachAutomation = null;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
