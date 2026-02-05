@@ -5360,6 +5360,83 @@ app.post('/api/test/all', async (req, res) => {
     res.json(testResults);
 });
 
+// Full abandoned cart recovery flow simulation (no real Salla webhook needed)
+app.post('/api/test/full-flow', async (req, res) => {
+    try {
+        const {
+            phone = '+966501234567',
+            productName = 'Test Product',
+            productPrice = 299,
+            customerName = 'Test Customer'
+        } = req.body || {};
+
+        const cartId = `test-${Date.now()}`;
+
+        // 1. Build a fake cart object matching the shape aiMessenger expects
+        const fakeCart = {
+            id: cartId,
+            customer: { name: customerName, phone, email: null },
+            items: [{ name: productName, quantity: 1, price: productPrice }],
+            total: productPrice,
+            currency: 'SAR',
+            createdAt: new Date().toISOString(),
+            checkoutUrl: 'https://store.example.com/checkout'
+        };
+
+        // 2. Save to Firestore abandoned_carts collection
+        await db.collection('abandoned_carts').doc(cartId).set({
+            ...fakeCart,
+            status: 'pending',
+            source: 'test-full-flow',
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+
+        // 3. Generate recovery message via aiMessenger template (no AI API)
+        let message = '';
+        let analysis = null;
+        if (aiMessenger) {
+            const result = await aiMessenger.generateSmartMessage(fakeCart, 1, null);
+            message = result.message;
+            analysis = {
+                segment: result.analysis.segment,
+                discount: result.discount,
+                discountCode: result.discountCode,
+                paymentPlan: result.paymentPlan ? result.paymentPlan.message.short : null
+            };
+        } else {
+            message = `مرحباً ${customerName}! سلتك في انتظارك - ${productName} بـ ${productPrice} ر.س`;
+        }
+
+        // 4. Send via WhatsApp if connected, otherwise just return the message
+        let whatsappSent = false;
+        if (whatsappBridge) {
+            const status = whatsappBridge.getStatus('default');
+            if (status.connected) {
+                const sendResult = await whatsappBridge.sendMessage('default', phone, message, { immediate: true, customerName });
+                whatsappSent = sendResult.success === true;
+            }
+        }
+
+        // 5. Update Firestore doc with send status
+        await db.collection('abandoned_carts').doc(cartId).update({
+            whatsappSent,
+            messageSent: message,
+            sentAt: whatsappSent ? admin.firestore.FieldValue.serverTimestamp() : null
+        });
+
+        res.json({
+            success: true,
+            message,
+            whatsappSent,
+            cartId,
+            analysis
+        });
+    } catch (error) {
+        console.error('Test full-flow error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get webhook logs
 app.get('/api/logs', async (req, res) => {
     const logs = await readDB(LOG_FILE);
