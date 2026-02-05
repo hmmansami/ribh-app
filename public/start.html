@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ابدأ مع RIBH | 60 ثانية</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050505;
+            --card: #0f0f0f;
+            --card-border: rgba(255,255,255,0.06);
+            --text: #FAFAFA;
+            --text-muted: #A1A1AA;
+            --text-dim: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-glow: rgba(16, 185, 129, 0.15);
+            --secondary: #6366F1;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+        }
+        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
+
+        .shell {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 0 20px 40px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .start-header {
+            padding: 28px 0 24px;
+            text-align: center;
+        }
+        .start-logo {
+            font-size: 32px; font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        .start-tagline {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 4px;
+            transition: width 600ms ease-out;
+            width: 0%;
+        }
+
+        /* Steps */
+        .step { display: none; flex: 1; flex-direction: column; }
+        .step.active { display: flex; animation: fadeUp 400ms ease-out; }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-icon {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--primary-glow);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; margin: 0 auto 24px;
+        }
+        .step-title {
+            font-size: 24px; font-weight: 700; text-align: center;
+            margin-bottom: 8px;
+        }
+        .step-subtitle {
+            font-size: 14px; color: var(--text-muted); text-align: center;
+            line-height: 1.6; margin-bottom: 32px;
+        }
+
+        /* Platform Selection */
+        .platform-grid {
+            display: flex; flex-direction: column; gap: 12px;
+            margin-bottom: 24px;
+        }
+        .platform-card {
+            background: var(--card);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex; align-items: center; gap: 16px;
+            cursor: pointer; transition: all 200ms;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .platform-card:hover { border-color: rgba(255,255,255,0.12); }
+        .platform-card.selected { border-color: var(--primary); background: var(--primary-glow); }
+        .platform-icon {
+            width: 52px; height: 52px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; flex-shrink: 0;
+        }
+        .platform-icon.salla { background: #6366F1; color: #fff; font-weight: 700; font-size: 14px; }
+        .platform-icon.shopify { background: #95BF47; color: #fff; font-weight: 700; font-size: 14px; }
+        .platform-name { font-size: 17px; font-weight: 600; }
+        .platform-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Features List */
+        .features-list {
+            display: flex; flex-direction: column; gap: 16px;
+            margin-bottom: 32px;
+        }
+        .feature-item {
+            display: flex; align-items: flex-start; gap: 14px;
+        }
+        .feature-check {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--primary-glow); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+        }
+        .feature-text { font-size: 14px; line-height: 1.5; }
+        .feature-text strong { color: var(--primary); }
+
+        /* Guarantee Box */
+        .guarantee-box {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .guarantee-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .guarantee-text { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+        /* Revenue Calculator */
+        .calc-box {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        .calc-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+        .calc-input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            text-align: center;
+            outline: none;
+        }
+        .calc-input:focus { border-color: var(--primary); }
+        .calc-result {
+            margin-top: 16px;
+            text-align: center;
+        }
+        .calc-amount {
+            font-size: 36px; font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .calc-period { font-size: 13px; color: var(--text-dim); }
+
+        /* Button */
+        .btn-next {
+            width: 100%;
+            padding: 18px 24px;
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 200ms;
+            margin-top: auto;
+        }
+        .btn-next:hover { background: var(--primary-hover); }
+        .btn-next:active { transform: scale(0.98); }
+        .btn-next:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+
+        .hint { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 12px; }
+
+        /* Done State */
+        .done-icon {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: var(--primary-glow);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 48px; margin: 40px auto 24px;
+            animation: popIn 500ms ease-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+        .done-title { font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+        .done-subtitle { font-size: 15px; color: var(--text-muted); text-align: center; line-height: 1.6; margin-bottom: 32px; }
+
+        .next-steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        .next-step {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .next-step-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .next-step-icon.green { background: var(--primary-glow); }
+        .next-step-icon.purple { background: rgba(99, 102, 241, 0.15); }
+        .next-step-icon.gold { background: rgba(245, 158, 11, 0.15); }
+        .next-step-text { font-size: 14px; font-weight: 600; }
+        .next-step-detail { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <!-- Header -->
+        <div class="start-header">
+            <div class="start-logo">RIBH</div>
+            <div class="start-tagline">استرد مبيعاتك الضائعة بنقرة واحدة</div>
+        </div>
+
+        <!-- Progress -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <!-- STEP 1: Platform -->
+        <div class="step active" id="step-1">
+            <div class="step-icon">&#128722;</div>
+            <div class="step-title">اختر منصتك</div>
+            <div class="step-subtitle">نربط مع متجرك تلقائياً. بدون أي إعداد يدوي.</div>
+
+            <div class="platform-grid">
+                <div class="platform-card" data-platform="salla" onclick="selectPlatform('salla')">
+                    <div class="platform-icon salla">سلة</div>
+                    <div>
+                        <div class="platform-name">سلة</div>
+                        <div class="platform-desc">ربط تلقائي بضغطة واحدة</div>
+                    </div>
+                </div>
+                <div class="platform-card" data-platform="shopify" onclick="selectPlatform('shopify')">
+                    <div class="platform-icon shopify">S</div>
+                    <div>
+                        <div class="platform-name">Shopify</div>
+                        <div class="platform-desc">ربط تلقائي بضغطة واحدة</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-next" id="btn-step1" disabled onclick="goStep(2)">
+                التالي
+            </button>
+        </div>
+
+        <!-- STEP 2: What You Get -->
+        <div class="step" id="step-2">
+            <div class="step-icon">&#9889;</div>
+            <div class="step-title">ماذا ستحصل عليه</div>
+            <div class="step-subtitle">كل شي يشتغل تلقائياً من اللحظة الأولى</div>
+
+            <div class="features-list">
+                <div class="feature-item">
+                    <div class="feature-check">&#10003;</div>
+                    <div class="feature-text"><strong>واتساب تلقائي</strong> - رسائل ذكية ترسل للعميل بعد ما يترك السلة</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">&#10003;</div>
+                    <div class="feature-text"><strong>دفع بنقرة واحدة</strong> - العميل يضغط الرابط ويدفع فوراً. Apple Pay، مدى، تمارا</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">&#10003;</div>
+                    <div class="feature-text"><strong>خصومات ذكية</strong> - الذكاء الاصطناعي يحدد العرض المناسب لكل عميل</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">&#10003;</div>
+                    <div class="feature-text"><strong>لوحة تحكم مباشرة</strong> - شاهد الأرباح المستردة في الوقت الفعلي</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-check">&#10003;</div>
+                    <div class="feature-text"><strong>بدون إعداد</strong> - فعّل واترك النظام يشتغل. صفر تدخل منك</div>
+                </div>
+            </div>
+
+            <button class="btn-next" onclick="goStep(3)">
+                عرفني على التسعير
+            </button>
+        </div>
+
+        <!-- STEP 3: Pricing Calculator -->
+        <div class="step" id="step-3">
+            <div class="step-icon">&#128176;</div>
+            <div class="step-title">احسب أرباحك</div>
+            <div class="step-subtitle">ادخل مبيعاتك الشهرية وشوف كم بتسترد</div>
+
+            <div class="calc-box">
+                <div class="calc-label">مبيعاتك الشهرية (ر.س)</div>
+                <input type="number" class="calc-input" id="monthly-sales" value="50000" oninput="calcRevenue()">
+                <div class="calc-result">
+                    <div class="calc-amount" id="calc-recovered">+10,500</div>
+                    <div class="calc-period">ر.س إضافية شهرياً</div>
+                </div>
+            </div>
+
+            <div class="guarantee-box">
+                <div class="guarantee-title">ما تدفع إلا إذا ربحت</div>
+                <div class="guarantee-text">
+                    5% فقط من المبيعات المستردة. إذا ما استرجعنا شي، ما تدفع شي. أبداً.
+                    <br><br>
+                    30 يوم مجاناً. بدون بطاقة ائتمان.
+                </div>
+            </div>
+
+            <button class="btn-next" onclick="startConnect()">
+                ابدأ مجاناً - ربط متجري
+            </button>
+            <div class="hint">60 ثانية فقط. بدون بطاقة ائتمان.</div>
+        </div>
+
+        <!-- STEP 4: Done -->
+        <div class="step" id="step-4">
+            <div class="done-icon">&#127881;</div>
+            <div class="done-title">تم بنجاح!</div>
+            <div class="done-subtitle">
+                تم ربط متجرك مع رِبح.
+                <br>النظام يشتغل الآن تلقائياً.
+            </div>
+
+            <div class="next-steps">
+                <div class="next-step">
+                    <div class="next-step-icon green">&#128241;</div>
+                    <div>
+                        <div class="next-step-text">ربط الواتساب</div>
+                        <div class="next-step-detail">امسح QR Code لربط رقمك</div>
+                    </div>
+                </div>
+                <div class="next-step">
+                    <div class="next-step-icon purple">&#128200;</div>
+                    <div>
+                        <div class="next-step-text">لوحة التحكم</div>
+                        <div class="next-step-detail">تابع أرباحك المستردة مباشرة</div>
+                    </div>
+                </div>
+                <div class="next-step">
+                    <div class="next-step-icon gold">&#9881;</div>
+                    <div>
+                        <div class="next-step-text">الإعدادات</div>
+                        <div class="next-step-detail">خصص الرسائل والعروض (اختياري)</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-next" onclick="window.location.href='/dashboard'">
+                افتح لوحة التحكم
+            </button>
+            <button class="btn-secondary" onclick="window.location.href='/app'">
+                ربط الواتساب أولاً
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        let selectedPlatformValue = null;
+
+        function goStep(n) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + n).classList.add('active');
+            currentStep = n;
+            document.getElementById('progress').style.width = (n / 4 * 100) + '%';
+        }
+
+        function selectPlatform(p) {
+            selectedPlatformValue = p;
+            document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('selected'));
+            document.querySelector(`[data-platform="${p}"]`).classList.add('selected');
+            document.getElementById('btn-step1').disabled = false;
+            localStorage.setItem('platform', p);
+        }
+
+        function calcRevenue() {
+            const monthly = parseInt(document.getElementById('monthly-sales').value) || 0;
+            // 70% abandonment rate, 30% recovery rate = 21% of sales recovered
+            const recovered = Math.round(monthly * 0.7 * 0.3);
+            document.getElementById('calc-recovered').textContent =
+                '+' + recovered.toLocaleString('ar-SA');
+        }
+
+        function startConnect() {
+            const platform = selectedPlatformValue || localStorage.getItem('platform') || 'salla';
+            if (platform === 'salla') {
+                // Redirect to Salla OAuth install
+                window.location.href = '/salla/install';
+            } else if (platform === 'shopify') {
+                window.location.href = '/shopify/install';
+            }
+            // If OAuth not configured, show success anyway (demo mode)
+            setTimeout(() => {
+                goStep(4);
+            }, 500);
+        }
+
+        calcRevenue();
+    </script>
+</body>
+</html>

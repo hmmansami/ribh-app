@@ -515,6 +515,15 @@ try {
     console.log('⚠️ Shopify routes not loaded:', e.message);
 }
 
+// Payment Routes (One-Click Payment for Cart Recovery)
+try {
+    const paymentRoutes = require('./routes/payment');
+    app.use('/api/pay', paymentRoutes);
+    console.log('✅ Payment routes loaded - /api/pay/:token');
+} catch (e) {
+    console.log('⚠️ Payment routes not loaded:', e.message);
+}
+
 // Request logging middleware
 app.use((req, res, next) => {
     console.log(`📥 ${req.method} ${req.path}`, req.method === 'POST' ? JSON.stringify(req.body).substring(0, 200) : '');

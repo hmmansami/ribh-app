@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH | مركز التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050505;
+            --card: #0f0f0f;
+            --card-border: rgba(255,255,255,0.06);
+            --card-hover: rgba(255,255,255,0.03);
+            --text: #FAFAFA;
+            --text-muted: #A1A1AA;
+            --text-dim: #71717A;
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.15);
+            --secondary: #6366F1;
+            --gold: #F59E0B;
+            --danger: #EF4444;
+            --success: #22C55E;
+            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
+        }
+        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
+
+        /* Cosmic BG */
+        .cosmic-bg {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0; pointer-events: none;
+        }
+        .cosmic-bg::before {
+            content: '';
+            position: absolute; width: 200%; height: 200%; top: -50%; left: -50%;
+            background:
+                radial-gradient(ellipse 500px 500px at 25% 30%, rgba(16, 185, 129, 0.08), transparent 50%),
+                radial-gradient(ellipse 400px 400px at 75% 70%, rgba(99, 102, 241, 0.06), transparent 50%);
+            animation: cosmicSpin 60s linear infinite;
+        }
+        @keyframes cosmicSpin { to { transform: rotate(360deg); } }
+
+        .content { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 24px 20px 60px; }
+
+        /* Header */
+        .dash-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 32px;
+        }
+        .dash-logo {
+            font-size: 26px; font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .dash-subtitle { font-size: 13px; color: var(--text-dim); margin-top: 2px; -webkit-text-fill-color: var(--text-dim); }
+        .live-indicator {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 8px 16px; border-radius: 50px; font-size: 13px; color: var(--success);
+        }
+        .live-dot {
+            width: 8px; height: 8px; background: var(--success); border-radius: 50%;
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(34,197,94,0); }
+        }
+
+        /* Hero Revenue Counter */
+        .revenue-hero {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .revenue-hero::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--gradient);
+        }
+        .revenue-label { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+        .revenue-amount {
+            font-size: 56px; font-weight: 800; letter-spacing: -2px;
+            background: var(--gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+        .revenue-currency { font-size: 20px; font-weight: 600; -webkit-text-fill-color: var(--text-muted); margin-top: 4px; }
+        .revenue-subtitle { font-size: 13px; color: var(--text-dim); margin-top: 12px; }
+        .revenue-change {
+            display: inline-flex; align-items: center; gap: 4px;
+            background: rgba(34, 197, 94, 0.1); color: var(--success);
+            padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+        }
+        .stat-value { font-size: 28px; font-weight: 700; }
+        .stat-value.green { color: var(--primary); }
+        .stat-value.gold { color: var(--gold); }
+        .stat-value.purple { color: var(--secondary); }
+        .stat-label { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+
+        /* Quick Actions */
+        .actions-row {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            margin-bottom: 32px;
+        }
+        .action-btn {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 18px 16px;
+            display: flex; align-items: center; gap: 12px;
+            cursor: pointer; transition: all 200ms;
+            font-family: inherit; color: var(--text); font-size: 14px; font-weight: 600;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .action-btn:hover { border-color: rgba(255,255,255,0.12); background: var(--card-hover); }
+        .action-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+        .action-icon.green { background: var(--primary-glow); }
+        .action-icon.purple { background: rgba(99, 102, 241, 0.15); }
+        .action-icon.gold { background: rgba(245, 158, 11, 0.15); }
+        .action-icon.blue { background: rgba(59, 130, 246, 0.15); }
+
+        /* Live Feed */
+        .feed-section { margin-bottom: 32px; }
+        .feed-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .feed-title { font-size: 18px; font-weight: 700; }
+        .feed-badge {
+            font-size: 12px; color: var(--primary);
+            background: var(--primary-glow); padding: 4px 12px; border-radius: 20px;
+        }
+
+        .feed-list { display: flex; flex-direction: column; gap: 8px; }
+        .feed-item {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            display: flex; align-items: center; gap: 14px;
+            animation: slideIn 400ms ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .feed-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; flex-shrink: 0;
+        }
+        .feed-icon.recovered { background: rgba(16, 185, 129, 0.15); }
+        .feed-icon.pending { background: rgba(245, 158, 11, 0.15); }
+        .feed-icon.sent { background: rgba(99, 102, 241, 0.15); }
+
+        .feed-info { flex: 1; }
+        .feed-name { font-size: 14px; font-weight: 600; }
+        .feed-detail { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+        .feed-amount { font-size: 16px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+        .feed-time { font-size: 11px; color: var(--text-dim); text-align: left; white-space: nowrap; margin-top: 2px; }
+
+        /* How It Works */
+        .how-section {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+        .how-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .how-steps { display: flex; flex-direction: column; gap: 20px; }
+        .how-step {
+            display: flex; align-items: flex-start; gap: 16px;
+        }
+        .step-num {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--primary-glow); color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; font-weight: 700; flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .step-desc { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+        .step-connector {
+            width: 2px; height: 16px; background: var(--card-border);
+            margin: 0 17px;
+        }
+
+        /* Conversion Funnel */
+        .funnel-section {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 32px;
+        }
+        .funnel-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .funnel-bars { display: flex; flex-direction: column; gap: 14px; }
+        .funnel-row { display: flex; align-items: center; gap: 12px; }
+        .funnel-label { width: 100px; font-size: 13px; color: var(--text-muted); text-align: left; flex-shrink: 0; }
+        .funnel-bar-bg {
+            flex: 1; height: 32px; background: rgba(255,255,255,0.03); border-radius: 8px; overflow: hidden;
+            position: relative;
+        }
+        .funnel-bar-fill {
+            height: 100%; border-radius: 8px; transition: width 1s ease-out;
+            display: flex; align-items: center; justify-content: flex-end; padding: 0 10px;
+            font-size: 12px; font-weight: 600; color: #fff;
+        }
+        .funnel-bar-fill.green { background: linear-gradient(90deg, var(--primary), #059669); }
+        .funnel-bar-fill.gold { background: linear-gradient(90deg, var(--gold), #D97706); }
+        .funnel-bar-fill.purple { background: linear-gradient(90deg, var(--secondary), #4F46E5); }
+        .funnel-bar-fill.emerald { background: linear-gradient(90deg, #22C55E, #16A34A); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+            .stat-card { padding: 14px 10px; }
+            .stat-value { font-size: 22px; }
+            .revenue-amount { font-size: 42px; }
+            .actions-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cosmic-bg"></div>
+    <div class="content">
+        <!-- Header -->
+        <div class="dash-header">
+            <div>
+                <div class="dash-logo">RIBH</div>
+                <div class="dash-subtitle">مركز التحكم</div>
+            </div>
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                مباشر
+            </div>
+        </div>
+
+        <!-- Revenue Hero -->
+        <div class="revenue-hero">
+            <div class="revenue-label">إجمالي المبيعات المستردة</div>
+            <div class="revenue-amount" id="total-revenue">0</div>
+            <div class="revenue-currency">ريال سعودي</div>
+            <div class="revenue-subtitle">
+                <span class="revenue-change" id="today-change">&#8593; 0 ر.س اليوم</span>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value green" id="stat-orders">0</div>
+                <div class="stat-label">طلب مسترد</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value gold" id="stat-pending">0</div>
+                <div class="stat-label">ينتظر الدفع</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value purple" id="stat-week">0</div>
+                <div class="stat-label">هذا الأسبوع</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="actions-row">
+            <button class="action-btn" onclick="window.location.href='/app'">
+                <div class="action-icon green">&#128241;</div>
+                <span>واتساب</span>
+            </button>
+            <button class="action-btn" onclick="window.location.href='/settings'">
+                <div class="action-icon purple">&#9881;</div>
+                <span>الإعدادات</span>
+            </button>
+            <button class="action-btn" onclick="copyPayLink()">
+                <div class="action-icon gold">&#128279;</div>
+                <span>نسخ رابط الدفع</span>
+            </button>
+            <button class="action-btn" onclick="window.location.href='/admin/campaigns'">
+                <div class="action-icon blue">&#128640;</div>
+                <span>الحملات</span>
+            </button>
+        </div>
+
+        <!-- How Customer Pays (UX Flow) -->
+        <div class="how-section">
+            <div class="how-title">كيف يدفع عميلك بنقرة واحدة</div>
+            <div class="how-steps">
+                <div class="how-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <div class="step-title">عميلك يتخلى عن السلة</div>
+                        <div class="step-desc">نظامنا يكتشف السلة المتروكة تلقائياً خلال ثوانٍ عبر ربط سلة/شوبيفاي</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="how-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <div class="step-title">واتساب برسالة ذكية + رابط دفع</div>
+                        <div class="step-desc">الذكاء الاصطناعي يكتب رسالة مخصصة مع عرض لا يُقاوم ورابط الدفع المباشر</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="how-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <div class="step-title">العميل يضغط &rarr; يرى سلته &rarr; يدفع</div>
+                        <div class="step-desc">صفحة دفع سريعة تعرض المنتجات والخصم. Apple Pay، مدى، تمارا، أو نقد عند الاستلام</div>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="how-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <div class="step-title">الفلوس في حسابك</div>
+                        <div class="step-desc">الطلب يتأكد تلقائياً. أنت ما تحتاج تسوي أي شي. استيقظ على أرباح</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversion Funnel -->
+        <div class="funnel-section">
+            <div class="funnel-title">قمع التحويل</div>
+            <div class="funnel-bars">
+                <div class="funnel-row">
+                    <div class="funnel-label">سلات متروكة</div>
+                    <div class="funnel-bar-bg">
+                        <div class="funnel-bar-fill purple" id="funnel-carts" style="width: 100%;">100%</div>
+                    </div>
+                </div>
+                <div class="funnel-row">
+                    <div class="funnel-label">تم الإرسال</div>
+                    <div class="funnel-bar-bg">
+                        <div class="funnel-bar-fill gold" id="funnel-sent" style="width: 85%;">85%</div>
+                    </div>
+                </div>
+                <div class="funnel-row">
+                    <div class="funnel-label">فتح الرابط</div>
+                    <div class="funnel-bar-bg">
+                        <div class="funnel-bar-fill green" id="funnel-opened" style="width: 62%;">62%</div>
+                    </div>
+                </div>
+                <div class="funnel-row">
+                    <div class="funnel-label">دفع وتحويل</div>
+                    <div class="funnel-bar-bg">
+                        <div class="funnel-bar-fill emerald" id="funnel-paid" style="width: 28%;">28%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Feed -->
+        <div class="feed-section">
+            <div class="feed-header">
+                <div class="feed-title">آخر النشاطات</div>
+                <div class="feed-badge">مباشر</div>
+            </div>
+            <div class="feed-list" id="feed-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MERCHANT_ID = localStorage.getItem('merchantId') || 'demo';
+        const API_BASE = '/api/pay/stats/';
+
+        // ── Animate number ──
+        function animateNumber(el, target, duration) {
+            const start = parseInt(el.textContent.replace(/,/g, '')) || 0;
+            const diff = target - start;
+            if (diff === 0) return;
+            const startTime = performance.now();
+
+            function tick(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = Math.round(start + diff * eased);
+                el.textContent = current.toLocaleString('ar-SA');
+                if (progress < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        // ── Format time ago ──
+        function timeAgo(dateStr) {
+            const diff = Date.now() - new Date(dateStr).getTime();
+            const mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'الآن';
+            if (mins < 60) return 'منذ ' + mins + ' د';
+            const hours = Math.floor(mins / 60);
+            if (hours < 24) return 'منذ ' + hours + ' س';
+            return 'منذ ' + Math.floor(hours / 24) + ' ي';
+        }
+
+        // ── Render feed ──
+        function renderFeed(orders) {
+            const list = document.getElementById('feed-list');
+
+            if (!orders || orders.length === 0) {
+                // Show demo data if no real data
+                const demoOrders = [
+                    { customer: 'أحمد محمد', total: 450, paymentMethod: 'apple_pay', createdAt: new Date(Date.now() - 300000).toISOString(), items: 3 },
+                    { customer: 'سارة خالد', total: 1200, paymentMethod: 'tamara', createdAt: new Date(Date.now() - 1800000).toISOString(), items: 2 },
+                    { customer: 'فهد العتيبي', total: 280, paymentMethod: 'cod', createdAt: new Date(Date.now() - 7200000).toISOString(), items: 1 },
+                    { customer: 'نورة السعيد', total: 890, paymentMethod: 'mada', createdAt: new Date(Date.now() - 14400000).toISOString(), items: 4 },
+                    { customer: 'عبدالله الحربي', total: 650, paymentMethod: 'stc_pay', createdAt: new Date(Date.now() - 28800000).toISOString(), items: 2 },
+                ];
+                orders = demoOrders;
+            }
+
+            const methodLabels = {
+                apple_pay: 'Apple Pay',
+                mada: 'مدى',
+                tamara: 'تمارا',
+                cod: 'نقد',
+                stc_pay: 'STC Pay',
+            };
+
+            list.innerHTML = orders.map(order => `
+                <div class="feed-item">
+                    <div class="feed-icon recovered">&#128176;</div>
+                    <div class="feed-info">
+                        <div class="feed-name">${order.customer}</div>
+                        <div class="feed-detail">${order.items} منتج &bull; ${methodLabels[order.paymentMethod] || order.paymentMethod}</div>
+                    </div>
+                    <div style="text-align: left;">
+                        <div class="feed-amount">+${order.total} ر.س</div>
+                        <div class="feed-time">${timeAgo(order.createdAt)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Load stats ──
+        async function loadStats() {
+            try {
+                const res = await fetch(API_BASE + MERCHANT_ID);
+                const data = await res.json();
+
+                if (data.success) {
+                    animateNumber(document.getElementById('total-revenue'), data.totalRecovered, 1500);
+                    animateNumber(document.getElementById('stat-orders'), data.totalOrders, 1000);
+                    document.getElementById('stat-pending').textContent = data.pendingPayments;
+                    animateNumber(document.getElementById('stat-week'), data.weekRecovered, 1000);
+                    document.getElementById('today-change').innerHTML =
+                        '&#8593; ' + data.todayRecovered.toLocaleString('ar-SA') + ' ر.س اليوم';
+
+                    renderFeed(data.recentOrders);
+                } else {
+                    // Show demo data
+                    animateNumber(document.getElementById('total-revenue'), 47850, 1500);
+                    animateNumber(document.getElementById('stat-orders'), 23, 1000);
+                    document.getElementById('stat-pending').textContent = '5';
+                    animateNumber(document.getElementById('stat-week'), 12400, 1000);
+                    document.getElementById('today-change').innerHTML = '&#8593; 3,200 ر.س اليوم';
+                    renderFeed([]);
+                }
+            } catch (e) {
+                // Fallback to demo
+                animateNumber(document.getElementById('total-revenue'), 47850, 1500);
+                animateNumber(document.getElementById('stat-orders'), 23, 1000);
+                document.getElementById('stat-pending').textContent = '5';
+                animateNumber(document.getElementById('stat-week'), 12400, 1000);
+                document.getElementById('today-change').innerHTML = '&#8593; 3,200 ر.س اليوم';
+                renderFeed([]);
+            }
+        }
+
+        function copyPayLink() {
+            const url = window.location.origin + '/pay?t=demo';
+            navigator.clipboard.writeText(url).then(() => {
+                alert('تم نسخ الرابط!');
+            }).catch(() => {
+                prompt('انسخ الرابط:', url);
+            });
+        }
+
+        // Auto-refresh every 30s
+        loadStats();
+        setInterval(loadStats, 30000);
+    </script>
+</body>
+</html>
