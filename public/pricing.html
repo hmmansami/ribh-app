@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH - الباقات</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #09090B;
+            --card: #18181B;
+            --border: #27272A;
+            --text: #FAFAFA;
+            --text-muted: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-dim: rgba(16, 185, 129, 0.12);
+        }
+        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { background: var(--bg); color: var(--text); min-height: 100dvh; }
+
+        .shell { max-width: 480px; margin: 0 auto; padding: 0 20px 40px; }
+
+        /* Header */
+        .header { display: flex; align-items: center; gap: 12px; padding: 20px 0; margin-bottom: 8px; }
+        .header-back { width: 36px; height: 36px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; color: var(--text); transition: background 180ms; }
+        .header-back:hover { background: var(--border); }
+        .header-back svg { width: 18px; height: 18px; }
+        .header-title { font-size: 18px; font-weight: 700; }
+
+        /* Card base */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
+
+        /* Trial banner */
+        .trial-banner {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            background: var(--primary-dim);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        .trial-banner-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(16, 185, 129, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .trial-banner-icon svg { width: 18px; height: 18px; color: var(--primary); }
+        .trial-banner-text { font-size: 14px; font-weight: 600; color: var(--primary); line-height: 1.5; }
+        .trial-banner-text span { font-weight: 400; opacity: 0.85; }
+
+        /* Plan cards */
+        .plan-card {
+            padding: 24px 20px;
+            margin-bottom: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .plan-card.recommended {
+            border: 2px solid var(--primary);
+        }
+
+        .plan-badge {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .plan-header { margin-bottom: 20px; }
+        .plan-card.recommended .plan-header { margin-top: 16px; }
+        .plan-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+
+        .plan-price-row { display: flex; align-items: baseline; gap: 4px; }
+        .plan-price {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--text);
+        }
+        .plan-currency {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            opacity: 0.7;
+        }
+        .plan-period {
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-muted);
+            margin-right: 2px;
+        }
+
+        /* Feature list */
+        .plan-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .plan-feature-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .plan-feature-icon svg { width: 12px; height: 12px; color: var(--primary); }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms, transform 120ms;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+
+        .btn-outline {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms, border-color 180ms;
+        }
+        .btn-outline:hover { background: var(--card); border-color: #3f3f46; }
+
+        /* FAQ section */
+        .faq-section { margin-top: 32px; margin-bottom: 32px; }
+        .faq-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+
+        details {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        details[open] { border-color: #3f3f46; }
+
+        summary {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            user-select: none;
+            transition: background 180ms;
+        }
+        summary:hover { background: rgba(255, 255, 255, 0.03); }
+        summary::-webkit-details-marker { display: none; }
+        summary::marker { display: none; content: ''; }
+
+        summary::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+            background-size: contain;
+            background-repeat: no-repeat;
+            flex-shrink: 0;
+            transition: transform 200ms ease;
+        }
+        details[open] summary::after { transform: rotate(180deg); }
+
+        .faq-answer {
+            padding: 0 16px 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Bottom note */
+        .bottom-note {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .bottom-note-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .bottom-note-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 180ms;
+        }
+        .bottom-note-link:hover { opacity: 0.8; }
+        .bottom-note-link svg { width: 16px; height: 16px; }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .plan-card { animation: fadeIn 400ms ease-out both; }
+        .plan-card:nth-child(1) { animation-delay: 0ms; }
+        .plan-card:nth-child(2) { animation-delay: 80ms; }
+        .plan-card:nth-child(3) { animation-delay: 160ms; }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <!-- Header -->
+        <div class="header">
+            <a href="/app" class="header-back"><i data-lucide="arrow-right"></i></a>
+            <h1 class="header-title">الباقات</h1>
+        </div>
+
+        <!-- Trial banner (shown dynamically) -->
+        <div class="trial-banner" id="trial-banner" style="display: none;">
+            <div class="trial-banner-icon"><i data-lucide="clock"></i></div>
+            <div class="trial-banner-text">
+                الفترة التجريبية <span>- متبقي <strong id="trial-days">7</strong> ايام</span>
+            </div>
+        </div>
+
+        <!-- Plan Cards -->
+        <div class="plans">
+
+            <!-- باقة البداية -->
+            <div class="card plan-card">
+                <div class="plan-header">
+                    <div class="plan-name">باقة البداية</div>
+                    <div class="plan-price-row">
+                        <span class="plan-price">99</span>
+                        <span class="plan-currency">ر.س</span>
+                        <span class="plan-period">/شهر</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>500 رسالة شهريا</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>استرداد السلات المتروكة</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>رسائل AI ذكية</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>تقارير اساسية</span>
+                    </li>
+                </ul>
+                <button class="btn-outline" data-plan="starter" onclick="choosePlan('starter')">اختر هذي الباقة</button>
+            </div>
+
+            <!-- باقة النمو (Recommended) -->
+            <div class="card plan-card recommended">
+                <div class="plan-badge">الاكثر طلبا</div>
+                <div class="plan-header">
+                    <div class="plan-name">باقة النمو</div>
+                    <div class="plan-price-row">
+                        <span class="plan-price">249</span>
+                        <span class="plan-currency">ر.س</span>
+                        <span class="plan-period">/شهر</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>2,000 رسالة شهريا</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>كل مميزات البداية</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>اعادة تنشيط العملاء الخاملين</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>البيع الاضافي</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>تقارير متقدمة</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>اوقات ارسال ذكية</span>
+                    </li>
+                </ul>
+                <button class="btn-primary" data-plan="growth" onclick="choosePlan('growth')">اختر هذي الباقة</button>
+            </div>
+
+            <!-- باقة الاحتراف -->
+            <div class="card plan-card">
+                <div class="plan-header">
+                    <div class="plan-name">باقة الاحتراف</div>
+                    <div class="plan-price-row">
+                        <span class="plan-price">499</span>
+                        <span class="plan-currency">ر.س</span>
+                        <span class="plan-period">/شهر</span>
+                    </div>
+                </div>
+                <ul class="plan-features">
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>10,000 رسالة شهريا</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>كل مميزات النمو</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>حملات مخصصة</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>API مفتوح</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>دعم فني اولوية</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>مدير حساب مخصص</span>
+                    </li>
+                </ul>
+                <button class="btn-outline" data-plan="pro" onclick="choosePlan('pro')">اختر هذي الباقة</button>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-section">
+            <div class="faq-title">اسئلة شائعة</div>
+
+            <details>
+                <summary>هل يمكنني تغيير الباقة لاحقا؟</summary>
+                <div class="faq-answer">نعم، يمكنك الترقية او التخفيض في اي وقت</div>
+            </details>
+
+            <details>
+                <summary>هل هناك عقد؟</summary>
+                <div class="faq-answer">لا، اشتراك شهري بدون التزام</div>
+            </details>
+
+            <details>
+                <summary>ماذا يحدث اذا تجاوزت الحد؟</summary>
+                <div class="faq-answer">يتم ايقاف الرسائل مؤقتا حتى تجديد الباقة او الترقية</div>
+            </details>
+        </div>
+
+        <!-- Bottom note -->
+        <div class="bottom-note">
+            <div class="bottom-note-text">تواصل معنا للباقات المخصصة</div>
+            <a href="https://wa.me/966500000000" target="_blank" class="bottom-note-link">
+                <i data-lucide="message-circle"></i>
+                <span>تواصل عبر الواتساب</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadTrialStatus();
+        });
+
+        // Check trial status and show banner if applicable
+        async function loadTrialStatus() {
+            var params = new URLSearchParams(window.location.search);
+            var merchantId = params.get('merchant');
+            try {
+                var url = '/api/merchant/status' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
+                var res = await fetch(url);
+                var data = await res.json();
+
+                if (data.trialStartDate) {
+                    var trialStart = new Date(data.trialStartDate);
+                    var daysElapsed = Math.floor((Date.now() - trialStart.getTime()) / 86400000);
+                    var daysLeft = 7 - daysElapsed;
+                    if (daysLeft > 0) {
+                        document.getElementById('trial-days').textContent = daysLeft;
+                        document.getElementById('trial-banner').style.display = 'flex';
+                    }
+                }
+            } catch (e) {
+                // Silently fail - banner just won't show
+            }
+        }
+
+        // Expose choosePlan to global scope
+        window.choosePlan = function(plan) {
+            var params = new URLSearchParams(window.location.search);
+            var merchantId = params.get('merchant');
+
+            var planNames = {
+                starter: 'باقة البداية',
+                growth: 'باقة النمو',
+                pro: 'باقة الاحتراف'
+            };
+
+            // For now, redirect to WhatsApp with plan info
+            var message = encodeURIComponent('مرحبا، ابي اشترك في ' + (planNames[plan] || plan));
+            window.open('https://wa.me/966500000000?text=' + message, '_blank');
+        };
+    })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH - العملاء</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #09090B;
+            --card: #18181B;
+            --border: #27272A;
+            --text: #FAFAFA;
+            --text-muted: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-dim: rgba(16, 185, 129, 0.12);
+        }
+
+        html {
+            font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
+
+        /* ── Layout ── */
+        .shell {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Animations ── */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0 16px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-back {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: background 180ms;
+            cursor: pointer;
+        }
+        .header-back:hover { background: var(--border); }
+        .header-back svg { width: 18px; height: 18px; }
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .header-count {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-dim);
+            padding: 3px 10px;
+            border-radius: 8px;
+        }
+
+        /* ── Stats summary ── */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+            animation: fadeIn 300ms ease-out;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .stat-value.green { color: var(--primary); }
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ── Segment tabs ── */
+        .tabs-wrap {
+            margin-bottom: 16px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .tabs-wrap::-webkit-scrollbar { display: none; }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding-bottom: 4px;
+            white-space: nowrap;
+        }
+        .tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--card);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 180ms;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .tab:hover { background: var(--border); }
+        .tab.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+            border-color: rgba(16, 185, 129, 0.25);
+        }
+        .tab .tab-count {
+            font-size: 11px;
+            margin-right: 4px;
+            opacity: 0.7;
+        }
+
+        /* ── Customer list ── */
+        .customer-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            padding-bottom: 24px;
+        }
+
+        .customer-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: fadeIn 300ms ease-out;
+            transition: background 180ms;
+            cursor: pointer;
+        }
+        .customer-card:hover { background: #1f1f23; }
+
+        .customer-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .customer-body {
+            flex: 1;
+            min-width: 0;
+        }
+        .customer-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .customer-action {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .customer-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .customer-amount {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            direction: ltr;
+        }
+        .customer-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Status dot */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-dot.delivered { background: var(--primary); }
+        .status-dot.read { background: #3B82F6; }
+        .status-dot.sent { background: #8B5CF6; }
+        .status-dot.none { background: #F59E0B; }
+
+        /* ── Empty state ── */
+        .empty-state {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 300ms ease-out;
+        }
+        .empty-state.visible { display: flex; }
+        .empty-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .empty-icon svg { width: 28px; height: 28px; color: var(--primary); }
+        .empty-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .empty-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .btn-primary {
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 180ms, transform 120ms;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        /* ── Loading ── */
+        .loading-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 40px 0;
+        }
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 800ms linear infinite;
+        }
+        .loading-text {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ── Segment badge on card ── */
+        .segment-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+        .segment-badge.abandoned { background: rgba(239, 68, 68, 0.12); color: #EF4444; }
+        .segment-badge.dormant { background: rgba(245, 158, 11, 0.12); color: #F59E0B; }
+        .segment-badge.recent { background: rgba(59, 130, 246, 0.12); color: #3B82F6; }
+        .segment-badge.vip { background: rgba(139, 92, 246, 0.12); color: #8B5CF6; }
+    </style>
+</head>
+<body>
+    <div class="shell">
+
+        <!-- Header -->
+        <div class="header">
+            <div class="header-right">
+                <a href="/app.html" class="header-back">
+                    <i data-lucide="arrow-right"></i>
+                </a>
+                <span class="header-title">العملاء</span>
+            </div>
+            <span class="header-count" id="header-count">0</span>
+        </div>
+
+        <!-- Stats summary bar -->
+        <div class="stats-bar" id="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-label">اجمالي العملاء</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="stat-messages">0</div>
+                <div class="stat-label">رسائل مرسلة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value green" id="stat-recovery">0%</div>
+                <div class="stat-label">نسبة الاسترداد</div>
+            </div>
+        </div>
+
+        <!-- Segment tabs -->
+        <div class="tabs-wrap">
+            <div class="tabs" id="tabs">
+                <button class="tab active" data-segment="all">الكل</button>
+                <button class="tab" data-segment="abandoned">سلات متروكة</button>
+                <button class="tab" data-segment="dormant">عملاء خاملين</button>
+                <button class="tab" data-segment="recent">مشترين جدد</button>
+                <button class="tab" data-segment="vip">VIP</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading-state" id="loading-state">
+            <div class="spinner"></div>
+            <span class="loading-text">جاري تحميل العملاء...</span>
+        </div>
+
+        <!-- Customer list -->
+        <div class="customer-list" id="customer-list" style="display:none;"></div>
+
+        <!-- Empty state -->
+        <div class="empty-state" id="empty-state">
+            <div class="empty-icon">
+                <i data-lucide="users"></i>
+            </div>
+            <h2 class="empty-title">لا يوجد عملاء بعد</h2>
+            <p class="empty-desc">اربط متجرك من سلة وراح نجمع بيانات عملائك تلقائيا</p>
+            <button class="btn-primary" onclick="window.location.href='/app.html'">
+                <i data-lucide="store"></i>
+                <span>ربط المتجر</span>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ── Demo data ──
+        var demoCustomers = [
+            { name: 'سارة احمد', phone: '+966501234567', segment: 'abandoned', lastAction: 'ترك سلة بقيمة 340 ر.س', status: 'delivered', amount: 340, time: '2h' },
+            { name: 'محمد علي', phone: '+966509876543', segment: 'abandoned', lastAction: 'ترك سلة بقيمة 890 ر.س', status: 'read', amount: 890, time: '4h' },
+            { name: 'فاطمة خالد', phone: '+966507654321', segment: 'dormant', lastAction: 'آخر شراء منذ 45 يوم', status: 'sent', amount: 0, time: '45d' },
+            { name: 'عبدالله سعد', phone: '+966503456789', segment: 'dormant', lastAction: 'آخر شراء منذ 30 يوم', status: 'none', amount: 0, time: '30d' },
+            { name: 'نورة فهد', phone: '+966508765432', segment: 'recent', lastAction: 'اشترى منذ 3 ايام', status: 'delivered', amount: 520, time: '3d' },
+            { name: 'خالد ابراهيم', phone: '+966502345678', segment: 'vip', lastAction: '12 طلب - 8,400 ر.س', status: 'read', amount: 8400, time: '1d' },
+            { name: 'ريم عمر', phone: '+966506789012', segment: 'abandoned', lastAction: 'ترك سلة بقيمة 1,200 ر.س', status: 'none', amount: 1200, time: '1h' },
+            { name: 'احمد يوسف', phone: '+966504567890', segment: 'recent', lastAction: 'اشترى منذ يومين', status: 'delivered', amount: 280, time: '2d' },
+        ];
+
+        var demoStats = {
+            totalCustomers: 8,
+            messagesSent: 47,
+            recoveryRate: 17
+        };
+
+        var customers = [];
+        var currentSegment = 'all';
+        var isDemo = false;
+
+        // ── Avatar colors ──
+        var avatarColors = [
+            '#EF4444', '#F59E0B', '#10B981', '#3B82F6',
+            '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'
+        ];
+
+        function getAvatarColor(name) {
+            var hash = 0;
+            var str = name || '';
+            for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return avatarColors[Math.abs(hash) % avatarColors.length];
+        }
+
+        function getInitial(customer) {
+            if (customer.name && customer.name.trim()) {
+                return customer.name.trim().charAt(0);
+            }
+            return '#';
+        }
+
+        function getDisplayName(customer) {
+            if (customer.name && customer.name.trim()) {
+                return customer.name.trim();
+            }
+            return customer.phone || 'عميل';
+        }
+
+        // ── Segment labels ──
+        var segmentLabels = {
+            abandoned: 'سلة متروكة',
+            dormant: 'خامل',
+            recent: 'جديد',
+            vip: 'VIP'
+        };
+
+        // ── Status labels ──
+        var statusLabels = {
+            delivered: 'تم التوصيل',
+            read: 'تم القراءة',
+            sent: 'تم الارسال',
+            none: 'لم يرسل بعد'
+        };
+
+        function formatAmount(amount) {
+            if (!amount || amount <= 0) return '';
+            return Number(amount).toLocaleString('ar-SA') + ' ر.س';
+        }
+
+        function formatTimeLabel(t) {
+            if (!t) return '';
+            // If it's already a short string like '2h', '3d'
+            if (typeof t === 'string' && t.match(/^\d+[hdm]$/)) {
+                var val = parseInt(t);
+                var unit = t.charAt(t.length - 1);
+                if (unit === 'h') return 'منذ ' + val + ' ساعة';
+                if (unit === 'd') return 'منذ ' + val + ' يوم';
+                if (unit === 'm') return 'منذ ' + val + ' دقيقة';
+            }
+            return t;
+        }
+
+        // ── Render functions ──
+        function renderCustomerCard(customer) {
+            var card = document.createElement('div');
+            card.className = 'customer-card';
+
+            var displayName = getDisplayName(customer);
+            var initial = getInitial(customer);
+            var color = getAvatarColor(displayName);
+            var amountHtml = customer.amount && customer.amount > 0
+                ? '<span class="customer-amount">' + formatAmount(customer.amount) + '</span>'
+                : '';
+
+            var segmentHtml = '';
+            if (currentSegment === 'all' && customer.segment && segmentLabels[customer.segment]) {
+                segmentHtml = '<span class="segment-badge ' + escapeAttr(customer.segment) + '">' + escapeHtml(segmentLabels[customer.segment]) + '</span>';
+            }
+
+            card.innerHTML =
+                '<div class="customer-avatar" style="background:' + color + '">' + escapeHtml(initial) + '</div>' +
+                '<div class="customer-body">' +
+                    '<div class="customer-name">' +
+                        '<span>' + escapeHtml(displayName) + '</span>' +
+                        segmentHtml +
+                    '</div>' +
+                    '<div class="customer-action">' + escapeHtml(customer.lastAction || '') + '</div>' +
+                '</div>' +
+                '<div class="customer-meta">' +
+                    amountHtml +
+                    '<div style="display:flex;align-items:center;gap:6px">' +
+                        '<span class="customer-time">' + escapeHtml(formatTimeLabel(customer.time)) + '</span>' +
+                        '<span class="status-dot ' + escapeAttr(customer.status || 'none') + '" title="' + escapeAttr(statusLabels[customer.status] || '') + '"></span>' +
+                    '</div>' +
+                '</div>';
+
+            return card;
+        }
+
+        function renderList() {
+            var listEl = document.getElementById('customer-list');
+            var emptyEl = document.getElementById('empty-state');
+            var loadingEl = document.getElementById('loading-state');
+
+            loadingEl.style.display = 'none';
+
+            var filtered = currentSegment === 'all'
+                ? customers
+                : customers.filter(function (c) { return c.segment === currentSegment; });
+
+            if (filtered.length === 0 && customers.length === 0) {
+                listEl.style.display = 'none';
+                emptyEl.classList.add('visible');
+                return;
+            }
+
+            emptyEl.classList.remove('visible');
+
+            if (filtered.length === 0) {
+                listEl.style.display = 'flex';
+                listEl.innerHTML = '<div style="text-align:center;padding:40px 16px;color:var(--text-muted);font-size:14px;">لا يوجد عملاء في هذا التصنيف</div>';
+                return;
+            }
+
+            listEl.style.display = 'flex';
+            listEl.innerHTML = '';
+
+            filtered.forEach(function (customer, i) {
+                var card = renderCustomerCard(customer);
+                card.style.animationDelay = (i * 50) + 'ms';
+                listEl.appendChild(card);
+            });
+        }
+
+        function updateStats(stats) {
+            document.getElementById('stat-total').textContent = (stats.totalCustomers || 0).toLocaleString('ar-SA');
+            document.getElementById('stat-messages').textContent = (stats.messagesSent || 0).toLocaleString('ar-SA');
+            document.getElementById('stat-recovery').textContent = (stats.recoveryRate || 0) + '%';
+            document.getElementById('header-count').textContent = (stats.totalCustomers || 0).toLocaleString('ar-SA');
+        }
+
+        function updateTabCounts() {
+            var tabs = document.querySelectorAll('.tab[data-segment]');
+            tabs.forEach(function (tab) {
+                var segment = tab.getAttribute('data-segment');
+                var count = segment === 'all'
+                    ? customers.length
+                    : customers.filter(function (c) { return c.segment === segment; }).length;
+
+                // Remove existing count span
+                var existing = tab.querySelector('.tab-count');
+                if (existing) existing.remove();
+
+                if (count > 0) {
+                    var span = document.createElement('span');
+                    span.className = 'tab-count';
+                    span.textContent = count;
+                    tab.appendChild(span);
+                }
+            });
+        }
+
+        // ── Tab handling ──
+        function initTabs() {
+            var tabsEl = document.getElementById('tabs');
+            tabsEl.addEventListener('click', function (e) {
+                var tab = e.target.closest('.tab');
+                if (!tab) return;
+
+                document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+                tab.classList.add('active');
+
+                currentSegment = tab.getAttribute('data-segment');
+                renderList();
+            });
+        }
+
+        // ── Data loading ──
+        async function loadData() {
+            try {
+                // Try loading dashboard stats
+                var statsRes = await fetch('/api/segments/dashboard');
+                if (!statsRes.ok) throw new Error('Stats API failed');
+                var statsData = await statsRes.json();
+
+                updateStats({
+                    totalCustomers: statsData.totalCustomers || 0,
+                    messagesSent: statsData.messagesSent || 0,
+                    recoveryRate: statsData.recoveryRate || 0
+                });
+
+                // Try loading customers for current segment
+                var customersRes = await fetch('/api/segments/all/customers');
+                if (!customersRes.ok) throw new Error('Customers API failed');
+                var customersData = await customersRes.json();
+
+                if (customersData.customers && customersData.customers.length > 0) {
+                    customers = customersData.customers;
+                } else {
+                    throw new Error('No customers from API');
+                }
+            } catch (e) {
+                console.warn('API unavailable, using demo data:', e.message);
+                isDemo = true;
+                customers = demoCustomers;
+                updateStats(demoStats);
+            }
+
+            updateTabCounts();
+            renderList();
+        }
+
+        // ── Helpers ──
+        function escapeHtml(str) {
+            if (!str) return '';
+            var div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function escapeAttr(str) {
+            if (!str) return '';
+            return String(str).replace(/[&"'<>]/g, function (m) {
+                return { '&': '&amp;', '"': '&quot;', "'": '&#39;', '<': '&lt;', '>': '&gt;' }[m];
+            });
+        }
+
+        // ── Boot ──
+        document.addEventListener('DOMContentLoaded', function () {
+            lucide.createIcons();
+            initTabs();
+            loadData();
+        });
+    })();
+    </script>
+</body>
+</html>
