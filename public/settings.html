@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RIBH - الاعدادات</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #09090B;
+            --card: #18181B;
+            --border: #27272A;
+            --text: #FAFAFA;
+            --text-muted: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-dim: rgba(16, 185, 129, 0.12);
+            --danger: #EF4444;
+            --danger-dim: rgba(239, 68, 68, 0.12);
+        }
+        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        body { background: var(--bg); color: var(--text); min-height: 100dvh; }
+
+        .shell { max-width: 480px; margin: 0 auto; padding: 0 20px 40px; }
+
+        /* Header */
+        .header { display: flex; align-items: center; gap: 12px; padding: 20px 0; margin-bottom: 8px; }
+        .header-back { width: 36px; height: 36px; border-radius: 10px; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; color: var(--text); }
+        .header-back svg { width: 18px; height: 18px; }
+        .header-title { font-size: 18px; font-weight: 700; }
+
+        /* Cards */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
+        .section { margin-bottom: 20px; }
+        .section-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; padding-right: 2px; }
+
+        /* Setting row */
+        .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
+        .setting-row + .setting-row { border-top: 1px solid var(--border); }
+        .setting-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+        .setting-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .setting-icon svg { width: 16px; height: 16px; color: var(--primary); }
+        .setting-icon.danger { background: var(--danger-dim); }
+        .setting-icon.danger svg { color: var(--danger); }
+        .setting-text {}
+        .setting-name { font-size: 14px; font-weight: 600; margin-bottom: 1px; }
+        .setting-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .setting-value { font-size: 12px; color: var(--text-muted); direction: ltr; flex-shrink: 0; }
+
+        /* Toggle */
+        .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 12px; cursor: pointer; transition: background 200ms; }
+        .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: var(--text); top: 3px; right: 3px; transition: transform 200ms; }
+        .toggle-switch input:checked + .toggle-slider { background: var(--primary); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(-20px); }
+
+        /* Radio group */
+        .radio-group { padding: 4px 16px 16px; }
+        .radio-option { display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; font-size: 14px; }
+        .radio-option + .radio-option { border-top: 1px solid var(--border); }
+        .radio-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 200ms; }
+        .radio-dot::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: transparent; transition: background 200ms; }
+        .radio-option input { display: none; }
+        .radio-option input:checked ~ .radio-dot { border-color: var(--primary); }
+        .radio-option input:checked ~ .radio-dot::after { background: var(--primary); }
+        .radio-label { flex: 1; }
+        .radio-sublabel { font-size: 12px; color: var(--text-muted); }
+
+        /* Danger buttons */
+        .btn-danger {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--card);
+            color: var(--danger);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms;
+            margin-bottom: 10px;
+        }
+        .btn-danger:hover { background: var(--danger-dim); }
+        .btn-danger svg { width: 18px; height: 18px; }
+
+        .version { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 32px; }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="header">
+            <a href="/app" class="header-back"><i data-lucide="arrow-right"></i></a>
+            <h1 class="header-title">الاعدادات</h1>
+        </div>
+
+        <!-- Store Info -->
+        <div class="section">
+            <div class="section-title">المتجر</div>
+            <div class="card">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="store"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name" id="set-store-name">المتجر</div>
+                            <div class="setting-desc" id="set-store-id">غير متصل</div>
+                        </div>
+                    </div>
+                    <span class="setting-value" id="set-store-status">متصل</span>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="message-circle"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name">الواتساب</div>
+                            <div class="setting-desc" id="set-wa-phone">غير متصل</div>
+                        </div>
+                    </div>
+                    <span class="setting-value" id="set-wa-status">غير متصل</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Timing -->
+        <div class="section">
+            <div class="section-title">توقيت الرسائل</div>
+            <div class="card">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="timer"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name">ارسال بعد ترك السلة</div>
+                            <div class="setting-desc">متى ترسل الرسالة بعد ترك العميل للسلة</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="send-delay" value="0">
+                        <span class="radio-dot"></span>
+                        <span class="radio-label">فوري</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="send-delay" value="60" checked>
+                        <span class="radio-dot"></span>
+                        <span class="radio-label">بعد ساعة <span class="radio-sublabel">(موصى به)</span></span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="send-delay" value="180">
+                        <span class="radio-dot"></span>
+                        <span class="radio-label">بعد 3 ساعات</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiet Hours -->
+        <div class="section">
+            <div class="section-title">الرسائل</div>
+            <div class="card">
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="moon"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name">اوقات الهدوء</div>
+                            <div class="setting-desc">لا ترسل بين 11 م - 8 ص</div>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked id="set-quiet-hours">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="sparkles"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name">رسائل ذكية بالـ AI</div>
+                            <div class="setting-desc">الذكاء الاصطناعي يكتب رسالة مخصصة لكل عميل</div>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked id="set-ai-messages">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="setting-row">
+                    <div class="setting-info">
+                        <div class="setting-icon"><i data-lucide="bell"></i></div>
+                        <div class="setting-text">
+                            <div class="setting-name">اشعارات الاسترداد</div>
+                            <div class="setting-desc">اشعار عند استرداد سلة</div>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked id="set-notifications">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="section">
+            <div class="section-title">خيارات متقدمة</div>
+            <button class="btn-danger" id="btn-disconnect-wa">
+                <i data-lucide="unplug"></i>
+                <span>فصل الواتساب</span>
+            </button>
+            <button class="btn-danger" id="btn-disconnect-store">
+                <i data-lucide="log-out"></i>
+                <span>فصل المتجر</span>
+            </button>
+        </div>
+
+        <div class="version">RIBH v1.0 - ربح</div>
+    </div>
+
+    <script>
+    (function() {
+        'use strict';
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            loadSettings();
+        });
+
+        async function loadSettings() {
+            var params = new URLSearchParams(window.location.search);
+            var merchantId = params.get('merchant');
+            try {
+                var url = '/api/merchant/status' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
+                var res = await fetch(url);
+                var data = await res.json();
+                if (data.connected) {
+                    document.getElementById('set-store-name').textContent = data.storeName || 'المتجر';
+                    document.getElementById('set-store-id').textContent = 'ID: ' + (data.merchantId || '');
+                    document.getElementById('set-store-status').textContent = 'متصل';
+                    document.getElementById('set-store-status').style.color = '#10B981';
+                }
+                if (data.whatsappConnected) {
+                    document.getElementById('set-wa-status').textContent = 'متصل';
+                    document.getElementById('set-wa-status').style.color = '#10B981';
+                    if (data.whatsappPhone) {
+                        document.getElementById('set-wa-phone').textContent = data.whatsappPhone;
+                    }
+                }
+            } catch (e) {
+                console.warn('Settings load error:', e.message);
+            }
+        }
+
+        // Save settings on change
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(function(input) {
+            input.addEventListener('change', function() {
+                saveSettings();
+            });
+        });
+
+        async function saveSettings() {
+            var params = new URLSearchParams(window.location.search);
+            var merchantId = params.get('merchant');
+            var settings = {
+                sendDelay: document.querySelector('input[name="send-delay"]:checked').value,
+                quietHours: document.getElementById('set-quiet-hours').checked,
+                aiMessages: document.getElementById('set-ai-messages').checked,
+                notifications: document.getElementById('set-notifications').checked
+            };
+            try {
+                await fetch('/api/store/settings' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : ''), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+            } catch (e) {
+                console.warn('Settings save error:', e.message);
+            }
+        }
+
+        // Disconnect handlers
+        document.getElementById('btn-disconnect-wa').addEventListener('click', async function() {
+            if (!confirm('هل انت متأكد من فصل الواتساب؟')) return;
+            try {
+                await fetch('/api/whatsapp/disconnect', { method: 'POST' });
+                document.getElementById('set-wa-status').textContent = 'غير متصل';
+                document.getElementById('set-wa-status').style.color = '';
+            } catch (e) { console.error(e); }
+        });
+
+        document.getElementById('btn-disconnect-store').addEventListener('click', function() {
+            if (!confirm('هل انت متأكد؟ سيتم ايقاف جميع الحملات')) {
+                return;
+            }
+            window.location.href = '/app';
+        });
+    })();
+    </script>
+</body>
+</html>

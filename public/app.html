@@ -392,6 +392,60 @@
             white-space: nowrap;
         }
 
+        /* Message preview */
+        .s3-preview { margin-bottom: 24px; }
+        .s3-preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .s3-preview-title { font-size: 16px; font-weight: 700; }
+        .s3-preview-edit { font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+        .s3-wa-bubble {
+            padding: 14px 16px;
+            position: relative;
+        }
+        .s3-wa-bubble-inner {
+            background: #1F2C34;
+            border-radius: 0 10px 10px 10px;
+            padding: 12px 14px;
+            position: relative;
+        }
+        .s3-wa-bubble-inner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -8px;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 8px 8px 0;
+            border-color: transparent transparent transparent #1F2C34;
+        }
+        .s3-wa-bubble-text {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #E9EDEF;
+            white-space: pre-line;
+        }
+        .s3-wa-bubble-time {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #8696A0;
+        }
+        .s3-wa-bubble-time svg { width: 14px; height: 14px; color: #53BDEB; }
+        .s3-wa-store-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .s3-wa-store-tag svg { width: 12px; height: 12px; }
+
         .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
         .toggle-switch input { opacity: 0; width: 0; height: 0; }
         .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 12px; cursor: pointer; transition: background 200ms; }
@@ -608,6 +662,42 @@
         .s4-wa-phone { font-size: 12px; color: var(--text-muted); direction: ltr; text-align: right; }
         .s4-wa-settings { font-size: 12px; color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
 
+        /* Usage meter */
+        .s4-usage { margin-bottom: 20px; }
+        .s4-usage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .s4-usage-title { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .s4-usage-plan { font-size: 11px; color: var(--primary); font-weight: 600; cursor: pointer; }
+
+        .s4-usage-card { padding: 16px; }
+        .s4-usage-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .s4-usage-label { font-size: 13px; font-weight: 500; }
+        .s4-usage-count { font-size: 13px; font-weight: 600; direction: ltr; }
+
+        .s4-usage-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+        .s4-usage-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 600ms ease; }
+        .s4-usage-fill.warning { background: #F59E0B; }
+        .s4-usage-fill.danger { background: #EF4444; }
+
+        .s4-trial-badge { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(16, 185, 129, 0.06); border-radius: 10px; border-top: 1px solid var(--border); }
+        .s4-trial-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .s4-trial-icon svg { width: 14px; height: 14px; color: var(--primary); }
+        .s4-trial-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .s4-trial-text strong { color: var(--primary); font-weight: 600; }
+
+        /* Analytics funnel */
+        .s4-funnel { margin-bottom: 20px; }
+        .s4-funnel-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
+        .s4-funnel-card { padding: 16px; }
+        .s4-funnel-steps { display: flex; align-items: center; justify-content: space-between; }
+        .s4-funnel-step { text-align: center; flex: 1; }
+        .s4-funnel-step-value { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+        .s4-funnel-step-label { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
+        .s4-funnel-arrow { color: var(--border); flex-shrink: 0; padding: 0 2px; }
+        .s4-funnel-arrow svg { width: 14px; height: 14px; }
+        .s4-funnel-rate { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .s4-funnel-rate-label { font-size: 12px; color: var(--text-muted); }
+        .s4-funnel-rate-value { font-size: 14px; font-weight: 700; color: var(--primary); }
+
         /* ── Utility ── */
         .visually-hidden {
             position: absolute; width: 1px; height: 1px;
@@ -763,6 +853,33 @@
                     </div>
                 </div>
 
+                <!-- AI Message Preview -->
+                <div class="s3-preview">
+                    <div class="s3-preview-header">
+                        <span class="s3-preview-title">معاينة الرسالة</span>
+                        <a class="s3-preview-edit" id="s3-preview-edit-btn">تعديل</a>
+                    </div>
+                    <div class="card s3-wa-bubble">
+                        <div class="s3-wa-bubble-inner">
+                            <div class="s3-wa-bubble-text" id="s3-preview-text">مرحبا {customer_name}!
+
+سلتك لسا موجودة في {store_name} بقيمة {cart_value} ر.س
+
+خلص طلبك الحين واستخدم كود RIBH10 وتحصل خصم 10%
+
+{checkout_link}</div>
+                        </div>
+                        <div class="s3-wa-bubble-time">
+                            <span>الآن</span>
+                            <i data-lucide="check-check"></i>
+                        </div>
+                    </div>
+                    <div class="s3-wa-store-tag">
+                        <i data-lucide="sparkles"></i>
+                        <span>تم انشاؤها بالذكاء الاصطناعي</span>
+                    </div>
+                </div>
+
                 <div class="s3-actions">
                     <button class="btn-primary" id="btn-start-recovery">
                         <i data-lucide="message-circle"></i>
@@ -867,6 +984,61 @@
                                 <input type="checkbox" checked data-campaign="upsell">
                                 <span class="toggle-slider"></span>
                             </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Funnel -->
+                <div class="s4-funnel">
+                    <div class="s4-funnel-title">مسار الاسترداد</div>
+                    <div class="card s4-funnel-card">
+                        <div class="s4-funnel-steps">
+                            <div class="s4-funnel-step">
+                                <div class="s4-funnel-step-value" id="s4-funnel-carts">0</div>
+                                <div class="s4-funnel-step-label">سلة متروكة</div>
+                            </div>
+                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
+                            <div class="s4-funnel-step">
+                                <div class="s4-funnel-step-value" id="s4-funnel-sent">0</div>
+                                <div class="s4-funnel-step-label">رسالة مرسلة</div>
+                            </div>
+                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
+                            <div class="s4-funnel-step">
+                                <div class="s4-funnel-step-value" id="s4-funnel-opened">0</div>
+                                <div class="s4-funnel-step-label">تم الفتح</div>
+                            </div>
+                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
+                            <div class="s4-funnel-step">
+                                <div class="s4-funnel-step-value" id="s4-funnel-recovered">0</div>
+                                <div class="s4-funnel-step-label">تم الشراء</div>
+                            </div>
+                        </div>
+                        <div class="s4-funnel-rate">
+                            <span class="s4-funnel-rate-label">نسبة الاسترداد</span>
+                            <span class="s4-funnel-rate-value" id="s4-funnel-rate-pct">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Meter -->
+                <div class="s4-usage">
+                    <div class="s4-usage-header">
+                        <span class="s4-usage-title">الاستخدام</span>
+                        <a class="s4-usage-plan">ترقية الباقة</a>
+                    </div>
+                    <div class="card s4-usage-card">
+                        <div class="s4-usage-row">
+                            <span class="s4-usage-label">الرسائل المرسلة</span>
+                            <span class="s4-usage-count" id="s4-usage-count">0 / 500</span>
+                        </div>
+                        <div class="s4-usage-bar">
+                            <div class="s4-usage-fill" id="s4-usage-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="s4-trial-badge">
+                            <div class="s4-trial-icon"><i data-lucide="clock"></i></div>
+                            <div class="s4-trial-text" id="s4-trial-text">
+                                الفترة التجريبية: متبقي <strong id="s4-trial-days">7</strong> ايام مجانا
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -981,7 +1153,9 @@
                         recentBuyers: { count: 89, upsellEstimate: 4000 }
                     }
                 },
-                stats: { messagesSent: 47, opened: 31, purchased: 8, recovered: 4280 }
+                stats: { messagesSent: 47, opened: 31, purchased: 8, recovered: 4280 },
+                usage: { limit: 500, used: 47 },
+                trialStartDate: new Date(Date.now() - 2 * 86400000).toISOString()
             };
 
             merchantData = demoData;
@@ -1130,6 +1304,12 @@
             document.getElementById('s3-campaign-cart-count').textContent = cartCount.toLocaleString('ar-SA') + ' سلة';
             document.getElementById('s3-campaign-dormant-count').textContent = dormantCount.toLocaleString('ar-SA') + ' عميل';
             document.getElementById('s3-campaign-upsell-count').textContent = upsellCount.toLocaleString('ar-SA') + ' فرصة';
+
+            // Update message preview with store name
+            var previewText = document.getElementById('s3-preview-text');
+            if (previewText && storeName) {
+                previewText.textContent = previewText.textContent.replace('{store_name}', storeName);
+            }
         }
 
         // ── STATE 4: active ──
@@ -1157,6 +1337,37 @@
 
             // Poll for new activities every 15s
             activityPollTimer = setInterval(loadActivities, 15000);
+
+            // Funnel data
+            var funnelCarts = (data && data.stats && data.stats.totalCarts) || (stats.messagesSent ? Math.round(stats.messagesSent * 1.4) : 0);
+            animateCountUp('s4-funnel-carts', funnelCarts, 800);
+            animateCountUp('s4-funnel-sent', stats.messagesSent || 0, 800);
+            animateCountUp('s4-funnel-opened', stats.opened || 0, 800);
+            animateCountUp('s4-funnel-recovered', stats.purchased || 0, 800);
+            if (funnelCarts > 0) {
+                var recoveryRate = Math.round(((stats.purchased || 0) / funnelCarts) * 100);
+                document.getElementById('s4-funnel-rate-pct').textContent = recoveryRate + '%';
+            }
+
+            // Usage meter
+            var used = stats.messagesSent || 0;
+            var limit = (data && data.usage && data.usage.limit) || 500;
+            var pct = Math.min(Math.round((used / limit) * 100), 100);
+            document.getElementById('s4-usage-count').textContent = used.toLocaleString('ar-SA') + ' / ' + limit.toLocaleString('ar-SA');
+            var fillEl = document.getElementById('s4-usage-fill');
+            if (fillEl) {
+                fillEl.style.width = pct + '%';
+                fillEl.classList.remove('warning', 'danger');
+                if (pct > 90) fillEl.classList.add('danger');
+                else if (pct > 70) fillEl.classList.add('warning');
+            }
+
+            // Trial countdown
+            var trialStart = (data && data.trialStartDate) || new Date().toISOString();
+            var trialDays = 7 - Math.floor((Date.now() - new Date(trialStart).getTime()) / 86400000);
+            if (trialDays < 0) trialDays = 0;
+            var trialDaysEl = document.getElementById('s4-trial-days');
+            if (trialDaysEl) trialDaysEl.textContent = trialDays;
 
             // WhatsApp status card
             const waConnected = data && data.whatsappConnected;
