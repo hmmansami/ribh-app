@@ -38,11 +38,6 @@
                 "region": "europe-west1"
             },
             {
-                "source": "/app",
-                "function": "api",
-                "region": "europe-west1"
-            },
-            {
                 "source": "/salla/**",
                 "function": "api",
                 "region": "europe-west1"
