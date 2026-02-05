@@ -484,6 +484,11 @@
         }
         .s4-engine-badge svg { width: 14px; height: 14px; }
 
+        .s4-logo { font-size: 16px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; font-style: italic; }
+        .s4-settings-btn { width: 32px; height: 32px; border-radius: 8px; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-muted); text-decoration: none; transition: background 180ms; }
+        .s4-settings-btn:hover { background: var(--border); }
+        .s4-settings-btn svg { width: 16px; height: 16px; }
+
         .s4-hero { text-align: center; margin-bottom: 28px; }
         .s4-hero-number {
             font-size: 48px;
@@ -698,6 +703,27 @@
         .s4-funnel-rate-label { font-size: 12px; color: var(--text-muted); }
         .s4-funnel-rate-value { font-size: 14px; font-weight: 700; color: var(--primary); }
 
+        /* Loading skeleton */
+        .s0-loading {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 40px 0;
+        }
+        .s0-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 800ms linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .s0-brand { font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; font-style: italic; }
+
         /* ── Utility ── */
         .visually-hidden {
             position: absolute; width: 1px; height: 1px;
@@ -707,6 +733,14 @@
 </head>
 <body>
     <div class="shell">
+
+        <!-- ═══════ STATE 0: loading ═══════ -->
+        <div id="state-loading" class="state is-active">
+            <div class="s0-loading">
+                <span class="s0-brand">RIBH</span>
+                <div class="s0-spinner"></div>
+            </div>
+        </div>
 
         <!-- ═══════ STATE 1: not_connected ═══════ -->
         <div id="state-not_connected" class="state">
@@ -894,11 +928,19 @@
         <div id="state-active" class="state">
             <div class="s4-wrap">
                 <div class="s4-topbar">
-                    <span class="s4-store-name" id="s4-store-name">المتجر</span>
-                    <span class="s4-engine-badge">
-                        <i data-lucide="check-circle-2"></i>
-                        <span>المحرك يعمل</span>
-                    </span>
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <span class="s4-logo">RIBH</span>
+                        <span class="s4-store-name" id="s4-store-name">المتجر</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span class="s4-engine-badge">
+                            <i data-lucide="check-circle-2"></i>
+                            <span>يعمل</span>
+                        </span>
+                        <a href="/settings.html" class="s4-settings-btn" title="الاعدادات">
+                            <i data-lucide="settings"></i>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="s4-hero">
@@ -1110,6 +1152,9 @@
                 await runDemo(demo);
                 return;
             }
+
+            // Show loading
+            document.getElementById('state-loading').classList.add('is-active');
 
             try {
                 const url = '/api/merchant/status' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');

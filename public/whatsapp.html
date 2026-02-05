@@ -567,6 +567,11 @@
 
             // Re-render Lucide icons for newly visible state
             lucide.createIcons();
+
+            // Auto-redirect to dashboard after successful connection
+            setTimeout(function() {
+                window.location.href = '/app';
+            }, 2500);
         }
 
         function startStatusPolling() {
