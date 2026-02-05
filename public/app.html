@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RIBH - One Click Money</title>
+    <title>RIBH - استرداد السلات المتروكة</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
             --bg: #09090B;
             --card: #18181B;
@@ -16,481 +17,979 @@
             --text-muted: #71717A;
             --primary: #10B981;
             --primary-hover: #059669;
-        }
-        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-
-        .container { max-width: 800px; margin: 0 auto; padding: 24px; }
-
-        /* Hero Section */
-        .hero { text-align: center; padding: 40px 0 32px; }
-        .hero-money { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
-        .hero-currency { font-size: 24px; color: var(--text-muted); }
-        .hero-subtitle { color: var(--text-muted); font-size: 18px; margin-top: 8px; }
-
-        /* Breakdown Cards */
-        .breakdown { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
-        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 140px; text-align: center; flex: 1; max-width: 200px; }
-        .breakdown-icon { font-size: 24px; margin-bottom: 8px; }
-        .breakdown-value { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
-        .breakdown-label { font-size: 12px; color: var(--text-muted); }
-        .breakdown-sar { font-size: 13px; color: var(--primary); margin-top: 4px; }
-
-        /* Main Action Button */
-        .action-section { text-align: center; margin-bottom: 32px; }
-        .action-btn {
-            padding: 20px 48px; font-size: 20px; font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white; border: none; border-radius: 14px;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
-            box-shadow: 0 0 40px rgba(16,185,129,0.4);
-            animation: glowPulse 2s ease-in-out infinite;
-            transition: transform 0.2s;
-        }
-        .action-btn:hover { transform: scale(1.03); }
-        .action-btn:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
-        .action-btn svg { width: 24px; height: 24px; }
-        @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 0 30px rgba(16,185,129,0.4); }
-            50% { box-shadow: 0 0 50px rgba(16,185,129,0.6); }
+            --primary-dim: rgba(16, 185, 129, 0.12);
         }
 
-        .action-hint { font-size: 13px; color: var(--text-muted); margin-top: 12px; }
+        html {
+            font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
-        /* Activity Feed */
-        .activity { margin-bottom: 32px; }
-        .activity-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .activity-title { font-size: 14px; font-weight: 600; }
-        .activity-badge { padding: 4px 10px; background: rgba(16,185,129,0.15); border-radius: 12px; font-size: 11px; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .activity-badge-dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .activity-list { }
-        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .activity-dot.green { background: var(--primary); }
-        .activity-dot.blue { background: #3B82F6; }
-        .activity-dot.orange { background: #F59E0B; }
-        .activity-dot.purple { background: #8B5CF6; }
-        .activity-content { flex: 1; }
-        .activity-msg { font-size: 13px; font-weight: 500; }
-        .activity-time { font-size: 11px; color: var(--text-muted); }
-        .activity-amount { font-size: 13px; font-weight: 600; color: var(--primary); }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            overflow-x: hidden;
+        }
 
-        /* Status Bar */
-        .status-bar { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; }
-        .status-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .status-dot.active { background: var(--primary); }
-        .status-dot.inactive { background: var(--text-muted); }
-        .status-dot.pending { background: #F59E0B; animation: blink 1s infinite; }
+        /* ── Layout ── */
+        .shell {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* Results Overlay */
-        .results-overlay { display: none; position: fixed; inset: 0; background: rgba(9,9,11,0.95); z-index: 100; align-items: center; justify-content: center; }
-        .results-overlay.active { display: flex; }
-        .results-content { text-align: center; padding: 32px; }
-        .results-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .results-icon svg { width: 40px; height: 40px; color: var(--primary); }
-        .results-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
-        .results-subtitle { color: var(--text-muted); margin-bottom: 24px; }
-        .results-stats { display: flex; gap: 32px; justify-content: center; margin-bottom: 32px; }
-        .results-stat { text-align: center; }
-        .results-stat-val { font-size: 32px; font-weight: 700; color: var(--primary); }
-        .results-stat-label { font-size: 13px; color: var(--text-muted); }
-        .btn-secondary { padding: 14px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; }
+        /* ── State containers ── */
+        .state { display: none; flex: 1; flex-direction: column; }
+        .state.is-active { display: flex; animation: fadeIn 300ms ease-out; }
 
-        /* Confetti */
-        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
 
-        /* Responsive */
-        @media (max-width: 640px) {
-            .hero-money { font-size: 48px; }
-            .breakdown { flex-direction: column; align-items: center; }
-            .breakdown-card { width: 100%; max-width: 280px; }
-            .action-btn { padding: 18px 36px; font-size: 18px; }
+        /* ── Shared elements ── */
+        .btn-primary {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 180ms, transform 120ms;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--card);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms, border-color 180ms;
+        }
+        .btn-secondary:hover { background: var(--border); border-color: #3f3f46; }
+        .btn-secondary svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            line-height: 1.6;
+        }
+        .hint svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           STATE 1: not_connected
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .s1-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .s1-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .s1-icon svg { width: 28px; height: 28px; color: var(--primary); }
+
+        .s1-headline {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .s1-stat {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        .s1-stat strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .s1-actions { width: 100%; max-width: 320px; }
+
+        .s1-trust {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 48px;
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           STATE 2: analyzing
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .s2-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .s2-connected {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 40px;
+        }
+        .s2-connected svg { width: 20px; height: 20px; }
+
+        .s2-progress {
+            width: 100%;
+            max-width: 320px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        .s2-progress-bar {
+            height: 100%;
+            width: 40%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--primary), #34d399, var(--primary));
+            background-size: 200% 100%;
+            animation: progressSlide 1.2s linear infinite;
+        }
+        @keyframes progressSlide {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .s2-list {
+            width: 100%;
+            max-width: 320px;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .s2-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            opacity: 0.35;
+            transition: opacity 400ms ease;
+        }
+        .s2-item.is-done { opacity: 1; }
+        .s2-item.is-active { opacity: 0.7; }
+
+        .s2-check {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: border-color 300ms, background 300ms;
+        }
+        .s2-item.is-done .s2-check {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        .s2-check svg { width: 14px; height: 14px; color: #fff; opacity: 0; transition: opacity 200ms; }
+        .s2-item.is-done .s2-check svg { opacity: 1; }
+
+        .s2-item.is-active .s2-check {
+            border-color: var(--primary);
+            animation: pulse 1s ease infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+            50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+        }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           STATE 3: analyzed
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .s3-wrap { padding: 32px 0; flex: 1; display: flex; flex-direction: column; }
+
+        .s3-store {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .s3-store svg { width: 14px; height: 14px; }
+
+        .s3-hero { text-align: center; margin-bottom: 32px; }
+        .s3-hero-number {
+            font-size: 52px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 4px;
+            direction: ltr;
+            display: inline-block;
+        }
+        .s3-hero-currency {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+            opacity: 0.7;
+            margin-right: 4px;
+        }
+        .s3-hero-label {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .s3-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .s3-card {
+            padding: 16px 12px;
+            text-align: center;
+        }
+        .s3-card-count {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .s3-card-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+        .s3-card-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .s3-actions { margin-top: auto; padding-bottom: 24px; }
+
+        /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+           STATE 4: active
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+        .s4-wrap { padding: 24px 0; flex: 1; display: flex; flex-direction: column; }
+
+        .s4-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+        .s4-store-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .s4-engine-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--primary-dim);
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .s4-engine-badge svg { width: 14px; height: 14px; }
+
+        .s4-hero { text-align: center; margin-bottom: 28px; }
+        .s4-hero-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 4px;
+            direction: ltr;
+            display: inline-block;
+        }
+        .s4-hero-currency {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary);
+            opacity: 0.7;
+            margin-right: 4px;
+        }
+        .s4-hero-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .s4-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .s4-stat {
+            padding: 14px 8px;
+            text-align: center;
+        }
+        .s4-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .s4-stat-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .s4-stat-pct {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* Activity feed */
+        .s4-activity { flex: 1; margin-bottom: 20px; }
+
+        .s4-activity-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .s4-activity-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .s4-live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: var(--primary-dim);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .s4-live-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: blink 1.2s ease infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.25; }
+        }
+
+        .s4-activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .s4-activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            animation: slideInRTL 300ms ease-out;
+        }
+        @keyframes slideInRTL {
+            from { opacity: 0; transform: translateX(-16px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .s4-act-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .s4-act-dot.green  { background: var(--primary); }
+        .s4-act-dot.blue   { background: #3B82F6; }
+        .s4-act-dot.amber  { background: #F59E0B; }
+        .s4-act-dot.purple { background: #8B5CF6; }
+
+        .s4-act-body { flex: 1; min-width: 0; }
+        .s4-act-msg {
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .s4-act-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .s4-act-amount {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .s4-empty {
+            text-align: center;
+            padding: 32px 16px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .s4-footer { padding-bottom: 24px; }
+
+        /* ── Utility ── */
+        .visually-hidden {
+            position: absolute; width: 1px; height: 1px;
+            overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <canvas id="confetti"></canvas>
+    <div class="shell">
 
-    <div class="container">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <span class="status-dot" id="sallaStatus"></span>
-                <span id="sallaStatusText">سلة</span>
-            </div>
-            <div class="status-item">
-                <span class="status-dot" id="waStatus"></span>
-                <span id="waStatusText">واتساب</span>
-            </div>
-            <div class="status-item">
-                <span class="status-dot" id="engineStatus"></span>
-                <span id="engineStatusText">المحرك</span>
-            </div>
-        </div>
-
-        <!-- Hero -->
-        <div class="hero">
-            <div>
-                <span class="hero-money" id="heroMoney">0</span>
-                <span class="hero-currency">ر.س</span>
-            </div>
-            <div class="hero-subtitle" id="heroSubtitle">جاري التحليل...</div>
-        </div>
-
-        <!-- Breakdown -->
-        <div class="breakdown">
-            <div class="breakdown-card">
-                <div class="breakdown-icon">🛒</div>
-                <div class="breakdown-value" id="cartCount">0</div>
-                <div class="breakdown-label">سلة متروكة</div>
-                <div class="breakdown-sar" id="cartValue">0 ر.س</div>
-            </div>
-            <div class="breakdown-card">
-                <div class="breakdown-icon">😴</div>
-                <div class="breakdown-value" id="dormantCount">0</div>
-                <div class="breakdown-label">عميل خامل</div>
-                <div class="breakdown-sar" id="dormantValue">0 ر.س</div>
-            </div>
-            <div class="breakdown-card">
-                <div class="breakdown-icon">🛍️</div>
-                <div class="breakdown-value" id="upsellCount">0</div>
-                <div class="breakdown-label">فرصة بيع</div>
-                <div class="breakdown-sar" id="upsellValue">0 ر.س</div>
-            </div>
-        </div>
-
-        <!-- Main Action -->
-        <div class="action-section">
-            <button class="action-btn" id="mainBtn" onclick="handleMainAction()">
-                <i data-lucide="message-circle"></i>
-                <span id="mainBtnText">ربط واتساب للتفعيل</span>
-            </button>
-            <div class="action-hint" id="actionHint">اربط واتساب لبدء استرداد أموالك تلقائياً</div>
-        </div>
-
-        <!-- Activity Feed -->
-        <div class="activity">
-            <div class="activity-header">
-                <span class="activity-title">النشاطات</span>
-                <span class="activity-badge"><span class="activity-badge-dot"></span> مباشر</span>
-            </div>
-            <div class="activity-list" id="activityList"></div>
-        </div>
-    </div>
-
-    <!-- Results Overlay -->
-    <div class="results-overlay" id="resultsOverlay">
-        <div class="results-content">
-            <div class="results-icon"><i data-lucide="check-circle"></i></div>
-            <h1 class="results-title">المحرك يعمل! 🚀</h1>
-            <div class="results-subtitle">سيتم استرداد أموالك تلقائياً من الآن</div>
-            <div class="results-stats">
-                <div class="results-stat">
-                    <div class="results-stat-val" id="resultsSent">0</div>
-                    <div class="results-stat-label">رسالة أُرسلت</div>
+        <!-- ═══════ STATE 1: not_connected ═══════ -->
+        <div id="state-not_connected" class="state">
+            <div class="s1-wrap">
+                <div class="s1-icon">
+                    <i data-lucide="shopping-cart"></i>
                 </div>
-                <div class="results-stat">
-                    <div class="results-stat-val" id="resultsRevenue">0</div>
-                    <div class="results-stat-label">ر.س متوقع</div>
+                <h1 class="s1-headline">كم تخسر من متجرك؟</h1>
+                <p class="s1-stat"><strong>٧٠٪</strong> من السلات المتروكة لا ترجع ابدا</p>
+                <div class="s1-actions">
+                    <button class="btn-primary" id="btn-connect-salla">
+                        <i data-lucide="store"></i>
+                        <span>ربط متجرك من سلة</span>
+                    </button>
+                    <div class="hint">
+                        <i data-lucide="lock"></i>
+                        <span>بياناتك آمنة · نقرأ فقط</span>
+                    </div>
+                </div>
+                <p class="s1-trust">اكثر من 500 متجر يستخدم ربح</p>
+            </div>
+        </div>
+
+        <!-- ═══════ STATE 2: analyzing ═══════ -->
+        <div id="state-analyzing" class="state">
+            <div class="s2-wrap">
+                <div class="s2-connected">
+                    <i data-lucide="check-circle-2"></i>
+                    <span id="s2-store-name">تم ربط المتجر</span>
+                </div>
+                <div class="s2-progress">
+                    <div class="s2-progress-bar"></div>
+                </div>
+                <ul class="s2-list">
+                    <li class="s2-item" data-step="0">
+                        <span class="s2-check"><i data-lucide="check"></i></span>
+                        <span>الطلبات</span>
+                    </li>
+                    <li class="s2-item" data-step="1">
+                        <span class="s2-check"><i data-lucide="check"></i></span>
+                        <span>العملاء</span>
+                    </li>
+                    <li class="s2-item" data-step="2">
+                        <span class="s2-check"><i data-lucide="check"></i></span>
+                        <span>السلات المتروكة</span>
+                    </li>
+                    <li class="s2-item" data-step="3">
+                        <span class="s2-check"><i data-lucide="check"></i></span>
+                        <span>فرص الاسترداد</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ═══════ STATE 3: analyzed ═══════ -->
+        <div id="state-analyzed" class="state">
+            <div class="s3-wrap">
+                <div class="s3-store">
+                    <i data-lucide="store"></i>
+                    <span id="s3-store-name">المتجر</span>
+                </div>
+
+                <div class="s3-hero">
+                    <div>
+                        <span class="s3-hero-currency">ر.س</span>
+                        <span class="s3-hero-number" id="s3-hero-amount">0</span>
+                    </div>
+                    <div class="s3-hero-label">اموال يمكنك استردادها</div>
+                </div>
+
+                <div class="s3-cards">
+                    <div class="card s3-card">
+                        <div class="s3-card-count" id="s3-cart-count">0</div>
+                        <div class="s3-card-label">سلة متروكة</div>
+                        <div class="s3-card-value" id="s3-cart-value">0 ر.س</div>
+                    </div>
+                    <div class="card s3-card">
+                        <div class="s3-card-count" id="s3-dormant-count">0</div>
+                        <div class="s3-card-label">عميل خامل</div>
+                        <div class="s3-card-value" id="s3-dormant-value">0 ر.س</div>
+                    </div>
+                    <div class="card s3-card">
+                        <div class="s3-card-count" id="s3-upsell-count">0</div>
+                        <div class="s3-card-label">فرصة بيع</div>
+                        <div class="s3-card-value" id="s3-upsell-value">0 ر.س</div>
+                    </div>
+                </div>
+
+                <div class="s3-actions">
+                    <button class="btn-primary" id="btn-start-recovery">
+                        <i data-lucide="message-circle"></i>
+                        <span>ابدأ الاسترداد بالواتساب</span>
+                    </button>
+                    <div class="hint">مجاني لمدة ٧ ايام · لا يحتاج بطاقة</div>
                 </div>
             </div>
-            <button class="btn-secondary" onclick="closeResults()">متابعة المراقبة</button>
         </div>
+
+        <!-- ═══════ STATE 4: active ═══════ -->
+        <div id="state-active" class="state">
+            <div class="s4-wrap">
+                <div class="s4-topbar">
+                    <span class="s4-store-name" id="s4-store-name">المتجر</span>
+                    <span class="s4-engine-badge">
+                        <i data-lucide="check-circle-2"></i>
+                        <span>المحرك يعمل</span>
+                    </span>
+                </div>
+
+                <div class="s4-hero">
+                    <div>
+                        <span class="s4-hero-currency">ر.س</span>
+                        <span class="s4-hero-number" id="s4-hero-recovered">0</span>
+                    </div>
+                    <div class="s4-hero-label">تم استردادها حتى الآن</div>
+                </div>
+
+                <div class="s4-stats">
+                    <div class="card s4-stat">
+                        <div class="s4-stat-value" id="s4-sent">0</div>
+                        <div class="s4-stat-label">رسائل مرسلة</div>
+                    </div>
+                    <div class="card s4-stat">
+                        <div class="s4-stat-value" id="s4-opened">0</div>
+                        <div class="s4-stat-label">تم الفتح</div>
+                        <div class="s4-stat-pct" id="s4-opened-pct"></div>
+                    </div>
+                    <div class="card s4-stat">
+                        <div class="s4-stat-value" id="s4-purchased">0</div>
+                        <div class="s4-stat-label">تم الشراء</div>
+                        <div class="s4-stat-pct" id="s4-purchased-pct"></div>
+                    </div>
+                </div>
+
+                <div class="s4-activity">
+                    <div class="s4-activity-header">
+                        <span class="s4-activity-title">النشاطات</span>
+                        <span class="s4-live-badge">
+                            <span class="s4-live-dot"></span>
+                            <span>مباشر</span>
+                        </span>
+                    </div>
+                    <div class="s4-activity-list" id="s4-activity-list">
+                        <div class="s4-empty">لا توجد بيانات بعد</div>
+                    </div>
+                </div>
+
+                <div class="s4-footer">
+                    <button class="btn-secondary" id="btn-pause">
+                        <i data-lucide="pause"></i>
+                        <span>ايقاف مؤقت</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-    // === STATE ===
-    let state = {
-        sallaConnected: false,
-        waConnected: false,
-        engineActive: false,
-        realData: null
-    };
+    /* ──────────────────────────────────────────
+       RIBH Dashboard  —  State Machine
+    ────────────────────────────────────────── */
+    (function () {
+        'use strict';
 
-    // === FAKE DATA (shown before real analysis) ===
-    const FAKE_DATA = {
-        money: 45000,
-        carts: 347,
-        cartsValue: 28000,
-        dormant: 891,
-        dormantValue: 12000,
-        upsell: 156,
-        upsellValue: 5000
-    };
+        // ── Cached data ──
+        let merchantData = null;
+        let currentState = null;
+        let activityPollTimer = null;
 
-    // === FAKE ACTIVITY (simulated) ===
-    const FAKE_ACTIVITIES = [
-        { msg: 'محمد أكمل طلبه', amount: 320, dot: 'green' },
-        { msg: 'أحمد قرأ الرسالة', dot: 'blue' },
-        { msg: 'سارة نقرت على الرابط', dot: 'orange' },
-        { msg: 'خالد أكمل طلبه', amount: 180, dot: 'green' },
-        { msg: 'فاطمة استلمت الرسالة', dot: 'blue' },
-        { msg: 'عبدالله أضاف للسلة', dot: 'purple' },
-        { msg: 'نورة أكملت طلبها', amount: 450, dot: 'green' },
-        { msg: 'سعود قرأ الرسالة', dot: 'blue' },
-    ];
+        // ── Boot ──
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            bindButtons();
+            init();
+        });
 
-    // === INIT ===
-    document.addEventListener('DOMContentLoaded', async () => {
-        lucide.createIcons();
-
-        // Check Salla connection
-        await checkSallaConnection();
-
-        // Start showing fake data with animation
-        showFakeData();
-
-        // Start fake activity feed
-        startFakeActivity();
-
-        // Update UI based on state
-        updateUI();
-    });
-
-    // === CHECK SALLA CONNECTION ===
-    async function checkSallaConnection() {
-        try {
-            const res = await fetch('/api/ribh/analyze');
-            const data = await res.json();
-
-            if (data.success && data.merchant) {
-                state.sallaConnected = true;
-                state.realData = data;
-            }
-        } catch (e) {
-            console.log('Salla check:', e.message);
-        }
-    }
-
-    // === SHOW FAKE DATA WITH COUNTING ANIMATION ===
-    function showFakeData() {
-        animateValue('heroMoney', FAKE_DATA.money, 2000);
-        animateValue('cartCount', FAKE_DATA.carts, 1500);
-        animateValue('dormantCount', FAKE_DATA.dormant, 1500);
-        animateValue('upsellCount', FAKE_DATA.upsell, 1500);
-
-        setTimeout(() => {
-            document.getElementById('cartValue').textContent = FAKE_DATA.cartsValue.toLocaleString() + ' ر.س';
-            document.getElementById('dormantValue').textContent = FAKE_DATA.dormantValue.toLocaleString() + ' ر.س';
-            document.getElementById('upsellValue').textContent = FAKE_DATA.upsellValue.toLocaleString() + ' ر.س';
-            document.getElementById('heroSubtitle').textContent = 'تنتظرك في متجرك';
-        }, 500);
-    }
-
-    // === FAKE ACTIVITY FEED ===
-    function startFakeActivity() {
-        let index = 0;
-
-        function addNext() {
-            const act = FAKE_ACTIVITIES[index % FAKE_ACTIVITIES.length];
-            addActivity(act.msg, act.dot, act.amount);
-            index++;
-
-            // Random interval 2-5 seconds
-            setTimeout(addNext, 2000 + Math.random() * 3000);
-        }
-
-        // Start after 1 second
-        setTimeout(addNext, 1000);
-    }
-
-    function addActivity(msg, dotColor, amount) {
-        const list = document.getElementById('activityList');
-        const item = document.createElement('div');
-        item.className = 'activity-item';
-
-        const amountHtml = amount ? `<span class="activity-amount">+${amount} ر.س</span>` : '';
-        item.innerHTML = `
-            <span class="activity-dot ${dotColor}"></span>
-            <div class="activity-content">
-                <div class="activity-msg">${msg}</div>
-                <div class="activity-time">الآن</div>
-            </div>
-            ${amountHtml}
-        `;
-
-        list.insertBefore(item, list.firstChild);
-
-        // Keep only last 6 items
-        while (list.children.length > 6) {
-            list.removeChild(list.lastChild);
-        }
-    }
-
-    // === UPDATE UI BASED ON STATE ===
-    function updateUI() {
-        const sallaStatus = document.getElementById('sallaStatus');
-        const waStatus = document.getElementById('waStatus');
-        const engineStatus = document.getElementById('engineStatus');
-        const mainBtn = document.getElementById('mainBtn');
-        const mainBtnText = document.getElementById('mainBtnText');
-        const actionHint = document.getElementById('actionHint');
-
-        // Salla status
-        if (state.sallaConnected) {
-            sallaStatus.className = 'status-dot active';
-            document.getElementById('sallaStatusText').textContent = 'سلة ✓';
-        } else {
-            sallaStatus.className = 'status-dot inactive';
-        }
-
-        // WhatsApp status
-        if (state.waConnected) {
-            waStatus.className = 'status-dot active';
-            document.getElementById('waStatusText').textContent = 'واتساب ✓';
-        } else {
-            waStatus.className = 'status-dot pending';
-            document.getElementById('waStatusText').textContent = 'واتساب (غير مفعل)';
-        }
-
-        // Engine status
-        if (state.engineActive) {
-            engineStatus.className = 'status-dot active';
-            document.getElementById('engineStatusText').textContent = 'المحرك يعمل ✓';
-        } else {
-            engineStatus.className = 'status-dot inactive';
-            document.getElementById('engineStatusText').textContent = 'المحرك (متوقف)';
-        }
-
-        // Main button
-        if (!state.sallaConnected) {
-            mainBtnText.textContent = 'ربط سلة أولاً';
-            mainBtn.innerHTML = '<i data-lucide="store"></i><span>ربط سلة أولاً</span>';
-            actionHint.textContent = 'اربط متجرك من سلة للبدء';
-        } else if (!state.waConnected) {
-            mainBtnText.textContent = 'ربط واتساب للتفعيل';
-            mainBtn.innerHTML = '<i data-lucide="message-circle"></i><span>ربط واتساب للتفعيل</span>';
-            actionHint.textContent = 'اربط واتساب لبدء استرداد أموالك تلقائياً';
-        } else if (!state.engineActive) {
-            mainBtnText.textContent = 'تفعيل المحرك 🚀';
-            mainBtn.innerHTML = '<i data-lucide="rocket"></i><span>تفعيل المحرك 🚀</span>';
-            actionHint.textContent = 'اضغط لبدء استرداد أموالك';
-        } else {
-            mainBtnText.textContent = 'المحرك يعمل ✓';
-            mainBtn.innerHTML = '<i data-lucide="check-circle"></i><span>المحرك يعمل ✓</span>';
-            mainBtn.disabled = true;
-            mainBtn.style.animation = 'none';
-            actionHint.textContent = 'سيتم استرداد أموالك تلقائياً';
-        }
-
-        lucide.createIcons();
-    }
-
-    // === MAIN ACTION HANDLER ===
-    async function handleMainAction() {
-        if (!state.sallaConnected) {
-            // Go to Salla install
-            window.location.href = '/salla/install';
-            return;
-        }
-
-        if (!state.waConnected) {
-            // Go to WhatsApp setup
-            window.location.href = '/whatsapp.html';
-            return;
-        }
-
-        if (!state.engineActive) {
-            // Activate engine - analyze real data and launch
-            await activateEngine();
-        }
-    }
-
-    // === ACTIVATE ENGINE ===
-    async function activateEngine() {
-        const btn = document.getElementById('mainBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span>جاري التفعيل...</span>';
-
-        try {
-            // Show real data if we have it
-            if (state.realData) {
-                const { analysis } = state.realData;
-                const { breakdown } = analysis;
-
-                animateValue('heroMoney', analysis.moneyWaiting, 1500);
-                animateValue('cartCount', breakdown.abandonedCarts.count, 1000);
-                animateValue('dormantCount', breakdown.dormantCustomers.count, 1000);
-                animateValue('upsellCount', breakdown.recentBuyers.count, 1000);
-
-                document.getElementById('cartValue').textContent = breakdown.abandonedCarts.recoveryEstimate.toLocaleString() + ' ر.س';
-                document.getElementById('dormantValue').textContent = breakdown.dormantCustomers.reactivationEstimate.toLocaleString() + ' ر.س';
-                document.getElementById('upsellValue').textContent = breakdown.recentBuyers.upsellEstimate.toLocaleString() + ' ر.س';
-            }
-
-            // Launch campaigns
-            const res = await fetch('/api/ribh/launch', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ campaigns: ['cartRecovery', 'winback', 'upsell'] })
+        // ── Button bindings ──
+        function bindButtons() {
+            document.getElementById('btn-connect-salla').addEventListener('click', () => {
+                window.location.href = '/salla/install';
             });
 
-            const data = await res.json();
+            document.getElementById('btn-start-recovery').addEventListener('click', () => {
+                window.location.href = '/whatsapp.html';
+            });
 
-            if (data.success) {
-                state.engineActive = true;
-                launchConfetti();
-                showResults(data.results);
-            } else {
-                alert('خطأ: ' + (data.error || 'غير معروف'));
+            document.getElementById('btn-pause').addEventListener('click', handlePause);
+        }
+
+        // ── Init: determine state ──
+        async function init() {
+            const params = new URLSearchParams(window.location.search);
+            const merchantId = params.get('merchant');
+
+            try {
+                const url = '/api/merchant/status' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (!data.connected) {
+                    showState('not_connected');
+                    return;
+                }
+
+                merchantData = data;
+
+                if (!data.analyzed) {
+                    showState('analyzing', data);
+                    await runAnalysis(data.merchantId);
+                } else if (!data.whatsappConnected) {
+                    showState('analyzed', data);
+                } else {
+                    showState('active', data);
+                }
+            } catch (e) {
+                console.warn('Init fallback to not_connected:', e.message);
+                showState('not_connected');
             }
-        } catch (e) {
-            console.error('Engine activation error:', e);
-            alert('حدث خطأ في الاتصال');
         }
 
-        updateUI();
-    }
+        // ── State transitions ──
+        function showState(name, data) {
+            if (currentState === name) return;
 
-    // === SHOW RESULTS ===
-    function showResults(results) {
-        const overlay = document.getElementById('resultsOverlay');
-        overlay.classList.add('active');
+            // Deactivate all
+            document.querySelectorAll('.state').forEach(el => el.classList.remove('is-active'));
 
-        const totalRevenue = results.launched.reduce((s, l) => s + (l.estimatedRevenue || 0), 0);
+            // Stop activity polling if leaving active
+            if (activityPollTimer) {
+                clearInterval(activityPollTimer);
+                activityPollTimer = null;
+            }
 
-        document.getElementById('resultsSent').textContent = results.messagesSent;
-        document.getElementById('resultsRevenue').textContent = totalRevenue.toLocaleString();
+            // Activate target
+            const target = document.getElementById('state-' + name);
+            if (!target) return;
+            target.classList.add('is-active');
+            currentState = name;
 
-        lucide.createIcons();
-    }
+            // Populate state-specific data
+            switch (name) {
+                case 'analyzing':
+                    populateAnalyzing(data);
+                    break;
+                case 'analyzed':
+                    populateAnalyzed(data);
+                    break;
+                case 'active':
+                    populateActive(data);
+                    break;
+            }
 
-    function closeResults() {
-        document.getElementById('resultsOverlay').classList.remove('active');
-    }
-
-    // === ANIMATE VALUE ===
-    function animateValue(elementId, end, duration = 1500) {
-        const el = document.getElementById(elementId);
-        let start = 0;
-        const startTime = performance.now();
-
-        function update(now) {
-            const p = Math.min((now - startTime) / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            el.textContent = Math.floor(start + (end - start) * eased).toLocaleString();
-            if (p < 1) requestAnimationFrame(update);
+            lucide.createIcons();
         }
-        requestAnimationFrame(update);
-    }
 
-    // === CONFETTI ===
-    function launchConfetti() {
-        const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
-        cv.width = window.innerWidth; cv.height = window.innerHeight;
-        const ps = [], colors = ['#10B981', '#22C55E', '#6366F1', '#F59E0B', '#3B82F6', '#EF4444', '#FAFAFA'];
-        for (let i = 0; i < 120; i++) ps.push({ x: cv.width / 2 + (Math.random() - 0.5) * 200, y: cv.height / 2, vx: (Math.random() - 0.5) * 12, vy: Math.random() * -16 - 4, w: Math.random() * 8 + 4, h: Math.random() * 6 + 2, c: colors[Math.floor(Math.random() * colors.length)], r: Math.random() * 360, rv: (Math.random() - 0.5) * 12, g: 0.3, o: 1 });
-        let f = 0;
-        function draw() {
-            ctx.clearRect(0, 0, cv.width, cv.height); let alive = false;
-            ps.forEach(p => { p.x += p.vx; p.vy += p.g; p.y += p.vy; p.r += p.rv; if (f > 40) p.o -= 0.015; if (p.o <= 0) return; alive = true; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r * Math.PI / 180); ctx.globalAlpha = p.o; ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore(); });
-            f++; if (alive) requestAnimationFrame(draw); else ctx.clearRect(0, 0, cv.width, cv.height);
+        // ── STATE 2: analyzing ──
+        function populateAnalyzing(data) {
+            const storeName = (data && data.storeName) || '';
+            document.getElementById('s2-store-name').textContent = storeName
+                ? 'تم ربط ' + storeName
+                : 'تم ربط المتجر';
+
+            // Reset checklist
+            document.querySelectorAll('.s2-item').forEach(el => {
+                el.classList.remove('is-done', 'is-active');
+            });
+
+            // Animate checklist items
+            const items = document.querySelectorAll('.s2-item');
+            items.forEach((item, i) => {
+                setTimeout(() => {
+                    // Deactivate previous
+                    if (i > 0) items[i - 1].classList.remove('is-active');
+                    items[i].classList.add('is-active');
+
+                    setTimeout(() => {
+                        items[i].classList.remove('is-active');
+                        items[i].classList.add('is-done');
+                    }, 600);
+                }, i * 800);
+            });
         }
-        requestAnimationFrame(draw);
-    }
+
+        async function runAnalysis(merchantId) {
+            try {
+                const res = await fetch('/api/ribh/analyze' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : ''));
+                const result = await res.json();
+
+                // Wait for checklist animation to finish (4 items * 800ms + 600ms buffer)
+                const minDelay = 4 * 800 + 600;
+                const elapsed = 0; // analysis may have taken time already
+                const wait = Math.max(minDelay - elapsed, 0);
+
+                setTimeout(() => {
+                    const merged = Object.assign({}, merchantData, { analysis: result });
+                    merchantData = merged;
+                    showState('analyzed', merged);
+                }, wait);
+            } catch (e) {
+                console.error('Analysis failed:', e);
+                // Still transition; show zeros
+                setTimeout(() => {
+                    showState('analyzed', merchantData || {});
+                }, 4 * 800 + 600);
+            }
+        }
+
+        // ── STATE 3: analyzed ──
+        function populateAnalyzed(data) {
+            const storeName = (data && data.storeName) || '';
+            document.getElementById('s3-store-name').textContent =
+                storeName ? 'متجر ' + storeName : 'المتجر';
+
+            const analysis = (data && data.analysis) || {};
+            const breakdown = analysis.breakdown || {};
+
+            const carts = breakdown.abandonedCarts || {};
+            const dormant = breakdown.dormantCustomers || {};
+            const upsell = breakdown.recentBuyers || {};
+
+            const totalRecoverable = (carts.recoveryEstimate || 0)
+                + (dormant.reactivationEstimate || 0)
+                + (upsell.upsellEstimate || 0);
+
+            // Animate hero number
+            animateCountUp('s3-hero-amount', analysis.moneyWaiting || totalRecoverable || 0, 1500);
+
+            // Cards
+            animateCountUp('s3-cart-count', carts.count || 0, 1200);
+            animateCountUp('s3-dormant-count', dormant.count || 0, 1200);
+            animateCountUp('s3-upsell-count', upsell.count || 0, 1200);
+
+            setTimeout(() => {
+                document.getElementById('s3-cart-value').textContent = formatSAR(carts.recoveryEstimate || 0);
+                document.getElementById('s3-dormant-value').textContent = formatSAR(dormant.reactivationEstimate || 0);
+                document.getElementById('s3-upsell-value').textContent = formatSAR(upsell.upsellEstimate || 0);
+            }, 400);
+        }
+
+        // ── STATE 4: active ──
+        function populateActive(data) {
+            const storeName = (data && data.storeName) || '';
+            document.getElementById('s4-store-name').textContent = storeName || 'المتجر';
+
+            const stats = (data && data.stats) || {};
+            animateCountUp('s4-hero-recovered', stats.recovered || 0, 1500);
+            animateCountUp('s4-sent', stats.messagesSent || 0, 1000);
+            animateCountUp('s4-opened', stats.opened || 0, 1000);
+            animateCountUp('s4-purchased', stats.purchased || 0, 1000);
+
+            // Percentages
+            const sent = stats.messagesSent || 0;
+            if (sent > 0) {
+                const openPct = Math.round(((stats.opened || 0) / sent) * 100);
+                const purchPct = Math.round(((stats.purchased || 0) / sent) * 100);
+                document.getElementById('s4-opened-pct').textContent = openPct + '%';
+                document.getElementById('s4-purchased-pct').textContent = purchPct + '%';
+            }
+
+            // Load activity feed
+            loadActivities();
+
+            // Poll for new activities every 15s
+            activityPollTimer = setInterval(loadActivities, 15000);
+        }
+
+        async function loadActivities() {
+            const listEl = document.getElementById('s4-activity-list');
+            try {
+                const merchantId = merchantData && merchantData.merchantId;
+                const url = '/api/ribh/activity' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (!data.activities || data.activities.length === 0) {
+                    listEl.innerHTML = '<div class="s4-empty">لا توجد بيانات بعد</div>';
+                    return;
+                }
+
+                listEl.innerHTML = '';
+                data.activities.slice(0, 10).forEach(act => {
+                    const item = document.createElement('div');
+                    item.className = 'card s4-activity-item';
+
+                    const dotColor = act.color || act.type || 'green';
+                    const amountHtml = act.amount
+                        ? '<span class="s4-act-amount">+' + Number(act.amount).toLocaleString('ar-SA') + ' ر.س</span>'
+                        : '';
+
+                    item.innerHTML =
+                        '<span class="s4-act-dot ' + sanitizeDotColor(dotColor) + '"></span>' +
+                        '<div class="s4-act-body">' +
+                            '<div class="s4-act-msg">' + escapeHtml(act.message || act.msg || '') + '</div>' +
+                            '<div class="s4-act-time">' + escapeHtml(formatTime(act.timestamp || act.time)) + '</div>' +
+                        '</div>' +
+                        amountHtml;
+
+                    listEl.appendChild(item);
+                });
+            } catch (e) {
+                console.warn('Activity load error:', e.message);
+            }
+        }
+
+        // ── Pause handler ──
+        async function handlePause() {
+            const btn = document.getElementById('btn-pause');
+            btn.disabled = true;
+
+            try {
+                const merchantId = merchantData && merchantData.merchantId;
+                await fetch('/api/ribh/pause' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : ''), {
+                    method: 'POST'
+                });
+                btn.innerHTML = '<i data-lucide="play"></i><span>تم الايقاف</span>';
+                lucide.createIcons();
+            } catch (e) {
+                console.error('Pause error:', e);
+                btn.disabled = false;
+            }
+        }
+
+        // ── Count-up animation (easeOutCubic) ──
+        function animateCountUp(elementId, endValue, duration) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            if (!endValue || endValue <= 0) {
+                el.textContent = '0';
+                return;
+            }
+
+            const startTime = performance.now();
+
+            function tick(now) {
+                const t = Math.min((now - startTime) / duration, 1);
+                const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+                const current = Math.floor(endValue * eased);
+                el.textContent = current.toLocaleString('ar-SA');
+                if (t < 1) requestAnimationFrame(tick);
+                else el.textContent = endValue.toLocaleString('ar-SA');
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        // ── Helpers ──
+        function formatSAR(n) {
+            if (!n) return '0 ر.س';
+            return Number(n).toLocaleString('ar-SA') + ' ر.س';
+        }
+
+        function formatTime(ts) {
+            if (!ts) return '';
+            try {
+                const d = new Date(ts);
+                const now = new Date();
+                const diffMs = now - d;
+                const diffMin = Math.floor(diffMs / 60000);
+
+                if (diffMin < 1) return 'الآن';
+                if (diffMin < 60) return 'منذ ' + diffMin + ' د';
+                const diffHr = Math.floor(diffMin / 60);
+                if (diffHr < 24) return 'منذ ' + diffHr + ' س';
+                const diffDay = Math.floor(diffHr / 24);
+                return 'منذ ' + diffDay + ' ي';
+            } catch (e) {
+                return String(ts);
+            }
+        }
+
+        function sanitizeDotColor(c) {
+            const allowed = ['green', 'blue', 'amber', 'purple'];
+            return allowed.includes(c) ? c : 'green';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    })();
     </script>
 </body>
 </html>

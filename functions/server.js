@@ -4474,6 +4474,103 @@ app.get('/api/analytics/v2', async (req, res) => {
 });
 
 // ==========================================
+// MERCHANT STATUS (powers the 4-state dashboard)
+// ==========================================
+app.get('/api/merchant/status', async (req, res) => {
+    try {
+        const merchantId = req.query.merchant;
+        let merchantDoc = null;
+        let merchantData = null;
+
+        if (merchantId) {
+            // Look up specific merchant
+            const snap = await db.collection('salla_merchants').doc(String(merchantId)).get();
+            if (snap.exists) {
+                merchantDoc = snap;
+                merchantData = snap.data();
+            }
+        }
+
+        // Fallback: find any active merchant
+        if (!merchantData) {
+            const snap = await db.collection('salla_merchants')
+                .where('status', 'in', ['active', 'installed'])
+                .limit(1).get();
+            if (!snap.empty) {
+                merchantDoc = snap.docs[0];
+                merchantData = merchantDoc.data();
+            }
+        }
+
+        if (!merchantData) {
+            return res.json({ connected: false });
+        }
+
+        // Check WhatsApp connection
+        let whatsappConnected = false;
+        if (whatsappBridge) {
+            try {
+                const waStatus = whatsappBridge.getStatus(merchantData.merchantId || merchantDoc.id);
+                whatsappConnected = waStatus && waStatus.connected === true;
+            } catch (e) { /* ignore */ }
+        }
+
+        // Check if we have cached analysis
+        let analyzed = false;
+        let analysis = null;
+        let stats = null;
+
+        // Check for recent analysis in Firestore
+        const analysisSnap = await db.collection('store_analysis')
+            .doc(String(merchantData.merchantId || merchantDoc.id)).get();
+        if (analysisSnap.exists) {
+            const aData = analysisSnap.data();
+            // Consider analyzed if analysis is less than 24h old
+            const age = Date.now() - (aData.analyzedAt?.toMillis?.() || 0);
+            if (age < 86400000) {
+                analyzed = true;
+                analysis = aData;
+            }
+        }
+
+        // Get campaign stats if engine is active
+        const campaignSnap = await db.collection('campaign_messages')
+            .where('merchantId', '==', String(merchantData.merchantId || merchantDoc.id))
+            .orderBy('sentAt', 'desc')
+            .limit(100).get();
+
+        if (!campaignSnap.empty) {
+            let sent = 0, opened = 0, purchased = 0, recovered = 0;
+            campaignSnap.docs.forEach(doc => {
+                const d = doc.data();
+                sent++;
+                if (d.opened) opened++;
+                if (d.converted || d.purchased) {
+                    purchased++;
+                    recovered += d.revenue || d.amount || 0;
+                }
+            });
+            stats = { messagesSent: sent, opened, purchased, recovered };
+        }
+
+        res.json({
+            connected: true,
+            merchantId: merchantData.merchantId || merchantDoc.id,
+            storeName: merchantData.storeName || merchantData.store_name || null,
+            analyzed,
+            analysis: analyzed ? analysis : null,
+            whatsappConnected,
+            engineActive: whatsappConnected && analyzed,
+            stats: stats || { messagesSent: 0, opened: 0, purchased: 0, recovered: 0 }
+        });
+
+    } catch (error) {
+        console.error('[MerchantStatus] Error:', error);
+        res.json({ connected: false, error: error.message });
+    }
+});
+
+// ==========================================
 // RIBH DASHBOARD STATS ENDPOINT
 // ==========================================
 
@@ -4663,6 +4760,22 @@ app.get('/api/ribh/analyze', async (req, res) => {
             previews.upsell.estimatedRevenue = summary.campaigns.upsell.estimatedRevenue;
         }
 
+        const analysisResult = {
+            moneyWaiting: summary.overview.totalMoneyWaiting,
+            breakdown: summary.overview.breakdown,
+            totalCustomers: summary.overview.totalCustomers
+        };
+
+        // Cache analysis in Firestore for the status endpoint
+        try {
+            await db.collection('store_analysis').doc(String(merchantId)).set({
+                ...analysisResult,
+                analyzedAt: admin.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        } catch (e) {
+            console.warn('[Analyze] Cache write failed:', e.message);
+        }
+
         res.json({
             success: true,
             merchant: {
@@ -4670,11 +4783,7 @@ app.get('/api/ribh/analyze', async (req, res) => {
                 name: merchantData.storeName || null,
                 status: merchantData.status
             },
-            analysis: {
-                moneyWaiting: summary.overview.totalMoneyWaiting,
-                breakdown: summary.overview.breakdown,
-                totalCustomers: summary.overview.totalCustomers
-            },
+            analysis: analysisResult,
             campaigns: summary.campaigns,
             previews,
             analyzedAt: analysis.analyzedAt
@@ -4839,48 +4948,115 @@ app.post('/api/ribh/launch', async (req, res) => {
 // Get recent activity for dashboard
 app.get('/api/ribh/activity', async (req, res) => {
     try {
-        const cookies = parseCookies(req);
-        const token = req.query.token || cookies.ribhToken;
-
-        // Get recent carts and logs
-        const carts = await readDB(DB_FILE);
-        const logs = await readDB(LOGS_FILE);
-
-        // Build activity feed from carts and logs
+        const merchantId = req.query.merchant;
         const activities = [];
 
-        // Recent cart activities (last 20)
-        const recentCarts = carts
-            .filter(c => c.createdAt)
-            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 20);
+        // 1. Get real abandoned carts from Firestore
+        let cartsQuery = db.collection('abandoned_carts')
+            .orderBy('createdAt', 'desc')
+            .limit(20);
+        if (merchantId) {
+            cartsQuery = db.collection('abandoned_carts')
+                .where('merchantId', '==', String(merchantId))
+                .orderBy('createdAt', 'desc')
+                .limit(20);
+        }
 
-        recentCarts.forEach(cart => {
-            let type = 'cart';
-            let message = 'سلة متروكة جديدة';
+        try {
+            const cartsSnap = await cartsQuery.get();
+            cartsSnap.docs.forEach(doc => {
+                const cart = doc.data();
+                const ts = cart.createdAt?.toDate?.() || cart.createdAt;
 
-            if (cart.status === 'recovered') {
-                type = 'recovered';
-                message = 'تم استرداد سلة بنجاح! 💰';
-            } else if (cart.status === 'sent') {
-                type = 'sent';
-                message = 'تم إرسال رسالة استرداد 📧';
-            } else {
-                type = 'cart';
-                message = 'سلة متروكة جديدة 🛒';
-            }
-
-            activities.push({
-                type,
-                message,
-                amount: cart.total || 0,
-                time: formatTimeAgo(cart.createdAt),
-                timestamp: cart.createdAt
+                if (cart.status === 'recovered' || cart.status === 'converted') {
+                    activities.push({
+                        type: 'recovered', color: 'green',
+                        message: (cart.customer?.name || 'عميل') + ' اكمل طلبه',
+                        amount: cart.total || 0, timestamp: ts
+                    });
+                } else if (cart.whatsappSent || cart.status === 'sent') {
+                    activities.push({
+                        type: 'sent', color: 'blue',
+                        message: 'تم ارسال رسالة استرداد',
+                        timestamp: ts
+                    });
+                } else {
+                    activities.push({
+                        type: 'cart', color: 'amber',
+                        message: 'سلة متروكة جديدة',
+                        amount: cart.total || 0, timestamp: ts
+                    });
+                }
             });
-        });
+        } catch (e) {
+            // Index may not exist yet - fall through
+            console.warn('[Activity] Firestore query failed:', e.message);
+        }
+
+        // 2. Get campaign messages from Firestore
+        try {
+            let msgQuery = db.collection('campaign_messages')
+                .orderBy('sentAt', 'desc')
+                .limit(10);
+            if (merchantId) {
+                msgQuery = db.collection('campaign_messages')
+                    .where('merchantId', '==', String(merchantId))
+                    .orderBy('sentAt', 'desc')
+                    .limit(10);
+            }
+            const msgSnap = await msgQuery.get();
+            msgSnap.docs.forEach(doc => {
+                const d = doc.data();
+                const ts = d.sentAt?.toDate?.() || d.sentAt;
+                if (d.converted || d.purchased) {
+                    activities.push({
+                        type: 'recovered', color: 'green',
+                        message: (d.customerName || 'عميل') + ' اكمل طلبه',
+                        amount: d.revenue || d.amount || 0, timestamp: ts
+                    });
+                } else if (d.opened) {
+                    activities.push({
+                        type: 'opened', color: 'blue',
+                        message: (d.customerName || 'عميل') + ' فتح الرسالة',
+                        timestamp: ts
+                    });
+                } else {
+                    activities.push({
+                        type: 'sent', color: 'purple',
+                        message: 'تم ارسال رسالة ' + (d.campaignType || 'استرداد'),
+                        timestamp: ts
+                    });
+                }
+            });
+        } catch (e) {
+            console.warn('[Activity] Campaign messages query failed:', e.message);
+        }
+
+        // 3. Fallback to local DB if Firestore is empty
+        if (activities.length === 0) {
+            try {
+                const carts = await readDB(DB_FILE);
+                carts.filter(c => c.createdAt)
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    .slice(0, 10)
+                    .forEach(cart => {
+                        activities.push({
+                            type: cart.status === 'recovered' ? 'recovered' : 'cart',
+                            color: cart.status === 'recovered' ? 'green' : 'amber',
+                            message: cart.status === 'recovered' ? 'تم استرداد سلة' : 'سلة متروكة',
+                            amount: cart.total || 0,
+                            timestamp: cart.createdAt
+                        });
+                    });
+            } catch (e) { /* no local data */ }
+        }
 
         // Sort by timestamp descending
-        activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        activities.sort((a, b) => {
+            const ta = a.timestamp instanceof Date ? a.timestamp : new Date(a.timestamp || 0);
+            const tb = b.timestamp instanceof Date ? b.timestamp : new Date(b.timestamp || 0);
+            return tb - ta;
+        });
 
         res.json({
             success: true,

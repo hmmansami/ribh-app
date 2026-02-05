@@ -76,11 +76,11 @@ router.get('/callback', async (req, res) => {
               .catch(e => console.error(`[Salla] ❌ Welcome email failed:`, e.message));
         }
         
-        // Redirect to setup page for WhatsApp connection
-        res.redirect(`/setup.html?connected=salla&merchant=${merchantId}`);
-    } catch (e) { 
-        // Redirect to setup with error
-        res.redirect(`/setup.html?error=${encodeURIComponent(e.message)}`);
+        // Redirect to dashboard - will enter analyzing state
+        res.redirect(`/app?merchant=${merchantId}`);
+    } catch (e) {
+        console.error('[Salla] OAuth callback error:', e.message);
+        res.redirect(`/app?error=${encodeURIComponent(e.message)}`);
     }
 });
 
