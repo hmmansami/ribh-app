@@ -2480,6 +2480,17 @@ try {
     console.log('⚠️ Salla Cart Webhook not available:', e.message);
 }
 
+// ==== SALLA ORDER WEBHOOK (INSTANT UPSELL + REVIEW) ====
+// Handles order.created → instant upsell, order.shipped → instant review
+try {
+    const sallaOrderWebhook = require('./webhooks/sallaOrder');
+    app.use('/webhooks/salla/order', sallaOrderWebhook);
+    app.use('/api/webhooks/salla/order', sallaOrderWebhook);
+    console.log('✅ Salla Order Webhook loaded at /webhooks/salla/order');
+} catch (e) {
+    console.log('⚠️ Salla Order Webhook not available:', e.message);
+}
+
 // ==== TELEGRAM BOT WEBHOOK ====
 // ONE-CLICK SIGNUP: Customer clicks link with phone embedded -> opens Telegram -> done!
 // Link format: https://t.me/RibhCartBot?start=966501234567

@@ -20,125 +20,84 @@
         html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
         body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-        /* === LOCKED STATE === */
-        .locked-wrapper { position: relative; min-height: 100vh; }
+        .container { max-width: 800px; margin: 0 auto; padding: 24px; }
 
-        /* Dark overlay with hole for Salla button */
-        .locked-overlay {
-            position: fixed; inset: 0; z-index: 100;
-            background: rgba(9,9,11,0.85);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 24px;
-        }
-        .locked-overlay.hidden { display: none; }
+        /* Hero Section */
+        .hero { text-align: center; padding: 40px 0 32px; }
+        .hero-money { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
+        .hero-currency { font-size: 24px; color: var(--text-muted); }
+        .hero-subtitle { color: var(--text-muted); font-size: 18px; margin-top: 8px; }
 
-        .locked-content { text-align: center; max-width: 400px; }
-        .locked-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); }
-        .locked-icon svg { width: 40px; height: 40px; color: var(--primary); }
-        .locked-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-        .locked-desc { color: var(--text-muted); margin-bottom: 32px; line-height: 1.7; }
+        /* Breakdown Cards */
+        .breakdown { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 140px; text-align: center; flex: 1; max-width: 200px; }
+        .breakdown-icon { font-size: 24px; margin-bottom: 8px; }
+        .breakdown-value { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+        .breakdown-label { font-size: 12px; color: var(--text-muted); }
+        .breakdown-sar { font-size: 13px; color: var(--primary); margin-top: 4px; }
 
-        /* ONLY Salla button - glowing */
-        .salla-btn {
-            padding: 18px 48px; font-size: 18px; font-weight: 700;
+        /* Main Action Button */
+        .action-section { text-align: center; margin-bottom: 32px; }
+        .action-btn {
+            padding: 20px 48px; font-size: 20px; font-weight: 700;
             background: linear-gradient(135deg, var(--primary), var(--primary-hover));
             color: white; border: none; border-radius: 14px;
             cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
-            box-shadow: 0 0 30px rgba(16,185,129,0.4);
+            box-shadow: 0 0 40px rgba(16,185,129,0.4);
             animation: glowPulse 2s ease-in-out infinite;
             transition: transform 0.2s;
         }
-        .salla-btn:hover { transform: scale(1.05); }
+        .action-btn:hover { transform: scale(1.03); }
+        .action-btn:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
+        .action-btn svg { width: 24px; height: 24px; }
         @keyframes glowPulse {
             0%, 100% { box-shadow: 0 0 30px rgba(16,185,129,0.4); }
             50% { box-shadow: 0 0 50px rgba(16,185,129,0.6); }
         }
-        .salla-logo { font-size: 20px; font-weight: 700; }
 
-        /* === DASHBOARD PREVIEW (behind overlay, scrollable) === */
-        .dashboard-preview { padding: 24px; opacity: 0.3; filter: blur(1px); }
-
-        .preview-hero { text-align: center; padding: 60px 24px; margin-bottom: 24px; }
-        .preview-money { font-size: 64px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .preview-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 32px; }
-        .preview-btn { padding: 20px 48px; font-size: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 10px; }
-
-        .preview-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
-        .preview-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 28px; text-align: center; min-width: 140px; }
-        .preview-card-icon { font-size: 28px; margin-bottom: 8px; }
-        .preview-card-val { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-        .preview-card-label { font-size: 12px; color: var(--text-muted); }
-
-        .preview-activity { max-width: 500px; margin: 0 auto; }
-        .preview-activity-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted); }
-        .preview-activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
-        .preview-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
-        .preview-dot.blue { background: #3B82F6; }
-        .preview-dot.orange { background: #F59E0B; }
-
-        /* === READY STATE (after Salla connected) === */
-        .app-container { display: none; min-height: 100vh; padding: 24px; }
-        .app-container.active { display: block; }
-
-        .hero { text-align: center; padding: 60px 24px; }
-        .hero-money { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
-        .hero-currency { font-size: 24px; color: var(--text-muted); margin-right: 8px; }
-        .hero-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
-
-        .breakdown { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
-        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 160px; text-align: center; transition: all 0.2s; }
-        .breakdown-card:hover { border-color: var(--primary); transform: translateY(-2px); }
-        .breakdown-icon { font-size: 28px; margin-bottom: 8px; }
-        .breakdown-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
-        .breakdown-label { font-size: 13px; color: var(--text-muted); }
-        .breakdown-sar { font-size: 14px; color: var(--primary); margin-top: 4px; }
-
-        .launch-section { text-align: center; margin-bottom: 40px; }
-        .launch-btn {
-            padding: 24px 64px; font-size: 22px; font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
-            color: white; border: none; border-radius: 16px;
-            cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
-            box-shadow: 0 8px 32px rgba(16,185,129,0.3);
-            animation: glowPulse 2s ease-in-out infinite;
-            transition: transform 0.2s;
-        }
-        .launch-btn:hover { transform: translateY(-2px); }
-        .launch-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
-        .launch-btn svg { width: 28px; height: 28px; }
+        .action-hint { font-size: 13px; color: var(--text-muted); margin-top: 12px; }
 
         /* Activity Feed */
-        .activity { max-width: 500px; margin: 0 auto; }
+        .activity { margin-bottom: 32px; }
         .activity-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
         .activity-title { font-size: 14px; font-weight: 600; }
-        .activity-badge { padding: 4px 10px; background: rgba(16,185,129,0.15); border-radius: 12px; font-size: 11px; color: var(--primary); font-weight: 600; }
+        .activity-badge { padding: 4px 10px; background: rgba(16,185,129,0.15); border-radius: 12px; font-size: 11px; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .activity-badge-dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .activity-list { }
-        .activity-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
+        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
         .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
         .activity-dot.green { background: var(--primary); }
         .activity-dot.blue { background: #3B82F6; }
         .activity-dot.orange { background: #F59E0B; }
+        .activity-dot.purple { background: #8B5CF6; }
         .activity-content { flex: 1; }
-        .activity-msg { font-size: 14px; font-weight: 500; }
-        .activity-time { font-size: 12px; color: var(--text-muted); }
-        .activity-amount { font-size: 14px; font-weight: 600; color: var(--primary); }
-        .activity-empty { text-align: center; padding: 32px; color: var(--text-muted); }
+        .activity-msg { font-size: 13px; font-weight: 500; }
+        .activity-time { font-size: 11px; color: var(--text-muted); }
+        .activity-amount { font-size: 13px; font-weight: 600; color: var(--primary); }
 
-        /* Results State */
-        .results { text-align: center; padding: 60px 24px; }
+        /* Status Bar */
+        .status-bar { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; padding: 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; }
+        .status-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .status-dot.active { background: var(--primary); }
+        .status-dot.inactive { background: var(--text-muted); }
+        .status-dot.pending { background: #F59E0B; animation: blink 1s infinite; }
+
+        /* Results Overlay */
+        .results-overlay { display: none; position: fixed; inset: 0; background: rgba(9,9,11,0.95); z-index: 100; align-items: center; justify-content: center; }
+        .results-overlay.active { display: flex; }
+        .results-content { text-align: center; padding: 32px; }
         .results-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
         .results-icon svg { width: 40px; height: 40px; color: var(--primary); }
-        .results-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-        .results-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .results-desc { color: var(--text-muted); margin-bottom: 32px; }
+        .results-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .results-subtitle { color: var(--text-muted); margin-bottom: 24px; }
         .results-stats { display: flex; gap: 32px; justify-content: center; margin-bottom: 32px; }
         .results-stat { text-align: center; }
-        .results-stat-val { font-size: 28px; font-weight: 700; }
+        .results-stat-val { font-size: 32px; font-weight: 700; color: var(--primary); }
         .results-stat-label { font-size: 13px; color: var(--text-muted); }
-        .btn-secondary { padding: 14px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .btn-secondary:hover { border-color: var(--primary); }
+        .btn-secondary { padding: 14px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; }
 
         /* Confetti */
         #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
@@ -148,192 +107,321 @@
             .hero-money { font-size: 48px; }
             .breakdown { flex-direction: column; align-items: center; }
             .breakdown-card { width: 100%; max-width: 280px; }
-            .launch-btn { padding: 20px 40px; font-size: 18px; }
-            .preview-money { font-size: 48px; }
+            .action-btn { padding: 18px 36px; font-size: 18px; }
         }
     </style>
 </head>
 <body>
     <canvas id="confetti"></canvas>
 
-    <!-- LOCKED: Dark overlay + Salla button -->
-    <div class="locked-overlay" id="lockedOverlay">
-        <div class="locked-content">
-            <div class="locked-icon"><i data-lucide="lock-open"></i></div>
-            <h1 class="locked-title">اربط متجرك</h1>
-            <p class="locked-desc">اربط سلة، واضغط زر واحد، وشاهد الأموال تتدفق</p>
-            <button class="salla-btn" onclick="connectSalla()">
-                <span class="salla-logo">سلة</span>
-                <span>ربط Salla</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- DASHBOARD PREVIEW (visible behind overlay, scrollable) -->
-    <div class="locked-wrapper">
-        <div class="dashboard-preview" id="dashboardPreview">
-            <div class="preview-hero">
-                <div class="preview-money">٤٥,٠٠٠ ر.س</div>
-                <div class="preview-subtitle">تنتظرك في متجرك</div>
-                <div class="preview-btn">
-                    <i data-lucide="rocket" style="width:20px;height:20px"></i>
-                    <span>استرجع أموالك</span>
-                </div>
+    <div class="container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot" id="sallaStatus"></span>
+                <span id="sallaStatusText">سلة</span>
             </div>
-            <div class="preview-cards">
-                <div class="preview-card">
-                    <div class="preview-card-icon">🛒</div>
-                    <div class="preview-card-val">٣٤٧</div>
-                    <div class="preview-card-label">سلة متروكة</div>
-                </div>
-                <div class="preview-card">
-                    <div class="preview-card-icon">😴</div>
-                    <div class="preview-card-val">٨٩١</div>
-                    <div class="preview-card-label">عميل خامل</div>
-                </div>
-                <div class="preview-card">
-                    <div class="preview-card-icon">🛍️</div>
-                    <div class="preview-card-val">١٥٦</div>
-                    <div class="preview-card-label">فرصة بيع إضافي</div>
-                </div>
+            <div class="status-item">
+                <span class="status-dot" id="waStatus"></span>
+                <span id="waStatusText">واتساب</span>
             </div>
-            <div class="preview-activity">
-                <div class="preview-activity-title">النشاطات</div>
-                <div class="preview-activity-item"><span class="preview-dot"></span><span>محمد أكمل طلبه - 320 ر.س</span></div>
-                <div class="preview-activity-item"><span class="preview-dot blue"></span><span>أحمد قرأ الرسالة</span></div>
-                <div class="preview-activity-item"><span class="preview-dot orange"></span><span>سارة نقرت على الرابط</span></div>
-                <div class="preview-activity-item"><span class="preview-dot"></span><span>خالد أكمل طلبه - 180 ر.س</span></div>
+            <div class="status-item">
+                <span class="status-dot" id="engineStatus"></span>
+                <span id="engineStatusText">المحرك</span>
             </div>
         </div>
-    </div>
 
-    <!-- MAIN APP (shown after Salla connected) -->
-    <div class="app-container" id="appContainer">
+        <!-- Hero -->
         <div class="hero">
-            <div class="hero-money" id="heroMoney">0</div>
-            <div class="hero-currency">ر.س</div>
-            <div class="hero-subtitle">تنتظرك في متجرك</div>
+            <div>
+                <span class="hero-money" id="heroMoney">0</span>
+                <span class="hero-currency">ر.س</span>
+            </div>
+            <div class="hero-subtitle" id="heroSubtitle">جاري التحليل...</div>
         </div>
 
-        <div class="breakdown" id="breakdown">
-            <div class="breakdown-card" id="cartCard">
+        <!-- Breakdown -->
+        <div class="breakdown">
+            <div class="breakdown-card">
                 <div class="breakdown-icon">🛒</div>
                 <div class="breakdown-value" id="cartCount">0</div>
                 <div class="breakdown-label">سلة متروكة</div>
                 <div class="breakdown-sar" id="cartValue">0 ر.س</div>
             </div>
-            <div class="breakdown-card" id="dormantCard">
+            <div class="breakdown-card">
                 <div class="breakdown-icon">😴</div>
                 <div class="breakdown-value" id="dormantCount">0</div>
                 <div class="breakdown-label">عميل خامل</div>
                 <div class="breakdown-sar" id="dormantValue">0 ر.س</div>
             </div>
-            <div class="breakdown-card" id="upsellCard">
+            <div class="breakdown-card">
                 <div class="breakdown-icon">🛍️</div>
                 <div class="breakdown-value" id="upsellCount">0</div>
-                <div class="breakdown-label">فرصة بيع إضافي</div>
+                <div class="breakdown-label">فرصة بيع</div>
                 <div class="breakdown-sar" id="upsellValue">0 ر.س</div>
             </div>
         </div>
 
-        <div class="launch-section">
-            <button class="launch-btn" id="launchBtn" onclick="launchCampaigns()">
-                <i data-lucide="rocket"></i>
-                <span>استرجع أموالك</span>
+        <!-- Main Action -->
+        <div class="action-section">
+            <button class="action-btn" id="mainBtn" onclick="handleMainAction()">
+                <i data-lucide="message-circle"></i>
+                <span id="mainBtnText">ربط واتساب للتفعيل</span>
             </button>
+            <div class="action-hint" id="actionHint">اربط واتساب لبدء استرداد أموالك تلقائياً</div>
         </div>
 
+        <!-- Activity Feed -->
         <div class="activity">
             <div class="activity-header">
                 <span class="activity-title">النشاطات</span>
-                <span class="activity-badge">مباشر</span>
+                <span class="activity-badge"><span class="activity-badge-dot"></span> مباشر</span>
             </div>
-            <div class="activity-list" id="activityList">
-                <div class="activity-empty">النشاطات ستظهر هنا عند بدء الحملة</div>
-            </div>
+            <div class="activity-list" id="activityList"></div>
         </div>
+    </div>
 
-        <!-- Results (shown after launch) -->
-        <div class="results" id="results" style="display:none">
+    <!-- Results Overlay -->
+    <div class="results-overlay" id="resultsOverlay">
+        <div class="results-content">
             <div class="results-icon"><i data-lucide="check-circle"></i></div>
-            <h1 class="results-title">تم إطلاق الحملة!</h1>
-            <div class="results-money" id="resultsMoney">0 ر.س</div>
-            <div class="results-desc">متوقع استرداده خلال 24 ساعة</div>
+            <h1 class="results-title">المحرك يعمل! 🚀</h1>
+            <div class="results-subtitle">سيتم استرداد أموالك تلقائياً من الآن</div>
             <div class="results-stats">
                 <div class="results-stat">
                     <div class="results-stat-val" id="resultsSent">0</div>
-                    <div class="results-stat-label">رسالة</div>
+                    <div class="results-stat-label">رسالة أُرسلت</div>
                 </div>
                 <div class="results-stat">
-                    <div class="results-stat-val" id="resultsCustomers">0</div>
-                    <div class="results-stat-label">عميل</div>
+                    <div class="results-stat-val" id="resultsRevenue">0</div>
+                    <div class="results-stat-label">ر.س متوقع</div>
                 </div>
             </div>
-            <button class="btn-secondary" onclick="location.reload()">حملة جديدة</button>
+            <button class="btn-secondary" onclick="closeResults()">متابعة المراقبة</button>
         </div>
     </div>
 
     <script>
-    let analysisData = null;
+    // === STATE ===
+    let state = {
+        sallaConnected: false,
+        waConnected: false,
+        engineActive: false,
+        realData: null
+    };
 
-    // Connect Salla
-    function connectSalla() {
-        window.location.href = '/salla/install';
-    }
+    // === FAKE DATA (shown before real analysis) ===
+    const FAKE_DATA = {
+        money: 45000,
+        carts: 347,
+        cartsValue: 28000,
+        dormant: 891,
+        dormantValue: 12000,
+        upsell: 156,
+        upsellValue: 5000
+    };
 
-    // Check connection on load
-    async function checkConnection() {
+    // === FAKE ACTIVITY (simulated) ===
+    const FAKE_ACTIVITIES = [
+        { msg: 'محمد أكمل طلبه', amount: 320, dot: 'green' },
+        { msg: 'أحمد قرأ الرسالة', dot: 'blue' },
+        { msg: 'سارة نقرت على الرابط', dot: 'orange' },
+        { msg: 'خالد أكمل طلبه', amount: 180, dot: 'green' },
+        { msg: 'فاطمة استلمت الرسالة', dot: 'blue' },
+        { msg: 'عبدالله أضاف للسلة', dot: 'purple' },
+        { msg: 'نورة أكملت طلبها', amount: 450, dot: 'green' },
+        { msg: 'سعود قرأ الرسالة', dot: 'blue' },
+    ];
+
+    // === INIT ===
+    document.addEventListener('DOMContentLoaded', async () => {
+        lucide.createIcons();
+
+        // Check Salla connection
+        await checkSallaConnection();
+
+        // Start showing fake data with animation
+        showFakeData();
+
+        // Start fake activity feed
+        startFakeActivity();
+
+        // Update UI based on state
+        updateUI();
+    });
+
+    // === CHECK SALLA CONNECTION ===
+    async function checkSallaConnection() {
         try {
             const res = await fetch('/api/ribh/analyze');
             const data = await res.json();
 
-            if (data.success) {
-                analysisData = data;
-                showApp(data);
+            if (data.success && data.merchant) {
+                state.sallaConnected = true;
+                state.realData = data;
             }
-            // If not connected, stay on locked screen
         } catch (e) {
-            console.error('Connection check failed:', e);
+            console.log('Salla check:', e.message);
         }
     }
 
-    // Show main app
-    function showApp(data) {
-        document.getElementById('lockedOverlay').classList.add('hidden');
-        document.getElementById('dashboardPreview').style.display = 'none';
-        document.getElementById('appContainer').classList.add('active');
+    // === SHOW FAKE DATA WITH COUNTING ANIMATION ===
+    function showFakeData() {
+        animateValue('heroMoney', FAKE_DATA.money, 2000);
+        animateValue('cartCount', FAKE_DATA.carts, 1500);
+        animateValue('dormantCount', FAKE_DATA.dormant, 1500);
+        animateValue('upsellCount', FAKE_DATA.upsell, 1500);
 
-        const { analysis } = data;
-        const { breakdown } = analysis;
-
-        // Animate money
-        animateValue(document.getElementById('heroMoney'), analysis.moneyWaiting);
-
-        // Breakdown
-        document.getElementById('cartCount').textContent = breakdown.abandonedCarts.count.toLocaleString();
-        document.getElementById('cartValue').textContent = breakdown.abandonedCarts.recoveryEstimate.toLocaleString() + ' ر.س';
-
-        document.getElementById('dormantCount').textContent = breakdown.dormantCustomers.count.toLocaleString();
-        document.getElementById('dormantValue').textContent = breakdown.dormantCustomers.reactivationEstimate.toLocaleString() + ' ر.س';
-
-        document.getElementById('upsellCount').textContent = breakdown.recentBuyers.count.toLocaleString();
-        document.getElementById('upsellValue').textContent = breakdown.recentBuyers.upsellEstimate.toLocaleString() + ' ر.س';
-
-        // Hide empty cards
-        if (breakdown.abandonedCarts.count === 0) document.getElementById('cartCard').style.display = 'none';
-        if (breakdown.dormantCustomers.count === 0) document.getElementById('dormantCard').style.display = 'none';
-        if (breakdown.recentBuyers.count === 0) document.getElementById('upsellCard').style.display = 'none';
+        setTimeout(() => {
+            document.getElementById('cartValue').textContent = FAKE_DATA.cartsValue.toLocaleString() + ' ر.س';
+            document.getElementById('dormantValue').textContent = FAKE_DATA.dormantValue.toLocaleString() + ' ر.س';
+            document.getElementById('upsellValue').textContent = FAKE_DATA.upsellValue.toLocaleString() + ' ر.س';
+            document.getElementById('heroSubtitle').textContent = 'تنتظرك في متجرك';
+        }, 500);
     }
 
-    // Launch campaigns
-    async function launchCampaigns() {
-        const btn = document.getElementById('launchBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span>جاري الإرسال...</span>';
+    // === FAKE ACTIVITY FEED ===
+    function startFakeActivity() {
+        let index = 0;
 
-        launchConfetti();
+        function addNext() {
+            const act = FAKE_ACTIVITIES[index % FAKE_ACTIVITIES.length];
+            addActivity(act.msg, act.dot, act.amount);
+            index++;
+
+            // Random interval 2-5 seconds
+            setTimeout(addNext, 2000 + Math.random() * 3000);
+        }
+
+        // Start after 1 second
+        setTimeout(addNext, 1000);
+    }
+
+    function addActivity(msg, dotColor, amount) {
+        const list = document.getElementById('activityList');
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+
+        const amountHtml = amount ? `<span class="activity-amount">+${amount} ر.س</span>` : '';
+        item.innerHTML = `
+            <span class="activity-dot ${dotColor}"></span>
+            <div class="activity-content">
+                <div class="activity-msg">${msg}</div>
+                <div class="activity-time">الآن</div>
+            </div>
+            ${amountHtml}
+        `;
+
+        list.insertBefore(item, list.firstChild);
+
+        // Keep only last 6 items
+        while (list.children.length > 6) {
+            list.removeChild(list.lastChild);
+        }
+    }
+
+    // === UPDATE UI BASED ON STATE ===
+    function updateUI() {
+        const sallaStatus = document.getElementById('sallaStatus');
+        const waStatus = document.getElementById('waStatus');
+        const engineStatus = document.getElementById('engineStatus');
+        const mainBtn = document.getElementById('mainBtn');
+        const mainBtnText = document.getElementById('mainBtnText');
+        const actionHint = document.getElementById('actionHint');
+
+        // Salla status
+        if (state.sallaConnected) {
+            sallaStatus.className = 'status-dot active';
+            document.getElementById('sallaStatusText').textContent = 'سلة ✓';
+        } else {
+            sallaStatus.className = 'status-dot inactive';
+        }
+
+        // WhatsApp status
+        if (state.waConnected) {
+            waStatus.className = 'status-dot active';
+            document.getElementById('waStatusText').textContent = 'واتساب ✓';
+        } else {
+            waStatus.className = 'status-dot pending';
+            document.getElementById('waStatusText').textContent = 'واتساب (غير مفعل)';
+        }
+
+        // Engine status
+        if (state.engineActive) {
+            engineStatus.className = 'status-dot active';
+            document.getElementById('engineStatusText').textContent = 'المحرك يعمل ✓';
+        } else {
+            engineStatus.className = 'status-dot inactive';
+            document.getElementById('engineStatusText').textContent = 'المحرك (متوقف)';
+        }
+
+        // Main button
+        if (!state.sallaConnected) {
+            mainBtnText.textContent = 'ربط سلة أولاً';
+            mainBtn.innerHTML = '<i data-lucide="store"></i><span>ربط سلة أولاً</span>';
+            actionHint.textContent = 'اربط متجرك من سلة للبدء';
+        } else if (!state.waConnected) {
+            mainBtnText.textContent = 'ربط واتساب للتفعيل';
+            mainBtn.innerHTML = '<i data-lucide="message-circle"></i><span>ربط واتساب للتفعيل</span>';
+            actionHint.textContent = 'اربط واتساب لبدء استرداد أموالك تلقائياً';
+        } else if (!state.engineActive) {
+            mainBtnText.textContent = 'تفعيل المحرك 🚀';
+            mainBtn.innerHTML = '<i data-lucide="rocket"></i><span>تفعيل المحرك 🚀</span>';
+            actionHint.textContent = 'اضغط لبدء استرداد أموالك';
+        } else {
+            mainBtnText.textContent = 'المحرك يعمل ✓';
+            mainBtn.innerHTML = '<i data-lucide="check-circle"></i><span>المحرك يعمل ✓</span>';
+            mainBtn.disabled = true;
+            mainBtn.style.animation = 'none';
+            actionHint.textContent = 'سيتم استرداد أموالك تلقائياً';
+        }
+
+        lucide.createIcons();
+    }
+
+    // === MAIN ACTION HANDLER ===
+    async function handleMainAction() {
+        if (!state.sallaConnected) {
+            // Go to Salla install
+            window.location.href = '/salla/install';
+            return;
+        }
+
+        if (!state.waConnected) {
+            // Go to WhatsApp setup
+            window.location.href = '/whatsapp.html';
+            return;
+        }
+
+        if (!state.engineActive) {
+            // Activate engine - analyze real data and launch
+            await activateEngine();
+        }
+    }
+
+    // === ACTIVATE ENGINE ===
+    async function activateEngine() {
+        const btn = document.getElementById('mainBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span>جاري التفعيل...</span>';
 
         try {
+            // Show real data if we have it
+            if (state.realData) {
+                const { analysis } = state.realData;
+                const { breakdown } = analysis;
+
+                animateValue('heroMoney', analysis.moneyWaiting, 1500);
+                animateValue('cartCount', breakdown.abandonedCarts.count, 1000);
+                animateValue('dormantCount', breakdown.dormantCustomers.count, 1000);
+                animateValue('upsellCount', breakdown.recentBuyers.count, 1000);
+
+                document.getElementById('cartValue').textContent = breakdown.abandonedCarts.recoveryEstimate.toLocaleString() + ' ر.س';
+                document.getElementById('dormantValue').textContent = breakdown.dormantCustomers.reactivationEstimate.toLocaleString() + ' ر.س';
+                document.getElementById('upsellValue').textContent = breakdown.recentBuyers.upsellEstimate.toLocaleString() + ' ر.س';
+            }
+
+            // Launch campaigns
             const res = await fetch('/api/ribh/launch', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -343,44 +431,43 @@
             const data = await res.json();
 
             if (data.success) {
+                state.engineActive = true;
+                launchConfetti();
                 showResults(data.results);
             } else {
-                alert('حدث خطأ: ' + (data.error || 'غير معروف'));
-                btn.disabled = false;
-                btn.innerHTML = '<i data-lucide="rocket"></i><span>استرجع أموالك</span>';
-                lucide.createIcons();
+                alert('خطأ: ' + (data.error || 'غير معروف'));
             }
         } catch (e) {
-            console.error('Launch error:', e);
+            console.error('Engine activation error:', e);
             alert('حدث خطأ في الاتصال');
-            btn.disabled = false;
-            btn.innerHTML = '<i data-lucide="rocket"></i><span>استرجع أموالك</span>';
-            lucide.createIcons();
         }
+
+        updateUI();
     }
 
-    // Show results
+    // === SHOW RESULTS ===
     function showResults(results) {
-        document.querySelector('.hero').style.display = 'none';
-        document.getElementById('breakdown').style.display = 'none';
-        document.querySelector('.launch-section').style.display = 'none';
-        document.querySelector('.activity').style.display = 'none';
-        document.getElementById('results').style.display = 'block';
-
-        launchConfetti();
+        const overlay = document.getElementById('resultsOverlay');
+        overlay.classList.add('active');
 
         const totalRevenue = results.launched.reduce((s, l) => s + (l.estimatedRevenue || 0), 0);
-        const totalCustomers = results.launched.reduce((s, l) => s + (l.audience || 0), 0);
 
-        document.getElementById('resultsMoney').textContent = totalRevenue.toLocaleString() + ' ر.س';
-        document.getElementById('resultsSent').textContent = results.messagesSent.toLocaleString();
-        document.getElementById('resultsCustomers').textContent = totalCustomers.toLocaleString();
+        document.getElementById('resultsSent').textContent = results.messagesSent;
+        document.getElementById('resultsRevenue').textContent = totalRevenue.toLocaleString();
+
+        lucide.createIcons();
     }
 
-    // Animate counter
-    function animateValue(el, end, duration = 1500) {
+    function closeResults() {
+        document.getElementById('resultsOverlay').classList.remove('active');
+    }
+
+    // === ANIMATE VALUE ===
+    function animateValue(elementId, end, duration = 1500) {
+        const el = document.getElementById(elementId);
         let start = 0;
         const startTime = performance.now();
+
         function update(now) {
             const p = Math.min((now - startTime) / duration, 1);
             const eased = 1 - Math.pow(1 - p, 3);
@@ -390,7 +477,7 @@
         requestAnimationFrame(update);
     }
 
-    // Confetti
+    // === CONFETTI ===
     function launchConfetti() {
         const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
         cv.width = window.innerWidth; cv.height = window.innerHeight;
@@ -404,12 +491,6 @@
         }
         requestAnimationFrame(draw);
     }
-
-    // Init
-    document.addEventListener('DOMContentLoaded', () => {
-        lucide.createIcons();
-        checkConnection();
-    });
     </script>
 </body>
 </html>
