@@ -1,15 +1,16 @@
 /**
- * ANTI-BAN SYSTEM - Bulletproof WhatsApp Protection
- * 
- * WHY ACCOUNTS GET BANNED:
- * 1. Too many messages too fast
- * 2. Same/similar messages (template detection)
- * 3. New numbers sending bulk = no warm-up
- * 4. Getting reported/blocked by recipients
- * 5. Abnormal patterns (24/7 no breaks)
- * 
- * THIS MODULE MAKES MESSAGING IMPOSSIBLE TO DETECT
+ * ANTI-BAN SYSTEM - WhatsApp Protection
+ *
+ * Rate limiting, warm-up, and message humanization to prevent bans.
+ * Critical state (daily counts, block counts, warm-up start) is persisted
+ * to Firestore so it survives function restarts / cold starts.
  */
+
+const admin = require('firebase-admin');
+
+function getDb() {
+    try { return admin.firestore(); } catch { return null; }
+}
 
 // ==========================================
 // CONFIGURATION
@@ -47,39 +48,96 @@ const CONFIG = {
 };
 
 // ==========================================
-// STATE TRACKING
+// STATE TRACKING (in-memory cache backed by Firestore)
 // ==========================================
 
-// Track per-merchant statistics
-const merchantStats = new Map();  // merchantId -> { hourly, daily, warmupDay, lastSent, blocked, etc }
+// In-memory cache — loaded from Firestore on first access per merchant
+const merchantStats = new Map();
+const messageQueue = new Map();
+const recipientHistory = new Map();
 
-// Message queue for scheduled delivery
-const messageQueue = new Map();   // merchantId -> [{to, message, scheduledAt}, ...]
-
-// Track recipient interactions
-const recipientHistory = new Map(); // phone -> { lastContact, blocked, responded }
+// Track which merchants have been loaded from Firestore
+const loadedFromFirestore = new Set();
 
 /**
- * Initialize or get merchant stats
+ * Initialize or get merchant stats.
+ * On first access, loads persisted state from Firestore.
  */
-function getMerchantStats(merchantId) {
+async function getMerchantStats(merchantId) {
     if (!merchantStats.has(merchantId)) {
-        merchantStats.set(merchantId, {
-            hourlyCount: 0,
-            hourlyResetAt: Date.now() + 3600000,
-            dailyCount: 0,
-            dailyResetAt: Date.now() + 86400000,
-            batchCount: 0,
-            batchResetAt: null,
-            warmupStarted: Date.now(),
-            totalSent: 0,
-            totalBlocked: 0,
-            lastSentAt: null,
-            isPaused: false,
-            pauseUntil: null
-        });
+        // Try to load from Firestore first
+        const db = getDb();
+        if (db && !loadedFromFirestore.has(merchantId)) {
+            try {
+                const doc = await db.collection('antiban_stats').doc(merchantId).get();
+                if (doc.exists) {
+                    const saved = doc.data();
+                    merchantStats.set(merchantId, {
+                        hourlyCount: 0, // Reset volatile counters
+                        hourlyResetAt: Date.now() + 3600000,
+                        dailyCount: saved.dailyCount || 0,
+                        dailyResetAt: saved.dailyResetAt || Date.now() + 86400000,
+                        batchCount: 0,
+                        batchResetAt: null,
+                        warmupStarted: saved.warmupStarted || Date.now(),
+                        totalSent: saved.totalSent || 0,
+                        totalBlocked: saved.totalBlocked || 0,
+                        lastSentAt: saved.lastSentAt || null,
+                        isPaused: saved.isPaused || false,
+                        pauseUntil: saved.pauseUntil || null
+                    });
+                    loadedFromFirestore.add(merchantId);
+                    return merchantStats.get(merchantId);
+                }
+            } catch (e) {
+                console.error(`[AntiBan] Firestore load error for ${merchantId}:`, e.message);
+            }
+            loadedFromFirestore.add(merchantId);
+        }
+
+        if (!merchantStats.has(merchantId)) {
+            merchantStats.set(merchantId, {
+                hourlyCount: 0,
+                hourlyResetAt: Date.now() + 3600000,
+                dailyCount: 0,
+                dailyResetAt: Date.now() + 86400000,
+                batchCount: 0,
+                batchResetAt: null,
+                warmupStarted: Date.now(),
+                totalSent: 0,
+                totalBlocked: 0,
+                lastSentAt: null,
+                isPaused: false,
+                pauseUntil: null
+            });
+        }
     }
     return merchantStats.get(merchantId);
+}
+
+/**
+ * Persist critical stats to Firestore (called after sends/blocks)
+ */
+async function persistStats(merchantId) {
+    const db = getDb();
+    if (!db) return;
+    const stats = merchantStats.get(merchantId);
+    if (!stats) return;
+    try {
+        await db.collection('antiban_stats').doc(merchantId).set({
+            dailyCount: stats.dailyCount,
+            dailyResetAt: stats.dailyResetAt,
+            warmupStarted: stats.warmupStarted,
+            totalSent: stats.totalSent,
+            totalBlocked: stats.totalBlocked,
+            lastSentAt: stats.lastSentAt,
+            isPaused: stats.isPaused,
+            pauseUntil: stats.pauseUntil,
+            updatedAt: new Date().toISOString()
+        }, { merge: true });
+    } catch (e) {
+        console.error(`[AntiBan] Firestore persist error for ${merchantId}:`, e.message);
+    }
 }
 
 // ==========================================
@@ -90,8 +148,8 @@ function getMerchantStats(merchantId) {
  * Check if merchant can send a message right now
  * Returns: { allowed: boolean, reason?: string, waitMs?: number }
  */
-function canSendNow(merchantId) {
-    const stats = getMerchantStats(merchantId);
+async function canSendNow(merchantId) {
+    const stats = await getMerchantStats(merchantId);
     const now = Date.now();
 
     // Reset hourly counter if needed
@@ -190,20 +248,21 @@ function canSendNow(merchantId) {
 /**
  * Record that a message was sent
  */
-function recordSent(merchantId) {
-    const stats = getMerchantStats(merchantId);
+async function recordSent(merchantId) {
+    const stats = await getMerchantStats(merchantId);
     stats.hourlyCount++;
     stats.dailyCount++;
     stats.batchCount++;
     stats.totalSent++;
     stats.lastSentAt = Date.now();
+    await persistStats(merchantId);
 }
 
 /**
  * Record that a message was blocked/reported
  */
-function recordBlocked(merchantId, phone) {
-    const stats = getMerchantStats(merchantId);
+async function recordBlocked(merchantId, phone) {
+    const stats = await getMerchantStats(merchantId);
     stats.totalBlocked++;
 
     // Mark recipient as blocked
@@ -218,8 +277,10 @@ function recordBlocked(merchantId, phone) {
         stats.isPaused = true;
         stats.pauseUntil = Date.now() + (CONFIG.BLOCK_COOLDOWN_HOURS * 3600000);
         console.log(`⚠️ Account ${merchantId} paused due to ${stats.totalBlocked} blocks`);
+        await persistStats(merchantId);
         return true;
     }
+    await persistStats(merchantId);
     return false;
 }
 
@@ -519,9 +580,9 @@ function markFailed(merchantId, index, error) {
 /**
  * Get queue stats for a merchant
  */
-function getQueueStats(merchantId) {
+async function getQueueStats(merchantId) {
     const queue = messageQueue.get(merchantId) || [];
-    const stats = getMerchantStats(merchantId);
+    const stats = await getMerchantStats(merchantId);
 
     return {
         queueLength: queue.filter(m => m.status === 'pending').length,

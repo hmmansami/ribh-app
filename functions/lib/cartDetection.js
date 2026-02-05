@@ -4,7 +4,6 @@
  */
 const admin = require('firebase-admin');
 const ABANDON_DELAY_MS = 30 * 60 * 1000; // 30 minutes
-const abandonTimers = new Map();
 
 function getDb() { return admin.firestore(); }
 
@@ -46,69 +45,75 @@ function normalizeCart(platform, payload) {
     };
 }
 
-/** Trigger abandoned cart event */
-async function triggerAbandoned(key, onAbandoned) {
-    const db = getDb();
-    const doc = await db.collection('carts').doc(key).get();
-    if (!doc.exists) return;
-    const cart = doc.data();
-    if (cart.status === 'converted' || cart.status === 'recovered') {
-        console.log(`[CartDetection] ${key} already ${cart.status}, skip`);
-        return;
-    }
-    await db.collection('carts').doc(key).update({
-        status: 'abandoned',
-        abandonedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
-    console.log(`[CartDetection] 🛒 ABANDONED: ${key}`);
-    if (typeof onAbandoned === 'function') {
-        try { await onAbandoned(cart); } catch (e) { console.error(`[CartDetection] callback error:`, e.message); }
-    }
-}
-
 /**
  * Handle incoming cart webhook
- * @param {string} platform - 'salla' or 'shopify'
- * @param {string} event - webhook event type
- * @param {object} payload - webhook payload
- * @param {function} onAbandoned - callback(cart) when abandoned
+ * Instead of setTimeout (lost on restart), stores an `abandonAt` timestamp in Firestore.
+ * The keepAlive cron calls processAbandonedCarts() every 5 minutes to check for expired carts.
  */
 async function handleCartWebhook(platform, event, payload, onAbandoned) {
     const cart = normalizeCart(platform, payload);
     const key = `${platform}:${cart.storeId}:${cart.cartId}`;
-    
+
     if (!cart.cartId || cart.cartId === 'undefined') return { status: 'skipped', reason: 'no_cart_id' };
     if (!cart.phone && !cart.email) return { status: 'skipped', reason: 'no_contact' };
-    
-    // Clear existing timer
-    if (abandonTimers.has(key)) { clearTimeout(abandonTimers.get(key)); abandonTimers.delete(key); }
-    
-    // Save to Firestore
+
+    // Save to Firestore with an abandonAt deadline (30 minutes from now)
     const db = getDb();
     await db.collection('carts').doc(key).set({
         ...cart, platform, key,
         lastActivity: admin.firestore.FieldValue.serverTimestamp(),
+        abandonAt: new Date(Date.now() + ABANDON_DELAY_MS).toISOString(),
         status: 'active', updatedAt: new Date().toISOString()
     }, { merge: true });
-    console.log(`[CartDetection] Saved ${key} - $${cart.totalAmount} ${cart.currency}`);
-    
-    // Set 30min abandon timer
-    abandonTimers.set(key, setTimeout(() => {
-        abandonTimers.delete(key);
-        triggerAbandoned(key, onAbandoned);
-    }, ABANDON_DELAY_MS));
-    
+    console.log(`[CartDetection] Saved ${key} - $${cart.totalAmount} ${cart.currency} (abandon check in 30min)`);
+
     return { status: 'tracked', key, abandonIn: '30min' };
+}
+
+/**
+ * Process abandoned carts — called by keepAlive cron every 5 minutes.
+ * Finds carts where status=active and abandonAt has passed.
+ */
+async function processAbandonedCarts(onAbandoned) {
+    const db = getDb();
+    const now = new Date().toISOString();
+
+    const snapshot = await db.collection('carts')
+        .where('status', '==', 'active')
+        .where('abandonAt', '<=', now)
+        .limit(50)
+        .get();
+
+    if (snapshot.empty) return { processed: 0 };
+
+    let processed = 0;
+    for (const doc of snapshot.docs) {
+        const cart = doc.data();
+        await doc.ref.update({
+            status: 'abandoned',
+            abandonedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        console.log(`[CartDetection] 🛒 ABANDONED: ${doc.id}`);
+        processed++;
+
+        if (typeof onAbandoned === 'function') {
+            try { await onAbandoned(cart); } catch (e) {
+                console.error(`[CartDetection] callback error for ${doc.id}:`, e.message);
+            }
+        }
+    }
+
+    if (processed > 0) console.log(`[CartDetection] Processed ${processed} abandoned carts`);
+    return { processed };
 }
 
 /** Mark cart as converted (order placed) */
 async function markConverted(platform, storeId, cartId) {
     const key = `${platform}:${storeId}:${cartId}`;
-    if (abandonTimers.has(key)) { clearTimeout(abandonTimers.get(key)); abandonTimers.delete(key); }
     await getDb().collection('carts').doc(key).update({
         status: 'converted', convertedAt: admin.firestore.FieldValue.serverTimestamp()
     }).catch(() => {});
     console.log(`[CartDetection] ✅ Converted: ${key}`);
 }
 
-module.exports = { handleCartWebhook, markConverted, normalizeCart, ABANDON_DELAY_MS };
+module.exports = { handleCartWebhook, markConverted, normalizeCart, processAbandonedCarts, ABANDON_DELAY_MS };

@@ -164,9 +164,9 @@ async function handleNewCustomer(store, data) {
 
     // Track customer
     const customers = readJSON(CUSTOMERS_FILE);
-    const existingCustomer = customers.find(c => 
-        (email && c.email === email) || 
-        (phone && c.phone === phone)
+    const existingCustomer = customers.find(c =>
+        c.storeId === store.merchant &&
+        ((email && c.email === email) || (phone && c.phone === phone))
     );
 
     if (!existingCustomer) {

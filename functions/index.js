@@ -22,6 +22,15 @@ try {
     lifecycleEngineV2 = null;
 }
 
+let cartDetection;
+try {
+    cartDetection = require('./lib/cartDetection');
+    console.log('✅ CartDetection loaded');
+} catch (e) {
+    console.log('⚠️ CartDetection not available:', e.message);
+    cartDetection = null;
+}
+
 // Main API - handles all HTTP requests (deployed to europe-west1)
 exports.api = regionalFunctions.https.onRequest(app);
 
@@ -75,7 +84,7 @@ exports.keepAlive = regionalFunctions.pubsub
             }
 
             // ==========================================
-            // 🔥 PROCESS PENDING SEQUENCES! 
+            // 🔥 PROCESS PENDING SEQUENCES!
             // This is the KEY integration - runs every 5 minutes
             // ==========================================
             if (lifecycleEngineV2) {
@@ -85,6 +94,22 @@ exports.keepAlive = regionalFunctions.pubsub
                 } catch (e) {
                     console.error('❌ Sequence processing error:', e.message);
                     results.sequences = { error: e.message };
+                }
+            }
+
+            // ==========================================
+            // 🛒 CHECK FOR ABANDONED CARTS
+            // Replaces in-memory setTimeout timers that were lost on restart
+            // ==========================================
+            if (cartDetection) {
+                try {
+                    results.abandonedCarts = await cartDetection.processAbandonedCarts();
+                    if (results.abandonedCarts.processed > 0) {
+                        console.log(`🛒 Abandoned carts processed: ${results.abandonedCarts.processed}`);
+                    }
+                } catch (e) {
+                    console.error('❌ Cart detection error:', e.message);
+                    results.abandonedCarts = { error: e.message };
                 }
             }
 

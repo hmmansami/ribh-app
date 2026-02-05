@@ -2280,6 +2280,20 @@ async function registerShopifyWebhooks(shop, accessToken) {
 
 // Shopify Webhook: Checkout Created/Updated (Potential Abandonment)
 app.post('/api/shopify/webhook/checkout', async (req, res) => {
+    // Verify Shopify HMAC signature
+    const hmac = req.headers['x-shopify-hmac-sha256'];
+    if (config.SHOPIFY_API_SECRET && hmac) {
+        const rawBody = req.rawBody || JSON.stringify(req.body);
+        const computedHmac = crypto.createHmac('sha256', config.SHOPIFY_API_SECRET).update(rawBody).digest('base64');
+        try {
+            if (!crypto.timingSafeEqual(Buffer.from(hmac, 'utf8'), Buffer.from(computedHmac, 'utf8'))) {
+                return res.status(401).json({ error: 'Invalid HMAC signature' });
+            }
+        } catch {
+            return res.status(401).json({ error: 'Invalid HMAC signature' });
+        }
+    }
+
     const checkout = req.body;
     const shop = req.headers['x-shopify-shop-domain'];
 
@@ -2316,6 +2330,20 @@ app.post('/api/shopify/webhook/checkout', async (req, res) => {
 
 // Shopify Webhook: Order Created (Cart Recovered!)
 app.post('/api/shopify/webhook/order', async (req, res) => {
+    // Verify Shopify HMAC signature
+    const hmac = req.headers['x-shopify-hmac-sha256'];
+    if (config.SHOPIFY_API_SECRET && hmac) {
+        const rawBody = req.rawBody || JSON.stringify(req.body);
+        const computedHmac = crypto.createHmac('sha256', config.SHOPIFY_API_SECRET).update(rawBody).digest('base64');
+        try {
+            if (!crypto.timingSafeEqual(Buffer.from(hmac, 'utf8'), Buffer.from(computedHmac, 'utf8'))) {
+                return res.status(401).json({ error: 'Invalid HMAC signature' });
+            }
+        } catch {
+            return res.status(401).json({ error: 'Invalid HMAC signature' });
+        }
+    }
+
     const order = req.body;
     const shop = req.headers['x-shopify-shop-domain'];
 

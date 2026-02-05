@@ -92,70 +92,69 @@ router.post('/webhooks', async (req, res) => {
     if (secret && !verifySallaSignature(req.body, req.headers['x-salla-signature'], secret)) {
         return res.status(401).json({ error: 'Invalid signature' });
     }
-    res.json({ success: true, event: eventType }); // Fast response
-    
-    // Async processing
-    setImmediate(async () => {
-        try {
-            if (eventType === 'app.store.authorize') await sallaApp.handleAuthorize(mid, data);
-            else if (eventType === 'app.installed') await sallaApp.handleInstalled(mid, data);
-            else if (eventType === 'app.uninstalled') await sallaApp.handleUninstalled(mid);
-            
-            // Cart events → track for abandonedCart module
-            else if (['checkout.created', 'checkout.updated', 'cart.created', 'cart.updated'].includes(eventType)) {
-                await handleCartWebhook('salla', eventType, { ...data, merchant: mid }, (cart) => {
-                    cart.phone = normalizeSaudiPhone(cart.phone);
-                    console.log(`[Salla] 🛒 ABANDONED: ${cart.phone} ${cart.totalAmount} ${cart.currency}`);
-                });
+
+    // Process webhook BEFORE responding (critical operations must complete)
+    try {
+        if (eventType === 'app.store.authorize') await sallaApp.handleAuthorize(mid, data);
+        else if (eventType === 'app.installed') await sallaApp.handleInstalled(mid, data);
+        else if (eventType === 'app.uninstalled') await sallaApp.handleUninstalled(mid);
+
+        // Cart events → track for abandonedCart module
+        else if (['checkout.created', 'checkout.updated', 'cart.created', 'cart.updated'].includes(eventType)) {
+            await handleCartWebhook('salla', eventType, { ...data, merchant: mid }, (cart) => {
+                cart.phone = normalizeSaudiPhone(cart.phone);
+                console.log(`[Salla] 🛒 ABANDONED: ${cart.phone} ${cart.totalAmount} ${cart.currency}`);
+            });
+        }
+
+        // Order created → send confirmation notification
+        else if (eventType === 'order.created') {
+            const cartId = data.cart_id || data.checkout_id || data.id;
+            if (cartId) await markConverted('salla', mid, cartId);
+            console.log(`[Salla] ✅ Order ${data.id}`);
+
+            // Send order created WhatsApp notification
+            const orderData = orderNotifications.extractFromSalla(mid, data);
+            if (orderData.phone) {
+                await orderNotifications.onOrderCreated(orderData);
             }
-            
-            // Order created → send confirmation notification
-            else if (eventType === 'order.created') {
-                const cartId = data.cart_id || data.checkout_id || data.id;
-                if (cartId) await markConverted('salla', mid, cartId);
-                console.log(`[Salla] ✅ Order ${data.id}`);
-                
-                // Send order created WhatsApp notification
-                const orderData = orderNotifications.extractFromSalla(mid, data);
+        }
+
+        // Order updated → check for shipping/delivered status
+        else if (eventType === 'order.updated') {
+            const orderData = orderNotifications.extractFromSalla(mid, data);
+            const status = orderData.status;
+
+            // Shipped → send tracking notification
+            if (isShippingStatus(status)) {
+                console.log(`[Salla] 🚚 Order ${data.id} shipped`);
                 if (orderData.phone) {
-                    await orderNotifications.onOrderCreated(orderData);
+                    await orderNotifications.onOrderShipped(orderData);
                 }
             }
-            
-            // Order updated → check for shipping/delivered status
-            else if (eventType === 'order.updated') {
-                const orderData = orderNotifications.extractFromSalla(mid, data);
-                const status = orderData.status;
-                
-                // Shipped → send tracking notification
-                if (isShippingStatus(status)) {
-                    console.log(`[Salla] 🚚 Order ${data.id} shipped`);
-                    if (orderData.phone) {
-                        await orderNotifications.onOrderShipped(orderData);
-                    }
-                }
-                
-                // Delivered → send notification AND schedule review request
-                else if (isDeliveredStatus(status)) {
-                    console.log(`[Salla] ✅ Order ${data.id} delivered`);
-                    if (orderData.phone) {
-                        await orderNotifications.onOrderDelivered(orderData);
-                        
-                        // Schedule review request 2 days after delivery
-                        await reviewCollector.scheduleReviewRequest({
-                            storeId: mid,
-                            orderId: String(orderData.orderId),
-                            phone: normalizeSaudiPhone(orderData.phone),
-                            customerName: orderData.customerName,
-                            products: orderData.items,
-                            reviewLink: orderData.reviewLink
-                        });
-                        console.log(`[Salla] 📝 Review request scheduled for order ${data.id}`);
-                    }
+
+            // Delivered → send notification AND schedule review request
+            else if (isDeliveredStatus(status)) {
+                console.log(`[Salla] ✅ Order ${data.id} delivered`);
+                if (orderData.phone) {
+                    await orderNotifications.onOrderDelivered(orderData);
+
+                    // Schedule review request 2 days after delivery
+                    await reviewCollector.scheduleReviewRequest({
+                        storeId: mid,
+                        orderId: String(orderData.orderId),
+                        phone: normalizeSaudiPhone(orderData.phone),
+                        customerName: orderData.customerName,
+                        products: orderData.items,
+                        reviewLink: orderData.reviewLink
+                    });
+                    console.log(`[Salla] 📝 Review request scheduled for order ${data.id}`);
                 }
             }
-        } catch (e) { console.error(`[Salla] ❌ ${eventType}:`, e.message); }
-    });
+        }
+    } catch (e) { console.error(`[Salla] ❌ ${eventType}:`, e.message); }
+
+    res.json({ success: true, event: eventType });
 });
 
 module.exports = router;
