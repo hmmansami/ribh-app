@@ -701,6 +701,13 @@
         async function init() {
             const params = new URLSearchParams(window.location.search);
             const merchantId = params.get('merchant');
+            const demo = params.get('demo');
+
+            // Demo mode: simulate full flow without Salla
+            if (demo) {
+                await runDemo(demo);
+                return;
+            }
 
             try {
                 const url = '/api/merchant/status' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
@@ -724,6 +731,46 @@
                 }
             } catch (e) {
                 console.warn('Init fallback to not_connected:', e.message);
+                showState('not_connected');
+            }
+        }
+
+        // ── Demo mode ──
+        async function runDemo(startState) {
+            var demoData = {
+                connected: true,
+                merchantId: 'demo-store',
+                storeName: 'متجر التجربة',
+                analyzed: true,
+                whatsappConnected: false,
+                analysis: {
+                    moneyWaiting: 28340,
+                    breakdown: {
+                        abandonedCarts: { count: 127, recoveryEstimate: 18200 },
+                        dormantCustomers: { count: 340, reactivationEstimate: 6140 },
+                        recentBuyers: { count: 89, upsellEstimate: 4000 }
+                    }
+                },
+                stats: { messagesSent: 47, opened: 31, purchased: 8, recovered: 4280 }
+            };
+
+            merchantData = demoData;
+
+            if (startState === 'full' || startState === 'true' || startState === '1') {
+                // Run the full flow: analyzing → analyzed → (user clicks) → active
+                showState('analyzing', demoData);
+                await new Promise(function(r) { setTimeout(r, 4 * 800 + 800); });
+                showState('analyzed', demoData);
+            } else if (startState === 'analyzed' || startState === '3') {
+                showState('analyzed', demoData);
+            } else if (startState === 'active' || startState === '4') {
+                demoData.whatsappConnected = true;
+                showState('active', demoData);
+            } else if (startState === 'analyzing' || startState === '2') {
+                showState('analyzing', demoData);
+                await new Promise(function(r) { setTimeout(r, 4 * 800 + 800); });
+                showState('analyzed', demoData);
+            } else {
                 showState('not_connected');
             }
         }
