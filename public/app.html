@@ -703,6 +703,67 @@
         .s4-funnel-rate-label { font-size: 12px; color: var(--text-muted); }
         .s4-funnel-rate-value { font-size: 14px; font-weight: 700; color: var(--primary); }
 
+        /* AI Insights */
+        .s4-insights { margin-bottom: 20px; }
+        .s4-insights-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .s4-insights-title svg { width: 14px; height: 14px; color: var(--primary); }
+        .s4-insight-item { padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
+        .s4-insight-item + .s4-insight-item { border-top: 1px solid var(--border); }
+        .s4-insight-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .s4-insight-icon svg { width: 14px; height: 14px; color: var(--primary); }
+        .s4-insight-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
+        .s4-insight-text strong { color: var(--text); font-weight: 600; }
+
+        /* Message editor modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+            animation: fadeIn 200ms ease;
+        }
+        .modal-overlay.is-open { display: flex; }
+        .modal-sheet {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card);
+            border-radius: 20px 20px 0 0;
+            padding: 24px 20px 32px;
+            max-height: 80dvh;
+            overflow-y: auto;
+            animation: slideUp 300ms ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+        .modal-textarea {
+            width: 100%;
+            min-height: 160px;
+            padding: 14px;
+            font-size: 14px;
+            font-family: inherit;
+            line-height: 1.8;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            resize: vertical;
+            direction: rtl;
+            margin-bottom: 12px;
+        }
+        .modal-textarea:focus { outline: none; border-color: var(--primary); }
+        .modal-hint { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; }
+        .modal-hint code { background: var(--border); padding: 1px 6px; border-radius: 4px; font-size: 11px; direction: ltr; }
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-actions .btn-primary { flex: 1; }
+        .modal-actions .btn-secondary { flex: 1; }
+
         /* Loading skeleton */
         .s0-loading {
             flex: 1;
@@ -1066,7 +1127,7 @@
                 <div class="s4-usage">
                     <div class="s4-usage-header">
                         <span class="s4-usage-title">الاستخدام</span>
-                        <a class="s4-usage-plan">ترقية الباقة</a>
+                        <a class="s4-usage-plan" href="/pricing.html">ترقية الباقة</a>
                     </div>
                     <div class="card s4-usage-card">
                         <div class="s4-usage-row">
@@ -1080,6 +1141,34 @@
                             <div class="s4-trial-icon"><i data-lucide="clock"></i></div>
                             <div class="s4-trial-text" id="s4-trial-text">
                                 الفترة التجريبية: متبقي <strong id="s4-trial-days">7</strong> ايام مجانا
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Insights -->
+                <div class="s4-insights">
+                    <div class="s4-insights-title">
+                        <i data-lucide="sparkles"></i>
+                        <span>توصيات ذكية</span>
+                    </div>
+                    <div class="card">
+                        <div class="s4-insight-item">
+                            <div class="s4-insight-icon"><i data-lucide="clock"></i></div>
+                            <div class="s4-insight-text" id="s4-insight-time">
+                                <strong>افضل وقت للارسال:</strong> بين 2-4 عصراً. عملائك يفتحون الرسائل اكثر في هالوقت
+                            </div>
+                        </div>
+                        <div class="s4-insight-item">
+                            <div class="s4-insight-icon"><i data-lucide="trending-up"></i></div>
+                            <div class="s4-insight-text" id="s4-insight-rate">
+                                نسبة استردادك <strong>اعلى من المتوسط</strong> - استمر على نفس الاستراتيجية
+                            </div>
+                        </div>
+                        <div class="s4-insight-item">
+                            <div class="s4-insight-icon"><i data-lucide="zap"></i></div>
+                            <div class="s4-insight-text" id="s4-insight-tip">
+                                <strong>نصيحة:</strong> فعّل حملة إعادة التنشيط للوصول لـ 340 عميل خامل
                             </div>
                         </div>
                     </div>
@@ -1099,9 +1188,46 @@
                 </div>
 
                 <div class="s4-footer">
+                    <div style="display:flex;gap:10px;margin-bottom:10px">
+                        <a href="/customers.html" class="btn-secondary" style="flex:1">
+                            <i data-lucide="users"></i>
+                            <span>العملاء</span>
+                        </a>
+                        <a href="/pricing.html" class="btn-secondary" style="flex:1">
+                            <i data-lucide="crown"></i>
+                            <span>الباقات</span>
+                        </a>
+                    </div>
                     <button class="btn-secondary" id="btn-pause">
                         <i data-lucide="pause"></i>
                         <span>ايقاف مؤقت</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ MESSAGE EDITOR MODAL ═══════ -->
+        <div class="modal-overlay" id="modal-editor">
+            <div class="modal-sheet">
+                <div class="modal-handle"></div>
+                <div class="modal-title">تعديل رسالة الاسترداد</div>
+                <textarea class="modal-textarea" id="modal-msg-text">مرحبا {customer_name}!
+
+سلتك لسا موجودة في {store_name} بقيمة {cart_value} ر.س
+
+خلص طلبك الحين واستخدم كود RIBH10 وتحصل خصم 10%
+
+{checkout_link}</textarea>
+                <div class="modal-hint">
+                    المتغيرات المتاحة: <code>{customer_name}</code> <code>{store_name}</code> <code>{cart_value}</code> <code>{checkout_link}</code>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-primary" id="modal-save-btn">
+                        <i data-lucide="check"></i>
+                        <span>حفظ</span>
+                    </button>
+                    <button class="btn-secondary" id="modal-cancel-btn">
+                        <span>الغاء</span>
                     </button>
                 </div>
             </div>
@@ -1547,6 +1673,40 @@
             const div = document.createElement('div');
             div.textContent = str;
             return div.innerHTML;
+        }
+
+        // ── Message editor modal ──
+        var modalEl = document.getElementById('modal-editor');
+        var modalTextarea = document.getElementById('modal-msg-text');
+        var editBtn = document.getElementById('s3-preview-edit-btn');
+
+        if (editBtn) {
+            editBtn.addEventListener('click', function() {
+                var previewText = document.getElementById('s3-preview-text');
+                if (previewText) modalTextarea.value = previewText.textContent;
+                modalEl.classList.add('is-open');
+            });
+        }
+
+        if (document.getElementById('modal-save-btn')) {
+            document.getElementById('modal-save-btn').addEventListener('click', function() {
+                var previewText = document.getElementById('s3-preview-text');
+                if (previewText) previewText.textContent = modalTextarea.value;
+                modalEl.classList.remove('is-open');
+                lucide.createIcons();
+            });
+        }
+
+        if (document.getElementById('modal-cancel-btn')) {
+            document.getElementById('modal-cancel-btn').addEventListener('click', function() {
+                modalEl.classList.remove('is-open');
+            });
+        }
+
+        if (modalEl) {
+            modalEl.addEventListener('click', function(e) {
+                if (e.target === modalEl) modalEl.classList.remove('is-open');
+            });
         }
     })();
     </script>
