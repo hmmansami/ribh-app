@@ -26,6 +26,9 @@ const isDeliveredStatus = (status) => {
     return ['delivered', 'completed', 'complete', 'fulfilled', 'received'].includes(s);
 };
 
+// Base URL for OAuth redirects (Cloud Functions URL)
+const APP_URL = process.env.APP_URL || 'https://europe-west1-ribh-484706.cloudfunctions.net/api';
+
 // Install redirect (App Store / Easy Mode)
 router.get('/install', (req, res) => {
     const appId = process.env.SALLA_APP_ID;
@@ -35,7 +38,7 @@ router.get('/install', (req, res) => {
     } else {
         // Custom Mode - direct OAuth
         const clientId = process.env.SALLA_CLIENT_ID;
-        const redirectUri = encodeURIComponent(`${process.env.APP_URL}/salla/callback`);
+        const redirectUri = encodeURIComponent(`${APP_URL}/salla/callback`);
         res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=offline_access`);
     }
 });
@@ -52,7 +55,7 @@ router.get('/callback', async (req, res) => {
             body: new URLSearchParams({
                 grant_type: 'authorization_code', client_id: process.env.SALLA_CLIENT_ID,
                 client_secret: process.env.SALLA_CLIENT_SECRET, code,
-                redirect_uri: `${process.env.APP_URL}/salla/callback`
+                redirect_uri: `${APP_URL}/salla/callback`
             })
         });
         if (!tokenRes.ok) throw new Error('Token exchange failed');
@@ -79,6 +82,18 @@ router.get('/callback', async (req, res) => {
         // Redirect to setup with error
         res.redirect(`/setup.html?error=${encodeURIComponent(e.message)}`);
     }
+});
+
+// Webhook URL validation (Salla sends GET to verify the URL is valid)
+router.get('/webhooks', (req, res) => {
+    console.log('Webhook URL validation (GET /salla/webhooks)');
+    res.status(200).json({
+        success: true,
+        message: 'RIBH Webhook endpoint is ready',
+        app: 'ribh',
+        version: '1.0.0',
+        status: 'active'
+    });
 });
 
 // Webhook handler

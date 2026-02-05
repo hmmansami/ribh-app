@@ -11,8 +11,7 @@
  * 4. Has ONE clear action
  */
 
-const Groq = require('groq-sdk');
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 // Message templates (fallback if AI fails)
 const TEMPLATES = {
@@ -188,7 +187,7 @@ async function generateCampaign(campaignType, customers, storeInfo, lang = 'ar')
  */
 async function generateMessage(campaignType, customer, storeInfo, lang) {
     // For simple cases, use templates (faster, cheaper)
-    if (!process.env.GROQ_API_KEY || customers?.length > 50) {
+    if (!GROQ_API_KEY || customers?.length > 50) {
         return generateFromTemplate(campaignType, customer, storeInfo, lang);
     }
 
@@ -225,17 +224,26 @@ Keep messages:
 Do not include placeholder text like [Store URL] - just say "رابط المتجر" or leave it for the system to fill.`;
 
     try {
-        const completion = await groq.chat.completions.create({
-            model: 'llama-3.1-8b-instant',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: prompts[campaignType] || prompts.winback }
-            ],
-            max_tokens: 300,
-            temperature: 0.7
+        const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${GROQ_API_KEY}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: 'llama-3.1-8b-instant',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: prompts[campaignType] || prompts.winback }
+                ],
+                max_tokens: 300,
+                temperature: 0.7
+            })
         });
 
-        let message = completion.choices[0]?.message?.content || '';
+        if (!res.ok) {
+            throw new Error(`Groq API ${res.status}: ${await res.text()}`);
+        }
+
+        const completion = await res.json();
+        let message = completion.choices?.[0]?.message?.content || '';
 
         // Add store URL if not present
         if (storeInfo.url && !message.includes(storeInfo.url)) {
