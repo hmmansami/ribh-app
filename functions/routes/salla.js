@@ -26,6 +26,10 @@ const isDeliveredStatus = (status) => {
     return ['delivered', 'completed', 'complete', 'fulfilled', 'received'].includes(s);
 };
 
+// Salla credentials (with hardcoded fallbacks matching server.js config)
+const SALLA_CLIENT_ID = process.env.SALLA_CLIENT_ID || '476e7ed1-796c-4731-b145-73a13d0019de';
+const SALLA_CLIENT_SECRET = process.env.SALLA_CLIENT_SECRET || 'ca8e6de4265c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe';
+
 // Base URL for OAuth redirects (Cloud Functions URL)
 const APP_URL = process.env.APP_URL || 'https://europe-west1-ribh-484706.cloudfunctions.net/api';
 
@@ -37,9 +41,8 @@ router.get('/install', (req, res) => {
         res.redirect(`https://s.salla.sa/apps/install/${appId}`);
     } else {
         // Custom Mode - direct OAuth
-        const clientId = process.env.SALLA_CLIENT_ID;
         const redirectUri = encodeURIComponent(`${APP_URL}/salla/callback`);
-        res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=offline_access`);
+        res.redirect(`https://accounts.salla.sa/oauth2/auth?client_id=${SALLA_CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=offline_access`);
     }
 });
 
@@ -47,14 +50,14 @@ router.get('/install', (req, res) => {
 router.get('/callback', async (req, res) => {
     const { code, error } = req.query;
     if (error || !code) {
-        return res.redirect(`/setup.html?error=${encodeURIComponent(error || 'لم يتم استلام رمز التفويض')}`);
+        return res.redirect(`/app?error=${encodeURIComponent(error || 'لم يتم استلام رمز التفويض')}`);
     }
     try {
         const tokenRes = await fetch(sallaApp.SALLA_TOKEN_URL, {
             method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({
-                grant_type: 'authorization_code', client_id: process.env.SALLA_CLIENT_ID,
-                client_secret: process.env.SALLA_CLIENT_SECRET, code,
+                grant_type: 'authorization_code', client_id: SALLA_CLIENT_ID,
+                client_secret: SALLA_CLIENT_SECRET, code,
                 redirect_uri: `${APP_URL}/salla/callback`
             })
         });
