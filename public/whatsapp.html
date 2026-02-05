@@ -1,328 +1,438 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ربط الواتساب | رِبح</title>
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💚</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #09090B;
+            --card: #18181B;
+            --border: #27272A;
+            --text: #FAFAFA;
+            --text-muted: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-dim: rgba(16, 185, 129, 0.12);
+        }
+
+        html {
+            font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f3460 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100dvh;
+            overflow-x: hidden;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
+        /* ── Layout ── */
+        .shell {
             max-width: 480px;
+            margin: 0 auto;
+            padding: 0 20px;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Shared elements ── */
+        .btn-primary {
             width: 100%;
-            text-align: center;
-        }
-
-        .logo {
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-
-        h1 {
-            color: #fff;
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            color: rgba(255, 255, 255, 0.6);
+            padding: 16px 24px;
             font-size: 16px;
-            margin-bottom: 30px;
-        }
-
-        .status-card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .status-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
-
-        .status-text {
-            color: #fff;
-            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .status-detail {
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 14px;
-        }
-
-        .qr-container {
-            background: #fff;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 20px auto;
-            max-width: 320px;
-            display: none;
-        }
-
-        .qr-container img {
-            width: 100%;
-            height: auto;
-        }
-
-        .qr-timer {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            margin-top: 15px;
-        }
-
-        .connected-info {
-            display: none;
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .connected-info .phone {
-            color: #10B981;
-            font-size: 20px;
-            font-weight: 700;
-            direction: ltr;
-        }
-
-        .connected-info .name {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 16px;
-            margin-top: 5px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            font-family: inherit;
+            background: var(--primary);
             color: #fff;
             border: none;
             border-radius: 12px;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
             cursor: pointer;
-            width: 100%;
-            transition: all 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            transition: background 180ms, transform 120ms;
         }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary svg { width: 20px; height: 20px; flex-shrink: 0; }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(37, 211, 102, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-disconnect {
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            margin-top: 15px;
-        }
-
-        .btn-disconnect:hover {
-            background: rgba(239, 68, 68, 0.3);
-            box-shadow: none;
-        }
-
-        .benefits {
-            text-align: right;
-            margin-top: 30px;
-        }
-
-        .benefits h3 {
-            color: #fff;
-            font-size: 16px;
-            margin-bottom: 15px;
-        }
-
-        .benefit-item {
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--card);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .benefit-item:last-child {
-            border-bottom: none;
-        }
-
-        .benefit-icon {
-            font-size: 20px;
-        }
-
-        .benefit-text {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-
-        .back-link {
-            display: inline-block;
-            color: rgba(255, 255, 255, 0.5);
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms, border-color 180ms;
             text-decoration: none;
-            margin-top: 30px;
+        }
+        .btn-secondary:hover { background: var(--border); border-color: #3f3f46; }
+        .btn-secondary svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .btn-danger {
+            width: 100%;
+            padding: 14px 24px;
             font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 180ms, border-color 180ms;
+        }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.18); border-color: rgba(239, 68, 68, 0.35); }
+        .btn-danger svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            line-height: 1.6;
+        }
+        .hint svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
         }
 
-        .back-link:hover {
-            color: #fff;
+        /* ── Page wrapper ── */
+        .wa-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 0;
         }
 
-        .loading {
-            display: none;
+        /* ── Icon badge ── */
+        .wa-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .wa-icon svg { width: 28px; height: 28px; color: var(--primary); }
+
+        .wa-icon--success {
+            background: var(--primary-dim);
+        }
+        .wa-icon--success svg { color: var(--primary); }
+
+        /* ── Typography ── */
+        .wa-headline {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 12px;
         }
 
-        .loading.active {
-            display: block;
+        .wa-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
         }
 
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-top: 3px solid #25D366;
+        /* ── Actions area ── */
+        .wa-actions {
+            width: 100%;
+            max-width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* ── Benefits list ── */
+        .wa-benefits {
+            width: 100%;
+            max-width: 320px;
+            margin-top: 36px;
+        }
+
+        .wa-benefits-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .wa-benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+        }
+
+        .wa-benefit + .wa-benefit {
+            border-top: 1px solid var(--border);
+        }
+
+        .wa-benefit-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .wa-benefit-icon svg { width: 18px; height: 18px; color: var(--primary); }
+
+        .wa-benefit-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            text-align: right;
+        }
+
+        /* ── Spinner ── */
+        .wa-spinner {
+            width: 44px;
+            height: 44px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 24px;
         }
 
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
-        .pulse {
-            animation: pulse 2s ease-in-out infinite;
+        /* ── QR Code container ── */
+        .wa-qr-instruction {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 24px;
         }
 
-        @keyframes pulse {
+        .wa-qr-box {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 auto 20px;
+            max-width: 280px;
+            width: 100%;
+        }
 
-            0%,
-            100% {
-                opacity: 1;
-            }
+        .wa-qr-box img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
 
-            50% {
-                opacity: 0.5;
-            }
+        .wa-timer {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .wa-timer svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        /* ── Connected info ── */
+        .wa-connected-info {
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+            margin-bottom: 28px;
+        }
+
+        .wa-phone {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            direction: ltr;
+            margin-bottom: 4px;
+        }
+
+        .wa-name {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* ── State visibility ── */
+        .wa-state { display: none; }
+        .wa-state.is-active {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            animation: fadeIn 300ms ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Back link area ── */
+        .wa-back {
+            padding-bottom: 24px;
+            width: 100%;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="logo">📱</div>
-        <h1>ربط الواتساب</h1>
-        <p class="subtitle">أرسل رسائل استرداد السلات مجاناً من رقمك!</p>
+    <div class="shell">
 
-        <div class="status-card" id="statusCard">
-            <!-- Initial State -->
-            <div id="initialState">
-                <div class="status-icon">🔗</div>
-                <div class="status-text">غير متصل</div>
-                <div class="status-detail">اضغط الزر أدناه لربط رقم الواتساب</div>
+        <!-- ═══════ STATE: Initial (not connected) ═══════ -->
+        <div id="initialState" class="wa-state is-active">
+            <div class="wa-wrap">
+                <div class="wa-icon">
+                    <i data-lucide="smartphone"></i>
+                </div>
+                <h1 class="wa-headline">ربط الواتساب</h1>
+                <p class="wa-subtitle">ارسل رسائل استرداد السلات مجانا من رقمك</p>
+
+                <div class="wa-actions">
+                    <button class="btn-primary" id="connectBtn" onclick="connectWhatsApp()">
+                        <i data-lucide="message-circle"></i>
+                        <span>ربط الواتساب</span>
+                    </button>
+                    <div class="hint">
+                        <i data-lucide="lock"></i>
+                        <span>اتصال مشفر وآمن</span>
+                    </div>
+                </div>
+
+                <div class="wa-benefits">
+                    <div class="wa-benefits-title">مميزات ربط الواتساب</div>
+                    <div class="card">
+                        <div class="wa-benefit">
+                            <div class="wa-benefit-icon">
+                                <i data-lucide="wallet"></i>
+                            </div>
+                            <span class="wa-benefit-text">رسائل مجانية بدون حدود</span>
+                        </div>
+                        <div class="wa-benefit">
+                            <div class="wa-benefit-icon">
+                                <i data-lucide="trending-up"></i>
+                            </div>
+                            <span class="wa-benefit-text">معدل فتح 98% - اعلى من الايميل</span>
+                        </div>
+                        <div class="wa-benefit">
+                            <div class="wa-benefit-icon">
+                                <i data-lucide="shield-check"></i>
+                            </div>
+                            <span class="wa-benefit-text">رسائل من رقمك = ثقة اعلى</span>
+                        </div>
+                        <div class="wa-benefit">
+                            <div class="wa-benefit-icon">
+                                <i data-lucide="zap"></i>
+                            </div>
+                            <span class="wa-benefit-text">تفعيل فوري - مسح QR فقط</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Loading State -->
-            <div id="loadingState" class="loading">
-                <div class="spinner"></div>
-                <div class="status-text">جاري الاتصال...</div>
-                <div class="status-detail">يرجى الانتظار</div>
+            <div class="wa-back">
+                <a href="/app" class="btn-secondary">
+                    <i data-lucide="arrow-right"></i>
+                    <span>العودة للوحة التحكم</span>
+                </a>
             </div>
+        </div>
 
-            <!-- QR State -->
-            <div id="qrState" style="display: none;">
-                <div class="status-icon pulse">📷</div>
-                <div class="status-text">امسح رمز QR</div>
-                <div class="status-detail">افتح واتساب ← الإعدادات ← الأجهزة المرتبطة</div>
-                <div class="qr-container" id="qrContainer">
+        <!-- ═══════ STATE: Loading ═══════ -->
+        <div id="loadingState" class="wa-state">
+            <div class="wa-wrap">
+                <div class="wa-spinner"></div>
+                <h2 class="wa-headline">جاري الاتصال...</h2>
+                <p class="wa-subtitle">يرجى الانتظار</p>
+            </div>
+        </div>
+
+        <!-- ═══════ STATE: QR Code ═══════ -->
+        <div id="qrState" class="wa-state">
+            <div class="wa-wrap">
+                <div class="wa-icon">
+                    <i data-lucide="scan-line"></i>
+                </div>
+                <h2 class="wa-headline">امسح رمز QR</h2>
+                <p class="wa-qr-instruction">افتح واتساب ← الاعدادات ← الاجهزة المرتبطة</p>
+
+                <div class="wa-qr-box" id="qrContainer">
                     <img id="qrImage" src="" alt="QR Code">
                 </div>
-                <div class="qr-timer" id="qrTimer">ينتهي خلال <span id="countdown">60</span> ثانية</div>
-            </div>
 
-            <!-- Connected State -->
-            <div id="connectedState" style="display: none;">
-                <div class="status-icon">✅</div>
-                <div class="status-text">متصل بنجاح!</div>
-                <div class="connected-info" style="display: block;">
-                    <div class="phone" id="connectedPhone">+966xxxxxxxx</div>
-                    <div class="name" id="connectedName">اسم الواتساب</div>
+                <div class="wa-timer" id="qrTimer">
+                    <i data-lucide="clock"></i>
+                    <span>ينتهي خلال <strong id="countdown">60</strong> ثانية</span>
                 </div>
             </div>
         </div>
 
-        <button class="btn" id="connectBtn" onclick="connectWhatsApp()">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-            ربط الواتساب
-        </button>
+        <!-- ═══════ STATE: Connected ═══════ -->
+        <div id="connectedState" class="wa-state">
+            <div class="wa-wrap">
+                <div class="wa-icon wa-icon--success">
+                    <i data-lucide="check-circle-2"></i>
+                </div>
+                <h2 class="wa-headline">متصل بنجاح!</h2>
 
-        <button class="btn btn-disconnect" id="disconnectBtn" style="display: none;" onclick="disconnectWhatsApp()">
-            قطع الاتصال
-        </button>
+                <div class="card wa-connected-info">
+                    <div class="wa-phone" id="connectedPhone">+966xxxxxxxx</div>
+                    <div class="wa-name" id="connectedName">اسم الواتساب</div>
+                </div>
 
-        <div class="benefits">
-            <h3>مميزات ربط الواتساب:</h3>
-            <div class="benefit-item">
-                <span class="benefit-icon">💰</span>
-                <span class="benefit-text">رسائل مجانية بدون حدود!</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-icon">📈</span>
-                <span class="benefit-text">معدل فتح 98% (أعلى من الإيميل)</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-icon">🎯</span>
-                <span class="benefit-text">رسائل من رقمك = ثقة أعلى</span>
-            </div>
-            <div class="benefit-item">
-                <span class="benefit-icon">⚡</span>
-                <span class="benefit-text">تفعيل فوري - مسح QR فقط!</span>
+                <div class="wa-actions">
+                    <a href="/app" class="btn-primary">
+                        <i data-lucide="arrow-right"></i>
+                        <span>العودة للوحة التحكم</span>
+                    </a>
+                    <button class="btn-danger" id="disconnectBtn" onclick="disconnectWhatsApp()">
+                        <i data-lucide="unplug"></i>
+                        <span>قطع الاتصال</span>
+                    </button>
+                </div>
             </div>
         </div>
 
-        <a href="/index.html" class="back-link">→ العودة للوحة التحكم</a>
     </div>
 
     <script>
@@ -335,6 +445,7 @@
 
         // Check initial status on load
         document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
             checkStatus();
         });
 
@@ -402,29 +513,29 @@
         }
 
         function showInitial() {
-            document.getElementById('initialState').style.display = 'block';
-            document.getElementById('loadingState').classList.remove('active');
-            document.getElementById('qrState').style.display = 'none';
-            document.getElementById('connectedState').style.display = 'none';
-            document.getElementById('connectBtn').style.display = 'flex';
-            document.getElementById('disconnectBtn').style.display = 'none';
+            document.getElementById('initialState').classList.add('is-active');
+            document.getElementById('loadingState').classList.remove('is-active');
+            document.getElementById('qrState').classList.remove('is-active');
+            document.getElementById('connectedState').classList.remove('is-active');
         }
 
         function showLoading() {
-            document.getElementById('initialState').style.display = 'none';
-            document.getElementById('loadingState').classList.add('active');
-            document.getElementById('qrState').style.display = 'none';
-            document.getElementById('connectedState').style.display = 'none';
+            document.getElementById('initialState').classList.remove('is-active');
+            document.getElementById('loadingState').classList.add('is-active');
+            document.getElementById('qrState').classList.remove('is-active');
+            document.getElementById('connectedState').classList.remove('is-active');
         }
 
         function showQR(qrDataUrl) {
-            document.getElementById('initialState').style.display = 'none';
-            document.getElementById('loadingState').classList.remove('active');
-            document.getElementById('qrState').style.display = 'block';
-            document.getElementById('connectedState').style.display = 'none';
+            document.getElementById('initialState').classList.remove('is-active');
+            document.getElementById('loadingState').classList.remove('is-active');
+            document.getElementById('qrState').classList.add('is-active');
+            document.getElementById('connectedState').classList.remove('is-active');
 
             document.getElementById('qrImage').src = qrDataUrl;
-            document.getElementById('qrContainer').style.display = 'block';
+
+            // Re-render Lucide icons for newly visible state
+            lucide.createIcons();
 
             // Start countdown
             let seconds = 60;
@@ -444,17 +555,18 @@
         function showConnected(info) {
             stopPolling();
 
-            document.getElementById('initialState').style.display = 'none';
-            document.getElementById('loadingState').classList.remove('active');
-            document.getElementById('qrState').style.display = 'none';
-            document.getElementById('connectedState').style.display = 'block';
-            document.getElementById('connectBtn').style.display = 'none';
-            document.getElementById('disconnectBtn').style.display = 'flex';
+            document.getElementById('initialState').classList.remove('is-active');
+            document.getElementById('loadingState').classList.remove('is-active');
+            document.getElementById('qrState').classList.remove('is-active');
+            document.getElementById('connectedState').classList.add('is-active');
 
             if (info) {
                 document.getElementById('connectedPhone').textContent = '+' + (info.phone || 'Unknown');
                 document.getElementById('connectedName').textContent = info.name || 'WhatsApp';
             }
+
+            // Re-render Lucide icons for newly visible state
+            lucide.createIcons();
         }
 
         function startStatusPolling() {
@@ -489,5 +601,4 @@
     </script>
     <script src="/js/transitions.js"></script>
 </body>
-
 </html>
