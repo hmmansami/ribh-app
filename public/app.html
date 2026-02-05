@@ -1559,42 +1559,65 @@
             }
         }
 
+        function getDemoActivities() {
+            var now = Date.now();
+            return [
+                { message: 'تم استرداد سلة — عميلة نورة من الرياض', color: 'green', amount: 890, timestamp: new Date(now - 3 * 60000).toISOString() },
+                { message: 'رسالة واتساب مرسلة — سلة بقيمة 1,240 ر.س', color: 'blue', timestamp: new Date(now - 8 * 60000).toISOString() },
+                { message: 'تم استرداد سلة — عميل فهد من جدة', color: 'green', amount: 2340, timestamp: new Date(now - 22 * 60000).toISOString() },
+                { message: 'عرض بيع إضافي — شراء منتج مكمل', color: 'purple', amount: 450, timestamp: new Date(now - 45 * 60000).toISOString() },
+                { message: 'رسالة واتساب مرسلة — تذكير سلة متروكة', color: 'blue', timestamp: new Date(now - 90 * 60000).toISOString() },
+                { message: 'تم استرداد سلة — عميلة سارة من الدمام', color: 'green', amount: 600, timestamp: new Date(now - 2.5 * 3600000).toISOString() },
+                { message: 'إعادة تنشيط عميل خامل — عودة بعد 45 يوم', color: 'amber', amount: 1750, timestamp: new Date(now - 5 * 3600000).toISOString() },
+            ];
+        }
+
         async function loadActivities() {
             const listEl = document.getElementById('s4-activity-list');
-            try {
-                const merchantId = merchantData && merchantData.merchantId;
-                const url = '/api/ribh/activity' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
-                const res = await fetch(url);
-                const data = await res.json();
 
-                if (!data.activities || data.activities.length === 0) {
-                    listEl.innerHTML = '<div class="s4-empty">لا توجد بيانات بعد</div>';
-                    return;
+            // Use demo data if in demo mode
+            var isDemo = merchantData && merchantData.merchantId === 'demo-store';
+            var activities = null;
+
+            if (isDemo) {
+                activities = getDemoActivities();
+            } else {
+                try {
+                    const merchantId = merchantData && merchantData.merchantId;
+                    const url = '/api/ribh/activity' + (merchantId ? '?merchant=' + encodeURIComponent(merchantId) : '');
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    activities = data.activities;
+                } catch (e) {
+                    console.warn('Activity load error:', e.message);
                 }
-
-                listEl.innerHTML = '';
-                data.activities.slice(0, 10).forEach(act => {
-                    const item = document.createElement('div');
-                    item.className = 'card s4-activity-item';
-
-                    const dotColor = act.color || act.type || 'green';
-                    const amountHtml = act.amount
-                        ? '<span class="s4-act-amount">+' + Number(act.amount).toLocaleString('ar-SA') + ' ر.س</span>'
-                        : '';
-
-                    item.innerHTML =
-                        '<span class="s4-act-dot ' + sanitizeDotColor(dotColor) + '"></span>' +
-                        '<div class="s4-act-body">' +
-                            '<div class="s4-act-msg">' + escapeHtml(act.message || act.msg || '') + '</div>' +
-                            '<div class="s4-act-time">' + escapeHtml(formatTime(act.timestamp || act.time)) + '</div>' +
-                        '</div>' +
-                        amountHtml;
-
-                    listEl.appendChild(item);
-                });
-            } catch (e) {
-                console.warn('Activity load error:', e.message);
             }
+
+            if (!activities || activities.length === 0) {
+                listEl.innerHTML = '<div class="s4-empty">لا توجد بيانات بعد</div>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            activities.slice(0, 10).forEach(act => {
+                const item = document.createElement('div');
+                item.className = 'card s4-activity-item';
+
+                const dotColor = act.color || act.type || 'green';
+                const amountHtml = act.amount
+                    ? '<span class="s4-act-amount">+' + Number(act.amount).toLocaleString('ar-SA') + ' ر.س</span>'
+                    : '';
+
+                item.innerHTML =
+                    '<span class="s4-act-dot ' + sanitizeDotColor(dotColor) + '"></span>' +
+                    '<div class="s4-act-body">' +
+                        '<div class="s4-act-msg">' + escapeHtml(act.message || act.msg || '') + '</div>' +
+                        '<div class="s4-act-time">' + escapeHtml(formatTime(act.timestamp || act.time)) + '</div>' +
+                    '</div>' +
+                    amountHtml;
+
+                listEl.appendChild(item);
+            });
         }
 
         // ── Pause handler ──
