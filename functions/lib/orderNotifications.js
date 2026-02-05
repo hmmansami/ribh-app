@@ -3,7 +3,7 @@
  * Stores history in Firestore to prevent duplicate sends
  */
 const admin = require('firebase-admin');
-const { sendMessage } = require('./whatsappSender');
+const { sendMessage } = require('./whatsappClient');
 const db = () => admin.firestore();
 
 const MESSAGES = {
@@ -30,8 +30,8 @@ async function notify(order, event) {
     : event === 'delivered' ? MESSAGES.delivered() : null;
   if (!msg) return { success: false, error: `Unknown event: ${event}` };
 
-  // Send & record
-  const result = await sendMessage(phone, msg);
+  // Send & record (whatsappClient.sendMessage takes merchantId, phone, message)
+  const result = await sendMessage(storeId, phone, msg);
   if (result.success) {
     await ref.set({ orderId, event, phone, messageId: result.messageId, sentAt: new Date().toISOString() });
   }

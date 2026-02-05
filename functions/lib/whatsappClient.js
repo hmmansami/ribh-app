@@ -8,7 +8,7 @@
 const fetch = require('node-fetch');
 
 const BRIDGE_URL = process.env.WHATSAPP_BRIDGE_URL || 'https://ribh-whatsapp-1.onrender.com';
-const API_KEY = process.env.WHATSAPP_BRIDGE_KEY || 'ribh-secret-2026';
+const API_KEY = process.env.WHATSAPP_BRIDGE_KEY || '';
 
 /**
  * Initialize WhatsApp connection - get QR code

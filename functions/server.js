@@ -264,8 +264,8 @@ const PORT = process.env.PORT || 3000;
 const config = {
     // Salla
     SALLA_WEBHOOK_SECRET: process.env.SALLA_WEBHOOK_SECRET || '',
-    SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '476e7ed1-796c-4731-b145-73a13d0019de',
-    SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || 'ca8e6de4265c8faa553c8ac45af0acb6306de00a388bf4e06027e4229944f5fe',
+    SALLA_CLIENT_ID: process.env.SALLA_CLIENT_ID || '',
+    SALLA_CLIENT_SECRET: process.env.SALLA_CLIENT_SECRET || '',
 
     // Shopify - Set via: firebase functions:config:set shopify.key="xxx" shopify.secret="xxx"
     SHOPIFY_API_KEY: process.env.SHOPIFY_API_KEY || '',
@@ -435,7 +435,12 @@ async function sendProfessionalEmail({ to, subject, body, preheader, merchantNam
 // Middleware
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        // Capture raw body for webhook signature verification
+        req.rawBody = buf;
+    }
+}));
 
 // Simple cookie parser helper (inline for early use)
 function parseCookies(req) {
@@ -576,26 +581,31 @@ async function writeDB(collectionName, data) {
     // Compromise: We will assume 'data' is an array of objects.
     // We will batch write them using a unique key (e.g. id, email, token).
 
-    const batch = db.batch();
     const collectionRef = db.collection(col);
 
-    // 1. Ideally we don't delete everything. But legacy code assumes "Output = Input".
-    // For now, let's just save the array items. 
-    // To prevent infinite growth/duplication if we don't delete, we need a strategy.
-    // Strategy: Use a deterministic ID.
+    // Chunk into batches of 499 (Firestore limit is 500 operations per batch)
+    const BATCH_SIZE = 499;
+    for (let i = 0; i < data.length; i += BATCH_SIZE) {
+        const batch = db.batch();
+        const chunk = data.slice(i, i + BATCH_SIZE);
 
-    data.forEach(item => {
-        let id = item.id || item.token || item.ribhToken || item.email || crypto.randomUUID();
-        // Sanitize ID
-        id = String(id).replace(/\//g, '_');
-        const docRef = collectionRef.doc(id);
-        batch.set(docRef, item, { merge: true });
-    });
+        chunk.forEach(item => {
+            if (typeof item !== 'object' || item === null) {
+                // Wrap non-object items (e.g. plain strings) into an object
+                item = { value: item, id: crypto.randomUUID() };
+            }
+            let id = item.id || item.token || item.ribhToken || item.email || crypto.randomUUID();
+            // Sanitize ID
+            id = String(id).replace(/\//g, '_');
+            const docRef = collectionRef.doc(id);
+            batch.set(docRef, item, { merge: true });
+        });
 
-    try {
-        await batch.commit();
-    } catch (e) {
-        console.error(`Error writing to ${col}:`, e);
+        try {
+            await batch.commit();
+        } catch (e) {
+            console.error(`Error writing batch to ${col}:`, e);
+        }
     }
 }
 
@@ -709,12 +719,12 @@ app.post('/api/auth/send-link', async (req, res) => {
     }
 
     // Generate new token if doesn't have one
-    if (!store.token) {
-        store.token = generateToken();
-        writeDB(STORES_FILE, stores);
+    if (!store.ribhToken) {
+        store.ribhToken = generateToken();
+        await writeDB(STORES_FILE, stores);
     }
 
-    const loginUrl = `https://ribh.click/?token=${store.token}`;
+    const loginUrl = `https://ribh.click/?token=${store.ribhToken}`;
 
     // Send email with magic link if Resend is configured
     if (config.RESEND_API_KEY) {
@@ -767,7 +777,7 @@ app.post('/api/auth/send-link', async (req, res) => {
 
 // Logout endpoint
 app.get('/api/auth/logout', (req, res) => {
-    res.setHeader('Set-Cookie', 'storeToken=; Path=/; HttpOnly; Max-Age=0');
+    res.setHeader('Set-Cookie', 'ribhToken=; Path=/; HttpOnly; Secure; Max-Age=0');
     res.redirect('/login.html');
 });
 
@@ -2334,17 +2344,28 @@ app.post('/api/shopify/webhook/order', async (req, res) => {
 // Verify Salla webhook signature (security)
 function verifySallaSignature(req) {
     const signature = req.headers['x-salla-signature'];
-    if (!signature || !config.SALLA_WEBHOOK_SECRET) {
+    if (!config.SALLA_WEBHOOK_SECRET) {
+        console.warn('⚠️ SALLA_WEBHOOK_SECRET not configured — skipping webhook verification');
         return true; // Skip verification if not configured
     }
+    if (!signature) {
+        return false; // Reject unsigned requests when secret is configured
+    }
 
-    const payload = JSON.stringify(req.body);
+    const payload = req.rawBody || JSON.stringify(req.body);
     const expectedSignature = crypto
         .createHmac('sha256', config.SALLA_WEBHOOK_SECRET)
         .update(payload)
         .digest('hex');
 
-    return signature === expectedSignature;
+    try {
+        return crypto.timingSafeEqual(
+            Buffer.from(signature, 'utf8'),
+            Buffer.from(expectedSignature, 'utf8')
+        );
+    } catch {
+        return false;
+    }
 }
 
 // Webhook handler function (shared between both paths)
@@ -2354,17 +2375,17 @@ async function handleSallaWebhook(req, res) {
 
     console.log('📨 Webhook received:', event.event || 'unknown', JSON.stringify(event).substring(0, 500));
 
-    // Log the webhook
+    // Verify signature FIRST — before any processing or logging
+    if (!verifySallaSignature(req)) {
+        console.log('⚠️ Invalid webhook signature — rejecting');
+        return res.status(401).json({ success: false, error: 'Invalid signature' });
+    }
+
+    // Log the webhook (only after signature is verified)
     await logWebhook(event.event || 'unknown', {
         merchant: event.merchant,
         timestamp: event.created_at
     });
-
-    // Verify signature (optional but recommended)
-    if (!verifySallaSignature(req)) {
-        console.log('⚠️ Invalid webhook signature');
-        return res.status(401).json({ success: false, error: 'Invalid signature' });
-    }
 
     // Handle different events
     try {
@@ -2372,15 +2393,15 @@ async function handleSallaWebhook(req, res) {
             case 'cart.abandoned':
             case 'abandoned_cart.created':
             case 'abandoned.cart':
-                handleAbandonedCart(event.data, event.merchant);
+                await handleAbandonedCart(event.data, event.merchant);
                 break;
 
             case 'order.created':
             case 'order.create':
-                handleOrderCreated(event.data, event.merchant);
+                await handleOrderCreated(event.data, event.merchant);
                 // CANCEL any active cart recovery sequences for this customer
                 if (sequenceEngine && event.data?.customer?.email) {
-                    sequenceEngine.cancelSequence('cart_recovery', event.merchant, event.data.customer.email);
+                    await sequenceEngine.cancelSequence('cart_recovery', event.merchant, event.data.customer.email);
                     console.log(`🛑 Cancelled cart recovery sequence for ${event.data.customer.email} - they purchased!`);
                 }
                 break;
@@ -2388,12 +2409,12 @@ async function handleSallaWebhook(req, res) {
             case 'order.updated':
             case 'order.update':
             case 'order.status.updated':
-                handleOrderUpdated(event.data, event.merchant);
+                await handleOrderUpdated(event.data, event.merchant);
                 break;
 
             case 'customer.created':
             case 'customer.create':
-                handleCustomerCreated(event.data, event.merchant);
+                await handleCustomerCreated(event.data, event.merchant);
                 break;
 
             case 'app.store.authorize':
@@ -3442,7 +3463,7 @@ function scheduleReminder(cart) {
     ];
 
     // For DEMO: Use shorter delays (10s, 30s, 60s)
-    const demoMode = true; // Set to false in production!
+    const demoMode = process.env.NODE_ENV !== 'production' && process.env.DEMO_MODE === 'true';
     const demoDelays = [
         { delay: 10000, discount: 0 },   // 10 seconds
         { delay: 30000, discount: 5 },   // 30 seconds
@@ -3453,7 +3474,7 @@ function scheduleReminder(cart) {
 
     delays.forEach((reminder, index) => {
         setTimeout(async () => {
-            const carts = readDB(DB_FILE);
+            const carts = await readDB(DB_FILE);
             const currentCart = carts.find(c => c.id === cart.id);
 
             // Only send if not already recovered
@@ -3775,7 +3796,7 @@ async function sendWhatsAppReminder(cart, reminderNumber) {
     }
 
     // Update cart status
-    const carts = readDB(DB_FILE);
+    const carts = await readDB(DB_FILE);
     const cartIndex = carts.findIndex(c => c.id === cart.id);
 
     if (cartIndex !== -1) {
@@ -3787,7 +3808,7 @@ async function sendWhatsAppReminder(cart, reminderNumber) {
             delivered: sent,
             error: errorMessage
         });
-        writeDB(DB_FILE, carts);
+        await writeDB(DB_FILE, carts);
     }
 
     return sent;
@@ -3833,6 +3854,12 @@ async function sendViaTwilio(phoneNumber, message) {
 async function sendEmailReminder(cart, reminderNumber) {
     if (!config.ENABLE_EMAIL || !cart.customer.email) {
         console.log('⚠️ Email disabled or no email address');
+        return false;
+    }
+
+    // Check unsubscribe list before sending
+    if (await isUnsubscribed(cart.customer.email)) {
+        console.log(`⏭️ Skipping email to ${cart.customer.email} — unsubscribed`);
         return false;
     }
 
@@ -4923,7 +4950,7 @@ app.get('/api/referrals', (req, res) => {
         return res.status(401).json({ error: 'Not authenticated' });
     }
 
-    const stores = readDB(STORES_FILE);
+    const stores = await readDB(STORES_FILE);
     const store = stores.find(s => s.ribhToken === token);
 
     if (!store || !referralSystem) {
@@ -4977,7 +5004,7 @@ app.post('/api/popup/capture', (req, res) => {
         return res.status(400).json({ error: 'Email required' });
     }
 
-    const leads = readDB(POPUP_LEADS_FILE);
+    const leads = await readDB('leads');
     const lead = {
         id: Date.now().toString(),
         storeId: storeId,
@@ -4996,14 +5023,16 @@ app.post('/api/popup/capture', (req, res) => {
     }
 
     try {
-        fs.writeFileSync(POPUP_LEADS_FILE, JSON.stringify(leads, null, 2));
-    } catch (e) { }
+        await writeDB('leads', leads);
+    } catch (e) {
+        console.error('Error saving lead:', e);
+    }
 
     console.log(`📥 [Popup] Captured lead: ${email} from ${storeId}`);
 
     // Send discount code email
     if (lifecycleEngine) {
-        const stores = readDB(STORES_FILE);
+        const stores = await readDB(STORES_FILE);
         const store = stores.find(s => String(s.merchant) === String(storeId)) || {};
 
         lifecycleEngine.handleNewCustomer(store, { email: email });
@@ -5020,8 +5049,8 @@ app.post('/api/popup/shown', (req, res) => {
 });
 
 // Get popup stats
-app.get('/api/popup/stats', (req, res) => {
-    const leads = readDB(POPUP_LEADS_FILE);
+app.get('/api/popup/stats', async (req, res) => {
+    const leads = await readDB('leads');
     const storeId = req.query.storeId;
 
     const storeLeads = storeId
@@ -5101,13 +5130,20 @@ app.post('/api/templates/save', async (req, res) => {
     }
 
     const templates = await readDB('templates');
-    templates[templateId] = {
+    const existingIdx = templates.findIndex(t => t.id === templateId);
+    const templateObj = {
+        id: templateId,
         ...template,
         updatedAt: new Date().toISOString()
     };
+    if (existingIdx !== -1) {
+        templates[existingIdx] = templateObj;
+    } else {
+        templates.push(templateObj);
+    }
 
     try {
-        await writeDB('templates', Object.values(templates)); // Store as list or handle object mapping in writeDB
+        await writeDB('templates', templates);
         console.log(`💾 Template ${templateId} saved`);
         res.json({ success: true, message: 'Template saved' });
     } catch (error) {
@@ -5323,123 +5359,13 @@ app.post('/api/winback/run', async (req, res) => {
     }
 });
 
-// ==========================================
-// WHATSAPP QR CONNECTION API (Instant - No Meta API needed!)
-// ==========================================
-
-let whatsappManager = null;
-try {
-    const { whatsappManager: wm } = require('./lib/whatsappQR');
-    whatsappManager = wm;
-    console.log('📱 WhatsApp QR service loaded');
-} catch (error) {
-    console.log('⚠️ WhatsApp QR service not available (install whatsapp-web.js)');
-}
-
-// Initialize WhatsApp connection for a store (returns QR code)
-app.post('/api/whatsapp/connect', async (req, res) => {
-    if (!whatsappManager) {
-        return res.status(503).json({
-            success: false,
-            error: 'WhatsApp QR service not available. Run: npm install whatsapp-web.js qrcode'
-        });
-    }
-
-    const { storeId } = req.body;
-    if (!storeId) {
-        return res.status(400).json({ success: false, error: 'storeId required' });
-    }
-
-    try {
-        const service = await whatsappManager.connect(storeId);
-
-        // Set up event handlers for this request
-        const timeout = setTimeout(() => {
-            res.json({
-                success: true,
-                status: service.getStatus(),
-                message: 'Connection initiated. Poll /api/whatsapp/status for QR code.'
-            });
-        }, 5000);
-
-        // If QR is generated quickly, return it
-        service.once('qr', (qrCode) => {
-            clearTimeout(timeout);
-            res.json({
-                success: true,
-                status: 'qr_ready',
-                qrCode: qrCode,
-                message: 'Scan this QR code with WhatsApp'
-            });
-        });
-
-        // If already connected
-        if (service.isReady) {
-            clearTimeout(timeout);
-            res.json({
-                success: true,
-                status: 'connected',
-                message: 'WhatsApp already connected!'
-            });
-        }
-
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Get WhatsApp connection status
-app.get('/api/whatsapp/status', async (req, res) => {
-    if (!whatsappManager) {
-        return res.json({
-            available: false,
-            message: 'WhatsApp QR not installed'
-        });
-    }
-
-    const { storeId } = req.query;
-
-    if (storeId) {
-        const service = await whatsappManager.getStore(storeId);
-        res.json({
-            available: true,
-            ...service.getStatus()
-        });
-    } else {
-        res.json({
-            available: true,
-            stores: whatsappManager.getAllStatus()
-        });
-    }
-});
-
-// Send WhatsApp message
-app.post('/api/whatsapp/send', async (req, res) => {
-    if (!whatsappManager) {
-        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
-    }
-
-    const { storeId, phone, message } = req.body;
-
-    if (!storeId || !phone || !message) {
-        return res.status(400).json({
-            success: false,
-            error: 'storeId, phone, and message are required'
-        });
-    }
-
-    try {
-        const result = await whatsappManager.sendMessage(storeId, phone, message);
-        res.json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
+// NOTE: WhatsApp QR routes removed — duplicate of whatsappBridge handlers registered earlier.
+// The primary WhatsApp routes use whatsappBridge (Baileys-based) via /api/whatsapp/* endpoints.
 
 // Send cart recovery via WhatsApp
 app.post('/api/whatsapp/cart-recovery', async (req, res) => {
-    if (!whatsappManager) {
-        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
+    if (!whatsappBridge) {
+        return res.status(503).json({ success: false, error: 'WhatsApp bridge not available' });
     }
 
     const { storeId, phone, customerName, cartTotal, checkoutUrl, discount } = req.body;
@@ -5452,27 +5378,10 @@ app.post('/api/whatsapp/cart-recovery', async (req, res) => {
     }
 
     try {
-        const result = await whatsappManager.sendCartRecovery(
-            storeId, phone, customerName, cartTotal, checkoutUrl || '', discount || 0
-        );
+        const discountText = discount ? `\n🎁 خصم ${discount}% على طلبك!` : '';
+        const message = `مرحباً ${customerName}! 👋\n\nسلتك في انتظارك 🛒\nبقيمة ${cartTotal} ريال${discountText}\n\nأكمل طلبك: ${checkoutUrl || ''}`;
+        const result = await whatsappBridge.sendMessage(storeId, phone, message);
         res.json(result);
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-// Disconnect WhatsApp
-app.post('/api/whatsapp/disconnect', async (req, res) => {
-    if (!whatsappManager) {
-        return res.status(503).json({ success: false, error: 'WhatsApp QR not available' });
-    }
-
-    const { storeId } = req.body;
-
-    try {
-        const service = await whatsappManager.getStore(storeId);
-        await service.disconnect();
-        res.json({ success: true, message: 'WhatsApp disconnected' });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -7467,10 +7376,12 @@ const AB_TESTS_COLLECTION = 'ab_tests';
  * Randomly assigns variant and tracks conversions
  */
 async function getABTestVariant(testName, merchantId) {
-    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+    const testsArr = await readDB(AB_TESTS_COLLECTION) || [];
+    let test = testsArr.find(t => t.name === testName);
 
-    if (!tests[testName]) {
-        tests[testName] = {
+    if (!test) {
+        test = {
+            id: testName,
             name: testName,
             variants: {
                 A: { impressions: 0, conversions: 0 },
@@ -7478,23 +7389,25 @@ async function getABTestVariant(testName, merchantId) {
             },
             createdAt: new Date().toISOString()
         };
+        testsArr.push(test);
     }
 
     // Simple 50/50 split
     const variant = Math.random() > 0.5 ? 'A' : 'B';
-    tests[testName].variants[variant].impressions++;
+    test.variants[variant].impressions++;
 
-    await writeDB(AB_TESTS_COLLECTION, tests);
+    await writeDB(AB_TESTS_COLLECTION, testsArr);
 
     return variant;
 }
 
 async function trackABConversion(testName, variant) {
-    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+    const testsArr = await readDB(AB_TESTS_COLLECTION) || [];
+    const test = testsArr.find(t => t.name === testName);
 
-    if (tests[testName] && tests[testName].variants[variant]) {
-        tests[testName].variants[variant].conversions++;
-        await writeDB(AB_TESTS_COLLECTION, tests);
+    if (test && test.variants[variant]) {
+        test.variants[variant].conversions++;
+        await writeDB(AB_TESTS_COLLECTION, testsArr);
     }
 }
 
@@ -7516,13 +7429,14 @@ const OFFER_VARIANTS = {
 
 // API to get A/B test results
 app.get('/api/ab-tests', async (req, res) => {
-    const tests = await readDB(AB_TESTS_COLLECTION) || {};
+    const testsArr = await readDB(AB_TESTS_COLLECTION) || [];
 
     const results = {};
-    for (const [name, test] of Object.entries(tests)) {
+    for (const test of testsArr) {
+        if (!test.name || !test.variants) continue;
         const varA = test.variants.A;
         const varB = test.variants.B;
-        results[name] = {
+        results[test.name] = {
             A: {
                 impressions: varA.impressions,
                 conversions: varA.conversions,
@@ -7550,32 +7464,35 @@ const SEND_TIMES_COLLECTION = 'send_times';
  * Track email open time to learn best send times
  */
 async function trackEmailOpen(merchantId, customerId, openedAt) {
-    const sendTimes = await readDB(SEND_TIMES_COLLECTION) || {};
+    const sendTimesArr = await readDB(SEND_TIMES_COLLECTION) || [];
 
     const hour = new Date(openedAt).getHours();
     const day = new Date(openedAt).getDay(); // 0-6 (Sun-Sat)
 
-    if (!sendTimes[merchantId]) {
-        sendTimes[merchantId] = {
+    let entry = sendTimesArr.find(s => s.id === merchantId);
+    if (!entry) {
+        entry = {
+            id: merchantId,
             byHour: Array(24).fill(0),
             byDay: Array(7).fill(0),
             totalOpens: 0
         };
+        sendTimesArr.push(entry);
     }
 
-    sendTimes[merchantId].byHour[hour]++;
-    sendTimes[merchantId].byDay[day]++;
-    sendTimes[merchantId].totalOpens++;
+    entry.byHour[hour]++;
+    entry.byDay[day]++;
+    entry.totalOpens++;
 
-    await writeDB(SEND_TIMES_COLLECTION, sendTimes);
+    await writeDB(SEND_TIMES_COLLECTION, sendTimesArr);
 }
 
 /**
  * Get best send time for a merchant
  */
 async function getBestSendTime(merchantId) {
-    const sendTimes = await readDB(SEND_TIMES_COLLECTION) || {};
-    const data = sendTimes[merchantId];
+    const sendTimesArr = await readDB(SEND_TIMES_COLLECTION) || [];
+    const data = sendTimesArr.find(s => s.id === merchantId);
 
     if (!data || data.totalOpens < 10) {
         // Default: 8 PM Saudi time (high engagement)
@@ -9180,8 +9097,9 @@ app.post('/api/unsubscribe', async (req, res) => {
 
     const unsubscribed = await readDB(UNSUBSCRIBE_COLLECTION) || [];
 
-    if (!unsubscribed.includes(email.toLowerCase())) {
-        unsubscribed.push(email.toLowerCase());
+    const alreadyExists = unsubscribed.some(u => u.email === email.toLowerCase());
+    if (!alreadyExists) {
+        unsubscribed.push({ email: email.toLowerCase(), unsubscribedAt: new Date().toISOString() });
         await writeDB(UNSUBSCRIBE_COLLECTION, unsubscribed);
         console.log(`📧 Unsubscribed: ${email}`);
     }
@@ -9195,7 +9113,7 @@ app.post('/api/unsubscribe', async (req, res) => {
 async function isUnsubscribed(email) {
     if (!email) return false;
     const unsubscribed = await readDB(UNSUBSCRIBE_COLLECTION) || [];
-    return unsubscribed.includes(email.toLowerCase());
+    return unsubscribed.some(u => u.email === email.toLowerCase());
 }
 
 // ENV RELOAD Tue Jan 20 22:30:00 +03 2026

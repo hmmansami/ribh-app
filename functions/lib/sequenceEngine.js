@@ -248,17 +248,20 @@ async function processPendingSteps(emailSender) {
         if (stepResult.channels.length > 0) {
             sequence.history.push(stepResult);
             processed++;
-        }
 
-        // Move to next step
-        sequence.currentStep++;
+            // Move to next step only when at least one channel delivered
+            sequence.currentStep++;
 
-        if (sequence.currentStep < template.length) {
-            const nextDelay = template[sequence.currentStep].delay;
-            sequence.nextStepAt = new Date(Date.now() + nextDelay).toISOString();
+            if (sequence.currentStep < template.length) {
+                const nextDelay = template[sequence.currentStep].delay;
+                sequence.nextStepAt = new Date(Date.now() + nextDelay).toISOString();
+            } else {
+                sequence.status = 'completed';
+                sequence.completedAt = new Date().toISOString();
+            }
         } else {
-            sequence.status = 'completed';
-            sequence.completedAt = new Date().toISOString();
+            // Both channels failed — retry this step later
+            sequence.nextStepAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
         }
     }
 
