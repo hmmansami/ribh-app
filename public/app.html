@@ -3,937 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RIBH</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>RIBH - One Click Money</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        :root{
-            --bg:#09090B;--bg-raised:#18181B;
-            --card:#18181B;--card-hover:#1F1F23;
-            --border:#27272A;--border-hover:#3F3F46;
-            --text:#FAFAFA;--text-secondary:#A1A1AA;--text-muted:#71717A;
-            --primary:#10B981;--primary-hover:#059669;--primary-muted:rgba(16,185,129,0.15);
-            --secondary:#6366F1;--secondary-muted:rgba(99,102,241,0.15);
-            --success:#22C55E;--warning:#F59E0B;--danger:#EF4444;
-            --radius:12px;--radius-sm:8px;--radius-lg:16px;
-            --sidebar-w:220px;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #09090B;
+            --card: #18181B;
+            --border: #27272A;
+            --text: #FAFAFA;
+            --text-muted: #71717A;
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --danger: #EF4444;
+            --warning: #F59E0B;
         }
-        html{scroll-behavior:smooth;overflow-x:hidden;max-width:100vw}
-        html[dir="ltr"]{font-family:'Inter',system-ui,sans-serif}
-        html[dir="rtl"]{font-family:'IBM Plex Sans Arabic','Inter',system-ui,sans-serif}
-        body{background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px;line-height:1.5;width:100%;max-width:100vw}
+        html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; }
 
-        /* ===== SIDEBAR ===== */
-        .sidebar{width:var(--sidebar-w);background:var(--bg);border-left:1px solid var(--border);position:fixed;height:100vh;z-index:100;display:flex;flex-direction:column;padding:16px 12px;overflow-y:auto}
-        html[dir="rtl"] .sidebar{right:0;border-left:1px solid var(--border);border-right:none}
-        html[dir="ltr"] .sidebar{left:0;border-right:1px solid var(--border);border-left:none}
-        .sb-logo{display:flex;align-items:center;gap:10px;padding:8px 12px;margin-bottom:24px}
-        .sb-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,#10B981,#059669);border-radius:8px;display:flex;align-items:center;justify-content:center}
-        .sb-logo-mark svg{color:white}
-        .sb-logo-text{font-size:18px;font-weight:700;letter-spacing:-0.02em}
-        .sb-section{margin-bottom:20px}
-        .sb-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-size:13px;font-weight:500;text-decoration:none}
-        .sb-item:hover{background:var(--bg-raised);color:var(--text)}
-        .sb-item.active{background:var(--primary-muted);color:var(--primary)}
-        .sb-item.active svg{color:var(--primary)}
-        .sb-item svg{width:18px;height:18px;flex-shrink:0;color:var(--text-muted)}
-        .sb-item:hover svg{color:var(--text-secondary)}
-        .sb-spacer{flex:1}
-        .sb-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:var(--radius-sm);background:var(--bg-raised);font-size:12px;color:var(--text-secondary);margin-bottom:4px}
-        .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-        .sb-dot.green{background:var(--success)}
-        .sb-dot.pulse{animation:dotPulse 2s infinite}
-        @keyframes dotPulse{0%,100%{opacity:1}50%{opacity:0.4}}
-        .sb-lang{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;font-size:12px;color:var(--text-muted);transition:all .15s}
-        .sb-lang:hover{background:var(--bg-raised);color:var(--text-secondary)}
+        /* === STATES === */
+        .state { display: none; min-height: 100vh; padding: 24px; }
+        .state.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-        /* ===== MAIN ===== */
-        .main{padding:24px 28px 80px;position:relative;min-height:100vh}
-        html[dir="rtl"] .main{margin-right:var(--sidebar-w)}
-        html[dir="ltr"] .main{margin-left:var(--sidebar-w)}
-        .section{margin-bottom:40px;scroll-margin-top:20px}
-        .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px}
-        .section-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:8px}
-        .section-title svg{width:18px;height:18px;color:var(--text-muted)}
-
-        /* ===== BUTTONS ===== */
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;border:none;text-decoration:none}
-        .btn-primary{background:var(--primary);color:white}
-        .btn-primary:hover{background:var(--primary-hover);transform:translateY(-1px)}
-        .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text-secondary)}
-        .btn-outline:hover{background:var(--bg-raised);border-color:var(--border-hover);color:var(--text)}
-        .btn svg{width:16px;height:16px}
-
-        /* ===== HERO ===== */
-        .hero{background:var(--bg);border-radius:var(--radius-lg);padding:48px 32px;text-align:center;margin-bottom:32px;position:relative;overflow:hidden}
-        .hero-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(16,185,129,0.06) 0%,transparent 70%);pointer-events:none}
-        .hero-amount{font-size:56px;font-weight:700;color:var(--text);letter-spacing:-0.04em;line-height:1;margin-bottom:4px;opacity:0;animation:heroReveal .8s ease-out .2s forwards}
-        .hero-amount .curr{font-size:22px;font-weight:500;color:var(--text-muted);margin:0 4px}
-        .hero-amount .money{color:var(--primary)}
-        .hero-subtitle{font-size:15px;color:var(--text-muted);margin-bottom:36px;opacity:0;animation:heroReveal .8s ease-out .4s forwards}
-        @keyframes heroReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
-        .hero-cta{margin-bottom:40px;opacity:0;animation:heroReveal .8s ease-out .6s forwards}
-        .btn-machine{padding:18px 48px;font-size:18px;font-weight:700;border-radius:14px;gap:12px;display:inline-flex;align-items:center;background:linear-gradient(135deg,#10B981,#059669);color:white;border:none;cursor:pointer;position:relative;overflow:hidden;transition:all .3s}
-        .btn-machine:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(16,185,129,0.3)}
-        .btn-machine:active{transform:translateY(0)}
-        .btn-machine svg{width:22px;height:22px}
-        .btn-machine-pulse{animation:machinePulse 3s ease-in-out infinite}
-        @keyframes machinePulse{0%,100%{box-shadow:0 0 0 0 rgba(16,185,129,0.4)}50%{box-shadow:0 0 0 12px rgba(16,185,129,0)}}
-        .btn-machine .shine{position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);transition:none}
-        .btn-machine:hover .shine{left:100%;transition:left .6s}
-        .btn-machine-pause{background:linear-gradient(135deg,var(--border-hover),var(--border));animation:none;box-shadow:none}
-        .btn-machine-pause:hover{background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 8px 30px rgba(239,68,68,0.2)}
-
-        .hero-breakdown{display:flex;gap:12px;max-width:620px;margin:0 auto;opacity:0;animation:heroReveal .8s ease-out .8s forwards}
-        .hero-pill{flex:1;display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .25s;cursor:pointer}
-        .hero-pill:hover{border-color:var(--primary);background:var(--primary-muted);transform:translateY(-2px)}
-        .hero-pill-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-        .hero-pill-info{text-align:start;min-width:0}
-        .hero-pill-val{font-size:15px;font-weight:700;color:var(--text)}
-        .hero-pill-label{font-size:11px;color:var(--text-muted);white-space:nowrap}
-        .hero-pill-sar{font-size:12px;color:var(--primary);font-weight:600;margin-top:2px}
-
-        /* ===== STATS ===== */
-        .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
-        .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .4s;opacity:0;transform:translateY(12px)}
-        .stat.visible{opacity:1;transform:translateY(0)}
-        .stat:hover{border-color:var(--border-hover)}
-        .stat-label{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:8px}
-        .stat-val{font-size:24px;font-weight:700;letter-spacing:-0.02em;line-height:1}
-        .stat-val .unit{font-size:13px;font-weight:500;color:var(--text-muted)}
-        .stats-empty{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;text-align:center;margin-bottom:28px;color:var(--text-muted);font-size:13px}
-        .stats-empty svg{width:24px;height:24px;margin-bottom:8px;opacity:0.4}
-
-        /* ===== GRID ===== */
-        .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-
-        /* ===== CHART ===== */
-        .chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;overflow:hidden}
-        .chart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;color:var(--text-muted)}
-        .chart-empty svg{width:32px;height:32px;margin-bottom:10px;opacity:0.3}
-        .chart-empty-text{font-size:13px}
-        .chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:8px}
-        .chart-bars .c-bar{flex:1;border-radius:4px 4px 0 0;position:relative;cursor:pointer;transition:all .4s;min-height:4px}
-        .chart-bars .c-bar:hover{opacity:0.8}
-        .chart-bars .c-bar .c-tip{position:absolute;top:-26px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;opacity:0;transition:opacity .2s;white-space:nowrap;pointer-events:none;z-index:10}
-        .chart-bars .c-bar:hover .c-tip{opacity:1}
-        .chart-labels{display:flex;gap:6px;margin-top:8px}
-        .chart-labels span{flex:1;text-align:center;font-size:10px;color:var(--text-muted)}
-
-        /* ===== ACTIVITY ===== */
-        .activity-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
-        .activity-header{padding:16px 16px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-        .activity-item{display:flex;align-items:center;gap:12px;padding:12px 16px;transition:all .3s;border-bottom:1px solid var(--border);opacity:0;transform:translateX(20px)}
-        html[dir="ltr"] .activity-item{transform:translateX(-20px)}
-        .activity-item.slide-in{opacity:1;transform:translateX(0)}
-        .activity-item:last-child{border-bottom:none}
-        .activity-item:hover{background:var(--card-hover)}
-        .activity-item.flash{animation:actFlash .6s ease-out}
-        @keyframes actFlash{0%{background:rgba(16,185,129,0.15)}100%{background:transparent}}
-        .act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-        .act-dot.green{background:var(--success)}.act-dot.blue{background:#3B82F6}.act-dot.orange{background:var(--warning)}
-        .act-body{flex:1;min-width:0}
-        .act-msg{font-size:13px;font-weight:500}
-        .act-time{font-size:11px;color:var(--text-muted)}
-        .act-amount{font-size:13px;font-weight:600;color:var(--success);white-space:nowrap}
-        .activity-empty{padding:40px 16px;text-align:center;color:var(--text-muted)}
-        .activity-empty svg{width:28px;height:28px;margin-bottom:8px;opacity:0.3}
-
-        /* ===== FLOW CARDS ===== */
-        .flow-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-        .flow-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);transition:all .35s;position:relative;overflow:hidden;opacity:0;transform:translateY(16px)}
-        .flow-card.entered{opacity:1;transform:translateY(0)}
-        .flow-card:hover{border-color:var(--border-hover)}
-        .flow-card.entered:hover{transform:translateY(-1px)}
-        .flow-card.active{border-color:rgba(16,185,129,0.3);box-shadow:0 0 20px rgba(16,185,129,0.05)}
-        .flow-card-top-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0}
-        .flow-head{display:flex;align-items:center;gap:12px;padding:18px 18px 14px;cursor:pointer}
-        .flow-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .35s}
-        .flow-ico svg{width:18px;height:18px}
-        .flow-card.active .flow-ico{transform:scale(1.05)}
-        .flow-info{flex:1;min-width:0}
-        .flow-name{font-size:14px;font-weight:600;margin-bottom:2px}
-        .flow-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
-        .flow-toggle{position:relative;width:44px;height:24px;flex-shrink:0}
-        .flow-toggle input{opacity:0;width:0;height:0;position:absolute}
-        .flow-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--border);border-radius:24px;transition:all .3s}
-        .flow-toggle .slider::before{content:'';position:absolute;height:18px;width:18px;border-radius:50%;background:white;bottom:3px;right:3px;transition:all .3s}
-        html[dir="ltr"] .flow-toggle .slider::before{left:3px;right:auto}
-        .flow-toggle input:checked+.slider{background:var(--primary);box-shadow:0 0 10px rgba(16,185,129,0.3)}
-        .flow-toggle input:checked+.slider::before{transform:translateX(-20px)}
-        html[dir="ltr"] .flow-toggle input:checked+.slider::before{transform:translateX(20px)}
-        .flow-summary{display:flex;align-items:center;justify-content:space-between;padding:0 18px 14px;font-size:11px;color:var(--text-muted)}
-        .flow-estimate{display:flex;align-items:center;gap:4px}
-        .flow-estimate svg{width:12px;height:12px;color:var(--primary)}
-        .flow-estimate strong{color:var(--primary);font-weight:600}
-        .flow-estimate-math{color:var(--text-muted);margin-right:4px;font-size:10px}
-        html[dir="ltr"] .flow-estimate-math{margin-left:4px;margin-right:0}
-        .flow-expand-hint{display:flex;align-items:center;gap:4px;color:var(--text-muted);font-size:11px;cursor:pointer}
-        .flow-expand-hint svg{width:12px;height:12px;transition:transform .2s}
-        .flow-card.expanded .flow-expand-hint svg{transform:rotate(90deg)}
-
-        /* Flow Detail (expandable) */
-        .flow-detail{max-height:0;overflow:hidden;transition:max-height .4s ease-out,opacity .3s;opacity:0;border-top:0 solid var(--border)}
-        .flow-detail.open{max-height:500px;opacity:1;border-top-width:1px}
-        .flow-detail-inner{padding:16px 18px}
-        .flow-detail-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;font-size:12px;color:var(--text-secondary)}
-        .flow-detail-row svg{width:14px;height:14px;color:var(--text-muted);flex-shrink:0;margin-top:1px}
-        .flow-detail-label{font-weight:600;color:var(--text-muted);font-size:11px;margin-bottom:2px}
-        .flow-msg-preview{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);border-radius:12px 12px 4px 12px;padding:12px 14px;font-size:12px;line-height:1.7;color:var(--text-secondary);white-space:pre-wrap;margin:8px 0 16px;max-width:320px}
-        html[dir="ltr"] .flow-msg-preview{border-radius:12px 12px 12px 4px}
-        .flow-active-status{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--primary);padding:8px 12px;background:var(--primary-muted);border-radius:var(--radius-sm);margin-top:8px}
-        .flow-active-status svg{width:14px;height:14px}
-        .flow-stats-bar{display:flex;gap:16px;padding:12px 18px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)}
-        .flow-stat{display:flex;align-items:center;gap:4px}
-        .flow-stat svg{width:12px;height:12px}
-        .flow-stat strong{color:var(--text-secondary);font-weight:600}
-        .flow-card.highlight{animation:flowHighlight 1.5s ease-out}
-        @keyframes flowHighlight{0%{box-shadow:0 0 0 3px rgba(16,185,129,0.4)}100%{box-shadow:none}}
-
-        /* ===== CHAT CAMPAIGN CREATOR ===== */
-        .chat-creator{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:16px}
-        .chat-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-        .chat-header svg{width:18px;height:18px;color:var(--primary)}
-        .chat-header-title{font-size:14px;font-weight:600}
-        .chat-body{padding:16px;min-height:60px}
-        .chat-bubbles{margin-bottom:16px}
-        .chat-bubble{max-width:80%;padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.6;margin-bottom:8px;opacity:0;transform:translateY(8px);animation:bubbleIn .3s ease-out forwards}
-        @keyframes bubbleIn{to{opacity:1;transform:translateY(0)}}
-        .chat-bubble.user{background:var(--primary);color:white;border-radius:16px 16px 4px 16px;margin-left:auto}
-        html[dir="ltr"] .chat-bubble.user{border-radius:16px 16px 16px 4px;margin-right:auto;margin-left:0}
-        .chat-bubble.ai{background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);border-radius:16px 16px 16px 4px;white-space:pre-wrap}
-        html[dir="ltr"] .chat-bubble.ai{border-radius:16px 16px 4px 16px}
-        .typing-dots{display:flex;gap:4px;padding:4px 0}
-        .typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text-muted);animation:typeBounce 1.4s infinite}
-        .typing-dots span:nth-child(2){animation-delay:.2s}
-        .typing-dots span:nth-child(3){animation-delay:.4s}
-        @keyframes typeBounce{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-6px);opacity:1}}
-        .chat-input-wrap{display:flex;gap:8px}
-        .chat-input{flex:1;padding:12px 16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:13px;font-family:inherit;transition:all .2s}
-        .chat-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}
-        .chat-input::placeholder{color:var(--text-muted)}
-        .chat-send{background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);padding:12px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center}
-        .chat-send:hover{background:var(--primary-hover);transform:scale(1.05)}
-        .chat-send:active{transform:scale(0.95)}
-        .chat-send svg{width:16px;height:16px}
-        .chat-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;opacity:0;animation:bubbleIn .3s ease-out forwards}
-        .chat-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-        .chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .2s;font-family:inherit}
-        .chip:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-muted)}
-
-        /* ===== SETTINGS ===== */
-        .settings-grid{display:flex;flex-direction:column;gap:16px}
-        .settings-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;transition:all .3s}
-        .settings-card:hover{border-color:var(--border-hover)}
-        .settings-card-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-        .settings-card-ico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-        .settings-card-ico svg{width:18px;height:18px}
-        .settings-card-title{font-size:14px;font-weight:600}
-        .settings-card-desc{font-size:12px;color:var(--text-muted);margin-top:2px}
-        .connect-status{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500}
-        .connect-status.connected{background:rgba(34,197,94,0.08);color:var(--success);border:1px solid rgba(34,197,94,0.15)}
-        .connect-status svg{width:16px;height:16px}
-        .connect-checkmark{display:inline-flex;width:16px;height:16px;border-radius:50%;background:var(--success);align-items:center;justify-content:center;animation:checkPop .4s ease-out}
-        .connect-checkmark svg{width:10px;height:10px;color:white}
-        @keyframes checkPop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
-        .connect-detail{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:12px;color:var(--text-muted)}
-        .connect-detail-item{display:flex;align-items:center;gap:4px}
-        .connect-detail-item svg{width:12px;height:12px}
-        .wa-info-toggle{display:flex;align-items:center;gap:6px;padding:8px 0;cursor:pointer;font-size:12px;color:var(--text-muted);margin-top:12px;transition:color .15s;background:none;border:none;font-family:inherit}
-        .wa-info-toggle:hover{color:var(--text-secondary)}
-        .wa-info-toggle svg{width:14px;height:14px;transition:transform .2s}
-        .wa-info-toggle.open svg{transform:rotate(90deg)}
-        .wa-info{max-height:0;overflow:hidden;transition:max-height .3s ease-out,opacity .3s;opacity:0}
-        .wa-info.open{max-height:200px;opacity:1}
-        .wa-info-inner{padding:12px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-muted);line-height:1.8}
-        .import-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-        .import-btn{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .25s;text-decoration:none;color:var(--text-secondary)}
-        .import-btn:hover{border-color:var(--primary);background:var(--primary-muted);color:var(--text);transform:translateY(-2px)}
-        .import-btn-logo{font-size:24px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:700}
-        .import-btn-name{font-size:11px;font-weight:500}
-        .upload-mini{border:2px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;cursor:pointer;transition:all .25s;margin-top:10px}
-        .upload-mini:hover{border-color:var(--primary);background:var(--primary-muted)}
-        .upload-mini svg{width:24px;height:24px;color:var(--text-muted);margin-bottom:6px}
-
-        /* ===== BADGE ===== */
-        .badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-        .badge-success{background:rgba(34,197,94,0.1);color:var(--success);border:1px solid rgba(34,197,94,0.2)}
-        .badge-success::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--success);animation:dotPulse 1.5s infinite}
-
-        /* ===== TOAST ===== */
-        .toast-container{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-        .toast{padding:12px 20px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;opacity:0;transform:translateY(-12px);animation:toastIn .3s ease-out forwards;box-shadow:0 8px 30px rgba(0,0,0,0.3);pointer-events:auto}
-        .toast.success{border-color:rgba(34,197,94,0.3);background:rgba(16,185,129,0.1)}
-        .toast svg{width:16px;height:16px;color:var(--primary);flex-shrink:0}
-        @keyframes toastIn{to{opacity:1;transform:translateY(0)}}
-        @keyframes toastOut{to{opacity:0;transform:translateY(-12px)}}
-
-        #confetti{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
-
-        /* ===== MOBILE NAV ===== */
-        .mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);z-index:200;padding:6px 0 env(safe-area-inset-bottom,8px)}
-        .mob-nav-inner{display:flex;justify-content:space-around}
-        .mn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 12px;color:var(--text-muted);cursor:pointer;transition:color .15s;text-decoration:none;font-size:10px;font-weight:500}
-        .mn.active{color:var(--primary)}
-        .mn svg{width:20px;height:20px}
-        .mn.active svg{color:var(--primary)}
-
-        ::-webkit-scrollbar{width:5px}
-        ::-webkit-scrollbar-track{background:transparent}
-        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:5px}
-
-        @media(max-width:1024px){
-            .stats-row{grid-template-columns:repeat(2,1fr)}
-            .flow-grid{grid-template-columns:1fr}
-            .grid-2{grid-template-columns:1fr}
-            .hero-breakdown{flex-direction:column}
+        /* === STATE: LOCKED === */
+        #locked { position: relative; }
+        .locked-bg {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(9,9,11,0) 0%, rgba(9,9,11,0.95) 100%);
+            pointer-events: none; z-index: 1;
         }
-        @media(max-width:768px){
-            .sidebar{display:none}
-            .main{margin-right:0!important;margin-left:0!important;padding:16px 16px 80px;overflow-x:hidden}
-            .stats-row{grid-template-columns:repeat(2,1fr);gap:8px}
-            .stat{padding:14px}.stat-val{font-size:20px}
-            .hero{padding:36px 20px}
-            .hero-amount{font-size:40px}
-            .btn-machine{padding:16px 36px;font-size:16px}
-            .hero-breakdown{flex-direction:column;gap:8px}
-            .flow-grid{grid-template-columns:1fr}
-            .grid-2{grid-template-columns:1fr}
-            .mob-nav{display:block}
-            .import-grid{grid-template-columns:repeat(2,1fr)}
-            .flow-msg-preview{max-width:100%}
+        .locked-preview {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            filter: blur(4px) brightness(0.3); transform: scale(0.95);
+        }
+        .locked-preview-money { font-size: 72px; font-weight: 700; color: var(--primary); opacity: 0.3; }
+        .locked-content { position: relative; z-index: 2; text-align: center; max-width: 400px; }
+        .locked-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); }
+        .locked-icon svg { width: 40px; height: 40px; color: var(--primary); }
+        .locked-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+        .locked-desc { color: var(--text-muted); margin-bottom: 32px; line-height: 1.7; }
+        .locked-sources { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+        .source-btn { padding: 12px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text); }
+        .source-btn:hover { border-color: var(--primary); background: rgba(16,185,129,0.1); }
+        .source-btn.primary { background: var(--primary); border-color: var(--primary); }
+        .source-btn.primary:hover { background: var(--primary-hover); }
+        .source-logo { font-size: 18px; font-weight: 700; }
+        .or-divider { color: var(--text-muted); font-size: 13px; margin: 16px 0; }
+
+        /* === STATE: ANALYZING === */
+        #analyzing { text-align: center; }
+        .analyzing-spinner { width: 60px; height: 60px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .analyzing-text { font-size: 18px; color: var(--text-muted); }
+
+        /* === STATE: READY === */
+        #ready { text-align: center; padding: 40px 24px; }
+        .ready-money { margin-bottom: 8px; }
+        .ready-money-value { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; }
+        .ready-money-currency { font-size: 24px; color: var(--text-muted); margin-right: 8px; }
+        .ready-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
+        .ready-breakdown { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 160px; text-align: center; }
+        .breakdown-icon { font-size: 28px; margin-bottom: 8px; }
+        .breakdown-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .breakdown-label { font-size: 13px; color: var(--text-muted); }
+        .breakdown-sar { font-size: 14px; color: var(--primary); margin-top: 4px; }
+        .launch-btn { padding: 24px 64px; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 16px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 8px 32px rgba(16,185,129,0.3); }
+        .launch-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(16,185,129,0.4); }
+        .launch-btn:active { transform: translateY(0); }
+        .launch-btn svg { width: 28px; height: 28px; }
+        .launch-btn.pulsing { animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(16,185,129,0.3); } 50% { box-shadow: 0 8px 48px rgba(16,185,129,0.5); } }
+
+        /* === STATE: RUNNING === */
+        #running { text-align: center; padding: 40px 24px; }
+        .running-header { margin-bottom: 32px; }
+        .running-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(16,185,129,0.15); border-radius: 20px; color: var(--primary); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+        .running-status-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .running-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .running-subtitle { color: var(--text-muted); }
+        .running-progress { max-width: 400px; margin: 0 auto 32px; }
+        .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+        .progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+        .progress-text { font-size: 13px; color: var(--text-muted); }
+        .running-feed { max-width: 500px; margin: 0 auto; text-align: right; }
+        .feed-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .feed-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .feed-dot.sent { background: #3B82F6; }
+        .feed-dot.read { background: var(--warning); }
+        .feed-dot.clicked { background: #8B5CF6; }
+        .feed-dot.purchased { background: var(--primary); }
+        .feed-content { flex: 1; min-width: 0; }
+        .feed-msg { font-size: 14px; font-weight: 500; }
+        .feed-time { font-size: 12px; color: var(--text-muted); }
+        .feed-amount { font-size: 14px; font-weight: 600; color: var(--primary); white-space: nowrap; }
+
+        /* === STATE: COMPLETE === */
+        #complete { text-align: center; padding: 40px 24px; }
+        .complete-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .complete-icon svg { width: 40px; height: 40px; color: var(--primary); }
+        .complete-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+        .complete-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .complete-desc { color: var(--text-muted); margin-bottom: 32px; }
+        .complete-stats { display: flex; gap: 24px; justify-content: center; margin-bottom: 32px; }
+        .complete-stat { text-align: center; }
+        .complete-stat-val { font-size: 24px; font-weight: 700; }
+        .complete-stat-label { font-size: 13px; color: var(--text-muted); }
+        .btn-secondary { padding: 14px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-secondary:hover { border-color: var(--primary); }
+
+        /* === OWNER PHONE CAPTURE === */
+        .owner-phone { margin-top: 24px; padding: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; max-width: 400px; }
+        .owner-phone-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .owner-phone-title svg { width: 18px; height: 18px; color: var(--primary); }
+        .owner-phone-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+        .owner-phone-input { display: flex; gap: 8px; }
+        .owner-phone-input input { flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; font-family: inherit; direction: ltr; text-align: left; }
+        .owner-phone-input input:focus { outline: none; border-color: var(--primary); }
+        .owner-phone-input button { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
+        /* === CONFETTI === */
+        #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 640px) {
+            .ready-money-value { font-size: 48px; }
+            .ready-breakdown { flex-direction: column; align-items: center; }
+            .breakdown-card { width: 100%; max-width: 280px; }
+            .launch-btn { padding: 20px 48px; font-size: 18px; }
+            .running-money { font-size: 36px; }
         }
     </style>
 </head>
 <body>
     <canvas id="confetti"></canvas>
-    <div class="toast-container" id="toasts"></div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sb-logo">
-            <div class="sb-logo-mark"><i data-lucide="zap" style="width:18px;height:18px;color:white"></i></div>
-            <span class="sb-logo-text" data-ar="رِبح" data-en="RIBH">رِبح</span>
+    <!-- STATE: LOCKED (no store connected) -->
+    <div id="locked" class="state active">
+        <div class="locked-preview">
+            <div class="locked-preview-money">154,000 ر.س</div>
         </div>
-        <div class="sb-section">
-            <a class="sb-item active" data-section="dashboard" onclick="nav('dashboard')"><i data-lucide="layout-dashboard"></i><span data-ar="لوحة التحكم" data-en="Dashboard">لوحة التحكم</span></a>
-            <a class="sb-item" data-section="flows" onclick="nav('flows')"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></a>
-            <a class="sb-item" data-section="settings" onclick="nav('settings')"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></a>
-        </div>
-        <div class="sb-spacer"></div>
-        <div class="sb-status"><span class="sb-dot green pulse"></span><span data-ar="واتساب متصل" data-en="WhatsApp connected">واتساب متصل</span></div>
-        <div class="sb-status" id="sbSallaStatus"><span class="sb-dot" id="sbSallaDot"></span><span id="sbSallaText" data-ar="سلة غير متصلة" data-en="Salla not connected">سلة غير متصلة</span></div>
-        <div class="sb-lang" onclick="toggleLang()"><i data-lucide="globe" style="width:14px;height:14px"></i><span id="langLabel">English</span></div>
-    </aside>
-
-    <!-- MAIN -->
-    <main class="main">
-
-        <!-- DASHBOARD -->
-        <div id="dashboard">
-            <div class="hero">
-                <div class="hero-glow"></div>
-                <div class="hero-amount"><span class="money" id="heroTotal">0</span> <span class="curr" data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                <div class="hero-subtitle" data-ar="تنتظرك في متجرك الآن" data-en="waiting in your store right now">تنتظرك في متجرك الآن</div>
-                <div class="hero-cta">
-                    <button class="btn-machine btn-machine-pulse" id="heroBtn" onclick="toggleAllFlows()">
-                        <div class="shine"></div>
-                        <i data-lucide="zap"></i>
-                        <span data-ar="استرجع أموالك" data-en="Recover your money">استرجع أموالك</span>
-                    </button>
-                </div>
-                <div class="hero-breakdown">
-                    <div class="hero-pill" onclick="scrollToFlow('cart_recovery')">
-                        <div class="hero-pill-icon" style="background:rgba(239,68,68,0.12)">🛒</div>
-                        <div class="hero-pill-info">
-                            <div class="hero-pill-val"><span id="heroCarts">0</span> <span data-ar="سلة" data-en="carts">سلة</span></div>
-                            <div class="hero-pill-label" data-ar="متروكة" data-en="abandoned">متروكة</div>
-                            <div class="hero-pill-sar" id="heroCartVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                        </div>
-                    </div>
-                    <div class="hero-pill" onclick="scrollToFlow('winback')">
-                        <div class="hero-pill-icon" style="background:rgba(245,158,11,0.12)">😴</div>
-                        <div class="hero-pill-info">
-                            <div class="hero-pill-val"><span id="heroDormant">0</span> <span data-ar="عميل" data-en="customers">عميل</span></div>
-                            <div class="hero-pill-label" data-ar="خامل" data-en="dormant">خامل</div>
-                            <div class="hero-pill-sar" id="heroDormantVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                        </div>
-                    </div>
-                    <div class="hero-pill" onclick="scrollToFlow('post_purchase')">
-                        <div class="hero-pill-icon" style="background:rgba(99,102,241,0.12)">🛍️</div>
-                        <div class="hero-pill-info">
-                            <div class="hero-pill-val"><span id="heroUpsell">0</span> <span data-ar="فرصة" data-en="opportunities">فرصة</span></div>
-                            <div class="hero-pill-label" data-ar="بيع إضافي" data-en="upsell">بيع إضافي</div>
-                            <div class="hero-pill-sar" id="heroUpsellVal">0 <span data-ar="ر.س" data-en="SAR">ر.س</span></div>
-                        </div>
-                    </div>
-                </div>
+        <div class="locked-bg"></div>
+        <div class="locked-content">
+            <div class="locked-icon"><i data-lucide="lock-open"></i></div>
+            <h1 class="locked-title">اربط متجرك</h1>
+            <p class="locked-desc">اربط بياناتك، واضغط زر واحد، وشاهد الأموال تتدفق</p>
+            <div class="locked-sources">
+                <button class="source-btn primary" onclick="connectSalla()">
+                    <span class="source-logo" style="color:#6C63FF">سلة</span>
+                    <span>Salla</span>
+                </button>
+                <button class="source-btn" onclick="connectSource('zid')">
+                    <span class="source-logo" style="color:#5B5FC7">زد</span>
+                </button>
+                <button class="source-btn" onclick="connectSource('shopify')">
+                    <span class="source-logo" style="color:#96BF48">S</span>
+                </button>
             </div>
-
-            <!-- Stats -->
-            <div id="statsEmpty" class="stats-empty">
-                <i data-lucide="bar-chart-3"></i>
-                <div data-ar="فعّل التدفقات وستظهر الإحصائيات" data-en="Activate flows to see your stats">فعّل التدفقات وستظهر الإحصائيات</div>
-            </div>
-            <div class="stats-row" id="statsRow" style="display:none">
-                <div class="stat" id="stat0"><div class="stat-label" data-ar="تم استرجاعه" data-en="Recovered">تم استرجاعه</div><div class="stat-val"><span id="totalRevenue">0</span> <span class="unit" data-ar="ر.س" data-en="SAR">ر.س</span></div></div>
-                <div class="stat" id="stat1"><div class="stat-label" data-ar="رسائل مرسلة" data-en="Messages Sent">رسائل مرسلة</div><div class="stat-val" id="messagesSent">0</div></div>
-                <div class="stat" id="stat2"><div class="stat-label" data-ar="معدل الاسترجاع" data-en="Recovery Rate">معدل الاسترجاع</div><div class="stat-val" id="recoveryRate">0<span class="unit">%</span></div></div>
-                <div class="stat" id="stat3"><div class="stat-label" data-ar="تدفقات نشطة" data-en="Active Flows">تدفقات نشطة</div><div class="stat-val" id="activeFlowCount">0</div></div>
-            </div>
-
-            <!-- Chart + Activity -->
-            <div class="grid-2" style="margin-bottom:24px">
-                <div class="chart-card">
-                    <div style="margin-bottom:16px"><div style="font-size:14px;font-weight:600;color:var(--text-secondary)" data-ar="الإيرادات المسترجعة" data-en="Recovered Revenue">الإيرادات المسترجعة</div></div>
-                    <div class="chart-empty" id="chartEmpty"><i data-lucide="trending-up"></i><div class="chart-empty-text" data-ar="ستظهر إيراداتك هنا بعد أول استرجاع" data-en="Revenue appears here after first recovery">ستظهر إيراداتك هنا بعد أول استرجاع</div></div>
-                    <div class="chart-bars" id="revenueChart" style="display:none"></div>
-                    <div class="chart-labels" id="revenueLabels" style="display:none"></div>
-                </div>
-                <div class="activity-card">
-                    <div class="activity-header">
-                        <span style="font-size:14px;font-weight:600" data-ar="النشاطات" data-en="Activity">النشاطات</span>
-                        <span class="badge badge-success" style="font-size:10px" data-ar="مباشر" data-en="Live">مباشر</span>
-                    </div>
-                    <div id="activityList">
-                        <div class="activity-empty" id="activityEmpty"><i data-lucide="activity"></i><div style="font-size:13px;color:var(--text-secondary);margin-bottom:2px" data-ar="جاهز" data-en="Ready">جاهز</div><div style="font-size:12px" data-ar="النشاطات تظهر فوراً عند أول رسالة" data-en="Activity appears instantly with first message">النشاطات تظهر فوراً عند أول رسالة</div></div>
-                    </div>
-                </div>
+            <div class="or-divider">أو</div>
+            <div class="locked-sources">
+                <button class="source-btn" onclick="connectSource('foodics')">
+                    <span class="source-logo" style="color:#FF6B35">F</span>
+                    <span>Foodics</span>
+                </button>
+                <button class="source-btn" onclick="showCSVUpload()">
+                    <i data-lucide="upload" style="width:18px;height:18px"></i>
+                    <span>CSV</span>
+                </button>
             </div>
         </div>
+    </div>
 
-        <!-- FLOWS -->
-        <div class="section" id="flows">
-            <div class="section-head">
-                <div class="section-title"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></div>
-                <div class="badge badge-success" id="flowsBadge" style="font-size:10px"><span id="flowsBadgeText">0 نشط</span></div>
+    <!-- STATE: ANALYZING -->
+    <div id="analyzing" class="state">
+        <div class="analyzing-spinner"></div>
+        <div class="analyzing-text">جاري تحليل متجرك...</div>
+    </div>
+
+    <!-- STATE: READY (analyzed, waiting to launch) -->
+    <div id="ready" class="state">
+        <div class="ready-money">
+            <span class="ready-money-value" id="moneyWaiting">0</span>
+            <span class="ready-money-currency">ر.س</span>
+        </div>
+        <div class="ready-subtitle">تنتظرك في متجرك</div>
+        <div class="ready-breakdown">
+            <div class="breakdown-card" id="cartCard">
+                <div class="breakdown-icon">🛒</div>
+                <div class="breakdown-value" id="cartCount">0</div>
+                <div class="breakdown-label">سلة متروكة</div>
+                <div class="breakdown-sar" id="cartValue">0 ر.س</div>
             </div>
-            <div class="flow-grid" id="flowGrid"></div>
-
-            <!-- Chat Campaign Creator -->
-            <div class="chat-creator">
-                <div class="chat-header">
-                    <i data-lucide="sparkles"></i>
-                    <div class="chat-header-title" data-ar="حملة مخصصة" data-en="Custom Campaign">حملة مخصصة</div>
-                </div>
-                <div class="chat-body">
-                    <div class="chat-chips" id="chatChips"></div>
-                    <div class="chat-bubbles" id="chatBubbles"></div>
-                    <div class="chat-input-wrap">
-                        <input type="text" class="chat-input" id="chatInput" data-placeholder-ar="اكتب هدفك... مثال: عرض رمضان" data-placeholder-en="Type your goal... e.g. Ramadan offer" placeholder="اكتب هدفك... مثال: عرض رمضان">
-                        <button class="chat-send" onclick="generateCampaign()"><i data-lucide="send"></i></button>
-                    </div>
-                </div>
+            <div class="breakdown-card" id="dormantCard">
+                <div class="breakdown-icon">😴</div>
+                <div class="breakdown-value" id="dormantCount">0</div>
+                <div class="breakdown-label">عميل خامل</div>
+                <div class="breakdown-sar" id="dormantValue">0 ر.س</div>
+            </div>
+            <div class="breakdown-card" id="upsellCard">
+                <div class="breakdown-icon">🛍️</div>
+                <div class="breakdown-value" id="upsellCount">0</div>
+                <div class="breakdown-label">فرصة بيع إضافي</div>
+                <div class="breakdown-sar" id="upsellValue">0 ر.س</div>
             </div>
         </div>
-
-        <!-- SETTINGS -->
-        <div class="section" id="settings">
-            <div class="section-head">
-                <div class="section-title"><i data-lucide="settings"></i><span data-ar="الإعدادات" data-en="Settings">الإعدادات</span></div>
-            </div>
-            <div class="settings-grid">
-                <!-- WhatsApp -->
-                <div class="settings-card">
-                    <div class="settings-card-head">
-                        <div class="settings-card-ico" style="background:rgba(34,197,94,0.12);color:var(--success)"><i data-lucide="message-circle"></i></div>
-                        <div><div class="settings-card-title" data-ar="واتساب" data-en="WhatsApp">واتساب</div><div class="settings-card-desc" data-ar="ربط رقمك لإرسال الرسائل" data-en="Connect your number to send messages">ربط رقمك لإرسال الرسائل</div></div>
-                    </div>
-                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span data-ar="متصل" data-en="Connected">متصل</span></div>
-                    <div class="connect-detail">
-                        <div class="connect-detail-item"><i data-lucide="phone"></i><span>+966 5XX XXX XXXX</span></div>
-                        <div class="connect-detail-item"><i data-lucide="clock"></i><span data-ar="آخر نشاط: قبل 3 دقائق" data-en="Last active: 3 min ago">آخر نشاط: قبل 3 دقائق</span></div>
-                    </div>
-                    <div style="display:flex;gap:8px;margin-top:12px">
-                        <button class="btn btn-outline" onclick="window.location.href='/whatsapp.html'" data-ar="إعادة ربط" data-en="Reconnect">إعادة ربط</button>
-                        <button class="btn btn-outline" data-ar="API رسمي" data-en="Official API">API رسمي</button>
-                    </div>
-                    <button class="wa-info-toggle" id="waInfoToggle" onclick="toggleWaInfo()"><i data-lucide="chevron-left"></i><span data-ar="كيف نحمي رقمك؟" data-en="How do we protect your number?">كيف نحمي رقمك؟</span></button>
-                    <div class="wa-info" id="waInfo"><div class="wa-info-inner"><span data-ar="إرسال تدريجي، فترات راحة، تسخين تلقائي" data-en="Gradual sending, pauses, auto warm-up">إرسال تدريجي، فترات راحة، تسخين تلقائي</span><br><span style="color:var(--text-secondary);margin-top:4px;display:inline-block" data-ar="للحماية الكاملة: فعّل API الرسمي ↑" data-en="For full protection: enable Official API ↑">للحماية الكاملة: فعّل API الرسمي ↑</span></div></div>
-                </div>
-                <!-- Store -->
-                <div class="settings-card" id="sallaCard">
-                    <div class="settings-card-head">
-                        <div class="settings-card-ico" style="background:rgba(59,130,246,0.12);color:#3B82F6"><i data-lucide="store"></i></div>
-                        <div><div class="settings-card-title" data-ar="المتجر" data-en="Store">المتجر</div><div class="settings-card-desc" data-ar="اربط متجرك لسحب البيانات" data-en="Connect your store to pull data">اربط متجرك لسحب البيانات</div></div>
-                    </div>
-                    <div id="sallaStatus">
-                        <!-- Default: not connected -->
-                        <a href="/salla/install" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px;font-size:14px;margin-bottom:8px">
-                            <i data-lucide="plug"></i>
-                            <span data-ar="ربط متجر سلة" data-en="Connect Salla Store">ربط متجر سلة</span>
-                        </a>
-                        <div style="font-size:11px;color:var(--text-muted);text-align:center" data-ar="يتم التثبيت من متجر تطبيقات سلة" data-en="Installs via Salla App Store">يتم التثبيت من متجر تطبيقات سلة</div>
-                    </div>
-                </div>
-                <!-- Import -->
-                <div class="settings-card">
-                    <div class="settings-card-head">
-                        <div class="settings-card-ico" style="background:rgba(245,158,11,0.12);color:var(--warning)"><i data-lucide="users"></i></div>
-                        <div><div class="settings-card-title" data-ar="استيراد العملاء" data-en="Import Customers">استيراد العملاء</div><div class="settings-card-desc" data-ar="من أي مصدر" data-en="From any source">من أي مصدر</div></div>
-                    </div>
-                    <div class="import-grid">
-                        <div class="import-btn" onclick="connectImport('salla')"><div class="import-btn-logo" style="color:#6C63FF">سلة</div><div class="import-btn-name">Salla</div></div>
-                        <div class="import-btn" onclick="connectImport('foodics')"><div class="import-btn-logo" style="color:#FF6B35">F</div><div class="import-btn-name">Foodics</div></div>
-                        <div class="import-btn" onclick="connectImport('zid')"><div class="import-btn-logo" style="color:#5B5FC7">زد</div><div class="import-btn-name">Zid</div></div>
-                        <div class="import-btn" onclick="connectImport('marn')"><div class="import-btn-logo" style="color:#00C9A7">مرن</div><div class="import-btn-name">Marn</div></div>
-                        <div class="import-btn" onclick="connectImport('shopify')"><div class="import-btn-logo" style="color:#96BF48">S</div><div class="import-btn-name">Shopify</div></div>
-                        <div class="import-btn" onclick="connectImport('loyverse')"><div class="import-btn-logo" style="color:#8E44AD">L</div><div class="import-btn-name">Loyverse</div></div>
-                    </div>
-                    <div class="upload-mini" onclick="document.getElementById('fileInput').click()"><i data-lucide="upload-cloud"></i><div style="font-size:12px;color:var(--text-secondary)" data-ar="أو ارفع ملف CSV / Excel" data-en="Or upload CSV / Excel file">أو ارفع ملف CSV / Excel</div></div>
-                    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" onchange="handleFile(event)" style="display:none">
-                </div>
+        <button class="launch-btn pulsing" onclick="launchCampaigns()">
+            <i data-lucide="rocket"></i>
+            <span>استرجع أموالك</span>
+        </button>
+        <div class="owner-phone" id="ownerPhoneSection">
+            <div class="owner-phone-title"><i data-lucide="bell"></i> احصل على تنبيه فوري</div>
+            <div class="owner-phone-desc">رقم واتساب لإبلاغك عند كل استرداد</div>
+            <div class="owner-phone-input">
+                <input type="tel" id="ownerPhone" placeholder="05xxxxxxxx" dir="ltr">
+                <button onclick="saveOwnerPhone()">حفظ</button>
             </div>
         </div>
-    </main>
+    </div>
 
-    <nav class="mob-nav"><div class="mob-nav-inner">
-        <a class="mn active" data-section="dashboard" onclick="nav('dashboard')"><i data-lucide="layout-dashboard"></i><span data-ar="الرئيسية" data-en="Home">الرئيسية</span></a>
-        <a class="mn" data-section="flows" onclick="nav('flows')"><i data-lucide="workflow"></i><span data-ar="التدفقات" data-en="Flows">التدفقات</span></a>
-        <a class="mn" data-section="settings" onclick="nav('settings')"><i data-lucide="settings"></i><span data-ar="إعدادات" data-en="Settings">إعدادات</span></a>
-    </div></nav>
+    <!-- STATE: RUNNING (campaigns launching) -->
+    <div id="running" class="state">
+        <div class="running-header">
+            <div class="running-status"><span class="running-status-dot"></span> جاري الإرسال</div>
+            <div class="running-money">+<span id="runningRevenue">0</span> ر.س</div>
+            <div class="running-subtitle">متوقع استرداده</div>
+        </div>
+        <div class="running-progress">
+            <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+            <div class="progress-text"><span id="sentCount">0</span> رسالة من <span id="totalCount">0</span></div>
+        </div>
+        <div class="running-feed" id="runningFeed"></div>
+    </div>
+
+    <!-- STATE: COMPLETE -->
+    <div id="complete" class="state">
+        <div class="complete-icon"><i data-lucide="check-circle"></i></div>
+        <h1 class="complete-title">تم إطلاق الحملة!</h1>
+        <div class="complete-money" id="completeRevenue">0 ر.س</div>
+        <div class="complete-desc">متوقع استرداده خلال 24 ساعة</div>
+        <div class="complete-stats">
+            <div class="complete-stat">
+                <div class="complete-stat-val" id="completeSent">0</div>
+                <div class="complete-stat-label">رسالة مرسلة</div>
+            </div>
+            <div class="complete-stat">
+                <div class="complete-stat-val" id="completeAudience">0</div>
+                <div class="complete-stat-label">عميل</div>
+            </div>
+        </div>
+        <button class="btn-secondary" onclick="location.reload()">حملة جديدة</button>
+    </div>
 
     <script>
-    const merchantId='demo';
-    let lang=localStorage.getItem('ribhLang')||'ar';
-    let allActive=false;
+    // === STATE MANAGEMENT ===
+    let currentState = 'locked';
+    let analysisData = null;
 
-    const FLOWS=[
-        {id:'cart_recovery',icon:'shopping-cart',name:'استرجاع السلات',nameEn:'Cart Recovery',
-         desc:'رسالة لمن ترك سلة التسوق',descEn:'Message when a cart is abandoned',
-         color:'#EF4444',gradient:'linear-gradient(135deg,#EF4444,#DC2626)',
-         estimate:12000,mathAr:'347 سلة × 35% استرجاع × 99 ر.س',mathEn:'347 carts × 35% recovery × 99 SAR',
-         timingAr:'بعد ساعة من ترك السلة',timingEn:'1 hour after cart abandonment',
-         audienceAr:'كل عميل ترك سلة بقيمة أكثر من 50 ر.س',audienceEn:'Customers with abandoned carts worth 50+ SAR',
-         triggerAr:'أول رسالة عند ترك سلة',triggerEn:'First message when a cart is abandoned',
-         msgAr:'مرحباً {name} 👋\n\nلاحظنا إنك ما كملت طلبك!\nمنتجاتك لسا في السلة 🛒\n\nكمّل طلبك الحين:\n{cart_link}',
-         msgEn:'Hi {name} 👋\n\nYou left items in your cart!\nThey\'re still waiting for you 🛒\n\nComplete your order:\n{cart_link}',
-         active:false,sent:0,revenue:0},
-        {id:'winback',icon:'user-check',name:'إعادة تنشيط',nameEn:'Win Back',
-         desc:'رسالة للعملاء الخاملين',descEn:'Message inactive customers',
-         color:'#F59E0B',gradient:'linear-gradient(135deg,#F59E0B,#D97706)',
-         estimate:8900,mathAr:'891 عميل × 10% عودة × 100 ر.س',mathEn:'891 customers × 10% return × 100 SAR',
-         timingAr:'بعد 30 يوم من آخر شراء',timingEn:'30 days after last purchase',
-         audienceAr:'عملاء ما اشتروا من 30 يوم أو أكثر',audienceEn:'Customers inactive for 30+ days',
-         triggerAr:'أول رسالة لعميل خامل 30 يوم',triggerEn:'First message for 30-day inactive customer',
-         msgAr:'أهلاً {name}!\n\nوحشتنا 😊\nعندنا منتجات جديدة تناسبك.\n\nخصم 10% خاص فيك:\n{store_link}',
-         msgEn:'Hey {name}!\n\nWe miss you 😊\nCheck out what\'s new.\n\n10% off just for you:\n{store_link}',
-         active:false,sent:0,revenue:0},
-        {id:'post_purchase',icon:'package',name:'بيع إضافي',nameEn:'Post-Purchase Upsell',
-         desc:'عرض منتجات بعد كل شراء',descEn:'Suggest products after purchase',
-         color:'#6366F1',gradient:'linear-gradient(135deg,#6366F1,#4F46E5)',
-         estimate:6500,mathAr:'156 طلب × 42% نقر × 100 ر.س',mathEn:'156 orders × 42% click × 100 SAR',
-         timingAr:'بعد يومين من الشراء',timingEn:'2 days after purchase',
-         audienceAr:'كل عميل أكمل طلب',audienceEn:'Every customer who completed an order',
-         triggerAr:'أول رسالة بعد طلب جديد',triggerEn:'First message after a new order',
-         msgAr:'شكراً {name} على طلبك! 🎉\n\nعملاء اشتروا نفس المنتج أعجبهم أيضاً:\n{recommendations}\n\n{store_link}',
-         msgEn:'Thanks for your order {name}! 🎉\n\nCustomers who bought the same also loved:\n{recommendations}\n\n{store_link}',
-         active:false,sent:0,revenue:0},
-        {id:'review',icon:'star',name:'جمع التقييمات',nameEn:'Review Collection',
-         desc:'طلب تقييم بعد التوصيل',descEn:'Ask for review after delivery',
-         color:'#10B981',gradient:'linear-gradient(135deg,#10B981,#059669)',
-         estimate:3200,mathAr:'تقييمات أعلى = مبيعات أكثر',mathEn:'More reviews = more sales',
-         timingAr:'بعد 3 أيام من التوصيل',timingEn:'3 days after delivery',
-         audienceAr:'كل عميل تم توصيل طلبه',audienceEn:'Every customer with a delivered order',
-         triggerAr:'أول طلب تقييم بعد التوصيل',triggerEn:'First review request after delivery',
-         msgAr:'مرحباً {name}\n\nنتمنى عجبك طلبك! ⭐\nرأيك يهمنا كثير.\n\nقيّم تجربتك:\n{review_link}',
-         msgEn:'Hi {name}\n\nHope you loved your order! ⭐\nYour feedback means a lot.\n\nRate your experience:\n{review_link}',
-         active:false,sent:0,revenue:0},
-        {id:'browse',icon:'eye',name:'تصفح بدون شراء',nameEn:'Browse Abandonment',
-         desc:'رسالة لمن تصفح بدون شراء',descEn:'Message browsers who didn\'t buy',
-         color:'#3B82F6',gradient:'linear-gradient(135deg,#3B82F6,#2563EB)',
-         estimate:5400,mathAr:'زوار × 8% تحويل × 85 ر.س',mathEn:'Visitors × 8% conversion × 85 SAR',
-         timingAr:'بعد 4 ساعات من التصفح',timingEn:'4 hours after browsing',
-         audienceAr:'زوار تصفحوا منتجات بدون إضافة للسلة',audienceEn:'Visitors who browsed without adding to cart',
-         triggerAr:'أول رسالة لمتصفح بدون شراء',triggerEn:'First message for browser without purchase',
-         msgAr:'أهلاً {name}!\n\nلاحظنا إنك تتصفح {product_name}.\nلسا متوفر! 🔥\n\n{product_link}',
-         msgEn:'Hey {name}!\n\nWe noticed you were browsing {product_name}.\nStill available! 🔥\n\n{product_link}',
-         active:false,sent:0,revenue:0},
-        {id:'cod',icon:'package-check',name:'تأكيد COD',nameEn:'COD Confirmation',
-         desc:'تأكيد الطلب لتقليل المرتجعات',descEn:'Confirm order to reduce returns',
-         color:'#8B5CF6',gradient:'linear-gradient(135deg,#8B5CF6,#7C3AED)',
-         estimate:4100,mathAr:'تقليل 40% من المرتجعات',mathEn:'40% reduction in returns',
-         timingAr:'فوراً بعد الطلب',timingEn:'Immediately after order',
-         audienceAr:'كل طلب دفع عند الاستلام',audienceEn:'Every COD order',
-         triggerAr:'أول تأكيد عند طلب COD',triggerEn:'First confirmation for COD order',
-         msgAr:'مرحباً {name}\n\nتم استلام طلبك #{order_id} ✅\n\nهل تأكد الطلب؟\n\n1️⃣ نعم، أكد الطلب\n2️⃣ لا، ألغِ الطلب',
-         msgEn:'Hi {name}\n\nOrder #{order_id} received ✅\n\nPlease confirm:\n\n1️⃣ Yes, confirm\n2️⃣ No, cancel',
-         active:false,sent:0,revenue:0}
-    ];
-
-    const CHIPS_AR=['عرض رمضان','الجمعة البيضاء','عيد الفطر','تصفيات نهاية الموسم'];
-    const CHIPS_EN=['Ramadan Offer','Black Friday','Eid Sale','End of Season'];
-
-    // === NAV ===
-    function nav(s){
-        const el=document.getElementById(s);
-        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
-        document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));
-        document.querySelectorAll(`[data-section="${s}"]`).forEach(i=>i.classList.add('active'));
-    }
-    const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){document.querySelectorAll('.sb-item,.mn').forEach(i=>i.classList.remove('active'));document.querySelectorAll(`[data-section="${e.target.id}"]`).forEach(i=>i.classList.add('active'));}});},{threshold:0.2,rootMargin:'-80px 0px -50% 0px'});
-
-    // === LANG ===
-    function toggleLang(){lang=lang==='ar'?'en':'ar';localStorage.setItem('ribhLang',lang);applyLang();}
-    function applyLang(){
-        const r=document.documentElement;
-        r.setAttribute('dir',lang==='ar'?'rtl':'ltr');
-        r.setAttribute('lang',lang);
-        document.getElementById('langLabel').textContent=lang==='ar'?'English':'العربية';
-        document.querySelectorAll('[data-ar]').forEach(el=>{el.textContent=el.getAttribute('data-'+lang)||el.textContent;});
-        document.querySelectorAll('[data-placeholder-ar]').forEach(el=>{el.placeholder=el.getAttribute('data-placeholder-'+lang)||el.placeholder;});
-        renderFlows();renderChips();updateFlowBadge();renderHeroButton();
+    function setState(state) {
+        document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+        document.getElementById(state).classList.add('active');
+        currentState = state;
     }
 
-    // === COUNTER ===
-    function animateValue(el,end,duration=1200){
-        const start=0,startTime=performance.now();
-        function update(now){
-            const p=Math.min((now-startTime)/duration,1);
-            const eased=1-Math.pow(1-p,3);
-            el.textContent=Math.floor(start+(end-start)*eased).toLocaleString();
-            if(p<1) requestAnimationFrame(update);
+    // === CONNECT SOURCES ===
+    function connectSalla() {
+        window.location.href = '/salla/install';
+    }
+
+    function connectSource(source) {
+        if (source === 'zid' || source === 'shopify' || source === 'foodics') {
+            alert('قريباً! حالياً نعمل مع سلة فقط');
+            return;
+        }
+    }
+
+    function showCSVUpload() {
+        alert('ارفع ملف CSV مع الأعمدة: phone, name, type, value\nقريباً!');
+    }
+
+    // === CHECK IF CONNECTED ===
+    async function checkConnection() {
+        try {
+            const res = await fetch('/api/ribh/analyze');
+            const data = await res.json();
+
+            if (data.success) {
+                analysisData = data;
+                showReadyState(data);
+            } else if (data.error === 'no_merchant') {
+                setState('locked');
+            } else {
+                console.error('Analysis error:', data);
+                setState('locked');
+            }
+        } catch (e) {
+            console.error('Connection check failed:', e);
+            setState('locked');
+        }
+    }
+
+    // === SHOW READY STATE ===
+    function showReadyState(data) {
+        setState('ready');
+
+        const { analysis, campaigns } = data;
+        const { breakdown } = analysis;
+
+        // Animate money counter
+        animateValue(document.getElementById('moneyWaiting'), analysis.moneyWaiting);
+
+        // Breakdown cards
+        document.getElementById('cartCount').textContent = breakdown.abandonedCarts.count.toLocaleString();
+        document.getElementById('cartValue').textContent = breakdown.abandonedCarts.recoveryEstimate.toLocaleString() + ' ر.س';
+
+        document.getElementById('dormantCount').textContent = breakdown.dormantCustomers.count.toLocaleString();
+        document.getElementById('dormantValue').textContent = breakdown.dormantCustomers.reactivationEstimate.toLocaleString() + ' ر.س';
+
+        document.getElementById('upsellCount').textContent = breakdown.recentBuyers.count.toLocaleString();
+        document.getElementById('upsellValue').textContent = breakdown.recentBuyers.upsellEstimate.toLocaleString() + ' ر.س';
+
+        // Hide empty cards
+        if (breakdown.abandonedCarts.count === 0) document.getElementById('cartCard').style.display = 'none';
+        if (breakdown.dormantCustomers.count === 0) document.getElementById('dormantCard').style.display = 'none';
+        if (breakdown.recentBuyers.count === 0) document.getElementById('upsellCard').style.display = 'none';
+    }
+
+    // === LAUNCH CAMPAIGNS ===
+    async function launchCampaigns() {
+        setState('running');
+        launchConfetti();
+
+        const totalCustomers = analysisData.analysis.totalCustomers;
+        document.getElementById('totalCount').textContent = totalCustomers;
+
+        try {
+            const res = await fetch('/api/ribh/launch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ campaigns: ['cartRecovery', 'winback', 'upsell'] })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                showCompleteState(data.results);
+            } else {
+                alert('حدث خطأ: ' + (data.error || 'غير معروف'));
+                setState('ready');
+            }
+        } catch (e) {
+            console.error('Launch error:', e);
+            alert('حدث خطأ في الاتصال');
+            setState('ready');
+        }
+    }
+
+    // === SIMULATE PROGRESS (while launching) ===
+    function simulateProgress() {
+        let sent = 0;
+        const total = parseInt(document.getElementById('totalCount').textContent) || 100;
+        const interval = setInterval(() => {
+            sent += Math.floor(Math.random() * 3) + 1;
+            if (sent > total) sent = total;
+
+            document.getElementById('sentCount').textContent = sent;
+            document.getElementById('progressBar').style.width = (sent / total * 100) + '%';
+
+            // Add feed item
+            addFeedItem(sent);
+
+            if (sent >= total) clearInterval(interval);
+        }, 1000);
+    }
+
+    function addFeedItem(count) {
+        const feed = document.getElementById('runningFeed');
+        const types = [
+            { type: 'sent', msg: 'رسالة مرسلة', dot: 'sent' },
+            { type: 'read', msg: 'رسالة مقروءة', dot: 'read' },
+            { type: 'clicked', msg: 'نقر على الرابط', dot: 'clicked' }
+        ];
+        const t = types[Math.floor(Math.random() * types.length)];
+        const item = document.createElement('div');
+        item.className = 'feed-item';
+        item.innerHTML = `<span class="feed-dot ${t.dot}"></span><div class="feed-content"><div class="feed-msg">${t.msg}</div><div class="feed-time">الآن</div></div>`;
+        feed.insertBefore(item, feed.firstChild);
+        if (feed.children.length > 5) feed.removeChild(feed.lastChild);
+    }
+
+    // === SHOW COMPLETE STATE ===
+    function showCompleteState(results) {
+        setState('complete');
+        launchConfetti();
+
+        const totalSent = results.messagesSent || 0;
+        const totalRevenue = results.launched.reduce((s, l) => s + (l.estimatedRevenue || 0), 0);
+        const totalAudience = results.launched.reduce((s, l) => s + (l.audience || 0), 0);
+
+        document.getElementById('completeSent').textContent = totalSent.toLocaleString();
+        document.getElementById('completeRevenue').textContent = totalRevenue.toLocaleString() + ' ر.س';
+        document.getElementById('completeAudience').textContent = totalAudience.toLocaleString();
+    }
+
+    // === SAVE OWNER PHONE ===
+    async function saveOwnerPhone() {
+        const phone = document.getElementById('ownerPhone').value.trim();
+        if (!phone) return;
+
+        try {
+            // Save to backend (would need endpoint)
+            alert('تم حفظ رقمك! ستصلك رسالة عند كل استرداد');
+            document.getElementById('ownerPhoneSection').style.display = 'none';
+        } catch (e) {
+            console.error('Save phone error:', e);
+        }
+    }
+
+    // === ANIMATE VALUE ===
+    function animateValue(el, end, duration = 1500) {
+        let start = 0;
+        const startTime = performance.now();
+        function update(now) {
+            const p = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.floor(start + (end - start) * eased).toLocaleString();
+            if (p < 1) requestAnimationFrame(update);
         }
         requestAnimationFrame(update);
     }
 
-    // === TOAST ===
-    function showToast(msg){
-        const c=document.getElementById('toasts'),t=document.createElement('div');
-        t.className='toast success';
-        t.innerHTML=`<i data-lucide="check-circle-2"></i><span>${msg}</span>`;
-        c.appendChild(t);lucide.createIcons({nodes:[t]});
-        setTimeout(()=>{t.style.animation='toastOut .3s ease-out forwards';setTimeout(()=>t.remove(),300);},3000);
-    }
-
     // === CONFETTI ===
-    function launchConfetti(){
-        const cv=document.getElementById('confetti'),ctx=cv.getContext('2d');
-        cv.width=window.innerWidth;cv.height=window.innerHeight;
-        const ps=[],colors=['#10B981','#22C55E','#6366F1','#F59E0B','#3B82F6','#EF4444','#FAFAFA'];
-        for(let i=0;i<120;i++) ps.push({x:cv.width/2+(Math.random()-.5)*200,y:cv.height/2,vx:(Math.random()-.5)*12,vy:Math.random()*-16-4,w:Math.random()*8+4,h:Math.random()*6+2,c:colors[Math.floor(Math.random()*colors.length)],r:Math.random()*360,rv:(Math.random()-.5)*12,g:.3,o:1});
-        let f=0;
-        function draw(){
-            ctx.clearRect(0,0,cv.width,cv.height);let alive=false;
-            ps.forEach(p=>{p.x+=p.vx;p.vy+=p.g;p.y+=p.vy;p.r+=p.rv;if(f>40)p.o-=.015;if(p.o<=0)return;alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r*Math.PI/180);ctx.globalAlpha=p.o;ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();});
-            f++;if(alive)requestAnimationFrame(draw);else ctx.clearRect(0,0,cv.width,cv.height);
+    function launchConfetti() {
+        const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
+        cv.width = window.innerWidth; cv.height = window.innerHeight;
+        const ps = [], colors = ['#10B981', '#22C55E', '#6366F1', '#F59E0B', '#3B82F6', '#EF4444', '#FAFAFA'];
+        for (let i = 0; i < 120; i++) ps.push({ x: cv.width / 2 + (Math.random() - 0.5) * 200, y: cv.height / 2, vx: (Math.random() - 0.5) * 12, vy: Math.random() * -16 - 4, w: Math.random() * 8 + 4, h: Math.random() * 6 + 2, c: colors[Math.floor(Math.random() * colors.length)], r: Math.random() * 360, rv: (Math.random() - 0.5) * 12, g: 0.3, o: 1 });
+        let f = 0;
+        function draw() {
+            ctx.clearRect(0, 0, cv.width, cv.height); let alive = false;
+            ps.forEach(p => { p.x += p.vx; p.vy += p.g; p.y += p.vy; p.r += p.rv; if (f > 40) p.o -= 0.015; if (p.o <= 0) return; alive = true; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r * Math.PI / 180); ctx.globalAlpha = p.o; ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore(); });
+            f++; if (alive) requestAnimationFrame(draw); else ctx.clearRect(0, 0, cv.width, cv.height);
         }
         requestAnimationFrame(draw);
     }
 
-    // === STATS ===
-    let statsShown=false;
-    function showStats(){
-        if(statsShown) return;statsShown=true;
-        document.getElementById('statsEmpty').style.display='none';
-        document.getElementById('statsRow').style.display='grid';
-        for(let i=0;i<4;i++) setTimeout(()=>{const s=document.getElementById('stat'+i);if(s)s.classList.add('visible');},i*100);
-    }
-
-    // === HERO BUTTON: TOGGLE ===
-    function renderHeroButton(){
-        const btn=document.getElementById('heroBtn');
-        if(allActive){
-            btn.className='btn-machine btn-machine-pause';
-            btn.innerHTML=`<i data-lucide="pause-circle"></i><span>${lang==='ar'?'إيقاف الكل':'Pause All'}</span>`;
-        }else{
-            btn.className='btn-machine btn-machine-pulse';
-            btn.innerHTML=`<div class="shine"></div><i data-lucide="zap"></i><span>${lang==='ar'?'استرجع أموالك':'Recover your money'}</span>`;
-        }
-        lucide.createIcons({nodes:[btn]});
-    }
-
-    function toggleAllFlows(){
-        if(allActive){
-            // PAUSE ALL
-            FLOWS.forEach(f=>f.active=false);
-            allActive=false;
-            renderFlows();updateFlowBadge();renderHeroButton();
-            showToast(lang==='ar'?'تم إيقاف جميع التدفقات':'All flows paused');
-        }else{
-            // ACTIVATE ALL
-            launchConfetti();
-            FLOWS.forEach(f=>f.active=true);
-            allActive=true;
-            showStats();
-            renderFlows();updateFlowBadge();renderHeroButton();
-            showToast(lang==='ar'?'تم تفعيل جميع التدفقات!':'All flows activated!');
-            // Add activation activity
-            FLOWS.forEach(f=>{
-                const name=lang==='ar'?f.name:f.nameEn;
-                const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
-                addActivityItem(`${name}: ${trigger}`,'green',0);
-            });
-            setTimeout(()=>nav('flows'),800);
-        }
-    }
-
-    // === SCROLL TO FLOW FROM HERO PILL ===
-    function scrollToFlow(flowId){
-        nav('flows');
-        setTimeout(()=>{
-            const card=document.getElementById('flow_'+flowId);
-            if(card){
-                card.scrollIntoView({behavior:'smooth',block:'center'});
-                card.classList.add('highlight');
-                setTimeout(()=>card.classList.remove('highlight'),1500);
-                expandFlow(flowId);
-            }
-        },400);
-    }
-
-    // === EXPAND FLOW ===
-    function expandFlow(id){
-        const detail=document.getElementById('detail_'+id);
-        if(!detail) return;
-        const isOpen=detail.classList.contains('open');
-        // Close all
-        document.querySelectorAll('.flow-detail.open').forEach(d=>d.classList.remove('open'));
-        document.querySelectorAll('.flow-card.expanded').forEach(c=>c.classList.remove('expanded'));
-        if(!isOpen){
-            detail.classList.add('open');
-            document.getElementById('flow_'+id).classList.add('expanded');
-        }
-    }
-
-    // === RENDER FLOWS ===
-    function renderFlows(){
-        const g=document.getElementById('flowGrid');
-        g.innerHTML=FLOWS.map((f,idx)=>{
-            const name=lang==='ar'?f.name:f.nameEn;
-            const desc=lang==='ar'?f.desc:f.descEn;
-            const math=lang==='ar'?f.mathAr:f.mathEn;
-            const estLabel=lang==='ar'?'ر.س/شهر':'SAR/mo';
-            const msg=lang==='ar'?f.msgAr:f.msgEn;
-            const timing=lang==='ar'?f.timingAr:f.timingEn;
-            const audience=lang==='ar'?f.audienceAr:f.audienceEn;
-            const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
-            const sentLabel=lang==='ar'?'رسالة':'sent';
-            const revLabel=lang==='ar'?'ر.س':'SAR';
-            const detailsLabel=lang==='ar'?'تفاصيل':'Details';
-            const msgLabel=lang==='ar'?'رسالة العميل':'Customer message';
-            const timingLabel=lang==='ar'?'التوقيت':'Timing';
-            const audienceLabel=lang==='ar'?'الجمهور':'Audience';
-            const activeStatusHtml=f.active?`<div class="flow-active-status"><i data-lucide="radio"></i><span>${trigger}</span></div>`:'';
-
-            return`<div class="flow-card ${f.active?'active':''}" id="flow_${f.id}" style="transition-delay:${idx*0.06}s">
-                <div class="flow-card-top-bar" style="background:${f.gradient}"></div>
-                <div class="flow-head" onclick="expandFlow('${f.id}')">
-                    <div class="flow-ico" style="background:${f.color}18;color:${f.color}"><i data-lucide="${f.icon}"></i></div>
-                    <div class="flow-info"><div class="flow-name">${name}</div><div class="flow-desc">${desc}</div></div>
-                    <label class="flow-toggle" onclick="event.stopPropagation()">
-                        <input type="checkbox" ${f.active?'checked':''} onchange="toggleFlow('${f.id}',this.checked)">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="flow-summary" onclick="expandFlow('${f.id}')">
-                    <div class="flow-estimate"><i data-lucide="trending-up"></i> ~<strong>${f.estimate.toLocaleString()}</strong> ${estLabel} <span class="flow-estimate-math">(${math})</span></div>
-                    <div class="flow-expand-hint"><span>${detailsLabel}</span><i data-lucide="chevron-left"></i></div>
-                </div>
-                <div class="flow-detail" id="detail_${f.id}">
-                    <div class="flow-detail-inner">
-                        <div class="flow-detail-row"><i data-lucide="message-circle"></i><div><div class="flow-detail-label">${msgLabel}</div><div class="flow-msg-preview">${msg}</div></div></div>
-                        <div class="flow-detail-row"><i data-lucide="clock"></i><div><div class="flow-detail-label">${timingLabel}</div><div>${timing}</div></div></div>
-                        <div class="flow-detail-row"><i data-lucide="users"></i><div><div class="flow-detail-label">${audienceLabel}</div><div>${audience}</div></div></div>
-                        ${activeStatusHtml}
-                    </div>
-                </div>
-                <div class="flow-stats-bar">
-                    <div class="flow-stat"><i data-lucide="send"></i> <strong>${f.sent.toLocaleString()}</strong> ${sentLabel}</div>
-                    <div class="flow-stat"><i data-lucide="banknote"></i> <strong>${f.revenue.toLocaleString()}</strong> ${revLabel}</div>
-                </div>
-            </div>`;
-        }).join('');
-        lucide.createIcons();
-        setTimeout(()=>{g.querySelectorAll('.flow-card').forEach((c,i)=>{setTimeout(()=>c.classList.add('entered'),i*80);});},100);
-    }
-
-    function toggleFlow(id,on){
-        const f=FLOWS.find(x=>x.id===id);if(!f) return;
-        f.active=on;
-        const card=document.getElementById('flow_'+id);
-        if(on){
-            card.classList.add('active');
-            showStats();
-            const name=lang==='ar'?f.name:f.nameEn;
-            const trigger=lang==='ar'?f.triggerAr:f.triggerEn;
-            showToast(lang==='ar'?`${name} مفعّل`:`${name} activated`);
-            addActivityItem(`${name}: ${trigger}`,'green',0);
-        }else{
-            card.classList.remove('active');
-        }
-        allActive=FLOWS.every(f=>f.active);
-        renderHeroButton();
-        updateFlowBadge();
-        // Re-render to update active status in detail
-        renderFlows();
-    }
-
-    function updateFlowBadge(){
-        const count=FLOWS.filter(f=>f.active).length;
-        document.getElementById('flowsBadgeText').textContent=lang==='ar'?`${count} نشط`:`${count} active`;
-        document.getElementById('activeFlowCount').textContent=count;
-    }
-
-    // === ACTIVITY ===
-    function addActivityItem(msg,dotColor,amount){
-        const list=document.getElementById('activityList');
-        const empty=document.getElementById('activityEmpty');
-        if(empty) empty.style.display='none';
-        const item=document.createElement('div');
-        item.className='activity-item';
-        const amtHtml=amount?`<span class="act-amount">+${amount.toLocaleString()} ${lang==='ar'?'ر.س':'SAR'}</span>`:'';
-        item.innerHTML=`<span class="act-dot ${dotColor}"></span><div class="act-body"><div class="act-msg">${msg}</div><div class="act-time">${lang==='ar'?'الآن':'Now'}</div></div>${amtHtml}`;
-        if(list.firstChild) list.insertBefore(item,list.firstChild);else list.appendChild(item);
-        requestAnimationFrame(()=>{requestAnimationFrame(()=>{item.classList.add('slide-in');item.classList.add('flash');});});
-        while(list.children.length>8) list.removeChild(list.lastChild);
-        lucide.createIcons({nodes:[item]});
-    }
-
-    // === CHAT ===
-    function renderChips(){
-        const chips=lang==='ar'?CHIPS_AR:CHIPS_EN;
-        document.getElementById('chatChips').innerHTML=chips.map(c=>`<button class="chip" onclick="fillChat('${c}')">${c}</button>`).join('');
-    }
-    function fillChat(text){document.getElementById('chatInput').value=text;generateCampaign();}
-
-    function generateCampaign(){
-        const input=document.getElementById('chatInput');
-        const goal=input.value.trim();if(!goal) return;
-        const bubbles=document.getElementById('chatBubbles');
-
-        const userB=document.createElement('div');
-        userB.className='chat-bubble user';userB.textContent=goal;bubbles.appendChild(userB);
-        input.value='';
-
-        const typing=document.createElement('div');
-        typing.className='chat-bubble ai';
-        typing.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';
-        typing.style.animationDelay='.2s';bubbles.appendChild(typing);
-        bubbles.scrollTop=bubbles.scrollHeight;
-
-        setTimeout(()=>{
-            typing.remove();
-            const audience=Math.floor(Math.random()*800)+200;
-            const bestTime=lang==='ar'?'الخميس 8 مساءً':'Thursday 8 PM';
-            const msgAr=`مرحباً {customer_name} 👋\n\nعندنا لك عرض خاص: ${goal}\n\nخصم 15% على كل المنتجات 🎉\nالكود: RIBH15\n\n🛒 {store_url}\n\nالعرض لفترة محدودة ⏰`;
-            const msgEn=`Hi {customer_name} 👋\n\nSpecial offer: ${goal}\n\n15% off everything 🎉\nCode: RIBH15\n\n🛒 {store_url}\n\nLimited time only ⏰`;
-            const aiB=document.createElement('div');
-            aiB.className='chat-bubble ai';aiB.textContent=lang==='ar'?msgAr:msgEn;bubbles.appendChild(aiB);
-
-            const actions=document.createElement('div');actions.className='chat-actions';
-            actions.innerHTML=`<span style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:12px;flex:1"><span><i data-lucide="users" style="width:12px;height:12px;display:inline"></i> ${audience}</span><span><i data-lucide="clock" style="width:12px;height:12px;display:inline"></i> ${bestTime}</span></span><button class="btn btn-outline" onclick="clearChat()">${lang==='ar'?'مسح':'Clear'}</button><button class="btn btn-primary" onclick="launchCustom()"><i data-lucide="send"></i><span>${lang==='ar'?'أطلق':'Launch'}</span></button>`;
-            bubbles.appendChild(actions);
-            lucide.createIcons({nodes:[aiB,actions]});bubbles.scrollTop=bubbles.scrollHeight;
-        },1500+Math.random()*1000);
-    }
-    function clearChat(){document.getElementById('chatBubbles').innerHTML='';}
-    function launchCustom(){clearChat();showToast(lang==='ar'?'تم إطلاق الحملة!':'Campaign launched!');launchConfetti();}
-
-    // === SETTINGS ===
-    function toggleWaInfo(){document.getElementById('waInfoToggle').classList.toggle('open');document.getElementById('waInfo').classList.toggle('open');}
-    function connectImport(p){if(p==='salla'){window.location.href='/setup.html';}else{showToast(lang==='ar'?`ربط ${p} قريباً`:`${p} coming soon`);}}
-    function handleFile(e){if(!e.target.files[0]) return;const f=e.target.files[0];if(f.size>10*1024*1024){showToast(lang==='ar'?'حجم كبير':'File too large');return;}showToast(lang==='ar'?`تم استيراد ${f.name}`:`Imported ${f.name}`);}
-
-    // === HERO DATA ===
-    function loadHeroData(){
-        // Placeholder until API loads — show zeroes, API call below will fill real data
-    }
-
-    // === API: LOAD REAL DATA ===
-    async function loadRibhStats(){
-        try{
-            const r=await fetch('/api/ribh/stats');
-            const d=await r.json();
-            if(!d.success) return;
-
-            // --- Hero ---
-            const h=d.hero||{};
-            const total=h.total||0;
-            animateValue(document.getElementById('heroTotal'),total,1800);
-            animateValue(document.getElementById('heroCarts'),h.abandonedCarts||0,1200);
-            animateValue(document.getElementById('heroDormant'),h.dormantCustomers||0,1200);
-            animateValue(document.getElementById('heroUpsell'),h.upsellOpportunities||0,1200);
-            const sar=lang==='ar'?'ر.س':'SAR';
-            document.getElementById('heroCartVal').innerHTML=(h.abandonedValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
-            document.getElementById('heroDormantVal').innerHTML=(h.dormantValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
-            document.getElementById('heroUpsellVal').innerHTML=(h.upsellValue||0).toLocaleString()+` <span data-ar="ر.س" data-en="SAR">${sar}</span>`;
-
-            // --- Stats row ---
-            const s=d.stats||{};
-            if(s.totalRevenue||s.messagesSent){
-                showStats();
-                document.getElementById('totalRevenue').textContent=(s.totalRevenue||0).toLocaleString();
-                document.getElementById('messagesSent').textContent=(s.messagesSent||0).toLocaleString();
-                document.getElementById('recoveryRate').textContent=(s.recoveryRate||0);
-                document.getElementById('activeFlowCount').textContent=(s.activeFlowCount||0);
-            }
-
-            // --- Flow stats ---
-            const fl=d.flows||{};
-            FLOWS.forEach(f=>{
-                const api=fl[f.id];
-                if(api){
-                    f.sent=api.sent||0;
-                    f.revenue=api.revenue||0;
-                }
-            });
-            renderFlows();
-
-            // --- Salla connection status ---
-            const m=d.merchant;
-            const dot=document.getElementById('sbSallaDot');
-            const txt=document.getElementById('sbSallaText');
-            const card=document.getElementById('sallaStatus');
-            if(m && m.status==='active'){
-                dot.className='sb-dot green pulse';
-                txt.setAttribute('data-ar','سلة متصلة');
-                txt.setAttribute('data-en','Salla connected');
-                txt.textContent=lang==='ar'?'سلة متصلة':'Salla connected';
-                // Update settings card
-                const storeName=m.storeName||(lang==='ar'?'متجرك':'Your Store');
-                const custCount=d.customerCount||0;
-                const syncText=m.lastSync?formatRelativeTime(m.lastSync):(lang==='ar'?'—':'—');
-                card.innerHTML=`
-                    <div class="connect-status connected"><span class="connect-checkmark"><i data-lucide="check"></i></span><span>${lang==='ar'?'سلة متصلة':'Salla connected'}</span></div>
-                    <div class="connect-detail">
-                        <div class="connect-detail-item"><i data-lucide="shopping-bag"></i><span>${storeName}</span></div>
-                        <div class="connect-detail-item"><i data-lucide="users"></i><span>${custCount.toLocaleString()} ${lang==='ar'?'عميل':'customers'}</span></div>
-                        <div class="connect-detail-item"><i data-lucide="refresh-cw"></i><span>${lang==='ar'?'آخر مزامنة:':'Last sync:'} ${syncText}</span></div>
-                    </div>`;
-                lucide.createIcons({nodes:[card]});
-            }else{
-                dot.className='sb-dot';
-                txt.setAttribute('data-ar','سلة غير متصلة');
-                txt.setAttribute('data-en','Salla not connected');
-                txt.textContent=lang==='ar'?'سلة غير متصلة':'Salla not connected';
-            }
-        }catch(e){console.error('Stats load error:',e);}
-    }
-
-    function formatRelativeTime(iso){
-        const diff=Date.now()-new Date(iso).getTime();
-        const mins=Math.floor(diff/60000);
-        if(mins<1) return lang==='ar'?'الآن':'now';
-        if(mins<60) return lang==='ar'?`قبل ${mins} دقيقة`:`${mins} min ago`;
-        const hrs=Math.floor(mins/60);
-        if(hrs<24) return lang==='ar'?`قبل ${hrs} ساعة`:`${hrs}h ago`;
-        const days=Math.floor(hrs/24);
-        return lang==='ar'?`قبل ${days} يوم`:`${days}d ago`;
-    }
-
-    async function loadActivity(){try{const r=await fetch('/api/ribh/activity');const d=await r.json();if(d.success&&d.activities?.length>0){d.activities.slice(0,8).forEach((a,i)=>{setTimeout(()=>{addActivityItem(a.message||a.title,a.type==='recovered'?'green':a.type==='sent'?'blue':'orange',a.amount||0);},i*100);});}}catch(e){}}
-
-    // === ENTER KEY ===
-    document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement===document.getElementById('chatInput'))generateCampaign();});
-
     // === INIT ===
-    document.addEventListener('DOMContentLoaded',()=>{
-        lucide.createIcons();applyLang();renderFlows();renderChips();updateFlowBadge();loadHeroData();loadRibhStats();loadActivity();
-        ['dashboard','flows','settings'].forEach(id=>{const el=document.getElementById(id);if(el)obs.observe(el);});
-        setInterval(()=>{loadRibhStats();loadActivity();},30000);
+    document.addEventListener('DOMContentLoaded', () => {
+        lucide.createIcons();
+
+        // Check URL params for Salla callback
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('connected') || params.has('merchant')) {
+            setState('analyzing');
+            setTimeout(() => checkConnection(), 1500);
+        } else {
+            checkConnection();
+        }
     });
     </script>
 </body>

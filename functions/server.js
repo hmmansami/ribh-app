@@ -4586,6 +4586,242 @@ app.get('/api/ribh/stats', async (req, res) => {
 });
 
 // ==========================================
+// STORE ANALYZER - One Click Money Flow
+// ==========================================
+
+const { analyzeStore, generateCampaignSummary } = require('./lib/storeAnalyzer');
+const { generateAllCampaigns, previewCampaign } = require('./lib/campaignGenerator');
+
+// Analyze store and return money waiting + campaign preview
+app.get('/api/ribh/analyze', async (req, res) => {
+    try {
+        // Find active merchant
+        const merchantSnap = await db.collection('salla_merchants')
+            .where('status', 'in', ['active', 'installed'])
+            .limit(1).get();
+
+        if (merchantSnap.empty) {
+            return res.json({
+                success: false,
+                error: 'no_merchant',
+                message: 'Connect your store first'
+            });
+        }
+
+        const merchantDoc = merchantSnap.docs[0];
+        const merchantData = merchantDoc.data();
+        const merchantId = merchantData.merchantId;
+
+        console.log(`[Analyze] Starting analysis for merchant ${merchantId}`);
+
+        // Analyze the store
+        const analysis = await analyzeStore('salla', merchantId);
+
+        if (analysis.error) {
+            return res.json({
+                success: false,
+                error: 'analysis_failed',
+                message: analysis.error
+            });
+        }
+
+        // Generate campaign summary
+        const summary = generateCampaignSummary(analysis);
+
+        // Get store info for previews
+        const storeInfo = {
+            name: merchantData.storeName || 'المتجر',
+            url: merchantData.storeUrl || `https://salla.sa/s/${merchantId}`
+        };
+
+        // Generate sample previews for each campaign type
+        const previews = {};
+        if (analysis.abandonedCarts.length > 0) {
+            previews.cartRecovery = previewCampaign('cartRecovery', analysis.abandonedCarts[0], storeInfo, 'ar');
+            previews.cartRecovery.audience = analysis.abandonedCarts.length;
+            previews.cartRecovery.estimatedRevenue = summary.campaigns.cartRecovery.estimatedRevenue;
+        }
+        if (analysis.dormantCustomers.length > 0) {
+            previews.winback = previewCampaign('winback', analysis.dormantCustomers[0], storeInfo, 'ar');
+            previews.winback.audience = analysis.dormantCustomers.length;
+            previews.winback.estimatedRevenue = summary.campaigns.winback.estimatedRevenue;
+        }
+        if (analysis.recentBuyers.length > 0) {
+            previews.upsell = previewCampaign('upsell', analysis.recentBuyers[0], storeInfo, 'ar');
+            previews.upsell.audience = analysis.recentBuyers.length;
+            previews.upsell.estimatedRevenue = summary.campaigns.upsell.estimatedRevenue;
+        }
+
+        res.json({
+            success: true,
+            merchant: {
+                id: merchantId,
+                name: merchantData.storeName || null,
+                status: merchantData.status
+            },
+            analysis: {
+                moneyWaiting: summary.overview.totalMoneyWaiting,
+                breakdown: summary.overview.breakdown,
+                totalCustomers: summary.overview.totalCustomers
+            },
+            campaigns: summary.campaigns,
+            previews,
+            analyzedAt: analysis.analyzedAt
+        });
+
+    } catch (error) {
+        console.error('[Analyze] Error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'server_error',
+            message: error.message
+        });
+    }
+});
+
+// Launch campaigns - ONE CLICK MONEY FLOW
+app.post('/api/ribh/launch', async (req, res) => {
+    try {
+        const { campaigns = ['cartRecovery', 'winback', 'upsell'] } = req.body;
+
+        // Find active merchant
+        const merchantSnap = await db.collection('salla_merchants')
+            .where('status', 'in', ['active', 'installed'])
+            .limit(1).get();
+
+        if (merchantSnap.empty) {
+            return res.json({ success: false, error: 'no_merchant' });
+        }
+
+        const merchantDoc = merchantSnap.docs[0];
+        const merchantData = merchantDoc.data();
+        const merchantId = merchantData.merchantId;
+
+        console.log(`[Launch] Starting campaigns for merchant ${merchantId}:`, campaigns);
+
+        // Analyze store first
+        const analysis = await analyzeStore('salla', merchantId);
+
+        if (analysis.error) {
+            return res.json({ success: false, error: analysis.error });
+        }
+
+        // Get store info
+        const storeInfo = {
+            name: merchantData.storeName || 'المتجر',
+            url: merchantData.storeUrl || `https://salla.sa/s/${merchantId}`
+        };
+
+        // Generate all campaign messages
+        const allCampaigns = await generateAllCampaigns(analysis, storeInfo, 'ar');
+
+        // Track results
+        const results = {
+            launched: [],
+            messagesSent: 0,
+            errors: []
+        };
+
+        // Send messages via WhatsApp
+        const RIBH_WHATSAPP = process.env.RIBH_WHATSAPP_API || 'https://ribh-whatsapp.onrender.com';
+
+        for (const campaignType of campaigns) {
+            const messages = allCampaigns[campaignType];
+            if (!messages || messages.length === 0) continue;
+
+            console.log(`[Launch] Sending ${messages.length} messages for ${campaignType}`);
+
+            let sent = 0;
+            for (const msg of messages) {
+                try {
+                    const response = await fetch(`${RIBH_WHATSAPP}/send`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            to: msg.phone,
+                            message: msg.message
+                        })
+                    });
+
+                    if (response.ok) {
+                        sent++;
+                        results.messagesSent++;
+
+                        // Log the sent message
+                        await db.collection('campaign_messages').add({
+                            merchantId,
+                            campaignType,
+                            phone: msg.phone,
+                            name: msg.name,
+                            message: msg.message,
+                            value: msg.value,
+                            status: 'sent',
+                            sentAt: admin.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        // Add delay between messages (anti-ban)
+                        await new Promise(r => setTimeout(r, 2000 + Math.random() * 3000));
+                    }
+                } catch (e) {
+                    console.error(`[Launch] Send error:`, e.message);
+                    results.errors.push({ phone: msg.phone, error: e.message });
+                }
+            }
+
+            results.launched.push({
+                type: campaignType,
+                audience: messages.length,
+                sent,
+                estimatedRevenue: Math.round(messages.reduce((s, m) => s + (m.value || 0), 0) * 0.35)
+            });
+        }
+
+        // Update merchant stats
+        await db.collection('salla_merchants').doc(merchantDoc.id).update({
+            lastCampaignAt: admin.firestore.FieldValue.serverTimestamp(),
+            totalMessagesSent: admin.firestore.FieldValue.increment(results.messagesSent)
+        });
+
+        // Notify owner via WhatsApp if configured
+        if (merchantData.ownerPhone && results.messagesSent > 0) {
+            try {
+                const ownerMessage = `🚀 تم إطلاق حملتك!
+
+📤 ${results.messagesSent} رسالة تم إرسالها
+💰 متوقع استرداد: ${results.launched.reduce((s, l) => s + l.estimatedRevenue, 0).toLocaleString()} ر.س
+
+سنبلغك فور أول استرداد! 🎉`;
+
+                await fetch(`${RIBH_WHATSAPP}/send`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        to: merchantData.ownerPhone,
+                        message: ownerMessage
+                    })
+                });
+            } catch (e) {
+                console.log(`[Launch] Owner notification failed:`, e.message);
+            }
+        }
+
+        console.log(`[Launch] Complete:`, results);
+
+        res.json({
+            success: true,
+            results
+        });
+
+    } catch (error) {
+        console.error('[Launch] Error:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// ==========================================
 // ACTIVITY FEED ENDPOINT
 // ==========================================
 
