@@ -16,182 +16,206 @@
             --text-muted: #71717A;
             --primary: #10B981;
             --primary-hover: #059669;
-            --danger: #EF4444;
-            --warning: #F59E0B;
         }
         html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-        /* === STATES === */
-        .state { display: none; min-height: 100vh; padding: 24px; }
-        .state.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* === LOCKED STATE === */
+        .locked-wrapper { position: relative; min-height: 100vh; }
 
-        /* === STATE: LOCKED === */
-        #locked { position: relative; }
-        .locked-bg {
-            position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(9,9,11,0) 0%, rgba(9,9,11,0.95) 100%);
-            pointer-events: none; z-index: 1;
+        /* Dark overlay with hole for Salla button */
+        .locked-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(9,9,11,0.85);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 24px;
         }
-        .locked-preview {
-            position: absolute; inset: 0;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            filter: blur(4px) brightness(0.3); transform: scale(0.95);
-        }
-        .locked-preview-money { font-size: 72px; font-weight: 700; color: var(--primary); opacity: 0.3; }
-        .locked-content { position: relative; z-index: 2; text-align: center; max-width: 400px; }
+        .locked-overlay.hidden { display: none; }
+
+        .locked-content { text-align: center; max-width: 400px; }
         .locked-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: var(--card); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); }
         .locked-icon svg { width: 40px; height: 40px; color: var(--primary); }
         .locked-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
         .locked-desc { color: var(--text-muted); margin-bottom: 32px; line-height: 1.7; }
-        .locked-sources { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
-        .source-btn { padding: 12px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text); }
-        .source-btn:hover { border-color: var(--primary); background: rgba(16,185,129,0.1); }
-        .source-btn.primary { background: var(--primary); border-color: var(--primary); }
-        .source-btn.primary:hover { background: var(--primary-hover); }
-        .source-logo { font-size: 18px; font-weight: 700; }
-        .or-divider { color: var(--text-muted); font-size: 13px; margin: 16px 0; }
 
-        /* === STATE: ANALYZING === */
-        #analyzing { text-align: center; }
-        .analyzing-spinner { width: 60px; height: 60px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 24px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .analyzing-text { font-size: 18px; color: var(--text-muted); }
+        /* ONLY Salla button - glowing */
+        .salla-btn {
+            padding: 18px 48px; font-size: 18px; font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white; border: none; border-radius: 14px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
+            box-shadow: 0 0 30px rgba(16,185,129,0.4);
+            animation: glowPulse 2s ease-in-out infinite;
+            transition: transform 0.2s;
+        }
+        .salla-btn:hover { transform: scale(1.05); }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(16,185,129,0.4); }
+            50% { box-shadow: 0 0 50px rgba(16,185,129,0.6); }
+        }
+        .salla-logo { font-size: 20px; font-weight: 700; }
 
-        /* === STATE: READY === */
-        #ready { text-align: center; padding: 40px 24px; }
-        .ready-money { margin-bottom: 8px; }
-        .ready-money-value { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; }
-        .ready-money-currency { font-size: 24px; color: var(--text-muted); margin-right: 8px; }
-        .ready-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
-        .ready-breakdown { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
-        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 160px; text-align: center; }
+        /* === DASHBOARD PREVIEW (behind overlay, scrollable) === */
+        .dashboard-preview { padding: 24px; opacity: 0.3; filter: blur(1px); }
+
+        .preview-hero { text-align: center; padding: 60px 24px; margin-bottom: 24px; }
+        .preview-money { font-size: 64px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .preview-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 32px; }
+        .preview-btn { padding: 20px 48px; font-size: 18px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; color: var(--text-muted); display: inline-flex; align-items: center; gap: 10px; }
+
+        .preview-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; }
+        .preview-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 28px; text-align: center; min-width: 140px; }
+        .preview-card-icon { font-size: 28px; margin-bottom: 8px; }
+        .preview-card-val { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+        .preview-card-label { font-size: 12px; color: var(--text-muted); }
+
+        .preview-activity { max-width: 500px; margin: 0 auto; }
+        .preview-activity-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted); }
+        .preview-activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+        .preview-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
+        .preview-dot.blue { background: #3B82F6; }
+        .preview-dot.orange { background: #F59E0B; }
+
+        /* === READY STATE (after Salla connected) === */
+        .app-container { display: none; min-height: 100vh; padding: 24px; }
+        .app-container.active { display: block; }
+
+        .hero { text-align: center; padding: 60px 24px; }
+        .hero-money { font-size: 72px; font-weight: 700; color: var(--primary); line-height: 1; margin-bottom: 8px; }
+        .hero-currency { font-size: 24px; color: var(--text-muted); margin-right: 8px; }
+        .hero-subtitle { color: var(--text-muted); font-size: 18px; margin-bottom: 40px; }
+
+        .breakdown { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+        .breakdown-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 24px; min-width: 160px; text-align: center; transition: all 0.2s; }
+        .breakdown-card:hover { border-color: var(--primary); transform: translateY(-2px); }
         .breakdown-icon { font-size: 28px; margin-bottom: 8px; }
         .breakdown-value { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
         .breakdown-label { font-size: 13px; color: var(--text-muted); }
         .breakdown-sar { font-size: 14px; color: var(--primary); margin-top: 4px; }
-        .launch-btn { padding: 24px 64px; font-size: 22px; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; border: none; border-radius: 16px; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 8px 32px rgba(16,185,129,0.3); }
-        .launch-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(16,185,129,0.4); }
-        .launch-btn:active { transform: translateY(0); }
+
+        .launch-section { text-align: center; margin-bottom: 40px; }
+        .launch-btn {
+            padding: 24px 64px; font-size: 22px; font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white; border: none; border-radius: 16px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 12px;
+            box-shadow: 0 8px 32px rgba(16,185,129,0.3);
+            animation: glowPulse 2s ease-in-out infinite;
+            transition: transform 0.2s;
+        }
+        .launch-btn:hover { transform: translateY(-2px); }
+        .launch-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: none; }
         .launch-btn svg { width: 28px; height: 28px; }
-        .launch-btn.pulsing { animation: pulse 2s ease-in-out infinite; }
-        @keyframes pulse { 0%, 100% { box-shadow: 0 8px 32px rgba(16,185,129,0.3); } 50% { box-shadow: 0 8px 48px rgba(16,185,129,0.5); } }
 
-        /* === STATE: RUNNING === */
-        #running { text-align: center; padding: 40px 24px; }
-        .running-header { margin-bottom: 32px; }
-        .running-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(16,185,129,0.15); border-radius: 20px; color: var(--primary); font-size: 14px; font-weight: 600; margin-bottom: 16px; }
-        .running-status-dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .running-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .running-subtitle { color: var(--text-muted); }
-        .running-progress { max-width: 400px; margin: 0 auto 32px; }
-        .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
-        .progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.3s; }
-        .progress-text { font-size: 13px; color: var(--text-muted); }
-        .running-feed { max-width: 500px; margin: 0 auto; text-align: right; }
-        .feed-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
+        /* Activity Feed */
+        .activity { max-width: 500px; margin: 0 auto; }
+        .activity-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .activity-title { font-size: 14px; font-weight: 600; }
+        .activity-badge { padding: 4px 10px; background: rgba(16,185,129,0.15); border-radius: 12px; font-size: 11px; color: var(--primary); font-weight: 600; }
+        .activity-list { }
+        .activity-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; animation: slideIn 0.3s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
-        .feed-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-        .feed-dot.sent { background: #3B82F6; }
-        .feed-dot.read { background: var(--warning); }
-        .feed-dot.clicked { background: #8B5CF6; }
-        .feed-dot.purchased { background: var(--primary); }
-        .feed-content { flex: 1; min-width: 0; }
-        .feed-msg { font-size: 14px; font-weight: 500; }
-        .feed-time { font-size: 12px; color: var(--text-muted); }
-        .feed-amount { font-size: 14px; font-weight: 600; color: var(--primary); white-space: nowrap; }
+        .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .activity-dot.green { background: var(--primary); }
+        .activity-dot.blue { background: #3B82F6; }
+        .activity-dot.orange { background: #F59E0B; }
+        .activity-content { flex: 1; }
+        .activity-msg { font-size: 14px; font-weight: 500; }
+        .activity-time { font-size: 12px; color: var(--text-muted); }
+        .activity-amount { font-size: 14px; font-weight: 600; color: var(--primary); }
+        .activity-empty { text-align: center; padding: 32px; color: var(--text-muted); }
 
-        /* === STATE: COMPLETE === */
-        #complete { text-align: center; padding: 40px 24px; }
-        .complete-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .complete-icon svg { width: 40px; height: 40px; color: var(--primary); }
-        .complete-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
-        .complete-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .complete-desc { color: var(--text-muted); margin-bottom: 32px; }
-        .complete-stats { display: flex; gap: 24px; justify-content: center; margin-bottom: 32px; }
-        .complete-stat { text-align: center; }
-        .complete-stat-val { font-size: 24px; font-weight: 700; }
-        .complete-stat-label { font-size: 13px; color: var(--text-muted); }
+        /* Results State */
+        .results { text-align: center; padding: 60px 24px; }
+        .results-icon { width: 80px; height: 80px; margin: 0 auto 24px; background: rgba(16,185,129,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .results-icon svg { width: 40px; height: 40px; color: var(--primary); }
+        .results-title { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+        .results-money { font-size: 48px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .results-desc { color: var(--text-muted); margin-bottom: 32px; }
+        .results-stats { display: flex; gap: 32px; justify-content: center; margin-bottom: 32px; }
+        .results-stat { text-align: center; }
+        .results-stat-val { font-size: 28px; font-weight: 700; }
+        .results-stat-label { font-size: 13px; color: var(--text-muted); }
         .btn-secondary { padding: 14px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
         .btn-secondary:hover { border-color: var(--primary); }
 
-        /* === OWNER PHONE CAPTURE === */
-        .owner-phone { margin-top: 24px; padding: 20px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; max-width: 400px; }
-        .owner-phone-title { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .owner-phone-title svg { width: 18px; height: 18px; color: var(--primary); }
-        .owner-phone-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
-        .owner-phone-input { display: flex; gap: 8px; }
-        .owner-phone-input input { flex: 1; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 14px; font-family: inherit; direction: ltr; text-align: left; }
-        .owner-phone-input input:focus { outline: none; border-color: var(--primary); }
-        .owner-phone-input button { padding: 12px 20px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-
-        /* === CONFETTI === */
+        /* Confetti */
         #confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9998; }
 
-        /* === RESPONSIVE === */
+        /* Responsive */
         @media (max-width: 640px) {
-            .ready-money-value { font-size: 48px; }
-            .ready-breakdown { flex-direction: column; align-items: center; }
+            .hero-money { font-size: 48px; }
+            .breakdown { flex-direction: column; align-items: center; }
             .breakdown-card { width: 100%; max-width: 280px; }
-            .launch-btn { padding: 20px 48px; font-size: 18px; }
-            .running-money { font-size: 36px; }
+            .launch-btn { padding: 20px 40px; font-size: 18px; }
+            .preview-money { font-size: 48px; }
         }
     </style>
 </head>
 <body>
     <canvas id="confetti"></canvas>
 
-    <!-- STATE: LOCKED (no store connected) -->
-    <div id="locked" class="state active">
-        <div class="locked-preview">
-            <div class="locked-preview-money">154,000 ر.س</div>
-        </div>
-        <div class="locked-bg"></div>
+    <!-- LOCKED: Dark overlay + Salla button -->
+    <div class="locked-overlay" id="lockedOverlay">
         <div class="locked-content">
             <div class="locked-icon"><i data-lucide="lock-open"></i></div>
             <h1 class="locked-title">اربط متجرك</h1>
-            <p class="locked-desc">اربط بياناتك، واضغط زر واحد، وشاهد الأموال تتدفق</p>
-            <div class="locked-sources">
-                <button class="source-btn primary" onclick="connectSalla()">
-                    <span class="source-logo" style="color:#6C63FF">سلة</span>
-                    <span>Salla</span>
-                </button>
-                <button class="source-btn" onclick="connectSource('zid')">
-                    <span class="source-logo" style="color:#5B5FC7">زد</span>
-                </button>
-                <button class="source-btn" onclick="connectSource('shopify')">
-                    <span class="source-logo" style="color:#96BF48">S</span>
-                </button>
+            <p class="locked-desc">اربط سلة، واضغط زر واحد، وشاهد الأموال تتدفق</p>
+            <button class="salla-btn" onclick="connectSalla()">
+                <span class="salla-logo">سلة</span>
+                <span>ربط Salla</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PREVIEW (visible behind overlay, scrollable) -->
+    <div class="locked-wrapper">
+        <div class="dashboard-preview" id="dashboardPreview">
+            <div class="preview-hero">
+                <div class="preview-money">٤٥,٠٠٠ ر.س</div>
+                <div class="preview-subtitle">تنتظرك في متجرك</div>
+                <div class="preview-btn">
+                    <i data-lucide="rocket" style="width:20px;height:20px"></i>
+                    <span>استرجع أموالك</span>
+                </div>
             </div>
-            <div class="or-divider">أو</div>
-            <div class="locked-sources">
-                <button class="source-btn" onclick="connectSource('foodics')">
-                    <span class="source-logo" style="color:#FF6B35">F</span>
-                    <span>Foodics</span>
-                </button>
-                <button class="source-btn" onclick="showCSVUpload()">
-                    <i data-lucide="upload" style="width:18px;height:18px"></i>
-                    <span>CSV</span>
-                </button>
+            <div class="preview-cards">
+                <div class="preview-card">
+                    <div class="preview-card-icon">🛒</div>
+                    <div class="preview-card-val">٣٤٧</div>
+                    <div class="preview-card-label">سلة متروكة</div>
+                </div>
+                <div class="preview-card">
+                    <div class="preview-card-icon">😴</div>
+                    <div class="preview-card-val">٨٩١</div>
+                    <div class="preview-card-label">عميل خامل</div>
+                </div>
+                <div class="preview-card">
+                    <div class="preview-card-icon">🛍️</div>
+                    <div class="preview-card-val">١٥٦</div>
+                    <div class="preview-card-label">فرصة بيع إضافي</div>
+                </div>
+            </div>
+            <div class="preview-activity">
+                <div class="preview-activity-title">النشاطات</div>
+                <div class="preview-activity-item"><span class="preview-dot"></span><span>محمد أكمل طلبه - 320 ر.س</span></div>
+                <div class="preview-activity-item"><span class="preview-dot blue"></span><span>أحمد قرأ الرسالة</span></div>
+                <div class="preview-activity-item"><span class="preview-dot orange"></span><span>سارة نقرت على الرابط</span></div>
+                <div class="preview-activity-item"><span class="preview-dot"></span><span>خالد أكمل طلبه - 180 ر.س</span></div>
             </div>
         </div>
     </div>
 
-    <!-- STATE: ANALYZING -->
-    <div id="analyzing" class="state">
-        <div class="analyzing-spinner"></div>
-        <div class="analyzing-text">جاري تحليل متجرك...</div>
-    </div>
-
-    <!-- STATE: READY (analyzed, waiting to launch) -->
-    <div id="ready" class="state">
-        <div class="ready-money">
-            <span class="ready-money-value" id="moneyWaiting">0</span>
-            <span class="ready-money-currency">ر.س</span>
+    <!-- MAIN APP (shown after Salla connected) -->
+    <div class="app-container" id="appContainer">
+        <div class="hero">
+            <div class="hero-money" id="heroMoney">0</div>
+            <div class="hero-currency">ر.س</div>
+            <div class="hero-subtitle">تنتظرك في متجرك</div>
         </div>
-        <div class="ready-subtitle">تنتظرك في متجرك</div>
-        <div class="ready-breakdown">
+
+        <div class="breakdown" id="breakdown">
             <div class="breakdown-card" id="cartCard">
                 <div class="breakdown-icon">🛒</div>
                 <div class="breakdown-value" id="cartCount">0</div>
@@ -211,81 +235,53 @@
                 <div class="breakdown-sar" id="upsellValue">0 ر.س</div>
             </div>
         </div>
-        <button class="launch-btn pulsing" onclick="launchCampaigns()">
-            <i data-lucide="rocket"></i>
-            <span>استرجع أموالك</span>
-        </button>
-        <div class="owner-phone" id="ownerPhoneSection">
-            <div class="owner-phone-title"><i data-lucide="bell"></i> احصل على تنبيه فوري</div>
-            <div class="owner-phone-desc">رقم واتساب لإبلاغك عند كل استرداد</div>
-            <div class="owner-phone-input">
-                <input type="tel" id="ownerPhone" placeholder="05xxxxxxxx" dir="ltr">
-                <button onclick="saveOwnerPhone()">حفظ</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- STATE: RUNNING (campaigns launching) -->
-    <div id="running" class="state">
-        <div class="running-header">
-            <div class="running-status"><span class="running-status-dot"></span> جاري الإرسال</div>
-            <div class="running-money">+<span id="runningRevenue">0</span> ر.س</div>
-            <div class="running-subtitle">متوقع استرداده</div>
+        <div class="launch-section">
+            <button class="launch-btn" id="launchBtn" onclick="launchCampaigns()">
+                <i data-lucide="rocket"></i>
+                <span>استرجع أموالك</span>
+            </button>
         </div>
-        <div class="running-progress">
-            <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
-            <div class="progress-text"><span id="sentCount">0</span> رسالة من <span id="totalCount">0</span></div>
-        </div>
-        <div class="running-feed" id="runningFeed"></div>
-    </div>
 
-    <!-- STATE: COMPLETE -->
-    <div id="complete" class="state">
-        <div class="complete-icon"><i data-lucide="check-circle"></i></div>
-        <h1 class="complete-title">تم إطلاق الحملة!</h1>
-        <div class="complete-money" id="completeRevenue">0 ر.س</div>
-        <div class="complete-desc">متوقع استرداده خلال 24 ساعة</div>
-        <div class="complete-stats">
-            <div class="complete-stat">
-                <div class="complete-stat-val" id="completeSent">0</div>
-                <div class="complete-stat-label">رسالة مرسلة</div>
+        <div class="activity">
+            <div class="activity-header">
+                <span class="activity-title">النشاطات</span>
+                <span class="activity-badge">مباشر</span>
             </div>
-            <div class="complete-stat">
-                <div class="complete-stat-val" id="completeAudience">0</div>
-                <div class="complete-stat-label">عميل</div>
+            <div class="activity-list" id="activityList">
+                <div class="activity-empty">النشاطات ستظهر هنا عند بدء الحملة</div>
             </div>
         </div>
-        <button class="btn-secondary" onclick="location.reload()">حملة جديدة</button>
+
+        <!-- Results (shown after launch) -->
+        <div class="results" id="results" style="display:none">
+            <div class="results-icon"><i data-lucide="check-circle"></i></div>
+            <h1 class="results-title">تم إطلاق الحملة!</h1>
+            <div class="results-money" id="resultsMoney">0 ر.س</div>
+            <div class="results-desc">متوقع استرداده خلال 24 ساعة</div>
+            <div class="results-stats">
+                <div class="results-stat">
+                    <div class="results-stat-val" id="resultsSent">0</div>
+                    <div class="results-stat-label">رسالة</div>
+                </div>
+                <div class="results-stat">
+                    <div class="results-stat-val" id="resultsCustomers">0</div>
+                    <div class="results-stat-label">عميل</div>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="location.reload()">حملة جديدة</button>
+        </div>
     </div>
 
     <script>
-    // === STATE MANAGEMENT ===
-    let currentState = 'locked';
     let analysisData = null;
 
-    function setState(state) {
-        document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
-        document.getElementById(state).classList.add('active');
-        currentState = state;
-    }
-
-    // === CONNECT SOURCES ===
+    // Connect Salla
     function connectSalla() {
         window.location.href = '/salla/install';
     }
 
-    function connectSource(source) {
-        if (source === 'zid' || source === 'shopify' || source === 'foodics') {
-            alert('قريباً! حالياً نعمل مع سلة فقط');
-            return;
-        }
-    }
-
-    function showCSVUpload() {
-        alert('ارفع ملف CSV مع الأعمدة: phone, name, type, value\nقريباً!');
-    }
-
-    // === CHECK IF CONNECTED ===
+    // Check connection on load
     async function checkConnection() {
         try {
             const res = await fetch('/api/ribh/analyze');
@@ -293,30 +289,27 @@
 
             if (data.success) {
                 analysisData = data;
-                showReadyState(data);
-            } else if (data.error === 'no_merchant') {
-                setState('locked');
-            } else {
-                console.error('Analysis error:', data);
-                setState('locked');
+                showApp(data);
             }
+            // If not connected, stay on locked screen
         } catch (e) {
             console.error('Connection check failed:', e);
-            setState('locked');
         }
     }
 
-    // === SHOW READY STATE ===
-    function showReadyState(data) {
-        setState('ready');
+    // Show main app
+    function showApp(data) {
+        document.getElementById('lockedOverlay').classList.add('hidden');
+        document.getElementById('dashboardPreview').style.display = 'none';
+        document.getElementById('appContainer').classList.add('active');
 
-        const { analysis, campaigns } = data;
+        const { analysis } = data;
         const { breakdown } = analysis;
 
-        // Animate money counter
-        animateValue(document.getElementById('moneyWaiting'), analysis.moneyWaiting);
+        // Animate money
+        animateValue(document.getElementById('heroMoney'), analysis.moneyWaiting);
 
-        // Breakdown cards
+        // Breakdown
         document.getElementById('cartCount').textContent = breakdown.abandonedCarts.count.toLocaleString();
         document.getElementById('cartValue').textContent = breakdown.abandonedCarts.recoveryEstimate.toLocaleString() + ' ر.س';
 
@@ -332,13 +325,13 @@
         if (breakdown.recentBuyers.count === 0) document.getElementById('upsellCard').style.display = 'none';
     }
 
-    // === LAUNCH CAMPAIGNS ===
+    // Launch campaigns
     async function launchCampaigns() {
-        setState('running');
-        launchConfetti();
+        const btn = document.getElementById('launchBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span>جاري الإرسال...</span>';
 
-        const totalCustomers = analysisData.analysis.totalCustomers;
-        document.getElementById('totalCount').textContent = totalCustomers;
+        launchConfetti();
 
         try {
             const res = await fetch('/api/ribh/launch', {
@@ -350,80 +343,41 @@
             const data = await res.json();
 
             if (data.success) {
-                showCompleteState(data.results);
+                showResults(data.results);
             } else {
                 alert('حدث خطأ: ' + (data.error || 'غير معروف'));
-                setState('ready');
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="rocket"></i><span>استرجع أموالك</span>';
+                lucide.createIcons();
             }
         } catch (e) {
             console.error('Launch error:', e);
             alert('حدث خطأ في الاتصال');
-            setState('ready');
+            btn.disabled = false;
+            btn.innerHTML = '<i data-lucide="rocket"></i><span>استرجع أموالك</span>';
+            lucide.createIcons();
         }
     }
 
-    // === SIMULATE PROGRESS (while launching) ===
-    function simulateProgress() {
-        let sent = 0;
-        const total = parseInt(document.getElementById('totalCount').textContent) || 100;
-        const interval = setInterval(() => {
-            sent += Math.floor(Math.random() * 3) + 1;
-            if (sent > total) sent = total;
+    // Show results
+    function showResults(results) {
+        document.querySelector('.hero').style.display = 'none';
+        document.getElementById('breakdown').style.display = 'none';
+        document.querySelector('.launch-section').style.display = 'none';
+        document.querySelector('.activity').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
 
-            document.getElementById('sentCount').textContent = sent;
-            document.getElementById('progressBar').style.width = (sent / total * 100) + '%';
-
-            // Add feed item
-            addFeedItem(sent);
-
-            if (sent >= total) clearInterval(interval);
-        }, 1000);
-    }
-
-    function addFeedItem(count) {
-        const feed = document.getElementById('runningFeed');
-        const types = [
-            { type: 'sent', msg: 'رسالة مرسلة', dot: 'sent' },
-            { type: 'read', msg: 'رسالة مقروءة', dot: 'read' },
-            { type: 'clicked', msg: 'نقر على الرابط', dot: 'clicked' }
-        ];
-        const t = types[Math.floor(Math.random() * types.length)];
-        const item = document.createElement('div');
-        item.className = 'feed-item';
-        item.innerHTML = `<span class="feed-dot ${t.dot}"></span><div class="feed-content"><div class="feed-msg">${t.msg}</div><div class="feed-time">الآن</div></div>`;
-        feed.insertBefore(item, feed.firstChild);
-        if (feed.children.length > 5) feed.removeChild(feed.lastChild);
-    }
-
-    // === SHOW COMPLETE STATE ===
-    function showCompleteState(results) {
-        setState('complete');
         launchConfetti();
 
-        const totalSent = results.messagesSent || 0;
         const totalRevenue = results.launched.reduce((s, l) => s + (l.estimatedRevenue || 0), 0);
-        const totalAudience = results.launched.reduce((s, l) => s + (l.audience || 0), 0);
+        const totalCustomers = results.launched.reduce((s, l) => s + (l.audience || 0), 0);
 
-        document.getElementById('completeSent').textContent = totalSent.toLocaleString();
-        document.getElementById('completeRevenue').textContent = totalRevenue.toLocaleString() + ' ر.س';
-        document.getElementById('completeAudience').textContent = totalAudience.toLocaleString();
+        document.getElementById('resultsMoney').textContent = totalRevenue.toLocaleString() + ' ر.س';
+        document.getElementById('resultsSent').textContent = results.messagesSent.toLocaleString();
+        document.getElementById('resultsCustomers').textContent = totalCustomers.toLocaleString();
     }
 
-    // === SAVE OWNER PHONE ===
-    async function saveOwnerPhone() {
-        const phone = document.getElementById('ownerPhone').value.trim();
-        if (!phone) return;
-
-        try {
-            // Save to backend (would need endpoint)
-            alert('تم حفظ رقمك! ستصلك رسالة عند كل استرداد');
-            document.getElementById('ownerPhoneSection').style.display = 'none';
-        } catch (e) {
-            console.error('Save phone error:', e);
-        }
-    }
-
-    // === ANIMATE VALUE ===
+    // Animate counter
     function animateValue(el, end, duration = 1500) {
         let start = 0;
         const startTime = performance.now();
@@ -436,7 +390,7 @@
         requestAnimationFrame(update);
     }
 
-    // === CONFETTI ===
+    // Confetti
     function launchConfetti() {
         const cv = document.getElementById('confetti'), ctx = cv.getContext('2d');
         cv.width = window.innerWidth; cv.height = window.innerHeight;
@@ -451,18 +405,10 @@
         requestAnimationFrame(draw);
     }
 
-    // === INIT ===
+    // Init
     document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
-
-        // Check URL params for Salla callback
-        const params = new URLSearchParams(window.location.search);
-        if (params.has('connected') || params.has('merchant')) {
-            setState('analyzing');
-            setTimeout(() => checkConnection(), 1500);
-        } else {
-            checkConnection();
-        }
+        checkConnection();
     });
     </script>
 </body>
