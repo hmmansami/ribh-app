@@ -5,9 +5,9 @@
  * Customer taps link in WhatsApp → sees cart → one tap → done.
  *
  * Routes:
+ *   GET  /api/pay/stats/:id     - Merchant recovery stats (MUST be before :token)
  *   GET  /api/pay/:token        - Get cart data for payment page
  *   POST /api/pay/:token        - Complete payment
- *   GET  /api/pay/stats/:id     - Merchant recovery stats
  */
 
 const express = require('express');
@@ -19,6 +19,25 @@ try {
 } catch (e) {
     console.error('[Payment] Failed to load paymentTokens:', e.message);
 }
+
+/**
+ * GET /api/pay/stats/:merchantId
+ * Get recovery stats for merchant dashboard
+ * MUST be before /:token or Express swallows "stats" as a token
+ */
+router.get('/stats/:merchantId', async (req, res) => {
+    try {
+        if (!paymentTokens) {
+            return res.status(500).json({ success: false, error: 'Payment system unavailable' });
+        }
+
+        const stats = await paymentTokens.getPaymentStats(req.params.merchantId);
+        return res.status(200).json({ success: true, ...stats });
+    } catch (error) {
+        console.error('[Payment] Stats error:', error.message);
+        return res.status(500).json({ success: false, error: 'حدث خطأ' });
+    }
+});
 
 /**
  * GET /api/pay/:token
@@ -126,24 +145,6 @@ router.post('/:token', async (req, res) => {
         });
     } catch (error) {
         console.error('[Payment] POST error:', error.message);
-        return res.status(500).json({ success: false, error: 'حدث خطأ' });
-    }
-});
-
-/**
- * GET /api/pay/stats/:merchantId
- * Get recovery stats for merchant dashboard
- */
-router.get('/stats/:merchantId', async (req, res) => {
-    try {
-        if (!paymentTokens) {
-            return res.status(500).json({ success: false, error: 'Payment system unavailable' });
-        }
-
-        const stats = await paymentTokens.getPaymentStats(req.params.merchantId);
-        return res.status(200).json({ success: true, ...stats });
-    } catch (error) {
-        console.error('[Payment] Stats error:', error.message);
         return res.status(500).json({ success: false, error: 'حدث خطأ' });
     }
 });

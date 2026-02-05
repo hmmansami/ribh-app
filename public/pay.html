@@ -463,6 +463,13 @@
         let selectedMethod = null;
         let token = null;
 
+        // Sanitize HTML to prevent XSS (payment page = high-value target)
+        function esc(str) {
+            const d = document.createElement('div');
+            d.textContent = str || '';
+            return d.innerHTML;
+        }
+
         function showState(id) {
             document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
             document.getElementById('state-' + id).classList.add('active');
@@ -520,17 +527,25 @@
             cart.items.forEach(item => {
                 const el = document.createElement('div');
                 el.className = 'cart-item';
+
+                // Build image safely - validate URL protocol
+                let imgHTML = '<div class="placeholder">&#128717;</div>';
+                if (item.image) {
+                    try {
+                        const url = new URL(item.image);
+                        if (url.protocol === 'https:' || url.protocol === 'http:') {
+                            imgHTML = '<img src="' + esc(item.image) + '" alt="' + esc(item.name) + '" loading="lazy">';
+                        }
+                    } catch (e) { /* invalid URL, use placeholder */ }
+                }
+
                 el.innerHTML = `
-                    <div class="item-image">
-                        ${item.image
-                            ? '<img src="' + item.image + '" alt="' + item.name + '" loading="lazy">'
-                            : '<div class="placeholder">&#128717;</div>'}
-                    </div>
+                    <div class="item-image">${imgHTML}</div>
                     <div class="item-details">
-                        <div class="item-name">${item.name}</div>
-                        <div class="item-qty">الكمية: ${item.quantity}</div>
+                        <div class="item-name">${esc(item.name)}</div>
+                        <div class="item-qty">الكمية: ${parseInt(item.quantity) || 1}</div>
                     </div>
-                    <div class="item-price">${item.price} ${cart.currency === 'SAR' ? 'ر.س' : cart.currency}</div>
+                    <div class="item-price">${parseFloat(item.price) || 0} ${cart.currency === 'SAR' ? 'ر.س' : esc(cart.currency)}</div>
                 `;
                 container.appendChild(el);
             });
@@ -703,7 +718,7 @@
             }
         }
 
-        // ── Timer ──
+        // ── Timer (1 update/sec, not 60fps) ──
         function startTimer(expiresAt) {
             const expiry = new Date(expiresAt).getTime();
             const timerEl = document.getElementById('timer-display');
@@ -712,6 +727,7 @@
                 const diff = expiry - Date.now();
                 if (diff <= 0) {
                     timerEl.textContent = 'انتهى';
+                    clearInterval(timerId);
                     return;
                 }
                 const h = Math.floor(diff / 3600000);
@@ -721,9 +737,9 @@
                     String(h).padStart(2, '0') + ':' +
                     String(m).padStart(2, '0') + ':' +
                     String(s).padStart(2, '0');
-                requestAnimationFrame(update);
             }
             update();
+            const timerId = setInterval(update, 1000);
         }
 
         // ── Init ──

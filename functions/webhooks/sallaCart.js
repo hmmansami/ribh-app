@@ -114,10 +114,8 @@ function verifySallaSignature(rawBody, signature, secret) {
 function normalizeSaudiPhone(phone) {
     if (!phone) return null;
     
-    // Remove all non-digits except leading +
-    let cleaned = String(phone).replace(/[^\d+]/g, '');
-    const hadPlus = cleaned.startsWith('+');
-    cleaned = cleaned.replace(/^\+/, '');
+    // Remove all non-digits
+    let cleaned = String(phone).replace(/\D/g, '');
     
     // Remove leading 00 (international prefix)
     if (cleaned.startsWith('00')) {
@@ -337,33 +335,44 @@ async function checkMerchantWhatsAppStatus(storeId) {
 }
 
 /**
- * Generate AI-powered personalized message for cart recovery
- * Now includes one-click payment link!
+ * Calculate discount ONCE for a cart. Single source of truth.
+ * Returns { discount, discountCode }
  */
-async function generateRecoveryMessage(cartData, paymentUrl) {
-    const { customer, items, total, currency, checkoutUrl } = cartData;
-    const customerName = customer?.name || 'عزيزنا العميل';
+function calculateDiscount(cartData) {
+    const { total, items, currency, customer, checkoutUrl } = cartData;
 
-    // Determine discount based on cart value
-    let discount = 0;
-    let discountCode = null;
     if (aiMessenger) {
         try {
             const analysis = aiMessenger.analyzeCartDeep({
                 total, items, currency, customer, checkoutUrl
             });
-            discount = analysis.suggestedDiscount || 0;
-            discountCode = analysis.discountCode || null;
+            return {
+                discount: analysis.suggestedDiscount || 0,
+                discountCode: analysis.discountCode || null,
+            };
         } catch (e) {
-            // Fallback discount logic
-            if (total >= 1000) discount = 15;
-            else if (total >= 500) discount = 10;
-            else if (total >= 200) discount = 5;
+            // AI failed, fall through to rule-based
         }
     }
 
-    // Build the WhatsApp message with payment link
+    // Rule-based fallback (always runs if AI unavailable or fails)
+    let discount = 0;
+    if (total >= 1000) discount = 15;
+    else if (total >= 500) discount = 10;
+    else if (total >= 200) discount = 5;
+
+    return { discount, discountCode: null };
+}
+
+/**
+ * Build WhatsApp recovery message with payment link.
+ * Discount is passed in (already calculated), not re-calculated.
+ */
+function buildRecoveryMessage(cartData, paymentUrl, discount) {
+    const { customer, items, total, currency, checkoutUrl } = cartData;
+    const customerName = customer?.name || 'عزيزنا العميل';
     const currencyLabel = currency === 'SAR' ? 'ر.س' : currency;
+
     let message = `مرحباً ${customerName}! 👋\n\n`;
     message += `لاحظنا أن لديك منتجات في سلة التسوق 🛒\n\n`;
 
@@ -386,7 +395,6 @@ async function generateRecoveryMessage(cartData, paymentUrl) {
         message += `💰 المجموع: ${total} ${currencyLabel}\n\n`;
     }
 
-    // The one-click payment link (the magic)
     if (paymentUrl) {
         message += `👇 ادفع بنقرة واحدة:\n${paymentUrl}\n\n`;
         message += `✅ Apple Pay، مدى، تمارا، أو نقد عند الاستلام`;
@@ -394,40 +402,21 @@ async function generateRecoveryMessage(cartData, paymentUrl) {
         message += `👉 أكمل طلبك الآن:\n${checkoutUrl}`;
     }
 
-    return { message, discountCode, discount };
+    return message;
 }
 
 /**
  * Generate payment token for one-click payment
  */
-async function generatePaymentLink(cartData) {
+async function generatePaymentLink(cartData, discount) {
     if (!paymentTokens) return null;
 
     try {
-        // Get discount from AI analysis
-        let discount = 0;
-        if (aiMessenger) {
-            try {
-                const analysis = aiMessenger.analyzeCartDeep({
-                    total: cartData.total,
-                    items: cartData.items,
-                });
-                discount = analysis.suggestedDiscount || 0;
-            } catch (e) {
-                if (cartData.total >= 1000) discount = 15;
-                else if (cartData.total >= 500) discount = 10;
-                else if (cartData.total >= 200) discount = 5;
-            }
-        }
-
         const result = await paymentTokens.generateToken(cartData, cartData.storeId, { discount });
-
-        // Build full URL (uses Firebase hosting domain)
         const baseUrl = process.env.APP_URL || 'https://ribh-484706.web.app';
         return {
             url: `${baseUrl}${result.paymentUrl}`,
             token: result.token,
-            discount,
         };
     } catch (error) {
         console.error('[SallaCart] Payment token generation failed:', error.message);
@@ -460,18 +449,21 @@ async function sendWhatsAppRecovery(storeId, cartData) {
         };
     }
 
-    // Generate one-click payment link
+    // Calculate discount ONCE (single source of truth)
+    const { discount, discountCode } = calculateDiscount(cartData);
+
+    // Generate one-click payment link (uses same discount)
     let paymentUrl = null;
     let paymentToken = null;
-    const payLink = await generatePaymentLink(cartData);
+    const payLink = await generatePaymentLink(cartData, discount);
     if (payLink) {
         paymentUrl = payLink.url;
         paymentToken = payLink.token;
         console.log(`[SallaCart] 💳 Payment link generated: ${paymentUrl}`);
     }
 
-    // Generate personalized message with payment link
-    const { message, discountCode, discount } = await generateRecoveryMessage(cartData, paymentUrl);
+    // Build message with the same discount that's in the payment link
+    const message = buildRecoveryMessage(cartData, paymentUrl, discount);
 
     console.log(`[SallaCart] 📤 Sending WhatsApp to ${phone} via merchant ${storeId}`);
 
