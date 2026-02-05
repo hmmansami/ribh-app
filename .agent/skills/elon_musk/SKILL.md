@@ -11,6 +11,22 @@ The goal: Cut 80% of the time. Ship in days what would take months. Delete every
 
 ---
 
+## AXIOM ZERO: NO LIMITS EXCEPT PHYSICS
+
+Before anything else, internalize this: **If it doesn't break the laws of physics, it is possible.** Full stop.
+
+This is not motivational fluff. This is the starting assumption for every problem. Musk drilled this into his teams relentlessly until they stopped saying "we can't" and started saying "we haven't figured out how yet." The difference is everything.
+
+**How to apply it**: When you hit a wall - "this API can't do that," "this framework doesn't support that," "that's not how it's done" - ask: **does physics (or the fundamental platform capability) actually forbid this?** If no, the constraint is convention, habit, or someone's past decision. Convention can be broken. Habits can change. Past decisions can be reversed.
+
+- "You can't deploy without a CI pipeline" - Does physics forbid deploying from a terminal? No. Push direct.
+- "You need a state management library for this" - Does the language forbid holding state in a variable? No. Use a variable.
+- "That would require rewriting the whole module" - Does physics forbid rewriting a module? No. If it's faster, rewrite it.
+
+**The mental shift**: Stop asking "is this possible?" Start asking "what would it take?" The answer to the first question is almost always yes. The answer to the second is where the real work begins.
+
+---
+
 ## PHASE 0: THE ALGORITHM (Mandatory Pre-Work)
 
 Before writing a single line of code or making any plan, run Musk's 5-Step Algorithm on the task. This is non-negotiable.
@@ -83,26 +99,38 @@ After running the Algorithm, define the perfect outcome.
 
 Now decompose the problem to its fundamentals.
 
-### The Idiot Index
+### The Idiot Index - Your Attack Radar
 
-For any component, system, or process:
+Musk doesn't just calculate this metric - he uses it to decide WHERE to attack. He looks at an industry, calculates the idiot index, and if it's high, that's where the opportunity is. SpaceX exists because rockets had a 50:1 idiot index (finished cost vs raw materials). Tesla exists because the auto industry had massive overhead between what a car costs to make and what it sells for.
 
-**Idiot Index = Actual Complexity / Minimum Possible Complexity**
+**Use it the same way. Scan the codebase/task for the highest idiot index, then attack THAT spot first.**
 
-- How many files does this actually need vs. how many are you creating?
-- How many API calls does this actually need vs. how many are being made?
-- How many database queries does this actually need vs. how many exist?
-- How many lines of code does this actually need vs. what's being written?
+**Idiot Index = Actual Cost / Minimum Possible Cost**
 
-**If the ratio is high, the approach is wrong.** Don't optimize the approach - find a different one.
+In software, "cost" means complexity, time, files, lines, dependencies, steps:
+
+| Dimension | Ask yourself |
+|-----------|-------------|
+| Files | How many files does this actually need vs. how many exist? |
+| Dependencies | How many npm packages does this need vs. how many are installed? |
+| API calls | How many round-trips does this need vs. how many are being made? |
+| Lines of code | How many lines does the core logic need vs. what's written? |
+| Build steps | How many steps does deploy need vs. how many are configured? |
+| Time to ship | How fast could this ship vs. how long is the current estimate? |
+
+**Calculate the index for each dimension. Rank them. Attack the highest ratio first.** That's where the biggest waste lives.
+
+**Example**: A feature needs 1 database write and 1 UI update. The current implementation has 3 API endpoints, 2 middleware layers, a validation schema, a DTO, a service class, and a repository pattern. Idiot index: ~8:1. The attack: delete the layers, write directly.
+
+**If the ratio is above 3:1, the approach is wrong.** Don't optimize - find a fundamentally different approach. Below 3:1, you're in reasonable territory.
 
 ### First Principles Questions:
 
 - **What are the raw materials?** (The actual data, the actual user action, the actual output needed)
-- **What does physics allow?** In software: what does the platform/language/API actually support directly? Not what the framework wraps - what the underlying system can do.
-- **Where is the 98% overhead?** SpaceX found rockets cost 50x their raw materials. Where is your 50x? It's usually in: unnecessary abstractions, over-general solutions, compatibility layers, and "enterprise patterns" applied to simple problems.
+- **What does the platform actually support directly?** Not what the framework wraps - what the underlying system can do. Go one layer below your current abstraction. Often the platform already does what you need and the framework is just overhead.
+- **Where is the 50x overhead?** SpaceX found rockets cost 50x their raw materials. In software, the overhead lives in: unnecessary abstractions, over-general solutions, compatibility layers, "enterprise patterns" applied to simple problems, and dependency chains where each layer adds its own complexity tax.
 
-**Gate check**: Identify the biggest source of unnecessary complexity and state how you'll eliminate it.
+**Gate check**: Calculate the idiot index for the task. State the highest-ratio dimension and how you'll collapse it.
 
 ---
 
