@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RIBH - الباقات</title>
+    <title>RIBH - الباقات والأسعار</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <style>
@@ -17,11 +17,13 @@
             --primary: #10B981;
             --primary-hover: #059669;
             --primary-dim: rgba(16, 185, 129, 0.12);
+            --secondary: #6366F1;
+            --gold: #F59E0B;
         }
         html { font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body { background: var(--bg); color: var(--text); min-height: 100dvh; }
 
-        .shell { max-width: 480px; margin: 0 auto; padding: 0 20px 40px; }
+        .shell { max-width: 720px; margin: 0 auto; padding: 0 20px 40px; }
 
         /* Header */
         .header { display: flex; align-items: center; gap: 12px; padding: 20px 0; margin-bottom: 8px; }
@@ -29,6 +31,11 @@
         .header-back:hover { background: var(--border); }
         .header-back svg { width: 18px; height: 18px; }
         .header-title { font-size: 18px; font-weight: 700; }
+
+        /* Hero */
+        .hero { text-align: center; margin-bottom: 32px; }
+        .hero-title { font-size: 28px; font-weight: 700; margin-bottom: 10px; line-height: 1.4; }
+        .hero-subtitle { font-size: 15px; color: var(--text-muted); font-weight: 400; line-height: 1.6; }
 
         /* Card base */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; }
@@ -60,8 +67,8 @@
 
         /* Plan cards */
         .plan-card {
-            padding: 24px 20px;
-            margin-bottom: 14px;
+            padding: 28px 24px;
+            margin-bottom: 16px;
             position: relative;
             overflow: hidden;
         }
@@ -81,14 +88,19 @@
             padding: 4px 16px;
             border-radius: 0 0 8px 8px;
         }
+        .plan-badge.gold {
+            background: var(--gold);
+            color: #000;
+        }
 
         .plan-header { margin-bottom: 20px; }
         .plan-card.recommended .plan-header { margin-top: 16px; }
-        .plan-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+        .plan-card.has-badge .plan-header { margin-top: 16px; }
+        .plan-name { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
 
-        .plan-price-row { display: flex; align-items: baseline; gap: 4px; }
+        .plan-price-row { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
         .plan-price {
-            font-size: 40px;
+            font-size: 42px;
             font-weight: 700;
             line-height: 1;
             color: var(--text);
@@ -105,6 +117,34 @@
             color: var(--text-muted);
             margin-right: 2px;
         }
+
+        /* Message box inside card */
+        .msg-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .msg-box-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .msg-box-row svg { width: 16px; height: 16px; color: var(--primary); flex-shrink: 0; }
+        .msg-box-row .extra { color: var(--text-muted); font-weight: 400; }
+
+        .msg-box.gold-box {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+        .msg-box.gold-box svg { color: var(--gold); }
+        .msg-box.gold-box .msg-box-row { color: var(--gold); font-weight: 600; }
 
         /* Feature list */
         .plan-features {
@@ -151,6 +191,7 @@
             justify-content: center;
             gap: 8px;
             transition: background 180ms, transform 120ms;
+            text-decoration: none;
         }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-primary:active { transform: scale(0.98); }
@@ -171,12 +212,166 @@
             justify-content: center;
             gap: 8px;
             transition: background 180ms, border-color 180ms;
+            text-decoration: none;
         }
         .btn-outline:hover { background: var(--card); border-color: #3f3f46; }
 
+        /* Calculator section */
+        .calc-section {
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+        .calc-card {
+            padding: 28px 24px;
+        }
+        .calc-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .calc-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+        .calc-slider-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .calc-slider-label span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .calc-msg-count {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .calc-slider {
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--border);
+            outline: none;
+            margin-bottom: 28px;
+        }
+        .calc-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        .calc-slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .calc-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .calc-result-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+        .calc-result-box.highlighted {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: var(--primary-dim);
+        }
+        .calc-result-plan {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+        .calc-result-price {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .calc-result-box.highlighted .calc-result-price {
+            color: var(--primary);
+        }
+        .calc-result-unit {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* Comparison table */
+        .compare-section {
+            margin-top: 32px;
+            margin-bottom: 32px;
+        }
+        .compare-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .compare-card {
+            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .compare-table th,
+        .compare-table td {
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .compare-table th:first-child,
+        .compare-table td:first-child {
+            text-align: right;
+            font-weight: 500;
+        }
+        .compare-table thead th {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 16px 16px;
+        }
+        .compare-table thead th.highlight-col {
+            color: var(--primary);
+            background: var(--primary-dim);
+        }
+        .compare-table tbody td.highlight-col {
+            background: rgba(16, 185, 129, 0.05);
+        }
+        .compare-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .check-yes { color: var(--primary); font-size: 16px; }
+        .check-no { color: #3f3f46; font-size: 16px; }
+
         /* FAQ section */
         .faq-section { margin-top: 32px; margin-bottom: 32px; }
-        .faq-title { font-size: 16px; font-weight: 700; margin-bottom: 14px; }
+        .faq-title { font-size: 18px; font-weight: 700; margin-bottom: 14px; text-align: center; }
 
         details {
             background: var(--card);
@@ -222,28 +417,32 @@
             line-height: 1.7;
         }
 
-        /* Bottom note */
-        .bottom-note {
+        /* Bottom CTA */
+        .bottom-cta {
             text-align: center;
-            padding: 20px 0;
+            padding: 32px 0 20px;
         }
-        .bottom-note-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
+        .bottom-cta-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
         }
-        .bottom-note-link {
+        .bottom-cta-link {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 14px;
+            gap: 8px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--primary);
             text-decoration: none;
-            transition: opacity 180ms;
+            padding: 12px 24px;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            background: var(--primary-dim);
+            transition: background 180ms, border-color 180ms;
         }
-        .bottom-note-link:hover { opacity: 0.8; }
-        .bottom-note-link svg { width: 16px; height: 16px; }
+        .bottom-cta-link:hover { background: rgba(16, 185, 129, 0.18); border-color: rgba(16, 185, 129, 0.4); }
+        .bottom-cta-link svg { width: 18px; height: 18px; }
 
         /* Animation */
         @keyframes fadeIn {
@@ -254,6 +453,18 @@
         .plan-card:nth-child(1) { animation-delay: 0ms; }
         .plan-card:nth-child(2) { animation-delay: 80ms; }
         .plan-card:nth-child(3) { animation-delay: 160ms; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .shell { padding: 0 16px 32px; }
+            .plan-card { padding: 22px 18px; }
+            .plan-price { font-size: 36px; }
+            .hero-title { font-size: 24px; }
+            .calc-results { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .calc-result-price { font-size: 18px; }
+            .compare-table th,
+            .compare-table td { padding: 10px 10px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
@@ -261,109 +472,172 @@
         <!-- Header -->
         <div class="header">
             <a href="/app" class="header-back"><i data-lucide="arrow-right"></i></a>
-            <h1 class="header-title">الباقات</h1>
+            <h1 class="header-title">الباقات والأسعار</h1>
+        </div>
+
+        <!-- Hero -->
+        <div class="hero">
+            <h2 class="hero-title">تسعير بسيط، نتائج مضاعفة</h2>
+            <p class="hero-subtitle">كل الباقات تشمل 7 أيام تجربة مجانية. بدون بطاقة ائتمان.</p>
         </div>
 
         <!-- Trial banner (shown dynamically) -->
         <div class="trial-banner" id="trial-banner" style="display: none;">
             <div class="trial-banner-icon"><i data-lucide="clock"></i></div>
             <div class="trial-banner-text">
-                الفترة التجريبية <span>- متبقي <strong id="trial-days">7</strong> ايام</span>
+                الفترة التجريبية <span>- متبقي <strong id="trial-days">7</strong> أيام</span>
             </div>
         </div>
 
         <!-- Plan Cards -->
         <div class="plans">
 
-            <!-- باقة البداية -->
+            <!-- باقة البداية (Starter) -->
             <div class="card plan-card">
                 <div class="plan-header">
                     <div class="plan-name">باقة البداية</div>
                     <div class="plan-price-row">
-                        <span class="plan-price">99</span>
+                        <span class="plan-price">199</span>
                         <span class="plan-currency">ر.س</span>
                         <span class="plan-period">/شهر</span>
                     </div>
                 </div>
+
+                <div class="msg-box">
+                    <div class="msg-box-row">
+                        <i data-lucide="mail"></i>
+                        <span>500 رسالة مشمولة</span>
+                    </div>
+                    <div class="msg-box-row">
+                        <i data-lucide="plus-circle"></i>
+                        <span class="extra">0.40 ر.س لكل رسالة إضافية</span>
+                    </div>
+                </div>
+
                 <ul class="plan-features">
-                    <li class="plan-feature">
-                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>500 رسالة شهريا</span>
-                    </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
                         <span>استرداد السلات المتروكة</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>رسائل AI ذكية</span>
+                        <span>رسائل واتساب بالذكاء الاصطناعي</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>تقارير اساسية</span>
+                        <span>حماية من البلوك</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>تقارير أساسية</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>دعم عبر الواتساب</span>
                     </li>
                 </ul>
-                <button class="btn-outline" data-plan="starter" onclick="choosePlan('starter')">اختر هذي الباقة</button>
+                <button class="btn-outline" onclick="choosePlan('starter')">ابدأ مجاناً</button>
             </div>
 
-            <!-- باقة النمو (Recommended) -->
+            <!-- باقة النمو (Growth) — RECOMMENDED -->
             <div class="card plan-card recommended">
-                <div class="plan-badge">الاكثر طلبا</div>
+                <div class="plan-badge">الأكثر طلباً</div>
                 <div class="plan-header">
                     <div class="plan-name">باقة النمو</div>
                     <div class="plan-price-row">
-                        <span class="plan-price">249</span>
+                        <span class="plan-price">399</span>
                         <span class="plan-currency">ر.س</span>
                         <span class="plan-period">/شهر</span>
                     </div>
                 </div>
+
+                <div class="msg-box">
+                    <div class="msg-box-row">
+                        <i data-lucide="mail"></i>
+                        <span>2,000 رسالة مشمولة</span>
+                    </div>
+                    <div class="msg-box-row">
+                        <i data-lucide="plus-circle"></i>
+                        <span class="extra">0.25 ر.س لكل رسالة إضافية</span>
+                    </div>
+                </div>
+
                 <ul class="plan-features">
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>2,000 رسالة شهريا</span>
+                        <span>استرداد السلات المتروكة</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>كل مميزات البداية</span>
+                        <span>رسائل واتساب بالذكاء الاصطناعي</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>اعادة تنشيط العملاء الخاملين</span>
+                        <span>حماية من البلوك</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>البيع الاضافي</span>
+                        <span>متابعة تصفح الزوار</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>عروض ما بعد الشراء</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>جمع التقييمات تلقائياً</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>تصنيف العملاء (RFM)</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>اختبارات A/B ذكية</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>أوقات إرسال محسّنة</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
                         <span>تقارير متقدمة</span>
                     </li>
-                    <li class="plan-feature">
-                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>اوقات ارسال ذكية</span>
-                    </li>
                 </ul>
-                <button class="btn-primary" data-plan="growth" onclick="choosePlan('growth')">اختر هذي الباقة</button>
+                <button class="btn-primary" onclick="choosePlan('growth')">ابدأ مجاناً</button>
             </div>
 
-            <!-- باقة الاحتراف -->
-            <div class="card plan-card">
+            <!-- باقة المؤسسات (Enterprise) -->
+            <div class="card plan-card has-badge">
+                <div class="plan-badge gold">عرض خاص</div>
                 <div class="plan-header">
-                    <div class="plan-name">باقة الاحتراف</div>
+                    <div class="plan-name">باقة المؤسسات</div>
                     <div class="plan-price-row">
-                        <span class="plan-price">499</span>
+                        <span class="plan-price">10,000</span>
                         <span class="plan-currency">ر.س</span>
-                        <span class="plan-period">/شهر</span>
+                    </div>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">إعداد شامل + اشتراك مخصص</div>
+                </div>
+
+                <div class="msg-box gold-box">
+                    <div class="msg-box-row">
+                        <i data-lucide="infinity"></i>
+                        <span>رسائل غير محدودة</span>
                     </div>
                 </div>
+
                 <ul class="plan-features">
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>10,000 رسالة شهريا</span>
+                        <span>كل مميزات باقة النمو</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>كل مميزات النمو</span>
+                        <span>برنامج ولاء كامل</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>تحليلات تنبؤية</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
@@ -375,43 +649,180 @@
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>دعم فني اولوية</span>
+                        <span>مدير حساب مخصص</span>
                     </li>
                     <li class="plan-feature">
                         <span class="plan-feature-icon"><i data-lucide="check"></i></span>
-                        <span>مدير حساب مخصص</span>
+                        <span>دعم أولوية على مدار الساعة</span>
+                    </li>
+                    <li class="plan-feature">
+                        <span class="plan-feature-icon"><i data-lucide="check"></i></span>
+                        <span>إعداد وتدريب مخصص</span>
                     </li>
                 </ul>
-                <button class="btn-outline" data-plan="pro" onclick="choosePlan('pro')">اختر هذي الباقة</button>
+                <a href="https://wa.me/966500000000" target="_blank" class="btn-outline" style="text-decoration: none;">تواصل معنا</a>
+            </div>
+        </div>
+
+        <!-- Message Calculator -->
+        <div class="calc-section">
+            <div class="card calc-card">
+                <div class="calc-title">احسب تكلفتك الشهرية</div>
+                <div class="calc-subtitle">حرّك المؤشر لتقدير التكلفة حسب عدد الرسائل المتوقعة</div>
+
+                <div class="calc-slider-label">
+                    <span>عدد الرسائل الشهرية</span>
+                    <span class="calc-msg-count" id="calc-messages">1,000</span>
+                </div>
+                <input type="range" class="calc-slider" id="msg-slider" min="100" max="10000" step="100" value="1000" oninput="updateCalc()">
+
+                <div class="calc-results">
+                    <div class="calc-result-box">
+                        <div class="calc-result-plan">باقة البداية</div>
+                        <div class="calc-result-price" id="calc-starter">399 ر.س</div>
+                        <div class="calc-result-unit">/شهر</div>
+                    </div>
+                    <div class="calc-result-box highlighted">
+                        <div class="calc-result-plan">باقة النمو</div>
+                        <div class="calc-result-price" id="calc-growth">399 ر.س</div>
+                        <div class="calc-result-unit">/شهر</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Comparison Table -->
+        <div class="compare-section">
+            <div class="compare-title">مقارنة المميزات</div>
+            <div class="card compare-card">
+                <table class="compare-table">
+                    <thead>
+                        <tr>
+                            <th>الميزة</th>
+                            <th>البداية</th>
+                            <th class="highlight-col">النمو</th>
+                            <th>المؤسسات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>استرداد السلات</td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>رسائل AI</td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>حماية البلوك</td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>متابعة التصفح</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>عروض بعد الشراء</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>جمع التقييمات</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>تصنيف RFM</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>A/B Testing</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-yes">&#10003;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>برنامج ولاء</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-no">&#10005;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>تحليلات تنبؤية</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-no">&#10005;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>API مفتوح</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-no">&#10005;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                        <tr>
+                            <td>مدير حساب</td>
+                            <td><span class="check-no">&#10005;</span></td>
+                            <td class="highlight-col"><span class="check-no">&#10005;</span></td>
+                            <td><span class="check-yes">&#10003;</span></td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
         <!-- FAQ -->
         <div class="faq-section">
-            <div class="faq-title">اسئلة شائعة</div>
+            <div class="faq-title">أسئلة شائعة</div>
 
             <details>
-                <summary>هل يمكنني تغيير الباقة لاحقا؟</summary>
-                <div class="faq-answer">نعم، يمكنك الترقية او التخفيض في اي وقت</div>
+                <summary>هل يمكنني تغيير الباقة لاحقاً؟</summary>
+                <div class="faq-answer">نعم، يمكنك الترقية أو التخفيض في أي وقت.</div>
             </details>
 
             <details>
                 <summary>هل هناك عقد؟</summary>
-                <div class="faq-answer">لا، اشتراك شهري بدون التزام</div>
+                <div class="faq-answer">لا، اشتراك شهري بدون التزام.</div>
             </details>
 
             <details>
-                <summary>ماذا يحدث اذا تجاوزت الحد؟</summary>
-                <div class="faq-answer">يتم ايقاف الرسائل مؤقتا حتى تجديد الباقة او الترقية</div>
+                <summary>ماذا يحدث إذا تجاوزت الحد؟</summary>
+                <div class="faq-answer">يتم احتساب الرسائل الإضافية تلقائياً حسب سعر الرسالة الإضافية في باقتك. لن يتم إيقاف رسائلك أبداً.</div>
+            </details>
+
+            <details>
+                <summary>كيف يعمل حساب الرسائل؟</summary>
+                <div class="faq-answer">كل رسالة واتساب أو SMS أو إيميل تُحتسب كرسالة واحدة. الرسائل المشمولة تتجدد شهرياً.</div>
+            </details>
+
+            <details>
+                <summary>ماذا يشمل عرض المؤسسات؟</summary>
+                <div class="faq-answer">إعداد كامل لمتجرك، تدريب فريقك، مدير حساب مخصص، ورسائل غير محدودة. تواصل معنا للتفاصيل.</div>
+            </details>
+
+            <details>
+                <summary>هل هناك فترة تجريبية؟</summary>
+                <div class="faq-answer">نعم، كل الباقات تشمل 7 أيام تجربة مجانية بكامل المميزات. بدون بطاقة ائتمان.</div>
             </details>
         </div>
 
-        <!-- Bottom note -->
-        <div class="bottom-note">
-            <div class="bottom-note-text">تواصل معنا للباقات المخصصة</div>
-            <a href="https://wa.me/966500000000" target="_blank" class="bottom-note-link">
+        <!-- Bottom CTA -->
+        <div class="bottom-cta">
+            <div class="bottom-cta-text">ما تعرف أي باقة تناسبك؟</div>
+            <a href="https://wa.me/966500000000" target="_blank" class="bottom-cta-link">
                 <i data-lucide="message-circle"></i>
-                <span>تواصل عبر الواتساب</span>
+                <span>تواصل معنا عبر الواتساب</span>
             </a>
         </div>
     </div>
@@ -423,6 +834,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             lucide.createIcons();
             loadTrialStatus();
+            updateCalc();
         });
 
         // Check trial status and show banner if applicable
@@ -448,20 +860,26 @@
             }
         }
 
-        // Expose choosePlan to global scope
+        // Message cost calculator
+        window.updateCalc = function() {
+            var messages = parseInt(document.getElementById('msg-slider').value);
+            var starterCost = 199 + Math.max(0, messages - 500) * 0.40;
+            var growthCost = 399 + Math.max(0, messages - 2000) * 0.25;
+            document.getElementById('calc-starter').textContent = Math.round(starterCost).toLocaleString('ar-SA') + ' ر.س';
+            document.getElementById('calc-growth').textContent = Math.round(growthCost).toLocaleString('ar-SA') + ' ر.س';
+            document.getElementById('calc-messages').textContent = messages.toLocaleString('ar-SA');
+        };
+
+        // Plan selection
         window.choosePlan = function(plan) {
-            var params = new URLSearchParams(window.location.search);
-            var merchantId = params.get('merchant');
+            var sallaInstallUrl = 'https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de';
+            var whatsappUrl = 'https://wa.me/966500000000';
 
-            var planNames = {
-                starter: 'باقة البداية',
-                growth: 'باقة النمو',
-                pro: 'باقة الاحتراف'
-            };
-
-            // For now, redirect to WhatsApp with plan info
-            var message = encodeURIComponent('مرحبا، ابي اشترك في ' + (planNames[plan] || plan));
-            window.open('https://wa.me/966500000000?text=' + message, '_blank');
+            if (plan === 'enterprise') {
+                window.open(whatsappUrl, '_blank');
+            } else {
+                window.location.href = sallaInstallUrl;
+            }
         };
     })();
     </script>

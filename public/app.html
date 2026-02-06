@@ -35,7 +35,7 @@
 
         /* ── Layout ── */
         .shell {
-            max-width: 480px;
+            max-width: 960px;
             margin: 0 auto;
             padding: 0 20px;
             min-height: 100dvh;
@@ -113,6 +113,16 @@
             border-radius: 14px;
         }
 
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title svg { width: 16px; height: 16px; color: var(--primary); }
+
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            STATE 1: not_connected
         ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -156,7 +166,7 @@
             font-weight: 600;
         }
 
-        .s1-actions { width: 100%; max-width: 320px; }
+        .s1-actions { width: 100%; max-width: 380px; }
 
         .s1-trust {
             font-size: 12px;
@@ -392,6 +402,16 @@
             white-space: nowrap;
         }
 
+        /* S3 campaigns grid for desktop */
+        @media (min-width: 640px) {
+            .s3-campaigns-list {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .s3-campaign { margin-bottom: 0; }
+        }
+
         /* Message preview */
         .s3-preview { margin-bottom: 24px; }
         .s3-preview-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
@@ -454,6 +474,7 @@
         .toggle-switch input:checked + .toggle-slider::before { transform: translateX(-20px); }
 
         .s3-actions { margin-top: auto; padding-bottom: 24px; }
+        .s3-actions .btn-primary { max-width: 480px; margin: 0 auto; }
 
         /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
            STATE 4: active
@@ -489,9 +510,9 @@
         .s4-settings-btn:hover { background: var(--border); }
         .s4-settings-btn svg { width: 16px; height: 16px; }
 
-        .s4-hero { text-align: center; margin-bottom: 28px; }
+        .s4-hero { text-align: center; margin-bottom: 8px; }
         .s4-hero-number {
-            font-size: 48px;
+            font-size: 52px;
             font-weight: 700;
             color: var(--primary);
             line-height: 1;
@@ -500,7 +521,7 @@
             display: inline-block;
         }
         .s4-hero-currency {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             color: var(--primary);
             opacity: 0.7;
@@ -511,6 +532,16 @@
             color: var(--text-muted);
             margin-top: 4px;
         }
+        .s4-hero-period {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .s4-hero-period svg { width: 12px; height: 12px; }
 
         .s4-stats {
             display: grid;
@@ -519,28 +550,253 @@
             margin-bottom: 28px;
         }
         .s4-stat {
-            padding: 14px 8px;
+            padding: 18px 12px;
             text-align: center;
         }
         .s4-stat-value {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
         .s4-stat-label {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-muted);
             line-height: 1.4;
         }
         .s4-stat-pct {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--primary);
             font-weight: 600;
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
-        /* Activity feed */
-        .s4-activity { flex: 1; margin-bottom: 20px; }
+        /* ── Feature Modules ── */
+        .s4-modules { margin-bottom: 24px; }
+
+        .feature-module {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: border-color 200ms;
+        }
+        .feature-module:hover {
+            border-color: #3f3f46;
+        }
+        .feature-module-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+        .feature-module-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .feature-module-icon svg { width: 20px; height: 20px; color: var(--primary); }
+        .feature-module-text { min-width: 0; }
+        .feature-module-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+        .feature-module-metric { font-size: 12px; color: var(--text-muted); }
+        .feature-module-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .feature-module-status {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+        .feature-module-status.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+        }
+        .feature-module-status.inactive {
+            background: rgba(113, 113, 122, 0.12);
+            color: var(--text-muted);
+        }
+
+        /* Desktop layout for modules */
+        @media (min-width: 640px) {
+            .s4-modules-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+        /* Mobile: single column */
+        @media (max-width: 639px) {
+            .s4-modules-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        /* ── Funnel (horizontal bar chart) ── */
+        .s4-funnel { margin-bottom: 24px; }
+        .s4-funnel-card { padding: 20px; }
+
+        .s4-funnel-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .s4-funnel-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .s4-funnel-bar-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            width: 80px;
+            flex-shrink: 0;
+            text-align: start;
+        }
+        .s4-funnel-bar-track {
+            flex: 1;
+            height: 28px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .s4-funnel-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10px;
+            min-width: 36px;
+        }
+        .s4-funnel-bar-fill.level-1 { background: rgba(16, 185, 129, 0.3); }
+        .s4-funnel-bar-fill.level-2 { background: rgba(16, 185, 129, 0.45); }
+        .s4-funnel-bar-fill.level-3 { background: rgba(16, 185, 129, 0.6); }
+        .s4-funnel-bar-fill.level-4 { background: var(--primary); }
+        .s4-funnel-bar-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+        .s4-funnel-rate {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .s4-funnel-rate-label { font-size: 13px; color: var(--text-muted); }
+        .s4-funnel-rate-value { font-size: 16px; font-weight: 700; color: var(--primary); }
+
+        /* ── AI Insights ── */
+        .s4-insights { margin-bottom: 24px; }
+        .s4-insights-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .s4-insights-title svg { width: 16px; height: 16px; color: var(--primary); }
+        .s4-insight-item { padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
+        .s4-insight-item + .s4-insight-item { border-top: 1px solid var(--border); }
+        .s4-insight-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+        .s4-insight-icon svg { width: 16px; height: 16px; color: var(--primary); }
+        .s4-insight-text { font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+        .s4-insight-text strong { color: var(--text); font-weight: 600; }
+
+        /* ── Customer Segments ── */
+        .s4-segments { margin-bottom: 24px; }
+        .s4-segments-card { padding: 20px; }
+
+        .segments-bar {
+            display: flex;
+            height: 24px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .segments-bar > div {
+            transition: width 1s ease;
+        }
+        .segment-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .segment-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .segment-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .segment-count {
+            font-weight: 600;
+            color: var(--text);
+            margin-right: 2px;
+        }
+
+        /* ── WhatsApp status card ── */
+        .s4-wa-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+        .s4-wa-right { display: flex; align-items: center; gap: 10px; }
+        .s4-wa-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+        .s4-wa-dot.offline { background: #EF4444; }
+        .s4-wa-info {}
+        .s4-wa-label { font-size: 13px; font-weight: 600; }
+        .s4-wa-phone { font-size: 12px; color: var(--text-muted); direction: ltr; text-align: right; }
+        .s4-wa-settings { font-size: 12px; color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        /* ── Usage meter ── */
+        .s4-usage { margin-bottom: 24px; }
+        .s4-usage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .s4-usage-title { font-size: 15px; font-weight: 700; }
+        .s4-usage-plan { font-size: 12px; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+        .s4-usage-card { padding: 16px; }
+        .s4-usage-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .s4-usage-label { font-size: 13px; font-weight: 500; }
+        .s4-usage-count { font-size: 13px; font-weight: 600; direction: ltr; }
+
+        .s4-usage-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+        .s4-usage-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 600ms ease; }
+        .s4-usage-fill.warning { background: #F59E0B; }
+        .s4-usage-fill.danger { background: #EF4444; }
+
+        .s4-trial-badge { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(16, 185, 129, 0.06); border-radius: 10px; border-top: 1px solid var(--border); }
+        .s4-trial-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .s4-trial-icon svg { width: 14px; height: 14px; color: var(--primary); }
+        .s4-trial-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .s4-trial-text strong { color: var(--primary); font-weight: 600; }
+
+        /* ── Activity feed ── */
+        .s4-activity { margin-bottom: 24px; }
 
         .s4-activity-header {
             display: flex;
@@ -549,8 +805,8 @@
             margin-bottom: 14px;
         }
         .s4-activity-title {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
         }
         .s4-live-badge {
             display: flex;
@@ -633,86 +889,25 @@
 
         .s4-footer { padding-bottom: 24px; }
 
-        /* State 4 - Campaign toggles */
-        .s4-campaigns { margin-bottom: 20px; }
-        .s4-campaigns-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
-
-        .s4-campaign {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px;
-            margin-bottom: 8px;
+        /* ── Two-column layout for desktop state 4 ── */
+        @media (min-width: 640px) {
+            .s4-two-col {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                align-items: start;
+            }
+            .s4-two-col > .s4-col-full {
+                grid-column: 1 / -1;
+            }
         }
-        .s4-campaign-right { display: flex; align-items: center; gap: 10px; }
-        .s4-campaign-left { display: flex; align-items: center; gap: 10px; }
-        .s4-campaign-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; }
-        .s4-campaign-icon svg { width: 16px; height: 16px; color: var(--primary); }
-        .s4-campaign-name { font-size: 13px; font-weight: 600; }
-        .s4-campaign-stat { font-size: 11px; color: var(--text-muted); }
-
-        /* WhatsApp status card */
-        .s4-wa-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px;
-            margin-bottom: 20px;
+        @media (max-width: 639px) {
+            .s4-two-col {
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
         }
-        .s4-wa-right { display: flex; align-items: center; gap: 10px; }
-        .s4-wa-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
-        .s4-wa-dot.offline { background: #EF4444; }
-        .s4-wa-info {}
-        .s4-wa-label { font-size: 13px; font-weight: 600; }
-        .s4-wa-phone { font-size: 12px; color: var(--text-muted); direction: ltr; text-align: right; }
-        .s4-wa-settings { font-size: 12px; color: var(--primary); font-weight: 600; text-decoration: none; cursor: pointer; }
-
-        /* Usage meter */
-        .s4-usage { margin-bottom: 20px; }
-        .s4-usage-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .s4-usage-title { font-size: 13px; font-weight: 600; color: var(--text-muted); }
-        .s4-usage-plan { font-size: 11px; color: var(--primary); font-weight: 600; cursor: pointer; }
-
-        .s4-usage-card { padding: 16px; }
-        .s4-usage-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .s4-usage-label { font-size: 13px; font-weight: 500; }
-        .s4-usage-count { font-size: 13px; font-weight: 600; direction: ltr; }
-
-        .s4-usage-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
-        .s4-usage-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 600ms ease; }
-        .s4-usage-fill.warning { background: #F59E0B; }
-        .s4-usage-fill.danger { background: #EF4444; }
-
-        .s4-trial-badge { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: rgba(16, 185, 129, 0.06); border-radius: 10px; border-top: 1px solid var(--border); }
-        .s4-trial-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .s4-trial-icon svg { width: 14px; height: 14px; color: var(--primary); }
-        .s4-trial-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-        .s4-trial-text strong { color: var(--primary); font-weight: 600; }
-
-        /* Analytics funnel */
-        .s4-funnel { margin-bottom: 20px; }
-        .s4-funnel-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; }
-        .s4-funnel-card { padding: 16px; }
-        .s4-funnel-steps { display: flex; align-items: center; justify-content: space-between; }
-        .s4-funnel-step { text-align: center; flex: 1; }
-        .s4-funnel-step-value { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
-        .s4-funnel-step-label { font-size: 10px; color: var(--text-muted); line-height: 1.3; }
-        .s4-funnel-arrow { color: var(--border); flex-shrink: 0; padding: 0 2px; }
-        .s4-funnel-arrow svg { width: 14px; height: 14px; }
-        .s4-funnel-rate { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
-        .s4-funnel-rate-label { font-size: 12px; color: var(--text-muted); }
-        .s4-funnel-rate-value { font-size: 14px; font-weight: 700; color: var(--primary); }
-
-        /* AI Insights */
-        .s4-insights { margin-bottom: 20px; }
-        .s4-insights-title { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-        .s4-insights-title svg { width: 14px; height: 14px; color: var(--primary); }
-        .s4-insight-item { padding: 12px 14px; display: flex; align-items: flex-start; gap: 10px; }
-        .s4-insight-item + .s4-insight-item { border-top: 1px solid var(--border); }
-        .s4-insight-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--primary-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
-        .s4-insight-icon svg { width: 14px; height: 14px; color: var(--primary); }
-        .s4-insight-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); }
-        .s4-insight-text strong { color: var(--text); font-weight: 600; }
 
         /* Message editor modal */
         .modal-overlay {
@@ -728,7 +923,7 @@
         .modal-overlay.is-open { display: flex; }
         .modal-sheet {
             width: 100%;
-            max-width: 480px;
+            max-width: 580px;
             background: var(--card);
             border-radius: 20px 20px 0 0;
             padding: 24px 20px 32px;
@@ -896,54 +1091,90 @@
                         <div class="s3-campaigns-subtitle">اختر الحملات اللي تبي تشغلها</div>
                     </div>
 
-                    <div class="s3-campaign card">
-                        <div class="s3-campaign-info">
-                            <div class="s3-campaign-icon"><i data-lucide="shopping-cart"></i></div>
-                            <div class="s3-campaign-text">
-                                <div class="s3-campaign-name">استرداد السلات المتروكة</div>
-                                <div class="s3-campaign-desc">ارسال تذكير تلقائي للعملاء اللي تركوا سلاتهم</div>
+                    <div class="s3-campaigns-list">
+                        <div class="s3-campaign card">
+                            <div class="s3-campaign-info">
+                                <div class="s3-campaign-icon"><i data-lucide="shopping-cart"></i></div>
+                                <div class="s3-campaign-text">
+                                    <div class="s3-campaign-name">استرداد السلات المتروكة</div>
+                                    <div class="s3-campaign-desc">ارسال تذكير تلقائي للعملاء اللي تركوا سلاتهم</div>
+                                </div>
+                            </div>
+                            <div class="s3-campaign-control">
+                                <span class="s3-campaign-count" id="s3-campaign-cart-count">0 سلة</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-campaign="cart_recovery">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="s3-campaign-control">
-                            <span class="s3-campaign-count" id="s3-campaign-cart-count">0 سلة</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="cart_recovery">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="s3-campaign card">
-                        <div class="s3-campaign-info">
-                            <div class="s3-campaign-icon"><i data-lucide="user-check"></i></div>
-                            <div class="s3-campaign-text">
-                                <div class="s3-campaign-name">إعادة تنشيط العملاء الخاملين</div>
-                                <div class="s3-campaign-desc">تواصل مع العملاء اللي ما اشتروا من فترة</div>
+                        <div class="s3-campaign card">
+                            <div class="s3-campaign-info">
+                                <div class="s3-campaign-icon"><i data-lucide="user-check"></i></div>
+                                <div class="s3-campaign-text">
+                                    <div class="s3-campaign-name">إعادة تنشيط العملاء الخاملين</div>
+                                    <div class="s3-campaign-desc">تواصل مع العملاء اللي ما اشتروا من فترة</div>
+                                </div>
+                            </div>
+                            <div class="s3-campaign-control">
+                                <span class="s3-campaign-count" id="s3-campaign-dormant-count">0 عميل</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-campaign="dormant_reactivation">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="s3-campaign-control">
-                            <span class="s3-campaign-count" id="s3-campaign-dormant-count">0 عميل</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="dormant_reactivation">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
 
-                    <div class="s3-campaign card">
-                        <div class="s3-campaign-info">
-                            <div class="s3-campaign-icon"><i data-lucide="gift"></i></div>
-                            <div class="s3-campaign-text">
-                                <div class="s3-campaign-name">عروض البيع الإضافي</div>
-                                <div class="s3-campaign-desc">اقتراح منتجات مكملة بعد الشراء</div>
+                        <div class="s3-campaign card">
+                            <div class="s3-campaign-info">
+                                <div class="s3-campaign-icon"><i data-lucide="gift"></i></div>
+                                <div class="s3-campaign-text">
+                                    <div class="s3-campaign-name">عروض البيع الإضافي</div>
+                                    <div class="s3-campaign-desc">اقتراح منتجات مكملة بعد الشراء</div>
+                                </div>
+                            </div>
+                            <div class="s3-campaign-control">
+                                <span class="s3-campaign-count" id="s3-campaign-upsell-count">0 فرصة</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-campaign="post_purchase_upsell">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="s3-campaign-control">
-                            <span class="s3-campaign-count" id="s3-campaign-upsell-count">0 فرصة</span>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="post_purchase_upsell">
-                                <span class="toggle-slider"></span>
-                            </label>
+
+                        <div class="s3-campaign card">
+                            <div class="s3-campaign-info">
+                                <div class="s3-campaign-icon"><i data-lucide="eye"></i></div>
+                                <div class="s3-campaign-text">
+                                    <div class="s3-campaign-name">متابعة التصفح</div>
+                                    <div class="s3-campaign-desc">ارسال تذكير بالمنتجات اللي شافها العميل</div>
+                                </div>
+                            </div>
+                            <div class="s3-campaign-control">
+                                <span class="s3-campaign-count" id="s3-campaign-browse-count">0 منتج</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-campaign="browse_abandonment">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="s3-campaign card">
+                            <div class="s3-campaign-info">
+                                <div class="s3-campaign-icon"><i data-lucide="star"></i></div>
+                                <div class="s3-campaign-text">
+                                    <div class="s3-campaign-name">جمع التقييمات</div>
+                                    <div class="s3-campaign-desc">طلب تقييم تلقائي بعد استلام الطلب</div>
+                                </div>
+                            </div>
+                            <div class="s3-campaign-control">
+                                <span class="s3-campaign-count" id="s3-campaign-review-count">0 تقييم</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-campaign="review_collection">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1004,14 +1235,20 @@
                     </div>
                 </div>
 
+                <!-- Revenue Hero -->
                 <div class="s4-hero">
                     <div>
                         <span class="s4-hero-currency">ر.س</span>
                         <span class="s4-hero-number" id="s4-hero-recovered">0</span>
                     </div>
                     <div class="s4-hero-label">تم استردادها حتى الآن</div>
+                    <div class="s4-hero-period">
+                        <i data-lucide="calendar"></i>
+                        <span>هذا الشهر</span>
+                    </div>
                 </div>
 
+                <!-- Stats Row -->
                 <div class="s4-stats">
                     <div class="card s4-stat">
                         <div class="s4-stat-value" id="s4-sent">0</div>
@@ -1029,162 +1266,290 @@
                     </div>
                 </div>
 
-                <!-- WhatsApp Status -->
-                <div class="card s4-wa-status">
-                    <div class="s4-wa-right">
-                        <span class="s4-wa-dot" id="s4-wa-dot"></span>
-                        <div class="s4-wa-info">
-                            <div class="s4-wa-label" id="s4-wa-label">الواتساب متصل</div>
-                            <div class="s4-wa-phone" id="s4-wa-phone"></div>
-                        </div>
+                <!-- Feature Modules -->
+                <div class="s4-modules">
+                    <div class="section-title">
+                        <i data-lucide="layers"></i>
+                        <span>المحركات النشطة</span>
                     </div>
-                    <a href="/whatsapp.html" class="s4-wa-settings">إعدادات</a>
-                </div>
+                    <div class="s4-modules-grid">
+                        <div class="feature-module" data-module="cart_recovery">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="shopping-cart"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">استرداد السلات</div>
+                                    <div class="feature-module-metric" id="s4-mod-cart-metric">0 سلة مستردة</div>
+                                </div>
+                            </div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status active">نشط</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-module-toggle="cart_recovery">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
 
-                <!-- Active Campaigns -->
-                <div class="s4-campaigns">
-                    <div class="s4-campaigns-title">الحملات النشطة</div>
-                    <div class="card s4-campaign">
-                        <div class="s4-campaign-left">
-                            <div class="s4-campaign-icon"><i data-lucide="shopping-cart"></i></div>
-                            <div>
-                                <div class="s4-campaign-name">استرداد السلات</div>
-                                <div class="s4-campaign-stat" id="s4-camp-cart-stat">يعمل</div>
+                        <div class="feature-module" data-module="browse_abandonment">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="eye"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">متابعة التصفح</div>
+                                    <div class="feature-module-metric" id="s4-mod-browse-metric">0 منتج متابع</div>
+                                </div>
+                            </div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status active">نشط</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-module-toggle="browse_abandonment">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="s4-campaign-right">
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="cart_recovery">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card s4-campaign">
-                        <div class="s4-campaign-left">
-                            <div class="s4-campaign-icon"><i data-lucide="user-check"></i></div>
-                            <div>
-                                <div class="s4-campaign-name">إعادة التنشيط</div>
-                                <div class="s4-campaign-stat" id="s4-camp-winback-stat">يعمل</div>
-                            </div>
-                        </div>
-                        <div class="s4-campaign-right">
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="winback">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="card s4-campaign">
-                        <div class="s4-campaign-left">
-                            <div class="s4-campaign-icon"><i data-lucide="gift"></i></div>
-                            <div>
-                                <div class="s4-campaign-name">البيع الإضافي</div>
-                                <div class="s4-campaign-stat" id="s4-camp-upsell-stat">يعمل</div>
-                            </div>
-                        </div>
-                        <div class="s4-campaign-right">
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked data-campaign="upsell">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Analytics Funnel -->
-                <div class="s4-funnel">
-                    <div class="s4-funnel-title">مسار الاسترداد</div>
-                    <div class="card s4-funnel-card">
-                        <div class="s4-funnel-steps">
-                            <div class="s4-funnel-step">
-                                <div class="s4-funnel-step-value" id="s4-funnel-carts">0</div>
-                                <div class="s4-funnel-step-label">سلة متروكة</div>
+                        <div class="feature-module" data-module="post_purchase_upsell">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="gift"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">البيع الإضافي</div>
+                                    <div class="feature-module-metric" id="s4-mod-upsell-metric">0 عرض مرسل</div>
+                                </div>
                             </div>
-                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
-                            <div class="s4-funnel-step">
-                                <div class="s4-funnel-step-value" id="s4-funnel-sent">0</div>
-                                <div class="s4-funnel-step-label">رسالة مرسلة</div>
-                            </div>
-                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
-                            <div class="s4-funnel-step">
-                                <div class="s4-funnel-step-value" id="s4-funnel-opened">0</div>
-                                <div class="s4-funnel-step-label">تم الفتح</div>
-                            </div>
-                            <div class="s4-funnel-arrow"><i data-lucide="chevron-left"></i></div>
-                            <div class="s4-funnel-step">
-                                <div class="s4-funnel-step-value" id="s4-funnel-recovered">0</div>
-                                <div class="s4-funnel-step-label">تم الشراء</div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status active">نشط</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-module-toggle="post_purchase_upsell">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
-                        <div class="s4-funnel-rate">
-                            <span class="s4-funnel-rate-label">نسبة الاسترداد</span>
-                            <span class="s4-funnel-rate-value" id="s4-funnel-rate-pct">0%</span>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Usage Meter -->
-                <div class="s4-usage">
-                    <div class="s4-usage-header">
-                        <span class="s4-usage-title">الاستخدام</span>
-                        <a class="s4-usage-plan" href="/pricing.html">ترقية الباقة</a>
-                    </div>
-                    <div class="card s4-usage-card">
-                        <div class="s4-usage-row">
-                            <span class="s4-usage-label">الرسائل المرسلة</span>
-                            <span class="s4-usage-count" id="s4-usage-count">0 / 500</span>
+                        <div class="feature-module" data-module="review_collection">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="star"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">جمع التقييمات</div>
+                                    <div class="feature-module-metric" id="s4-mod-review-metric">0 تقييم مجمع</div>
+                                </div>
+                            </div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status active">نشط</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-module-toggle="review_collection">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
-                        <div class="s4-usage-bar">
-                            <div class="s4-usage-fill" id="s4-usage-fill" style="width: 0%"></div>
+
+                        <div class="feature-module" data-module="winback">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="user-check"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">إعادة التنشيط</div>
+                                    <div class="feature-module-metric" id="s4-mod-winback-metric">0 عميل نشط</div>
+                                </div>
+                            </div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status active">نشط</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked data-module-toggle="winback">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
                         </div>
-                        <div class="s4-trial-badge">
-                            <div class="s4-trial-icon"><i data-lucide="clock"></i></div>
-                            <div class="s4-trial-text" id="s4-trial-text">
-                                الفترة التجريبية: متبقي <strong id="s4-trial-days">7</strong> ايام مجانا
+
+                        <div class="feature-module" data-module="loyalty">
+                            <div class="feature-module-info">
+                                <div class="feature-module-icon"><i data-lucide="crown"></i></div>
+                                <div class="feature-module-text">
+                                    <div class="feature-module-name">برنامج الولاء</div>
+                                    <div class="feature-module-metric" id="s4-mod-loyalty-metric">0 عضو</div>
+                                </div>
+                            </div>
+                            <div class="feature-module-actions">
+                                <span class="feature-module-status inactive" id="s4-mod-loyalty-status">معطل</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" data-module-toggle="loyalty">
+                                    <span class="toggle-slider"></span>
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- AI Insights -->
-                <div class="s4-insights">
-                    <div class="s4-insights-title">
-                        <i data-lucide="sparkles"></i>
-                        <span>توصيات ذكية</span>
-                    </div>
-                    <div class="card">
-                        <div class="s4-insight-item">
-                            <div class="s4-insight-icon"><i data-lucide="clock"></i></div>
-                            <div class="s4-insight-text" id="s4-insight-time">
-                                <strong>افضل وقت للارسال:</strong> بين 2-4 عصراً. عملائك يفتحون الرسائل اكثر في هالوقت
-                            </div>
-                        </div>
-                        <div class="s4-insight-item">
-                            <div class="s4-insight-icon"><i data-lucide="trending-up"></i></div>
-                            <div class="s4-insight-text" id="s4-insight-rate">
-                                نسبة استردادك <strong>اعلى من المتوسط</strong> - استمر على نفس الاستراتيجية
-                            </div>
-                        </div>
-                        <div class="s4-insight-item">
-                            <div class="s4-insight-icon"><i data-lucide="zap"></i></div>
-                            <div class="s4-insight-text" id="s4-insight-tip">
-                                <strong>نصيحة:</strong> فعّل حملة إعادة التنشيط للوصول لـ 340 عميل خامل
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div class="s4-two-col">
 
-                <div class="s4-activity">
-                    <div class="s4-activity-header">
-                        <span class="s4-activity-title">النشاطات</span>
-                        <span class="s4-live-badge">
-                            <span class="s4-live-dot"></span>
-                            <span>مباشر</span>
-                        </span>
+                    <!-- Analytics Funnel -->
+                    <div class="s4-funnel">
+                        <div class="section-title">
+                            <i data-lucide="bar-chart-3"></i>
+                            <span>مسار الاسترداد</span>
+                        </div>
+                        <div class="card s4-funnel-card">
+                            <div class="s4-funnel-bars">
+                                <div class="s4-funnel-bar-row">
+                                    <span class="s4-funnel-bar-label">سلة متروكة</span>
+                                    <div class="s4-funnel-bar-track">
+                                        <div class="s4-funnel-bar-fill level-1" id="s4-funnel-bar-carts" style="width:100%">
+                                            <span class="s4-funnel-bar-value" id="s4-funnel-carts">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="s4-funnel-bar-row">
+                                    <span class="s4-funnel-bar-label">رسالة مرسلة</span>
+                                    <div class="s4-funnel-bar-track">
+                                        <div class="s4-funnel-bar-fill level-2" id="s4-funnel-bar-sent" style="width:70%">
+                                            <span class="s4-funnel-bar-value" id="s4-funnel-sent">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="s4-funnel-bar-row">
+                                    <span class="s4-funnel-bar-label">تم الفتح</span>
+                                    <div class="s4-funnel-bar-track">
+                                        <div class="s4-funnel-bar-fill level-3" id="s4-funnel-bar-opened" style="width:45%">
+                                            <span class="s4-funnel-bar-value" id="s4-funnel-opened">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="s4-funnel-bar-row">
+                                    <span class="s4-funnel-bar-label">تم الشراء</span>
+                                    <div class="s4-funnel-bar-track">
+                                        <div class="s4-funnel-bar-fill level-4" id="s4-funnel-bar-recovered" style="width:12%">
+                                            <span class="s4-funnel-bar-value" id="s4-funnel-recovered">0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="s4-funnel-rate">
+                                <span class="s4-funnel-rate-label">نسبة الاسترداد</span>
+                                <span class="s4-funnel-rate-value" id="s4-funnel-rate-pct">0%</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="s4-activity-list" id="s4-activity-list">
-                        <div class="s4-empty">لا توجد بيانات بعد</div>
+
+                    <!-- Customer Segments -->
+                    <div class="s4-segments">
+                        <div class="section-title">
+                            <i data-lucide="pie-chart"></i>
+                            <span>شرائح العملاء</span>
+                        </div>
+                        <div class="card s4-segments-card">
+                            <div class="segments-bar" id="s4-segments-bar">
+                                <div style="width:15%;background:#10B981" title="أبطال"></div>
+                                <div style="width:25%;background:#3B82F6" title="أوفياء"></div>
+                                <div style="width:20%;background:#8B5CF6" title="جدد"></div>
+                                <div style="width:22%;background:#F59E0B" title="معرضون للمغادرة"></div>
+                                <div style="width:18%;background:#EF4444" title="خاملون"></div>
+                            </div>
+                            <div class="segment-legend" id="s4-segments-legend">
+                                <div class="segment-item">
+                                    <span class="segment-dot" style="background:#10B981"></span>
+                                    <span>أبطال</span>
+                                    <span class="segment-count" id="s4-seg-champions">0</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span class="segment-dot" style="background:#3B82F6"></span>
+                                    <span>أوفياء</span>
+                                    <span class="segment-count" id="s4-seg-loyal">0</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span class="segment-dot" style="background:#8B5CF6"></span>
+                                    <span>جدد</span>
+                                    <span class="segment-count" id="s4-seg-new">0</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span class="segment-dot" style="background:#F59E0B"></span>
+                                    <span>معرضون</span>
+                                    <span class="segment-count" id="s4-seg-atrisk">0</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span class="segment-dot" style="background:#EF4444"></span>
+                                    <span>خاملون</span>
+                                    <span class="segment-count" id="s4-seg-dormant">0</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- AI Insights -->
+                    <div class="s4-insights">
+                        <div class="s4-insights-title">
+                            <i data-lucide="sparkles"></i>
+                            <span>توصيات ذكية</span>
+                        </div>
+                        <div class="card">
+                            <div class="s4-insight-item">
+                                <div class="s4-insight-icon"><i data-lucide="clock"></i></div>
+                                <div class="s4-insight-text" id="s4-insight-time">
+                                    <strong>افضل وقت للارسال:</strong> بين 2-4 عصراً. عملائك يفتحون الرسائل اكثر في هالوقت
+                                </div>
+                            </div>
+                            <div class="s4-insight-item">
+                                <div class="s4-insight-icon"><i data-lucide="trending-up"></i></div>
+                                <div class="s4-insight-text" id="s4-insight-rate">
+                                    نسبة استردادك <strong>اعلى من المتوسط</strong> - استمر على نفس الاستراتيجية
+                                </div>
+                            </div>
+                            <div class="s4-insight-item">
+                                <div class="s4-insight-icon"><i data-lucide="zap"></i></div>
+                                <div class="s4-insight-text" id="s4-insight-tip">
+                                    <strong>نصيحة:</strong> فعّل حملة إعادة التنشيط للوصول لـ 340 عميل خامل
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp Status -->
+                    <div class="s4-wa-wrap">
+                        <div class="card s4-wa-status">
+                            <div class="s4-wa-right">
+                                <span class="s4-wa-dot" id="s4-wa-dot"></span>
+                                <div class="s4-wa-info">
+                                    <div class="s4-wa-label" id="s4-wa-label">الواتساب متصل</div>
+                                    <div class="s4-wa-phone" id="s4-wa-phone"></div>
+                                </div>
+                            </div>
+                            <a href="/whatsapp.html" class="s4-wa-settings">إعدادات</a>
+                        </div>
+                    </div>
+
+                    <!-- Usage Meter -->
+                    <div class="s4-usage">
+                        <div class="s4-usage-header">
+                            <span class="s4-usage-title">الاستخدام</span>
+                            <a class="s4-usage-plan" href="/pricing.html">ترقية الباقة</a>
+                        </div>
+                        <div class="card s4-usage-card">
+                            <div class="s4-usage-row">
+                                <span class="s4-usage-label">الرسائل المرسلة</span>
+                                <span class="s4-usage-count" id="s4-usage-count">0 / 500</span>
+                            </div>
+                            <div class="s4-usage-bar">
+                                <div class="s4-usage-fill" id="s4-usage-fill" style="width: 0%"></div>
+                            </div>
+                            <div class="s4-trial-badge">
+                                <div class="s4-trial-icon"><i data-lucide="clock"></i></div>
+                                <div class="s4-trial-text" id="s4-trial-text">
+                                    الفترة التجريبية: متبقي <strong id="s4-trial-days">7</strong> ايام مجانا
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed -->
+                    <div class="s4-activity s4-col-full">
+                        <div class="s4-activity-header">
+                            <span class="s4-activity-title">النشاطات</span>
+                            <span class="s4-live-badge">
+                                <span class="s4-live-dot"></span>
+                                <span>مباشر</span>
+                            </span>
+                        </div>
+                        <div class="s4-activity-list" id="s4-activity-list">
+                            <div class="s4-empty">لا توجد بيانات بعد</div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="s4-footer">
@@ -1321,12 +1686,29 @@
                     breakdown: {
                         abandonedCarts: { count: 127, recoveryEstimate: 18200 },
                         dormantCustomers: { count: 340, reactivationEstimate: 6140 },
-                        recentBuyers: { count: 89, upsellEstimate: 4000 }
+                        recentBuyers: { count: 89, upsellEstimate: 4000 },
+                        browseAbandonment: { count: 64 },
+                        reviewCollection: { count: 52 }
                     }
                 },
                 stats: { messagesSent: 47, opened: 31, purchased: 8, recovered: 4280 },
                 usage: { limit: 500, used: 47 },
-                trialStartDate: new Date(Date.now() - 2 * 86400000).toISOString()
+                trialStartDate: new Date(Date.now() - 2 * 86400000).toISOString(),
+                modules: {
+                    cartRecovery: { recovered: 8 },
+                    browseAbandonment: { tracked: 64 },
+                    postPurchaseUpsell: { sent: 23 },
+                    reviewCollection: { collected: 52 },
+                    winback: { reactivated: 15 },
+                    loyalty: { members: 0, enabled: false }
+                },
+                segments: {
+                    champions: 42,
+                    loyal: 68,
+                    new: 55,
+                    atRisk: 61,
+                    dormant: 48
+                }
             };
 
             merchantData = demoData;
@@ -1449,6 +1831,8 @@
             const carts = breakdown.abandonedCarts || {};
             const dormant = breakdown.dormantCustomers || {};
             const upsell = breakdown.recentBuyers || {};
+            const browse = breakdown.browseAbandonment || {};
+            const reviews = breakdown.reviewCollection || {};
 
             const totalRecoverable = (carts.recoveryEstimate || 0)
                 + (dormant.reactivationEstimate || 0)
@@ -1472,9 +1856,13 @@
             var cartCount = carts.count || 0;
             var dormantCount = dormant.count || 0;
             var upsellCount = upsell.count || 0;
+            var browseCount = browse.count || 0;
+            var reviewCount = reviews.count || 0;
             document.getElementById('s3-campaign-cart-count').textContent = cartCount.toLocaleString('ar-SA') + ' سلة';
             document.getElementById('s3-campaign-dormant-count').textContent = dormantCount.toLocaleString('ar-SA') + ' عميل';
             document.getElementById('s3-campaign-upsell-count').textContent = upsellCount.toLocaleString('ar-SA') + ' فرصة';
+            document.getElementById('s3-campaign-browse-count').textContent = browseCount.toLocaleString('ar-SA') + ' منتج';
+            document.getElementById('s3-campaign-review-count').textContent = reviewCount.toLocaleString('ar-SA') + ' تقييم';
 
             // Update message preview with store name
             var previewText = document.getElementById('s3-preview-text');
@@ -1503,22 +1891,113 @@
                 document.getElementById('s4-purchased-pct').textContent = purchPct + '%';
             }
 
+            // Feature module metrics
+            var modules = (data && data.modules) || {};
+            var cartMod = modules.cartRecovery || {};
+            var browseMod = modules.browseAbandonment || {};
+            var upsellMod = modules.postPurchaseUpsell || {};
+            var reviewMod = modules.reviewCollection || {};
+            var winbackMod = modules.winback || {};
+            var loyaltyMod = modules.loyalty || {};
+
+            setText('s4-mod-cart-metric', (cartMod.recovered || 0).toLocaleString('ar-SA') + ' سلة مستردة');
+            setText('s4-mod-browse-metric', (browseMod.tracked || 0).toLocaleString('ar-SA') + ' منتج متابع');
+            setText('s4-mod-upsell-metric', (upsellMod.sent || 0).toLocaleString('ar-SA') + ' عرض مرسل');
+            setText('s4-mod-review-metric', (reviewMod.collected || 0).toLocaleString('ar-SA') + ' تقييم مجمع');
+            setText('s4-mod-winback-metric', (winbackMod.reactivated || 0).toLocaleString('ar-SA') + ' عميل نشط');
+            setText('s4-mod-loyalty-metric', (loyaltyMod.members || 0).toLocaleString('ar-SA') + ' عضو');
+
+            // Loyalty module status
+            var loyaltyStatus = document.getElementById('s4-mod-loyalty-status');
+            var loyaltyToggle = document.querySelector('[data-module-toggle="loyalty"]');
+            if (loyaltyMod.enabled) {
+                if (loyaltyStatus) {
+                    loyaltyStatus.className = 'feature-module-status active';
+                    loyaltyStatus.textContent = 'نشط';
+                }
+                if (loyaltyToggle) loyaltyToggle.checked = true;
+            } else {
+                if (loyaltyStatus) {
+                    loyaltyStatus.className = 'feature-module-status inactive';
+                    loyaltyStatus.textContent = 'معطل';
+                }
+                if (loyaltyToggle) loyaltyToggle.checked = false;
+            }
+
+            // Module toggle status badges
+            document.querySelectorAll('[data-module-toggle]').forEach(function(toggle) {
+                toggle.addEventListener('change', function() {
+                    var moduleEl = toggle.closest('.feature-module');
+                    var statusEl = moduleEl ? moduleEl.querySelector('.feature-module-status') : null;
+                    if (statusEl) {
+                        if (toggle.checked) {
+                            statusEl.className = 'feature-module-status active';
+                            statusEl.textContent = 'نشط';
+                        } else {
+                            statusEl.className = 'feature-module-status inactive';
+                            statusEl.textContent = 'معطل';
+                        }
+                    }
+                });
+            });
+
+            // Funnel data (horizontal bars)
+            var funnelCarts = (data && data.stats && data.stats.totalCarts) || (sent ? Math.round(sent * 1.4) : 0);
+            var funnelSent = stats.messagesSent || 0;
+            var funnelOpened = stats.opened || 0;
+            var funnelRecovered = stats.purchased || 0;
+
+            setText('s4-funnel-carts', funnelCarts.toLocaleString('ar-SA'));
+            setText('s4-funnel-sent', funnelSent.toLocaleString('ar-SA'));
+            setText('s4-funnel-opened', funnelOpened.toLocaleString('ar-SA'));
+            setText('s4-funnel-recovered', funnelRecovered.toLocaleString('ar-SA'));
+
+            // Set funnel bar widths proportionally
+            if (funnelCarts > 0) {
+                setWidth('s4-funnel-bar-carts', '100%');
+                setWidth('s4-funnel-bar-sent', Math.max(Math.round((funnelSent / funnelCarts) * 100), 8) + '%');
+                setWidth('s4-funnel-bar-opened', Math.max(Math.round((funnelOpened / funnelCarts) * 100), 8) + '%');
+                setWidth('s4-funnel-bar-recovered', Math.max(Math.round((funnelRecovered / funnelCarts) * 100), 8) + '%');
+
+                var recoveryRate = Math.round((funnelRecovered / funnelCarts) * 100);
+                document.getElementById('s4-funnel-rate-pct').textContent = recoveryRate + '%';
+            }
+
+            // Customer segments
+            var segments = (data && data.segments) || {};
+            var segChampions = segments.champions || 0;
+            var segLoyal = segments.loyal || 0;
+            var segNew = segments.new || 0;
+            var segAtRisk = segments.atRisk || 0;
+            var segDormant = segments.dormant || 0;
+            var segTotal = segChampions + segLoyal + segNew + segAtRisk + segDormant;
+
+            setText('s4-seg-champions', segChampions.toLocaleString('ar-SA'));
+            setText('s4-seg-loyal', segLoyal.toLocaleString('ar-SA'));
+            setText('s4-seg-new', segNew.toLocaleString('ar-SA'));
+            setText('s4-seg-atrisk', segAtRisk.toLocaleString('ar-SA'));
+            setText('s4-seg-dormant', segDormant.toLocaleString('ar-SA'));
+
+            // Update segment bar widths
+            if (segTotal > 0) {
+                var segBar = document.getElementById('s4-segments-bar');
+                if (segBar) {
+                    var bars = segBar.children;
+                    if (bars.length >= 5) {
+                        bars[0].style.width = Math.round((segChampions / segTotal) * 100) + '%';
+                        bars[1].style.width = Math.round((segLoyal / segTotal) * 100) + '%';
+                        bars[2].style.width = Math.round((segNew / segTotal) * 100) + '%';
+                        bars[3].style.width = Math.round((segAtRisk / segTotal) * 100) + '%';
+                        bars[4].style.width = Math.round((segDormant / segTotal) * 100) + '%';
+                    }
+                }
+            }
+
             // Load activity feed
             loadActivities();
 
             // Poll for new activities every 15s
             activityPollTimer = setInterval(loadActivities, 15000);
-
-            // Funnel data
-            var funnelCarts = (data && data.stats && data.stats.totalCarts) || (stats.messagesSent ? Math.round(stats.messagesSent * 1.4) : 0);
-            animateCountUp('s4-funnel-carts', funnelCarts, 800);
-            animateCountUp('s4-funnel-sent', stats.messagesSent || 0, 800);
-            animateCountUp('s4-funnel-opened', stats.opened || 0, 800);
-            animateCountUp('s4-funnel-recovered', stats.purchased || 0, 800);
-            if (funnelCarts > 0) {
-                var recoveryRate = Math.round(((stats.purchased || 0) / funnelCarts) * 100);
-                document.getElementById('s4-funnel-rate-pct').textContent = recoveryRate + '%';
-            }
 
             // Usage meter
             var used = stats.messagesSent || 0;
@@ -1564,11 +2043,14 @@
             return [
                 { message: 'تم استرداد سلة — عميلة نورة من الرياض', color: 'green', amount: 890, timestamp: new Date(now - 3 * 60000).toISOString() },
                 { message: 'رسالة واتساب مرسلة — سلة بقيمة 1,240 ر.س', color: 'blue', timestamp: new Date(now - 8 * 60000).toISOString() },
+                { message: 'تقييم جديد — عميلة هند: ⭐⭐⭐⭐⭐ "منتجات رائعة"', color: 'purple', timestamp: new Date(now - 15 * 60000).toISOString() },
                 { message: 'تم استرداد سلة — عميل فهد من جدة', color: 'green', amount: 2340, timestamp: new Date(now - 22 * 60000).toISOString() },
+                { message: 'متابعة تصفح — عميل خالد شاف 3 منتجات', color: 'blue', timestamp: new Date(now - 35 * 60000).toISOString() },
                 { message: 'عرض بيع إضافي — شراء منتج مكمل', color: 'purple', amount: 450, timestamp: new Date(now - 45 * 60000).toISOString() },
                 { message: 'رسالة واتساب مرسلة — تذكير سلة متروكة', color: 'blue', timestamp: new Date(now - 90 * 60000).toISOString() },
                 { message: 'تم استرداد سلة — عميلة سارة من الدمام', color: 'green', amount: 600, timestamp: new Date(now - 2.5 * 3600000).toISOString() },
                 { message: 'إعادة تنشيط عميل خامل — عودة بعد 45 يوم', color: 'amber', amount: 1750, timestamp: new Date(now - 5 * 3600000).toISOString() },
+                { message: 'انضمام عضو جديد لبرنامج الولاء — عميل محمد', color: 'amber', timestamp: new Date(now - 8 * 3600000).toISOString() },
             ];
         }
 
@@ -1665,6 +2147,16 @@
         function formatSAR(n) {
             if (!n) return '0 ر.س';
             return Number(n).toLocaleString('ar-SA') + ' ر.س';
+        }
+
+        function setText(id, text) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
+
+        function setWidth(id, w) {
+            var el = document.getElementById(id);
+            if (el) el.style.width = w;
         }
 
         function formatTime(ts) {

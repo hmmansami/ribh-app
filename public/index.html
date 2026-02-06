@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح | استيقظ على أرباح جاءت وأنت نايم 💰</title>
-    <meta name="description" content="الذكاء الاصطناعي يسترد سلاتك المتروكة تلقائياً. تدفع فقط على النتائج. مضمون أو مجاني للأبد.">
+    <title>رِبح | استرجع السلات المتروكة وحوّل الزوار إلى مشترين</title>
+    <meta name="description" content="منصة ذكية تسترد سلاتك المتروكة، تتابع الزوار، تجمع التقييمات، وتبني ولاء عملائك — كلها بالواتساب وبدون مجهود.">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +33,7 @@
             overflow-x: hidden;
             line-height: 1.7;
         }
-        
+
         /* Animated Background */
         .cosmic-bg {
             position: fixed;
@@ -52,98 +52,92 @@
             animation: cosmicRotate 40s linear infinite;
         }
         @keyframes cosmicRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
+
         .content {
             position: relative;
             z-index: 10;
             max-width: 1100px;
             margin: 0 auto;
-            padding: 40px 24px;
+            padding: 0 24px;
         }
-        
-        /* Header */
+
+        /* ========== HEADER ========== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            padding: 24px 0;
+            margin-bottom: 20px;
         }
         .logo {
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 800;
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-decoration: none;
         }
-        .live-badge {
+        .header-nav {
             display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        .header-nav a.nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .header-nav a.nav-link:hover {
+            color: var(--text);
+        }
+        .header-cta {
+            display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            color: var(--success);
-        }
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-            50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-        }
-        
-        /* URGENCY BAR - Scarcity */
-        .urgency-bar {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
-            border: 1px solid rgba(239, 68, 68, 0.3);
+            background: var(--gradient);
+            color: white;
+            padding: 10px 24px;
             border-radius: 12px;
-            padding: 16px 24px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            text-align: center;
-        }
-        .urgency-bar .icon { font-size: 24px; }
-        .urgency-bar .text {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        .urgency-bar .count {
-            background: rgba(239, 68, 68, 0.2);
-            color: #EF4444;
-            padding: 6px 16px;
-            border-radius: 20px;
+            font-size: 15px;
             font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
         }
-        
-        /* Hero */
-        .hero { text-align: center; margin-bottom: 60px; }
+        .header-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.35);
+        }
+        @media (max-width: 768px) {
+            .header-nav a.nav-link { display: none; }
+            .header-cta { padding: 8px 18px; font-size: 14px; }
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 8px 20px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            padding: 8px 22px;
             border-radius: 50px;
             font-size: 14px;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             color: var(--primary);
+            font-weight: 500;
         }
         .hero-title {
-            font-size: clamp(36px, 6vw, 64px);
+            font-size: clamp(34px, 5.5vw, 60px);
             font-weight: 800;
-            line-height: 1.15;
+            line-height: 1.2;
             margin-bottom: 24px;
         }
         .gradient-text {
@@ -152,20 +146,13 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .gold-text {
-            background: linear-gradient(135deg, #F59E0B, #EF4444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
         .hero-subtitle {
-            font-size: 20px;
+            font-size: 19px;
             color: var(--text-muted);
-            max-width: 650px;
-            margin: 0 auto 32px;
+            max-width: 640px;
+            margin: 0 auto 36px;
+            line-height: 1.8;
         }
-        
-        /* CTA */
         .cta-wrapper { position: relative; display: inline-block; margin-bottom: 16px; }
         .cta-ring {
             position: absolute;
@@ -173,7 +160,7 @@
             width: calc(100% + 40px);
             height: calc(100% + 40px);
             transform: translate(-50%, -50%);
-            border: 2px dashed rgba(16, 185, 129, 0.3);
+            border: 2px dashed rgba(16, 185, 129, 0.25);
             border-radius: 28px;
             animation: ringRotate 20s linear infinite;
         }
@@ -187,12 +174,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 10px;
             background: var(--gradient);
             color: white;
             padding: 20px 48px;
             border-radius: 16px;
-            font-size: 22px;
+            font-size: 21px;
             font-weight: 700;
             text-decoration: none;
             border: none;
@@ -207,24 +194,48 @@
         .cta-micro {
             font-size: 14px;
             color: var(--text-dim);
-            margin-top: 12px;
+            margin-top: 14px;
         }
         .cta-micro span { color: var(--success); }
-        
-        /* PROBLEM SECTION - Agitate the pain */
-        .problem-section {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            border-radius: 24px;
-            padding: 48px;
-            margin-bottom: 60px;
-            text-align: center;
+
+        /* Trust Bar */
+        .trust-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 48px;
+            padding: 28px 0;
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
         }
-        .problem-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: #EF4444;
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+        .trust-item .trust-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            .trust-bar { gap: 24px; }
+            .trust-item { font-size: 13px; }
+            .trust-item .trust-value { font-size: 18px; }
+        }
+
+        /* ========== PROBLEM SECTION ========== */
+        .problem-section {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.03));
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 24px;
+            padding: 48px 40px;
+            margin: 60px 0;
+            text-align: center;
         }
         .problem-stat {
             font-size: 80px;
@@ -233,351 +244,61 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
+            line-height: 1;
+        }
+        .problem-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--danger);
         }
         .problem-desc {
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 24px;
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.8;
         }
-        .problem-cta {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            padding: 12px 24px;
-            border-radius: 12px;
-            color: #EF4444;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
+        @media (max-width: 768px) {
+            .problem-section { padding: 36px 24px; }
+            .problem-stat { font-size: 60px; }
         }
-        .problem-cta:hover {
-            background: rgba(239, 68, 68, 0.2);
+
+        /* ========== CALCULATOR ========== */
+        .calculator-section {
+            margin-bottom: 60px;
         }
-        
-        /* VALUE STACK SECTION */
-        .value-section { margin-bottom: 60px; }
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 48px;
-        }
-        .value-stack {
+        .calc-card {
             background: var(--card);
             border: 1px solid var(--card-border);
             border-radius: 24px;
             padding: 40px;
-            max-width: 700px;
+            max-width: 600px;
             margin: 0 auto;
         }
-        .value-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--card-border);
-        }
-        .value-item:last-of-type { border-bottom: none; }
-        .value-item .desc {
-            flex: 1;
-            font-size: 18px;
-        }
-        .value-item .amount {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-            min-width: 120px;
-            text-align: left;
-        }
-        .value-item .tag {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .value-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 0;
-            border-top: 2px solid var(--card-border);
-            margin-top: 16px;
-        }
-        .value-total .label { font-size: 18px; color: var(--text-muted); }
-        .value-total .amount {
-            font-size: 28px;
-            font-weight: 800;
-            text-decoration: line-through;
-            color: var(--text-dim);
-        }
-        .value-price {
-            background: var(--gradient);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
+        .calc-title {
             text-align: center;
-        }
-        .value-price .label {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 8px;
-        }
-        .value-price .amount {
-            font-size: 28px;
-            font-weight: 800;
-        }
-        .value-price .sub {
-            font-size: 14px;
-            opacity: 0.8;
-            margin-top: 8px;
-        }
-        
-        /* GUARANTEE FORTRESS */
-        .guarantee-section { margin-bottom: 60px; }
-        .guarantee-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        .guarantee-card {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 28px;
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-            transition: all 0.3s ease;
-        }
-        .guarantee-card:hover {
-            border-color: rgba(16, 185, 129, 0.3);
-            transform: translateY(-4px);
-        }
-        .guarantee-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            flex-shrink: 0;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
-            border: 1px solid rgba(16, 185, 129, 0.3);
-        }
-        .guarantee-content h3 {
-            font-size: 18px;
+            font-size: 26px;
             font-weight: 700;
             margin-bottom: 6px;
+        }
+        .calc-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+        .calc-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+        .calc-label .value {
+            font-weight: 700;
             color: var(--primary);
         }
-        .guarantee-content p {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-        
-        /* MAIN GUARANTEE - 2X OR FREE */
-        .main-guarantee {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));
-            border: 2px solid rgba(16, 185, 129, 0.4);
-            border-radius: 24px;
-            padding: 48px;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .main-guarantee .icon { font-size: 64px; margin-bottom: 20px; }
-        .main-guarantee h2 {
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 16px;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .main-guarantee p {
-            font-size: 18px;
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        /* HOW IT WORKS */
-        .how-section { margin-bottom: 60px; }
-        .steps-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-        .step-card {
-            text-align: center;
-            padding: 40px 24px;
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            position: relative;
-        }
-        .step-number {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 44px;
-            height: 44px;
-            background: var(--gradient);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 700;
-            box-shadow: 0 0 30px var(--primary-glow);
-        }
-        .step-icon { font-size: 48px; margin-bottom: 20px; }
-        .step-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-        .step-desc { font-size: 15px; color: var(--text-muted); }
-        .step-time {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-top: 16px;
-        }
-        
-        /* SOCIAL PROOF */
-        .proof-section {
-            background: var(--card);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .proof-label {
-            font-size: 16px;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .proof-counter {
-            font-size: 64px;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 8px;
-        }
-        .proof-sub { font-size: 18px; color: var(--text-muted); }
-        .proof-activity {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid var(--card-border);
-        }
-        .proof-activity-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-        .proof-activity-item .dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        /* FAQ PREVIEW */
-        .faq-preview {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 60px;
-        }
-        .faq-preview h2 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 32px;
-        }
-        .faq-item {
-            padding: 20px 0;
-            border-bottom: 1px solid var(--card-border);
-        }
-        .faq-item:last-child { border-bottom: none; }
-        .faq-q {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .faq-a {
-            font-size: 15px;
-            color: var(--text-muted);
-            padding-right: 36px;
-        }
-        
-        /* FINAL CTA */
-        .final-cta {
-            text-align: center;
-            padding: 60px 0;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
-            border-radius: 32px;
-            margin-bottom: 40px;
-        }
-        .final-title { font-size: 36px; font-weight: 700; margin-bottom: 16px; }
-        .final-subtitle { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; }
-        .final-bullets {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            margin-bottom: 32px;
-        }
-        .final-bullet {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-        }
-        .final-bullet .check { color: var(--success); font-size: 18px; }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 40px 0;
-            border-top: 1px solid var(--card-border);
-            color: var(--text-dim);
-            font-size: 14px;
-        }
-        .footer a { color: var(--text-muted); text-decoration: none; margin: 0 12px; }
-        .footer a:hover { color: var(--primary); }
-        
-        /* Calculator Slider */
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -612,247 +333,444 @@
             box-shadow: 0 0 20px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
             border: 3px solid var(--primary);
         }
-        
-        /* STICKY URGENCY BAR */
-        .sticky-urgency {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(245, 158, 11, 0.9));
-            padding: 12px 24px;
+        .calc-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 32px;
+        }
+        .calc-result-card {
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
-            font-size: 15px;
+        }
+        .calc-result-card.loss {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .calc-result-card.gain {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .calc-result-card .label {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .calc-result-card.loss .label { color: var(--danger); }
+        .calc-result-card.gain .label { color: var(--success); }
+        .calc-result-card .amount {
+            font-size: 28px;
+            font-weight: 800;
+        }
+        .calc-result-card.loss .amount { color: var(--danger); }
+        .calc-result-card.gain .amount { color: var(--success); }
+        .calc-note {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .calc-card { padding: 28px 20px; }
+            .calc-result-card .amount { font-size: 22px; }
+        }
+
+        /* ========== FEATURES SECTION ========== */
+        .features-section {
+            margin-bottom: 60px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 34px;
             font-weight: 700;
-            color: #fff;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            margin-bottom: 12px;
+        }
+        .section-subtitle {
+            text-align: center;
+            font-size: 17px;
+            color: var(--text-muted);
+            margin-bottom: 48px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px 28px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.08);
+        }
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .feature-icon {
+            font-size: 28px;
+            line-height: 1;
+        }
+        .feature-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .feature-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            flex: 1;
+            margin-bottom: 16px;
+        }
+        .feature-tag {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        @media (max-width: 768px) {
+            .features-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 28px; }
+        }
+
+        /* ========== HOW IT WORKS ========== */
+        .how-section { margin-bottom: 60px; }
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .step-card {
+            text-align: center;
+            padding: 40px 24px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            position: relative;
+        }
+        .step-number {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: var(--gradient);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 0 30px var(--primary-glow);
         }
-        .sticky-urgency .spots-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-weight: 800;
+        .step-icon { font-size: 44px; margin-bottom: 18px; }
+        .step-title { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
+        .step-desc { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+        @media (max-width: 768px) {
+            .steps-container { grid-template-columns: 1fr; }
         }
-        body { padding-top: 48px; }
 
-        /* PRICING SECTION */
+        /* ========== PRICING ========== */
         .pricing-section { margin-bottom: 60px; }
         .pricing-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 24px;
-            max-width: 900px;
-            margin: 0 auto;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: start;
         }
         .pricing-card {
             background: var(--card);
             border: 1px solid var(--card-border);
             border-radius: 24px;
-            padding: 36px;
+            padding: 36px 28px;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
         }
-        .pricing-card.featured {
+        .pricing-card:hover {
+            transform: translateY(-4px);
+        }
+        .pricing-card.recommended {
             border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.15);
+            box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
         }
-        .pricing-card.featured::before {
+        .pricing-card.recommended::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 4px;
             background: var(--gradient);
         }
-        .pricing-badge {
+        .pricing-recommend-badge {
             display: inline-block;
             background: var(--gradient);
-            color: #fff;
-            padding: 6px 16px;
+            color: white;
+            padding: 5px 16px;
             border-radius: 20px;
             font-size: 13px;
             font-weight: 700;
             margin-bottom: 16px;
         }
-        .pricing-card h3 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .pricing-card .price {
-            font-size: 48px;
-            font-weight: 800;
+        .pricing-plan-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
             margin-bottom: 4px;
         }
-        .pricing-card .price-sub {
-            font-size: 15px;
-            color: var(--text-muted);
-            margin-bottom: 20px;
+        .pricing-plan-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
-        .pricing-card .price .currency {
-            font-size: 20px;
+        .pricing-price {
+            font-size: 44px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            line-height: 1.1;
+        }
+        .pricing-price .currency {
+            font-size: 18px;
             font-weight: 600;
+        }
+        .pricing-price .period {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+        .pricing-messages {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .pricing-extra {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 24px;
         }
         .pricing-features {
             list-style: none;
             padding: 0;
-            margin: 0 0 24px;
+            margin: 0 0 28px;
         }
         .pricing-features li {
-            padding: 10px 0;
-            font-size: 15px;
+            padding: 8px 0;
+            font-size: 14px;
             display: flex;
-            align-items: center;
-            gap: 10px;
-            border-bottom: 1px solid var(--card-border);
+            align-items: flex-start;
+            gap: 8px;
+            color: var(--text-muted);
+            line-height: 1.5;
         }
-        .pricing-features li:last-child { border-bottom: none; }
-        .pricing-features .check { color: var(--success); font-size: 18px; flex-shrink: 0; }
-        .pricing-card .spots-remaining {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: #EF4444;
-            padding: 10px;
-            border-radius: 12px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 15px;
-            margin-bottom: 20px;
+        .pricing-features li .check {
+            color: var(--success);
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 2px;
         }
-        .pricing-card .cta-button-sm {
+        .pricing-cta {
             display: block;
             text-align: center;
-            background: var(--gradient);
-            color: white;
-            padding: 16px 24px;
+            padding: 14px 24px;
             border-radius: 14px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
+        }
+        .pricing-cta.primary {
+            background: var(--gradient);
+            color: white;
             box-shadow: 0 0 30px var(--primary-glow);
         }
-        .pricing-card .cta-button-sm:hover {
+        .pricing-cta.primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 0 50px var(--primary-glow);
         }
-        /* Regular pricing tiers */
-        .regular-tiers {
-            margin-top: 16px;
-        }
-        .regular-tiers h4 {
-            font-size: 16px;
-            font-weight: 600;
+        .pricing-cta.outline {
+            background: transparent;
             color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-        .tier-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--card-border);
-            font-size: 14px;
-        }
-        .tier-item:last-child { border-bottom: none; }
-        .tier-item .tier-name {
-            font-weight: 600;
-            color: var(--text);
-        }
-        .tier-item .tier-price {
-            color: var(--text-muted);
-        }
-
-        /* COMPARISON TABLE */
-        .comparison-section { margin-bottom: 60px; }
-        .comparison-table-wrap {
-            max-width: 800px;
-            margin: 0 auto;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .comparison-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: var(--card);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            overflow: hidden;
-            font-size: 15px;
         }
-        .comparison-table th,
-        .comparison-table td {
-            padding: 16px 20px;
-            text-align: center;
-            border-bottom: 1px solid var(--card-border);
-        }
-        .comparison-table th {
-            background: rgba(255,255,255,0.03);
-            font-weight: 700;
-            font-size: 16px;
-        }
-        .comparison-table th:first-child,
-        .comparison-table td:first-child {
-            text-align: right;
-            font-weight: 600;
-        }
-        .comparison-table tr:last-child td { border-bottom: none; }
-        .comparison-table .ribh-col {
-            background: rgba(16, 185, 129, 0.08);
-        }
-        .comparison-table th.ribh-col {
-            background: rgba(16, 185, 129, 0.15);
+        .pricing-cta.outline:hover {
+            border-color: rgba(16, 185, 129, 0.3);
             color: var(--primary);
         }
-        .comparison-table .winner {
-            color: var(--success);
-            font-weight: 700;
+        .pricing-trial {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 12px;
+        }
+        @media (max-width: 768px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
+            .pricing-price { font-size: 36px; }
         }
 
-        /* CALC CTA LINK */
-        .calc-cta-link {
-            display: inline-flex;
+        /* ========== SOCIAL PROOF ========== */
+        .proof-section {
+            background: var(--card);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .proof-label {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .proof-counter {
+            font-size: 60px;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+        }
+        .proof-sub { font-size: 18px; color: var(--text-muted); }
+        .proof-activity {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+            padding-top: 24px;
+            border-top: 1px solid var(--card-border);
+        }
+        .proof-activity-item {
+            display: flex;
             align-items: center;
             gap: 8px;
-            margin-top: 20px;
-            padding: 12px 28px;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.3);
-            border-radius: 12px;
-            color: var(--secondary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.3s;
+            font-size: 14px;
+            color: var(--text-muted);
         }
-        .calc-cta-link:hover {
-            background: rgba(99, 102, 241, 0.2);
-            transform: translateY(-2px);
+        .proof-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
         }
 
-        /* Responsive */
+        /* ========== FAQ ========== */
+        .faq-section {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+        .faq-section h2 {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 32px;
+        }
+        .faq-item {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .faq-a {
+            font-size: 15px;
+            color: var(--text-muted);
+            padding-right: 34px;
+            line-height: 1.7;
+        }
+
+        /* ========== FINAL CTA ========== */
+        .final-cta {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.08));
+            border: 1px solid var(--card-border);
+            border-radius: 32px;
+            margin-bottom: 40px;
+        }
+        .final-title {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .final-bullets {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+        }
+        .final-bullet {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+        .final-bullet .check { color: var(--success); font-size: 18px; }
         @media (max-width: 768px) {
-            .steps-container { grid-template-columns: 1fr; }
-            .guarantee-grid { grid-template-columns: 1fr; }
-            .hero-title { font-size: 32px; }
+            .final-cta { padding: 40px 24px; }
+            .final-title { font-size: 26px; }
             .cta-button { padding: 18px 36px; font-size: 18px; }
-            .value-stack { padding: 24px; }
-            .value-item { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .value-item .amount { text-align: right; }
-            .urgency-bar { flex-direction: column; }
-            .pricing-grid { grid-template-columns: 1fr; }
-            .pricing-card .price { font-size: 36px; }
-            .comparison-table { font-size: 13px; }
-            .comparison-table th, .comparison-table td { padding: 12px 10px; }
-            .sticky-urgency { font-size: 13px; padding: 10px 16px; }
-            body { padding-top: 44px; }
+            .hero { padding: 40px 0 30px; }
+            .hero-title { font-size: 30px; }
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            text-align: center;
+            padding: 40px 0 48px;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+        .footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+        .footer a:hover { color: var(--primary); }
+        .footer .copyright {
+            margin-top: 12px;
+            color: var(--text-dim);
         }
     </style>
 </head>
@@ -860,478 +778,381 @@
 <body>
     <div class="cosmic-bg"></div>
 
-    <!-- STICKY URGENCY BAR -->
-    <div class="sticky-urgency">
-        <span>⚡</span>
-        <span>عرض الأعضاء المؤسسين:</span>
-        <span class="spots-badge" id="stickySpots">باقي 73 مكان من 100</span>
-        <span>| مجاني للأبد للمؤسسين</span>
-    </div>
-
     <div class="content">
-        <!-- Header -->
+
+        <!-- ===== HEADER ===== -->
         <header class="header">
-            <div class="logo">رِبح 💚</div>
-            <div style="display:flex;align-items:center;gap:12px;">
-                <a href="/app?demo=active" style="display:inline-flex;align-items:center;gap:8px;background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.4);padding:10px 20px;border-radius:50px;font-size:14px;color:#818CF8;text-decoration:none;font-weight:600;transition:all 0.3s;" onmouseover="this.style.background='rgba(99,102,241,0.25)'" onmouseout="this.style.background='rgba(99,102,241,0.15)'">
-                    شاهد الداشبورد ←
-                </a>
-                <div class="live-badge">
-                    <span class="live-dot"></span>
-                    <span id="liveStores">847</span> متجر نشط الآن
-                </div>
-            </div>
+            <a href="/" class="logo">رِبح</a>
+            <nav class="header-nav">
+                <a href="#features" class="nav-link">المميزات</a>
+                <a href="#how" class="nav-link">كيف يعمل</a>
+                <a href="#pricing" class="nav-link">الأسعار</a>
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="header-cta">ابدأ مجاناً</a>
+            </nav>
         </header>
-        
-        <!-- URGENCY BAR (inline version) -->
-        <div class="urgency-bar">
-            <span class="icon">⚡</span>
-            <span class="text">عرض الأعضاء المؤسسين - باقي</span>
-            <span class="count" id="spotsLeft">73 مكان</span>
-            <span class="text">من 100 | مجاني للأبد للمؤسسين</span>
-        </div>
-        
-        <!-- HERO -->
+
+        <!-- ===== HERO ===== -->
         <section class="hero">
             <div class="hero-badge">
                 <span>🤖</span>
                 <span>مدعوم بالذكاء الاصطناعي</span>
             </div>
-            
+
             <h1 class="hero-title">
-                استيقظ على <span class="gradient-text">أرباح</span>
+                <span class="gradient-text">استرجع السلات المتروكة</span>
                 <br>
-                جاءت <span class="gold-text">وأنت نايم</span> 💰
+                وحوّل الزوار إلى مشترين
             </h1>
-            
+
             <p class="hero-subtitle">
-                الذكاء الاصطناعي يسترد سلاتك المتروكة تلقائياً.
-                <br>
-                <strong>بدون كتابة رسائل. بدون إعدادات. بدون مجهود.</strong>
+                منصة ذكية تسترد سلاتك، تتابع الزوار، تجمع التقييمات، وتبني ولاء عملائك — كلها بالواتساب وبدون مجهود
             </p>
-            
+
             <div class="cta-wrapper">
                 <div class="cta-ring"></div>
                 <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    <span>←</span>
-                    فعّل مجاناً في 60 ثانية
+                    ابدأ مجاناً — 7 أيام تجربة
                 </a>
             </div>
-            
+
             <p class="cta-micro">
-                <span>✓</span> بدون بطاقة ائتمان &nbsp;•&nbsp; 
-                <span>✓</span> تدفع فقط على النتائج &nbsp;•&nbsp; 
-                <span>✓</span> إلغاء بضغطة واحدة
+                <span>✓</span> بدون بطاقة ائتمان &nbsp;&bull;&nbsp;
+                <span>✓</span> تفعيل في 60 ثانية &nbsp;&bull;&nbsp;
+                <span>✓</span> إلغاء بضغطة
             </p>
+
+            <div class="trust-bar">
+                <div class="trust-item">
+                    <span class="trust-value">98%</span>
+                    <span>معدل فتح الواتساب</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-value">25%</span>
+                    <span>معدل استرداد</span>
+                </div>
+                <div class="trust-item">
+                    <span class="trust-value">+500</span>
+                    <span>متجر</span>
+                </div>
+            </div>
         </section>
-        
-        <!-- PROBLEM: Agitate the pain -->
+
+        <!-- ===== PROBLEM SECTION ===== -->
         <section class="problem-section">
-            <div class="problem-title">⚠️ هل تعرف كم تخسر؟</div>
             <div class="problem-stat">70%</div>
+            <div class="problem-title">من زوار متجرك يتركون سلاتهم قبل الشراء</div>
             <p class="problem-desc">
-                من زوار متجرك يتركون سلاتهم قبل الشراء.
-                <br>
-                <strong>كل يوم تخسر آلاف الريالات بدون ما تدري.</strong>
+                كل يوم تخسر آلاف الريالات بدون ما تدري. رِبح يسترد هالأرباح لك تلقائياً.
             </p>
-            <a href="#signup-form" class="problem-cta">
-                🚀 ابدأ الآن واسترد خسارتك ←
-            </a>
         </section>
-        
-        <!-- SIMPLE CALCULATOR -->
-        <section class="calculator-section" style="margin-bottom: 60px;">
-            <div style="background: var(--card); border: 1px solid var(--card-border); border-radius: 24px; padding: 40px; max-width: 600px; margin: 0 auto;">
-                <h2 style="text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 8px;">🧮 احسب أرباحك المفقودة</h2>
-                <p style="text-align: center; color: var(--text-muted); margin-bottom: 32px;">حرك المؤشر لمعرفة كم تخسر شهرياً</p>
-                
+
+        <!-- ===== CALCULATOR ===== -->
+        <section class="calculator-section">
+            <div class="calc-card">
+                <h2 class="calc-title">احسب أرباحك المفقودة</h2>
+                <p class="calc-subtitle">حرك المؤشر لمعرفة كم تخسر شهرياً</p>
+
                 <div style="margin-bottom: 24px;">
-                    <label style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
-                        <span>💰 مبيعاتك الشهرية</span>
-                        <span id="salesValue" style="font-weight: 700; color: var(--primary);">50,000 ر.س</span>
-                    </label>
-                    <input type="range" id="salesSlider" min="10000" max="500000" value="50000" step="5000" style="width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to left, var(--primary), var(--secondary)); appearance: none; cursor: pointer;">
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 32px;">
-                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 16px; padding: 20px; text-align: center;">
-                        <div style="font-size: 14px; color: #EF4444; margin-bottom: 8px;">❌ تخسر شهرياً</div>
-                        <div id="lostValue" style="font-size: 28px; font-weight: 800; color: #EF4444;">35,000 ر.س</div>
+                    <div class="calc-label">
+                        <span>مبيعاتك الشهرية</span>
+                        <span class="value" id="salesValue">50,000 ر.س</span>
                     </div>
-                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 16px; padding: 20px; text-align: center;">
-                        <div style="font-size: 14px; color: var(--success); margin-bottom: 8px;">✅ رِبح يسترد لك</div>
-                        <div id="recoveredValue" style="font-size: 28px; font-weight: 800; color: var(--success);">10,500 ر.س</div>
+                    <input type="range" id="salesSlider" min="10000" max="500000" value="50000" step="5000">
+                </div>
+
+                <div class="calc-results">
+                    <div class="calc-result-card loss">
+                        <div class="label">تخسر شهرياً</div>
+                        <div class="amount" id="lostValue">35,000 ر.س</div>
                     </div>
-                </div>
-                
-                <p style="text-align: center; color: var(--text-dim); font-size: 13px; margin-top: 20px;">
-                    * بناءً على متوسط 70% سلات متروكة و 15% معدل استرداد (يمكن أن يرتفع أكثر)
-                </p>
-
-                <div style="text-align: center;">
-                    <a href="/calculator.html" class="calc-cta-link">
-                        احسب كم تخسر يومياً ←
-                    </a>
-                </div>
-            </div>
-        </section>
-        
-        <!-- VALUE STACK -->
-        <section class="value-section">
-            <h2 class="section-title">💎 ماذا تحصل مجاناً؟</h2>
-
-            <div class="value-stack">
-                <div class="value-item">
-                    <span class="desc">✅ استرداد السلات بالواتساب</span>
-                    <span class="amount">50,000+ ر.س/سنة</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-item">
-                    <span class="desc">✅ عروض ما بعد الشراء</span>
-                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Zipify يأخذ 8$/شهر + عمولة</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-item">
-                    <span class="desc">✅ جمع التقييمات تلقائياً</span>
-                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Klaviyo يأخذ 25$/شهر</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-item">
-                    <span class="desc">✅ تحليلات ذكية</span>
-                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">Klaviyo يأخذ 100$+/شهر</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-item">
-                    <span class="desc">✅ تصنيف العملاء RFM</span>
-                    <span class="amount" style="font-size: 14px; color: var(--text-muted);">الخطط المدفوعة فقط عند المنافسين</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-item">
-                    <span class="desc">✅ حماية السمعة والبلوك</span>
-                    <span class="amount">لا يقدر بثمن</span>
-                    <span class="tag">مشمول ✓</span>
-                </div>
-
-                <div class="value-total">
-                    <span class="label">القيمة الإجمالية سنوياً:</span>
-                    <span class="amount">90,000+ ر.س</span>
-                </div>
-
-                <div class="value-price">
-                    <div class="label">أنت تدفع:</div>
-                    <div class="amount">10% فقط من المبيعات المستردة</div>
-                    <div class="sub">لا نتائج = لا رسوم. صفر مخاطرة.</div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- PRICING SECTION -->
-        <section class="pricing-section">
-            <h2 class="section-title">💰 الأسعار</h2>
-
-            <div class="pricing-grid">
-                <!-- Founding Member Card -->
-                <div class="pricing-card featured">
-                    <div class="pricing-badge">🔥 عرض الأعضاء المؤسسين — أول 100 متجر</div>
-                    <h3>العضوية التأسيسية</h3>
-                    <div class="price" style="color: var(--success);">
-                        <span class="currency">SAR</span> 0<span class="currency">/شهر</span>
-                    </div>
-                    <div class="price-sub">مجاني بالكامل — ادفع فقط <strong style="color: var(--primary);">10%</strong> من الإيرادات المستردة</div>
-
-                    <div class="spots-remaining">
-                        🔴 <span id="pricingSpots">73</span> مكان متبقي من 100
-                    </div>
-
-                    <ul class="pricing-features">
-                        <li><span class="check">✓</span> استرداد سلات بالواتساب (ذكاء اصطناعي)</li>
-                        <li><span class="check">✓</span> عروض ما بعد الشراء</li>
-                        <li><span class="check">✓</span> جمع تقييمات تلقائي</li>
-                        <li><span class="check">✓</span> تحليلات ذكية + تصنيف RFM</li>
-                        <li><span class="check">✓</span> حماية السمعة والبلوك</li>
-                        <li><span class="check">✓</span> ضمان 2x ROI أو مجاني للأبد</li>
-                    </ul>
-
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button-sm">
-                        ← فعّل مجاناً الآن
-                    </a>
-                </div>
-
-                <!-- Regular Pricing Card -->
-                <div class="pricing-card">
-                    <h3 style="color: var(--text-muted);">بعد انتهاء العرض</h3>
-                    <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 20px;">الأسعار العادية بعد اكتمال 100 عضو مؤسس</p>
-
-                    <div class="regular-tiers">
-                        <div class="tier-item">
-                            <span class="tier-name">🟢 Starter</span>
-                            <span class="tier-price">SAR 199/شهر + 10%</span>
-                        </div>
-                        <div class="tier-item">
-                            <span class="tier-name">🔵 Growth</span>
-                            <span class="tier-price">SAR 499/شهر + 5%</span>
-                        </div>
-                        <div class="tier-item">
-                            <span class="tier-name">🟣 Pro</span>
-                            <span class="tier-price">SAR 999/شهر + 3%</span>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 24px; padding: 16px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; text-align: center;">
-                        <p style="font-size: 14px; color: var(--gold);">
-                            ⚡ المؤسسون يحتفظون بسعر SAR 0/شهر <strong>للأبد</strong>
-                        </p>
+                    <div class="calc-result-card gain">
+                        <div class="label">رِبح يسترد لك</div>
+                        <div class="amount" id="recoveredValue">10,500 ر.س</div>
                     </div>
                 </div>
+
+                <p class="calc-note">* بناءً على متوسط 70% سلات متروكة و 15% معدل استرداد</p>
             </div>
         </section>
 
-        <!-- COMPETITIVE COMPARISON TABLE -->
-        <section class="comparison-section">
-            <h2 class="section-title">📊 لماذا رِبح أفضل؟</h2>
+        <!-- ===== FEATURES SECTION ===== -->
+        <section class="features-section" id="features">
+            <h2 class="section-title">كل ما يحتاجه متجرك في مكان واحد</h2>
+            <p class="section-subtitle">بينما المنافسين يقدمون ميزة واحدة، رِبح يعطيك المنصة الكاملة</p>
 
-            <div class="comparison-table-wrap">
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>الميزة</th>
-                            <th>Klaviyo</th>
-                            <th>LetsBot</th>
-                            <th class="ribh-col">رِبح 💚</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>السعر</td>
-                            <td>$150+/شهر</td>
-                            <td>119 ر.س/شهر</td>
-                            <td class="ribh-col winner">مجاني ✨</td>
-                        </tr>
-                        <tr>
-                            <td>واتساب</td>
-                            <td>❌</td>
-                            <td>✅ بسيط</td>
-                            <td class="ribh-col winner">✅ ذكاء اصطناعي</td>
-                        </tr>
-                        <tr>
-                            <td>عروض بعد الشراء</td>
-                            <td>❌</td>
-                            <td>❌</td>
-                            <td class="ribh-col winner">✅</td>
-                        </tr>
-                        <tr>
-                            <td>تقييمات</td>
-                            <td>$25/شهر إضافي</td>
-                            <td>❌</td>
-                            <td class="ribh-col winner">✅</td>
-                        </tr>
-                        <tr>
-                            <td>تحليلات تنبؤية</td>
-                            <td>$100+/شهر</td>
-                            <td>❌</td>
-                            <td class="ribh-col winner">✅</td>
-                        </tr>
-                        <tr>
-                            <td>ضمان</td>
-                            <td>❌</td>
-                            <td>❌</td>
-                            <td class="ribh-col winner">2x أو مجاني</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="features-grid">
+
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">🛒</span>
+                        <h3 class="feature-title">استرداد السلات المتروكة</h3>
+                    </div>
+                    <p class="feature-desc">ذكاء اصطناعي يكتب رسائل مخصصة لكل عميل بناءً على نوع متجرك وقيمة السلة. عروض ذكية تتغير حسب العميل.</p>
+                    <span class="feature-tag">25% معدل استرداد</span>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">👁️</span>
+                        <h3 class="feature-title">متابعة تصفح الزوار</h3>
+                    </div>
+                    <p class="feature-desc">اذا عميلك تصفح منتجاتك بدون ما يضيف للسلة، نرسل له رسالة بالمنتجات اللي شافها مع خصم حصري.</p>
+                    <span class="feature-tag">استرداد المتصفحين</span>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">🎁</span>
+                        <h3 class="feature-title">عروض ما بعد الشراء</h3>
+                    </div>
+                    <p class="feature-desc">بعد كل عملية شراء، نقترح منتجات مكملة بخصم 10-15%. تزيد متوسط قيمة الطلب بدون مجهود.</p>
+                    <span class="feature-tag">زيادة قيمة الطلب</span>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">⭐</span>
+                        <h3 class="feature-title">جمع التقييمات تلقائياً</h3>
+                    </div>
+                    <p class="feature-desc">نرسل طلب تقييم بعد التوصيل. العميل السعيد يروح للتقييم العام. الغير سعيد يروح للدعم مع كود خصم اعتذار.</p>
+                    <span class="feature-tag">حماية السمعة</span>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">📊</span>
+                        <h3 class="feature-title">تصنيف العملاء الذكي (RFM)</h3>
+                    </div>
+                    <p class="feature-desc">نصنف عملائك تلقائياً: أبطال، أوفياء، جدد، معرضين للخسارة. كل شريحة تحصل رسائل مختلفة.</p>
+                    <span class="feature-tag">8 شرائح تلقائية</span>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">🏆</span>
+                        <h3 class="feature-title">برنامج الولاء</h3>
+                    </div>
+                    <p class="feature-desc">نقاط على كل عملية شراء. 4 مستويات (برونز، فضي، ذهبي، بلاتيني). خصومات حصرية للعملاء المميزين.</p>
+                    <span class="feature-tag">احتفظ بعملائك</span>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">🧪</span>
+                        <h3 class="feature-title">اختبارات A/B ذكية</h3>
+                    </div>
+                    <p class="feature-desc">نختبر رسائل مختلفة تلقائياً — العنوان، نسبة الخصم، درجة الإلحاح — ونختار الأفضل أداءً.</p>
+                    <span class="feature-tag">تحسين مستمر</span>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <span class="feature-icon">🔐</span>
+                        <h3 class="feature-title">حماية من البلوك</h3>
+                    </div>
+                    <p class="feature-desc">نظام مضاد للحظر: إرسال تدريجي، تأخيرات بشرية، ساعات نشطة فقط. واتسابك آمن 100%.</p>
+                    <span class="feature-tag">0% معدل حظر</span>
+                </div>
+
             </div>
         </section>
 
-        <!-- MAIN GUARANTEE -->
-        <section class="main-guarantee">
-            <div class="icon">🛡️</div>
-            <h2>ضمان مضاعفة الأرباح</h2>
-            <p>
-                إذا ما ضاعفنا أرباحك في 60 يوم، كل شي مجاني للأبد.
-                <br>
-                <strong>لا أسئلة. لا شروط. نحن نتحمل المخاطرة.</strong>
-            </p>
-        </section>
-        
-        <!-- GUARANTEE GRID -->
-        <section class="guarantee-section">
-            <h2 class="section-title">🔒 ضماناتك - بدون أي مخاطرة</h2>
+        <!-- ===== HOW IT WORKS ===== -->
+        <section class="how-section" id="how">
+            <h2 class="section-title">كيف يعمل؟</h2>
+            <p class="section-subtitle">3 خطوات بسيطة وتبدأ تسترد أرباحك</p>
 
-            <div class="guarantee-grid">
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">🛡️</div>
-                    <div class="guarantee-content">
-                        <h3>ضمان مضاعفة الأرباح</h3>
-                        <p>إذا ما ضاعفنا أرباحك في 60 يوم، كل شي مجاني للأبد. بدون أسئلة.</p>
-                    </div>
-                </div>
-
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">⏱️</div>
-                    <div class="guarantee-content">
-                        <h3>إلغاء فوري بضغطة واحدة</h3>
-                        <p>لا عقود. لا التزامات. ألغِ في أي وقت بضغطة زر فورية.</p>
-                    </div>
-                </div>
-
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">💳</div>
-                    <div class="guarantee-content">
-                        <h3>تدفع فقط على النتائج</h3>
-                        <p>لا استرداد = لا رسوم. نأخذ 10% فقط من المبيعات المستردة فعلياً.</p>
-                    </div>
-                </div>
-
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">🔒</div>
-                    <div class="guarantee-content">
-                        <h3>بياناتك ملكك بالكامل</h3>
-                        <p>لا نبيع ولا نشارك بياناتك. تُحذف فوراً عند إلغاء الاشتراك.</p>
-                    </div>
-                </div>
-
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">👀</div>
-                    <div class="guarantee-content">
-                        <h3>شاهد كل رسالة قبل الإرسال</h3>
-                        <p>تحكم كامل. تشوف الرسائل، توافق أو تعدل. لا شيء يُرسل بدون علمك.</p>
-                    </div>
-                </div>
-
-                <div class="guarantee-card">
-                    <div class="guarantee-icon">🚫</div>
-                    <div class="guarantee-content">
-                        <h3>حماية ضد البلوك</h3>
-                        <p>نراقب معدلات الحظر. لو ارتفعت، نوقف تلقائياً ونبلغك.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- HOW IT WORKS -->
-        <section class="how-section">
-            <h2 class="section-title">⚡ كيف يعمل؟ 3 خطوات فقط</h2>
-            
             <div class="steps-container">
                 <div class="step-card">
                     <div class="step-number">1</div>
                     <div class="step-icon">🔗</div>
                     <h3 class="step-title">اربط متجرك</h3>
-                    <p class="step-desc">ضغطة واحدة لربط سلة أو شوبيفاي. بدون كلمات مرور.</p>
-                    <div class="step-time">⏱️ 30 ثانية</div>
+                    <p class="step-desc">ضغطة واحدة لربط سلة أو شوبيفاي</p>
                 </div>
-                
+
                 <div class="step-card">
                     <div class="step-number">2</div>
                     <div class="step-icon">📱</div>
                     <h3 class="step-title">امسح QR الواتساب</h3>
-                    <p class="step-desc">ربط فوري لواتساب متجرك. أمان كامل.</p>
-                    <div class="step-time">⏱️ 10 ثواني</div>
+                    <p class="step-desc">ربط فوري لواتساب متجرك</p>
                 </div>
-                
+
                 <div class="step-card">
                     <div class="step-number">3</div>
                     <div class="step-icon">💰</div>
-                    <h3 class="step-title">شاهد الأرباح تتدفق</h3>
-                    <p class="step-desc">الذكاء الاصطناعي يعمل 24/7. أنت استرخِ وشاهد.</p>
-                    <div class="step-time">🎯 أول استرداد خلال 48 ساعة</div>
+                    <h3 class="step-title">شاهد الأرباح</h3>
+                    <p class="step-desc">الذكاء الاصطناعي يعمل 24/7</p>
                 </div>
             </div>
         </section>
-        
-        <!-- SOCIAL PROOF -->
+
+        <!-- ===== PRICING ===== -->
+        <section class="pricing-section" id="pricing">
+            <h2 class="section-title">تسعير بسيط وشفاف</h2>
+            <p class="section-subtitle">كل الباقات تشمل 7 أيام تجربة مجانية</p>
+
+            <div class="pricing-grid">
+
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <div class="pricing-plan-name">Starter</div>
+                    <div class="pricing-plan-title">باقة البداية</div>
+                    <div class="pricing-price">
+                        199 <span class="currency">ر.س</span><span class="period">/شهر</span>
+                    </div>
+                    <div class="pricing-messages">500 رسالة مشمولة</div>
+                    <div class="pricing-extra">0.40 ر.س لكل رسالة إضافية</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> استرداد السلات المتروكة</li>
+                        <li><span class="check">✓</span> رسائل AI مخصصة</li>
+                        <li><span class="check">✓</span> تقارير أساسية</li>
+                        <li><span class="check">✓</span> حماية من البلوك</li>
+                    </ul>
+                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta outline">ابدأ مجاناً</a>
+                    <div class="pricing-trial">7 أيام تجربة مجانية</div>
+                </div>
+
+                <!-- Growth (Recommended) -->
+                <div class="pricing-card recommended">
+                    <div class="pricing-recommend-badge">الأكثر طلباً</div>
+                    <div class="pricing-plan-name">Growth</div>
+                    <div class="pricing-plan-title">باقة النمو</div>
+                    <div class="pricing-price">
+                        399 <span class="currency">ر.س</span><span class="period">/شهر</span>
+                    </div>
+                    <div class="pricing-messages">2,000 رسالة مشمولة</div>
+                    <div class="pricing-extra">0.25 ر.س لكل رسالة إضافية</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> كل مميزات باقة البداية</li>
+                        <li><span class="check">✓</span> متابعة تصفح الزوار</li>
+                        <li><span class="check">✓</span> عروض ما بعد الشراء</li>
+                        <li><span class="check">✓</span> جمع التقييمات تلقائياً</li>
+                        <li><span class="check">✓</span> تصنيف العملاء RFM</li>
+                        <li><span class="check">✓</span> اختبارات A/B</li>
+                        <li><span class="check">✓</span> أوقات إرسال ذكية</li>
+                    </ul>
+                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta primary">ابدأ مجاناً</a>
+                    <div class="pricing-trial">7 أيام تجربة مجانية</div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="pricing-card">
+                    <div class="pricing-plan-name">Enterprise</div>
+                    <div class="pricing-plan-title">باقة المؤسسات</div>
+                    <div class="pricing-price">
+                        10,000 <span class="currency">ر.س</span>
+                    </div>
+                    <div class="pricing-messages">رسوم تأسيس + اشتراك مخصص</div>
+                    <div class="pricing-extra">رسائل غير محدودة</div>
+                    <ul class="pricing-features">
+                        <li><span class="check">✓</span> كل مميزات باقة النمو</li>
+                        <li><span class="check">✓</span> برنامج الولاء</li>
+                        <li><span class="check">✓</span> حملات مخصصة</li>
+                        <li><span class="check">✓</span> API مفتوح</li>
+                        <li><span class="check">✓</span> مدير حساب مخصص</li>
+                        <li><span class="check">✓</span> دعم أولوية</li>
+                        <li><span class="check">✓</span> تحليلات تنبؤية</li>
+                    </ul>
+                    <a href="https://wa.me/966500000000" class="pricing-cta outline">تواصل معنا</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== SOCIAL PROOF ===== -->
         <section class="proof-section">
             <div class="proof-label">
-                <span class="dot" style="display: inline-block;"></span>
+                <span class="proof-dot"></span>
                 تم استردادها لمتاجر مثلك هذا الشهر
             </div>
             <div class="proof-counter" id="proofCounter">0</div>
             <div class="proof-sub">ر.س</div>
-            
+
             <div class="proof-activity">
                 <div class="proof-activity-item">
-                    <span class="dot"></span>
+                    <span class="proof-dot"></span>
                     <span>أحمد من الرياض: +2,450 ر.س</span>
                 </div>
                 <div class="proof-activity-item">
-                    <span class="dot"></span>
+                    <span class="proof-dot"></span>
                     <span>سارة من جدة: +1,890 ر.س</span>
                 </div>
                 <div class="proof-activity-item">
-                    <span class="dot"></span>
+                    <span class="proof-dot"></span>
                     <span>محمد من الدمام: +3,200 ر.س</span>
                 </div>
             </div>
         </section>
-        
-        <!-- QUICK FAQ -->
-        <section class="faq-preview">
-            <h2>❓ أسئلة سريعة</h2>
-            
+
+        <!-- ===== FAQ ===== -->
+        <section class="faq-section">
+            <h2>أسئلة شائعة</h2>
+
             <div class="faq-item">
                 <div class="faq-q">💰 كم تكلفة رِبح؟</div>
-                <div class="faq-a">صفر للبدء. تدفع 30% فقط من المبيعات التي نستردها لك. إذا ما كسبت، ما تدفع شي.</div>
+                <div class="faq-a">نقدم 3 باقات تبدأ من 199 ر.س/شهر مع رسائل مشمولة. كل الباقات تشمل 7 أيام تجربة مجانية.</div>
             </div>
-            
+
             <div class="faq-item">
                 <div class="faq-q">⏱️ كم يستغرق التفعيل؟</div>
                 <div class="faq-a">60 ثانية حرفياً. ضغطة لربط المتجر، مسح QR للواتساب، وخلاص!</div>
             </div>
-            
+
             <div class="faq-item">
                 <div class="faq-q">🛡️ هل واتساب متجري آمن؟</div>
                 <div class="faq-a">نعم 100%. نستخدم ربط QR آمن، ونراقب معدلات البلوك. لو في أي خطر، نوقف فوراً.</div>
             </div>
-            
+
             <div class="faq-item">
                 <div class="faq-q">📧 ماذا لو أردت الإلغاء؟</div>
                 <div class="faq-a">ضغطة واحدة. فوري. بدون أسئلة. بدون رسوم إلغاء.</div>
             </div>
         </section>
-        
-        <!-- FINAL CTA -->
+
+        <!-- ===== FINAL CTA ===== -->
         <section class="final-cta">
             <h2 class="final-title">جاهز تسترد أرباحك المفقودة؟</h2>
-            <p class="final-subtitle">الطريقة الوحيدة للخسارة هي عدم التجربة.</p>
-            
+
             <div class="final-bullets">
                 <div class="final-bullet"><span class="check">✓</span> تفعيل فوري</div>
                 <div class="final-bullet"><span class="check">✓</span> بدون بطاقة ائتمان</div>
-                <div class="final-bullet"><span class="check">✓</span> ضمان 2X أو مجاني</div>
+                <div class="final-bullet"><span class="check">✓</span> 7 أيام تجربة مجانية</div>
                 <div class="final-bullet"><span class="check">✓</span> إلغاء بضغطة</div>
             </div>
-            
+
             <div class="cta-wrapper">
                 <div class="cta-ring"></div>
                 <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    <span>←</span>
-                    ابدأ الآن مجاناً
+                    ابدأ مجاناً — 7 أيام تجربة
                 </a>
             </div>
-            
-            <p class="cta-micro" style="margin-top: 16px;">
-                ⚡ باقي <strong id="spotsLeft2">37</strong> مكان من عرض الأعضاء المؤسسين
-            </p>
         </section>
-        
-        <!-- Footer -->
+
+        <!-- ===== FOOTER ===== -->
         <footer class="footer">
-            <a href="/privacy.html">🔒 الخصوصية</a>
-            <a href="/faq.html">❓ الأسئلة الشائعة</a>
-            <span>رِبح © 2026</span>
+            <div>
+                <a href="/privacy.html">الخصوصية</a>
+                <a href="/faq.html">الأسئلة الشائعة</a>
+            </div>
+            <div class="copyright">رِبح &copy; 2026</div>
         </footer>
+
     </div>
-    
+
     <script>
         // Animate counter
-        function animateCounter(element, target, duration = 2000) {
-            let current = 0;
-            const step = target / (duration / 16);
+        function animateCounter(element, target, duration) {
+            duration = duration || 2000;
+            var current = 0;
+            var step = target / (duration / 16);
             function update() {
                 current += step;
                 if (current < target) {
@@ -1343,52 +1164,35 @@
             }
             requestAnimationFrame(update);
         }
-        
+
         // Calculator logic
         function updateCalculator() {
-            const slider = document.getElementById('salesSlider');
-            const sales = parseInt(slider.value);
-            const lost = Math.round(sales * 0.7); // 70% abandoned
-            const recovered = Math.round(lost * 0.15); // 15% recovery rate (can go higher)
-            
+            var slider = document.getElementById('salesSlider');
+            var sales = parseInt(slider.value);
+            var lost = Math.round(sales * 0.7);
+            var recovered = Math.round(lost * 0.15);
+
             document.getElementById('salesValue').textContent = sales.toLocaleString('ar-SA') + ' ر.س';
             document.getElementById('lostValue').textContent = lost.toLocaleString('ar-SA') + ' ر.س';
             document.getElementById('recoveredValue').textContent = recovered.toLocaleString('ar-SA') + ' ر.س';
         }
-        
-        document.addEventListener('DOMContentLoaded', () => {
+
+        document.addEventListener('DOMContentLoaded', function() {
             // Social proof counter
-            const proofCounter = document.getElementById('proofCounter');
-            const targetAmount = 127450 + Math.floor(Math.random() * 50000);
-            setTimeout(() => animateCounter(proofCounter, targetAmount), 500);
-            
-            // Live stores counter
-            const liveStores = document.getElementById('liveStores');
-            const storeCount = 847 + Math.floor(Math.random() * 100);
-            liveStores.textContent = storeCount;
-            
-            // Spots remaining (synced)
-            const spotsBase = 37;
-            document.getElementById('spotsLeft').textContent = spotsBase + ' مكان';
-            document.getElementById('spotsLeft2').textContent = spotsBase;
-            
+            var proofCounter = document.getElementById('proofCounter');
+            var targetAmount = 127450 + Math.floor(Math.random() * 50000);
+            setTimeout(function() { animateCounter(proofCounter, targetAmount); }, 500);
+
             // Calculator slider
-            const salesSlider = document.getElementById('salesSlider');
+            var salesSlider = document.getElementById('salesSlider');
             if (salesSlider) {
                 salesSlider.addEventListener('input', updateCalculator);
-                updateCalculator(); // Initial calculation
+                updateCalculator();
             }
-            
-            // Increment live stores periodically
-            setInterval(() => {
-                const current = parseInt(liveStores.textContent);
-                if (Math.random() > 0.7) {
-                    liveStores.textContent = current + 1;
-                }
-            }, 10000);
         });
     </script>
-<script src="/js/transitions.js"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="/js/transitions.js"></script>
 </body>
 
 </html>
