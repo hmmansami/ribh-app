@@ -889,6 +889,89 @@
 
         .s4-footer { padding-bottom: 24px; }
 
+        /* ── Tab Bar (Apple iOS-style) ── */
+        .tab-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: rgba(9, 9, 11, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            z-index: 100;
+            padding: 0 16px;
+            padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        .tab-bar.is-visible { display: flex; }
+        .tab-item {
+            flex: 1;
+            max-width: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            padding: 8px 0;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 200ms;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tab-item svg { width: 22px; height: 22px; }
+        .tab-item.active { color: var(--primary); }
+        .tab-item.active svg { stroke-width: 2.5; }
+
+        /* Tab content panels */
+        .tab-panel { display: none; }
+        .tab-panel.is-visible { display: block; animation: fadeIn 200ms ease-out; }
+
+        /* Bottom padding when tab bar is visible */
+        .s4-wrap.has-tabs { padding-bottom: 80px !important; }
+
+        /* ── Message Performance Chart ── */
+        .perf-chart { margin-bottom: 20px; }
+        .perf-chart-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .perf-chart-title svg { width: 16px; height: 16px; color: var(--primary); }
+        .perf-bars { display: flex; flex-direction: column; gap: 12px; }
+        .perf-bar-row { display: flex; align-items: center; gap: 12px; }
+        .perf-bar-label { width: 80px; font-size: 12px; color: var(--text-muted); text-align: left; flex-shrink: 0; }
+        .perf-bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; }
+        .perf-bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding: 0 10px; font-size: 12px; font-weight: 600; color: #fff; transition: width 1s ease; }
+        .perf-bar-fill.clr-blue { background: linear-gradient(90deg, rgba(59,130,246,0.8), #3B82F6); }
+        .perf-bar-fill.clr-purple { background: linear-gradient(90deg, rgba(139,92,246,0.8), #8B5CF6); }
+        .perf-bar-fill.clr-amber { background: linear-gradient(90deg, rgba(245,158,11,0.8), #F59E0B); }
+        .perf-bar-fill.clr-green { background: linear-gradient(90deg, rgba(16,185,129,0.8), var(--primary)); }
+
+        /* ── Time Heatmap ── */
+        .time-grid { margin-bottom: 20px; }
+        .time-grid-title { font-size: 14px; font-weight: 600; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+        .time-grid-title svg { width: 16px; height: 16px; color: var(--primary); }
+        .time-cells { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        @media (min-width: 640px) { .time-cells { grid-template-columns: repeat(6, 1fr); } }
+        .time-cell { aspect-ratio: 1.4; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; }
+        .time-cell .hour { font-weight: 600; }
+        .time-cell .rate { font-size: 10px; opacity: 0.7; }
+        .time-cell.hot { background: rgba(16, 185, 129, 0.25); border: 1px solid rgba(16, 185, 129, 0.3); color: var(--primary); }
+        .time-cell.warm { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.2); color: #F59E0B; }
+        .time-cell.cool { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); color: var(--text-muted); }
+
+        /* ── Plan card ── */
+        .plan-card-mini { padding: 16px; margin-bottom: 12px; }
+        .plan-card-mini .plan-name { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+        .plan-card-mini .plan-detail { font-size: 13px; color: var(--text-muted); }
+        .plan-card-mini .plan-upgrade { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--primary); text-decoration: none; }
+        .plan-card-mini .plan-upgrade svg { width: 14px; height: 14px; }
+
         /* ── Two-column layout for desktop state 4 ── */
         @media (min-width: 640px) {
             .s4-two-col {
@@ -1218,7 +1301,7 @@
 
         <!-- ═══════ STATE 4: active ═══════ -->
         <div id="state-active" class="state">
-            <div class="s4-wrap">
+            <div class="s4-wrap has-tabs">
                 <div class="s4-topbar">
                     <div style="display:flex;align-items:center;gap:10px">
                         <span class="s4-logo">RIBH</span>
@@ -1235,44 +1318,62 @@
                     </div>
                 </div>
 
-                <!-- Revenue Hero -->
-                <div class="s4-hero">
-                    <div>
-                        <span class="s4-hero-currency">ر.س</span>
-                        <span class="s4-hero-number" id="s4-hero-recovered">0</span>
+                <!-- ═══ TAB: Home ═══ -->
+                <div class="tab-panel is-visible" id="tab-home">
+                    <!-- Revenue Hero -->
+                    <div class="s4-hero">
+                        <div>
+                            <span class="s4-hero-currency">ر.س</span>
+                            <span class="s4-hero-number" id="s4-hero-recovered">0</span>
+                        </div>
+                        <div class="s4-hero-label">تم استردادها حتى الآن</div>
+                        <div class="s4-hero-period">
+                            <i data-lucide="calendar"></i>
+                            <span>هذا الشهر</span>
+                        </div>
                     </div>
-                    <div class="s4-hero-label">تم استردادها حتى الآن</div>
-                    <div class="s4-hero-period">
-                        <i data-lucide="calendar"></i>
-                        <span>هذا الشهر</span>
+
+                    <!-- Stats Row -->
+                    <div class="s4-stats">
+                        <div class="card s4-stat">
+                            <div class="s4-stat-value" id="s4-sent">0</div>
+                            <div class="s4-stat-label">رسائل مرسلة</div>
+                        </div>
+                        <div class="card s4-stat">
+                            <div class="s4-stat-value" id="s4-opened">0</div>
+                            <div class="s4-stat-label">تم الفتح</div>
+                            <div class="s4-stat-pct" id="s4-opened-pct"></div>
+                        </div>
+                        <div class="card s4-stat">
+                            <div class="s4-stat-value" id="s4-purchased">0</div>
+                            <div class="s4-stat-label">تم الشراء</div>
+                            <div class="s4-stat-pct" id="s4-purchased-pct"></div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed -->
+                    <div class="s4-activity">
+                        <div class="s4-activity-header">
+                            <span class="s4-activity-title">النشاطات</span>
+                            <span class="s4-live-badge">
+                                <span class="s4-live-dot"></span>
+                                <span>مباشر</span>
+                            </span>
+                        </div>
+                        <div class="s4-activity-list" id="s4-activity-list">
+                            <div class="s4-empty">لا توجد بيانات بعد</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Stats Row -->
-                <div class="s4-stats">
-                    <div class="card s4-stat">
-                        <div class="s4-stat-value" id="s4-sent">0</div>
-                        <div class="s4-stat-label">رسائل مرسلة</div>
-                    </div>
-                    <div class="card s4-stat">
-                        <div class="s4-stat-value" id="s4-opened">0</div>
-                        <div class="s4-stat-label">تم الفتح</div>
-                        <div class="s4-stat-pct" id="s4-opened-pct"></div>
-                    </div>
-                    <div class="card s4-stat">
-                        <div class="s4-stat-value" id="s4-purchased">0</div>
-                        <div class="s4-stat-label">تم الشراء</div>
-                        <div class="s4-stat-pct" id="s4-purchased-pct"></div>
-                    </div>
-                </div>
-
-                <!-- Feature Modules -->
-                <div class="s4-modules">
-                    <div class="section-title">
-                        <i data-lucide="layers"></i>
-                        <span>المحركات النشطة</span>
-                    </div>
-                    <div class="s4-modules-grid">
+                <!-- ═══ TAB: Engines ═══ -->
+                <div class="tab-panel" id="tab-engines">
+                    <div class="s4-modules">
+                        <div class="section-title">
+                            <i data-lucide="layers"></i>
+                            <span>المحركات النشطة</span>
+                        </div>
+                        <div class="s4-modules-grid">
                         <div class="feature-module" data-module="cart_recovery">
                             <div class="feature-module-info">
                                 <div class="feature-module-icon"><i data-lucide="shopping-cart"></i></div>
@@ -1376,8 +1477,10 @@
                         </div>
                     </div>
                 </div>
+                </div><!-- /tab-engines -->
 
-                <div class="s4-two-col">
+                <!-- ═══ TAB: Analytics ═══ -->
+                <div class="tab-panel" id="tab-analytics">
 
                     <!-- Analytics Funnel -->
                     <div class="s4-funnel">
@@ -1499,6 +1602,68 @@
                         </div>
                     </div>
 
+                    <!-- Message Performance Chart -->
+                    <div class="perf-chart">
+                        <div class="perf-chart-title">
+                            <i data-lucide="activity"></i>
+                            <span>أداء الرسائل</span>
+                        </div>
+                        <div class="card" style="padding: 16px;">
+                            <div class="perf-bars">
+                                <div class="perf-bar-row">
+                                    <span class="perf-bar-label">مرسلة</span>
+                                    <div class="perf-bar-track">
+                                        <div class="perf-bar-fill clr-blue" id="perf-sent" style="width: 100%;">100%</div>
+                                    </div>
+                                </div>
+                                <div class="perf-bar-row">
+                                    <span class="perf-bar-label">تم التوصيل</span>
+                                    <div class="perf-bar-track">
+                                        <div class="perf-bar-fill clr-purple" id="perf-delivered" style="width: 95%;">95%</div>
+                                    </div>
+                                </div>
+                                <div class="perf-bar-row">
+                                    <span class="perf-bar-label">تم القراءة</span>
+                                    <div class="perf-bar-track">
+                                        <div class="perf-bar-fill clr-amber" id="perf-read" style="width: 66%;">66%</div>
+                                    </div>
+                                </div>
+                                <div class="perf-bar-row">
+                                    <span class="perf-bar-label">تم الشراء</span>
+                                    <div class="perf-bar-track">
+                                        <div class="perf-bar-fill clr-green" id="perf-converted" style="width: 17%;">17%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Best Send Times Heatmap -->
+                    <div class="time-grid">
+                        <div class="time-grid-title">
+                            <i data-lucide="clock"></i>
+                            <span>أفضل أوقات الإرسال</span>
+                        </div>
+                        <div class="card" style="padding: 16px;">
+                            <div class="time-cells">
+                                <div class="time-cell cool"><span class="hour">8 ص</span><span class="rate">12%</span></div>
+                                <div class="time-cell warm"><span class="hour">10 ص</span><span class="rate">24%</span></div>
+                                <div class="time-cell cool"><span class="hour">12 ظ</span><span class="rate">18%</span></div>
+                                <div class="time-cell hot"><span class="hour">2 م</span><span class="rate">38%</span></div>
+                                <div class="time-cell hot"><span class="hour">4 م</span><span class="rate">42%</span></div>
+                                <div class="time-cell warm"><span class="hour">6 م</span><span class="rate">28%</span></div>
+                                <div class="time-cell hot"><span class="hour">8 م</span><span class="rate">35%</span></div>
+                                <div class="time-cell warm"><span class="hour">10 م</span><span class="rate">22%</span></div>
+                                <div class="time-cell cool"><span class="hour">12 ل</span><span class="rate">8%</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /tab-analytics -->
+
+                <!-- ═══ TAB: Account ═══ -->
+                <div class="tab-panel" id="tab-account">
+
                     <!-- WhatsApp Status -->
                     <div class="s4-wa-wrap">
                         <div class="card s4-wa-status">
@@ -1536,39 +1701,56 @@
                         </div>
                     </div>
 
-                    <!-- Activity Feed -->
-                    <div class="s4-activity s4-col-full">
-                        <div class="s4-activity-header">
-                            <span class="s4-activity-title">النشاطات</span>
-                            <span class="s4-live-badge">
-                                <span class="s4-live-dot"></span>
-                                <span>مباشر</span>
-                            </span>
-                        </div>
-                        <div class="s4-activity-list" id="s4-activity-list">
-                            <div class="s4-empty">لا توجد بيانات بعد</div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="s4-footer">
-                    <div style="display:flex;gap:10px;margin-bottom:10px">
-                        <a href="/customers.html" class="btn-secondary" style="flex:1">
-                            <i data-lucide="users"></i>
-                            <span>العملاء</span>
-                        </a>
-                        <a href="/pricing.html" class="btn-secondary" style="flex:1">
-                            <i data-lucide="crown"></i>
-                            <span>الباقات</span>
+                    <!-- Plan Info -->
+                    <div class="card plan-card-mini">
+                        <div class="plan-name" id="s4-plan-name">الفترة التجريبية</div>
+                        <div class="plan-detail" id="s4-plan-detail">500 رسالة مشمولة · 0.40 ر.س/رسالة إضافية</div>
+                        <a href="/pricing.html" class="plan-upgrade">
+                            <i data-lucide="arrow-up-circle"></i>
+                            <span>ترقية الباقة</span>
                         </a>
                     </div>
-                    <button class="btn-secondary" id="btn-pause">
-                        <i data-lucide="pause"></i>
-                        <span>ايقاف مؤقت</span>
-                    </button>
-                </div>
+
+                    <div class="s4-footer">
+                        <div style="display:flex;gap:10px;margin-bottom:10px">
+                            <a href="/customers.html" class="btn-secondary" style="flex:1">
+                                <i data-lucide="users"></i>
+                                <span>العملاء</span>
+                            </a>
+                            <a href="/pricing.html" class="btn-secondary" style="flex:1">
+                                <i data-lucide="crown"></i>
+                                <span>الباقات</span>
+                            </a>
+                        </div>
+                        <button class="btn-secondary" id="btn-pause">
+                            <i data-lucide="pause"></i>
+                            <span>ايقاف مؤقت</span>
+                        </button>
+                    </div>
+
+                </div><!-- /tab-account -->
+
             </div>
+
+            <!-- Tab Bar Navigation -->
+            <nav class="tab-bar" id="tab-bar">
+                <button class="tab-item active" data-tab="home">
+                    <i data-lucide="home"></i>
+                    <span>الرئيسية</span>
+                </button>
+                <button class="tab-item" data-tab="engines">
+                    <i data-lucide="layers"></i>
+                    <span>المحركات</span>
+                </button>
+                <button class="tab-item" data-tab="analytics">
+                    <i data-lucide="bar-chart-3"></i>
+                    <span>التحليلات</span>
+                </button>
+                <button class="tab-item" data-tab="account">
+                    <i data-lucide="user"></i>
+                    <span>الحساب</span>
+                </button>
+            </nav>
         </div>
 
         <!-- ═══════ MESSAGE EDITOR MODAL ═══════ -->
@@ -1616,6 +1798,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             bindButtons();
+            initTabs();
             init();
         });
 
@@ -1630,6 +1813,30 @@
             });
 
             document.getElementById('btn-pause').addEventListener('click', handlePause);
+        }
+
+        // ── Tab Navigation ──
+        function initTabs() {
+            var tabItems = document.querySelectorAll('.tab-item');
+            var tabPanels = document.querySelectorAll('.tab-panel');
+
+            tabItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    var tab = this.getAttribute('data-tab');
+
+                    // Update active tab
+                    tabItems.forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+
+                    // Show target panel
+                    tabPanels.forEach(function(p) { p.classList.remove('is-visible'); });
+                    var target = document.getElementById('tab-' + tab);
+                    if (target) target.classList.add('is-visible');
+
+                    // Re-render icons for new panel
+                    lucide.createIcons();
+                });
+            });
         }
 
         // ── Init: determine state ──
@@ -1750,6 +1957,16 @@
             if (!target) return;
             target.classList.add('is-active');
             currentState = name;
+
+            // Show/hide tab bar
+            var tabBar = document.getElementById('tab-bar');
+            if (tabBar) {
+                if (name === 'active') {
+                    tabBar.classList.add('is-visible');
+                } else {
+                    tabBar.classList.remove('is-visible');
+                }
+            }
 
             // Populate state-specific data
             switch (name) {
