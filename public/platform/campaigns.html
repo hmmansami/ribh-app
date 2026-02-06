@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - الحملات</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="shared/shell.css">
+    <style>
+        /* ── Page Header ── */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-header-info h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .page-header-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ── Campaign Cards ── */
+        .campaigns-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .campaign-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0;
+            transition: all 0.2s var(--ease);
+            overflow: hidden;
+            display: flex;
+            cursor: default;
+        }
+
+        .campaign-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .campaign-card-border {
+            width: 4px;
+            flex-shrink: 0;
+        }
+
+        .campaign-card-border.sent { background: var(--success); }
+        .campaign-card-border.scheduled { background: var(--info); }
+        .campaign-card-border.draft { background: var(--text-dim); }
+
+        .campaign-card-body {
+            flex: 1;
+            padding: 20px 24px;
+            min-width: 0;
+        }
+
+        .campaign-card-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            gap: 12px;
+        }
+
+        .campaign-card-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .campaign-card-badges {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .campaign-card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .campaign-card-meta .meta-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: var(--text-dim);
+        }
+
+        /* ── Campaign Stats Inline ── */
+        .campaign-stats-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .campaign-stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding: 10px 16px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            min-width: 90px;
+        }
+
+        .campaign-stat-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .campaign-stat-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
+        }
+
+        .campaign-stat-value.revenue {
+            color: var(--primary);
+        }
+
+        /* ── Campaign Progress Bar ── */
+        .campaign-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .campaign-progress-bar {
+            flex: 1;
+            height: 5px;
+            background: var(--bg-surface-2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .campaign-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s var(--ease);
+        }
+
+        .campaign-progress-fill.sent { background: var(--success); }
+        .campaign-progress-fill.scheduled { background: var(--info); }
+
+        .campaign-progress-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        /* ── Draft/Scheduled Card (no stats) ── */
+        .campaign-card-target {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .campaign-card-target svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-dim);
+        }
+
+        .campaign-card-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 12px;
+        }
+
+        .campaign-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+
+        .campaign-action-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .campaign-action-btn.delete:hover {
+            background: var(--danger-dim);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+
+        .campaign-action-btn svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        /* ── Multi-Step Modal ── */
+        .modal-wide {
+            max-width: 640px !important;
+        }
+
+        /* ── Step Indicator ── */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 20px 24px 0;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-surface-2);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dim);
+            transition: all 0.3s var(--ease);
+            position: relative;
+            z-index: 2;
+        }
+
+        .step-dot.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #000;
+        }
+
+        .step-dot.completed {
+            background: var(--primary-dim);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .step-line {
+            width: 60px;
+            height: 2px;
+            background: var(--border);
+            transition: background 0.3s var(--ease);
+            z-index: 1;
+        }
+
+        .step-line.completed {
+            background: var(--primary);
+        }
+
+        .step-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 40px 0;
+        }
+
+        .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dim);
+            text-align: center;
+            flex: 1;
+            transition: color 0.3s var(--ease);
+        }
+
+        .step-label.active {
+            color: var(--primary);
+        }
+
+        /* ── Step Content Panels ── */
+        .step-panel {
+            display: none;
+        }
+
+        .step-panel.active {
+            display: block;
+        }
+
+        /* ── Expected Recipients ── */
+        .expected-recipients {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            margin-top: 4px;
+            background: var(--primary-dim);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .expected-recipients svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ── Variable Buttons ── */
+        .variable-buttons {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+
+        .var-btn {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--secondary-dim);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            color: var(--secondary);
+            font-size: 11px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+
+        .var-btn:hover {
+            background: rgba(99, 102, 241, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .message-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            line-height: 1.7;
+            resize: vertical;
+            outline: none;
+            direction: rtl;
+            transition: border-color 0.15s var(--ease);
+        }
+
+        .message-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .message-textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* ── WhatsApp Preview ── */
+        .wa-preview-container {
+            margin-top: 16px;
+        }
+
+        .wa-preview-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .wa-preview-label svg {
+            width: 14px;
+            height: 14px;
+            color: var(--whatsapp);
+        }
+
+        .wa-preview-phone {
+            background: #0b141a;
+            border-radius: var(--radius-lg);
+            padding: 20px 16px;
+            position: relative;
+            overflow: hidden;
+            max-width: 340px;
+        }
+
+        .wa-preview-phone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cdefs%3E%3Cpattern id='p' patternUnits='userSpaceOnUse' width='40' height='40'%3E%3Cpath d='M0 20h40M20 0v40' stroke='%23ffffff' stroke-width='0.3' opacity='0.03'/%3E%3C/pattern%3E%3C/defs%3E%3Crect fill='url(%23p)' width='200' height='200'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .wa-bubble {
+            background: #005c4b;
+            border-radius: 8px 0 8px 8px;
+            padding: 8px 12px;
+            max-width: 280px;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .wa-bubble-text {
+            font-size: 13px;
+            color: #e9edef;
+            line-height: 1.7;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            direction: rtl;
+        }
+
+        .wa-bubble-time {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 4px;
+            margin-top: 4px;
+        }
+
+        .wa-bubble-time span {
+            font-size: 10px;
+            color: rgba(233, 237, 239, 0.5);
+        }
+
+        .wa-bubble-time svg {
+            width: 14px;
+            height: 14px;
+            color: #53bdeb;
+        }
+
+        .wa-preview-empty {
+            text-align: center;
+            padding: 20px;
+            color: rgba(233, 237, 239, 0.3);
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ── Schedule Options ── */
+        .schedule-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .schedule-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+
+        .schedule-option:hover {
+            border-color: var(--border-strong);
+        }
+
+        .schedule-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .schedule-option input[type="radio"] {
+            display: none;
+        }
+
+        .schedule-radio {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-strong);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.15s var(--ease);
+        }
+
+        .schedule-option.selected .schedule-radio {
+            border-color: var(--primary);
+        }
+
+        .schedule-radio-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: transparent;
+            transition: background 0.15s var(--ease);
+        }
+
+        .schedule-option.selected .schedule-radio-dot {
+            background: var(--primary);
+        }
+
+        .schedule-option-content {
+            flex: 1;
+        }
+
+        .schedule-option-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .schedule-option-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .schedule-datetime {
+            display: none;
+            margin-top: 12px;
+        }
+
+        .schedule-datetime.visible {
+            display: block;
+        }
+
+        .datetime-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .datetime-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        /* Fix datetime picker colors */
+        .datetime-input::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        /* ── Modal Navigation ── */
+        .modal-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            gap: 8px;
+        }
+
+        .modal-nav-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .modal-nav-left {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .page-header-right {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .campaign-card-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .campaign-stats-row {
+                gap: 8px;
+            }
+
+            .campaign-stat-item {
+                min-width: 70px;
+                padding: 8px 10px;
+                flex: 1;
+            }
+
+            .campaign-stat-value {
+                font-size: 13px;
+            }
+
+            .wa-preview-phone {
+                max-width: 100%;
+            }
+
+            .modal-wide {
+                max-width: 100% !important;
+            }
+
+            .step-line {
+                width: 30px;
+            }
+
+            .step-labels {
+                padding: 8px 16px 0;
+            }
+
+            .modal-nav {
+                flex-direction: column-reverse;
+                gap: 10px;
+            }
+
+            .modal-nav-right,
+            .modal-nav-left {
+                width: 100%;
+            }
+
+            .modal-nav-right .btn,
+            .modal-nav-left .btn {
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .campaign-stats-row {
+                flex-direction: column;
+            }
+
+            .campaign-stat-item {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="page-body" style="display:none">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-info">
+                <h2>الحملات</h2>
+                <p>أنشئ حملات تسويقية مباشرة عبر واتساب وأرسلها لشرائح محددة من عملائك</p>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateModal()">
+                <i data-lucide="plus"></i>
+                إنشاء حملة جديدة
+            </button>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="campaignTabs">
+            <button class="tab active" data-filter="all" onclick="filterCampaigns('all', this)">الكل</button>
+            <button class="tab" data-filter="sent" onclick="filterCampaigns('sent', this)">مرسلة</button>
+            <button class="tab" data-filter="scheduled" onclick="filterCampaigns('scheduled', this)">مجدولة</button>
+            <button class="tab" data-filter="draft" onclick="filterCampaigns('draft', this)">مسودة</button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-grid stagger">
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="send"></i>
+                    إجمالي الحملات
+                </div>
+                <div class="stat-card-value">24</div>
+                <div class="stat-card-change up">
+                    <i data-lucide="trending-up"></i>
+                    +4 هذا الشهر
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="message-square"></i>
+                    الرسائل المرسلة
+                </div>
+                <div class="stat-card-value">12,450</div>
+                <div class="stat-card-change up">
+                    <i data-lucide="trending-up"></i>
+                    +18.3%
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="eye"></i>
+                    معدل الفتح
+                </div>
+                <div class="stat-card-value">94.2%</div>
+                <div class="stat-card-change up">
+                    <i data-lucide="trending-up"></i>
+                    ميزة واتساب!
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="banknote"></i>
+                    الإيرادات من الحملات
+                </div>
+                <div class="stat-card-value">15,200 <span style="font-size:14px;font-weight:600;">ر.س</span></div>
+                <div class="stat-card-change up">
+                    <i data-lucide="trending-up"></i>
+                    +22.5%
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaigns List -->
+        <div class="campaigns-list stagger" id="campaignsList"></div>
+
+        <!-- Create Campaign Modal -->
+        <div class="modal-overlay" id="createCampaignModal">
+            <div class="modal modal-wide">
+                <div class="modal-header">
+                    <div class="modal-title">إنشاء حملة جديدة</div>
+                    <button class="modal-close" onclick="closeCreateModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-dot active" id="stepDot1">1</div>
+                    <div class="step-line" id="stepLine1"></div>
+                    <div class="step-dot" id="stepDot2">2</div>
+                    <div class="step-line" id="stepLine2"></div>
+                    <div class="step-dot" id="stepDot3">3</div>
+                </div>
+                <div class="step-labels">
+                    <div class="step-label active" id="stepLabel1">البيانات</div>
+                    <div class="step-label" id="stepLabel2">المحتوى</div>
+                    <div class="step-label" id="stepLabel3">الجدولة</div>
+                </div>
+
+                <!-- Step 1: Campaign Details -->
+                <div class="modal-body step-panel active" id="step1">
+                    <div class="input-group">
+                        <label class="input-label">اسم الحملة</label>
+                        <input type="text" class="input" id="campaignName" placeholder="مثال: عروض نهاية الأسبوع">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">القناة</label>
+                        <select class="select" id="campaignChannel">
+                            <option value="whatsapp" selected>واتساب</option>
+                            <option value="email">بريد إلكتروني</option>
+                            <option value="sms">رسائل قصيرة</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">الشريحة المستهدفة</label>
+                        <select class="select" id="campaignSegment" onchange="updateRecipientCount()">
+                            <option value="">اختر شريحة...</option>
+                            <option value="all">جميع العملاء (1,847)</option>
+                            <option value="champion">الأبطال (156)</option>
+                            <option value="loyal">المخلصون (312)</option>
+                            <option value="potential">الواعدون (428)</option>
+                            <option value="recent">الجدد (534)</option>
+                            <option value="at_risk">معرضون للخسارة (267)</option>
+                            <option value="dormant">خاملون (150)</option>
+                            <option value="champion_loyal">الأبطال + المخلصون (468)</option>
+                        </select>
+                    </div>
+                    <div class="expected-recipients" id="recipientCount" style="display:none">
+                        <i data-lucide="users"></i>
+                        <span>عدد المستلمين المتوقع: <strong id="recipientNumber">0</strong></span>
+                    </div>
+                </div>
+
+                <!-- Step 2: Message Content -->
+                <div class="modal-body step-panel" id="step2">
+                    <div class="input-group">
+                        <label class="input-label">محتوى الرسالة</label>
+                        <div class="variable-buttons">
+                            <button type="button" class="var-btn" onclick="insertVariable('{name}')">
+                                {name}
+                            </button>
+                            <button type="button" class="var-btn" onclick="insertVariable('{store_name}')">
+                                {store_name}
+                            </button>
+                        </div>
+                        <textarea class="message-textarea" id="messageContent" placeholder="اكتب محتوى الرسالة هنا..." oninput="updatePreview()"></textarea>
+                    </div>
+                    <div class="wa-preview-container">
+                        <div class="wa-preview-label">
+                            <i data-lucide="smartphone"></i>
+                            معاينة الرسالة
+                        </div>
+                        <div class="wa-preview-phone">
+                            <div id="waPreviewContent">
+                                <div class="wa-preview-empty">اكتب رسالتك لمشاهدة المعاينة</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Schedule -->
+                <div class="modal-body step-panel" id="step3">
+                    <div class="schedule-options">
+                        <div class="schedule-option selected" id="optionNow" onclick="selectSchedule('now')">
+                            <input type="radio" name="schedule" value="now" checked>
+                            <div class="schedule-radio">
+                                <div class="schedule-radio-dot"></div>
+                            </div>
+                            <div class="schedule-option-content">
+                                <div class="schedule-option-title">إرسال الآن</div>
+                                <div class="schedule-option-desc">سيتم إرسال الحملة فوراً لجميع المستلمين</div>
+                            </div>
+                        </div>
+                        <div class="schedule-option" id="optionSchedule" onclick="selectSchedule('schedule')">
+                            <input type="radio" name="schedule" value="schedule">
+                            <div class="schedule-radio">
+                                <div class="schedule-radio-dot"></div>
+                            </div>
+                            <div class="schedule-option-content">
+                                <div class="schedule-option-title">جدولة</div>
+                                <div class="schedule-option-desc">اختر تاريخ ووقت محدد للإرسال</div>
+                                <div class="schedule-datetime" id="scheduleDatetime">
+                                    <div class="input-group" style="margin-bottom:0;margin-top:12px;">
+                                        <label class="input-label">تاريخ ووقت الإرسال</label>
+                                        <input type="datetime-local" class="datetime-input" id="scheduleInput">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div style="margin-top:20px; padding:16px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-md);">
+                        <div style="font-size:13px; font-weight:700; color:var(--text); margin-bottom:12px;">ملخص الحملة</div>
+                        <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">اسم الحملة</span>
+                                <span style="color:var(--text); font-weight:600;" id="summaryName">-</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">القناة</span>
+                                <span style="color:var(--text); font-weight:600;" id="summaryChannel">واتساب</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">الشريحة</span>
+                                <span style="color:var(--text); font-weight:600;" id="summarySegment">-</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between;">
+                                <span style="color:var(--text-muted);">عدد المستلمين</span>
+                                <span style="color:var(--primary); font-weight:700;" id="summaryRecipients">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal Navigation -->
+                <div class="modal-nav">
+                    <div class="modal-nav-right">
+                        <button class="btn btn-primary" id="btnNext" onclick="nextStep()">
+                            التالي
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+                        <button class="btn btn-primary" id="btnSend" onclick="sendCampaign()" style="display:none">
+                            <i data-lucide="send"></i>
+                            إرسال الحملة
+                        </button>
+                        <button class="btn btn-secondary" id="btnDraft" onclick="saveDraft()">
+                            <i data-lucide="save"></i>
+                            حفظ كمسودة
+                        </button>
+                    </div>
+                    <div class="modal-nav-left">
+                        <button class="btn btn-ghost" id="btnPrev" onclick="prevStep()" style="display:none">
+                            <i data-lucide="arrow-right"></i>
+                            السابق
+                        </button>
+                        <button class="btn btn-ghost" onclick="closeCreateModal()">إلغاء</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="shared/shell.js"></script>
+    <script>
+        RibhShell.init('campaigns');
+
+        // ── Campaign Data ──
+        const campaigns = [
+            {
+                id: 'camp1',
+                name: 'عروض نهاية الأسبوع',
+                status: 'sent',
+                statusLabel: 'مرسلة',
+                date: '2 فبراير 2026',
+                channel: 'واتساب',
+                recipients: 1200,
+                delivered: 1185,
+                deliveredPct: 98.7,
+                opened: 1115,
+                openedPct: 94.1,
+                clicked: 342,
+                clickedPct: 28.5,
+                revenue: 4800
+            },
+            {
+                id: 'camp2',
+                name: 'تخفيضات يوم التأسيس',
+                status: 'scheduled',
+                statusLabel: 'مجدولة',
+                date: '22 فبراير 2026',
+                dateLabel: 'مجدول في',
+                channel: 'واتساب',
+                recipients: 468,
+                target: 'شريحة الأبطال + المخلصون'
+            },
+            {
+                id: 'camp3',
+                name: 'وصول منتجات جديدة',
+                status: 'sent',
+                statusLabel: 'مرسلة',
+                date: '28 يناير 2026',
+                channel: 'واتساب',
+                recipients: 890,
+                delivered: 878,
+                deliveredPct: 98.6,
+                opened: 821,
+                openedPct: 93.5,
+                clicked: 245,
+                clickedPct: 27.5,
+                revenue: 3400
+            },
+            {
+                id: 'camp4',
+                name: 'استبيان رضا العملاء',
+                status: 'draft',
+                statusLabel: 'مسودة',
+                channel: 'واتساب',
+                target: 'جميع العملاء'
+            },
+            {
+                id: 'camp5',
+                name: 'عرض حصري VIP',
+                status: 'sent',
+                statusLabel: 'مرسلة',
+                date: '20 يناير 2026',
+                channel: 'واتساب',
+                recipients: 156,
+                delivered: 156,
+                deliveredPct: 100,
+                opened: 152,
+                openedPct: 97.4,
+                clicked: 89,
+                clickedPct: 57.1,
+                revenue: 7000
+            }
+        ];
+
+        // ── Render Campaigns ──
+        function renderCampaigns(filter = 'all') {
+            const list = document.getElementById('campaignsList');
+            const filtered = filter === 'all' ? campaigns : campaigns.filter(c => c.status === filter);
+
+            if (filtered.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">
+                            <i data-lucide="send"></i>
+                        </div>
+                        <div class="empty-state-title">لا توجد حملات</div>
+                        <div class="empty-state-desc">لم يتم العثور على حملات في هذا التصنيف</div>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            list.innerHTML = filtered.map((c, idx) => {
+                const isSent = c.status === 'sent';
+                const isScheduled = c.status === 'scheduled';
+                const isDraft = c.status === 'draft';
+
+                const statusBadgeClass = isSent ? 'badge-success' : isScheduled ? 'badge-info' : 'badge-neutral';
+
+                // Meta line
+                let metaHTML = '';
+                if (isSent) {
+                    metaHTML = `${c.date} <span class="meta-dot"></span> ${c.recipients.toLocaleString('ar-SA')} مستلم`;
+                } else if (isScheduled) {
+                    metaHTML = `مجدول في ${c.date} <span class="meta-dot"></span> ${c.recipients.toLocaleString('ar-SA')} مستلم`;
+                } else {
+                    metaHTML = 'مسودة غير مكتملة';
+                }
+
+                // Stats (only for sent campaigns)
+                let statsHTML = '';
+                if (isSent) {
+                    statsHTML = `
+                        <div class="campaign-stats-row">
+                            <div class="campaign-stat-item">
+                                <span class="campaign-stat-label">تسليم</span>
+                                <span class="campaign-stat-value">${c.deliveredPct}%</span>
+                            </div>
+                            <div class="campaign-stat-item">
+                                <span class="campaign-stat-label">فتح</span>
+                                <span class="campaign-stat-value">${c.openedPct}%</span>
+                            </div>
+                            <div class="campaign-stat-item">
+                                <span class="campaign-stat-label">نقر</span>
+                                <span class="campaign-stat-value">${c.clickedPct}%</span>
+                            </div>
+                            <div class="campaign-stat-item">
+                                <span class="campaign-stat-label">إيرادات</span>
+                                <span class="campaign-stat-value revenue">${c.revenue.toLocaleString('ar-SA')} ر.س</span>
+                            </div>
+                        </div>
+                        <div class="campaign-progress">
+                            <div class="campaign-progress-bar">
+                                <div class="campaign-progress-fill sent" style="width: ${c.openedPct}%"></div>
+                            </div>
+                            <span class="campaign-progress-label">${c.openedPct}% معدل الفتح</span>
+                        </div>
+                    `;
+                }
+
+                // Target info (for scheduled/draft)
+                let targetHTML = '';
+                if ((isScheduled || isDraft) && c.target) {
+                    targetHTML = `
+                        <div class="campaign-card-target" style="margin-top:8px;">
+                            <i data-lucide="target"></i>
+                            الشريحة: ${c.target}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="campaign-card animate-in" data-status="${c.status}" style="animation-delay: ${idx * 60}ms">
+                        <div class="campaign-card-border ${c.status}"></div>
+                        <div class="campaign-card-body">
+                            <div class="campaign-card-top">
+                                <div class="campaign-card-name">${c.name}</div>
+                                <div class="campaign-card-badges">
+                                    <span class="badge ${statusBadgeClass}">${c.statusLabel}</span>
+                                    <span class="badge badge-whatsapp">
+                                        <i data-lucide="message-circle" style="width:11px;height:11px;"></i>
+                                        ${c.channel}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="campaign-card-meta">${metaHTML}</div>
+                            ${statsHTML}
+                            ${targetHTML}
+                            <div class="campaign-card-actions">
+                                ${isSent ? `
+                                    <button class="campaign-action-btn" title="عرض التقرير">
+                                        <i data-lucide="bar-chart-3"></i>
+                                    </button>
+                                    <button class="campaign-action-btn" title="إعادة الإرسال">
+                                        <i data-lucide="refresh-cw"></i>
+                                    </button>
+                                ` : ''}
+                                ${isScheduled ? `
+                                    <button class="campaign-action-btn" title="تعديل">
+                                        <i data-lucide="pencil"></i>
+                                    </button>
+                                    <button class="campaign-action-btn delete" title="إلغاء الجدولة">
+                                        <i data-lucide="x-circle"></i>
+                                    </button>
+                                ` : ''}
+                                ${isDraft ? `
+                                    <button class="campaign-action-btn" title="متابعة التحرير" onclick="openCreateModal()">
+                                        <i data-lucide="pencil"></i>
+                                    </button>
+                                    <button class="campaign-action-btn delete" title="حذف">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                ` : ''}
+                                <button class="campaign-action-btn" title="نسخ">
+                                    <i data-lucide="copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // ── Tab Filtering ──
+        let currentFilter = 'all';
+
+        function filterCampaigns(filter, btnEl) {
+            currentFilter = filter;
+
+            // Update active tab
+            document.querySelectorAll('#campaignTabs .tab').forEach(t => t.classList.remove('active'));
+            if (btnEl) btnEl.classList.add('active');
+
+            renderCampaigns(filter);
+        }
+
+        // ── Modal: Multi-Step ──
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function openCreateModal() {
+            const modal = document.getElementById('createCampaignModal');
+            modal.classList.add('open');
+            currentStep = 1;
+            updateStepUI();
+
+            // Reset form
+            document.getElementById('campaignName').value = '';
+            document.getElementById('campaignChannel').selectedIndex = 0;
+            document.getElementById('campaignSegment').selectedIndex = 0;
+            document.getElementById('messageContent').value = '';
+            document.getElementById('recipientCount').style.display = 'none';
+            selectSchedule('now');
+            updatePreview();
+            lucide.createIcons();
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createCampaignModal').classList.remove('open');
+        }
+
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepUI();
+                if (currentStep === 3) updateSummary();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepUI();
+            }
+        }
+
+        function updateStepUI() {
+            // Update step dots
+            for (let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById('stepDot' + i);
+                const label = document.getElementById('stepLabel' + i);
+                const panel = document.getElementById('step' + i);
+
+                dot.classList.remove('active', 'completed');
+                label.classList.remove('active');
+                panel.classList.remove('active');
+
+                if (i < currentStep) {
+                    dot.classList.add('completed');
+                    dot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+                } else if (i === currentStep) {
+                    dot.classList.add('active');
+                    label.classList.add('active');
+                    panel.classList.add('active');
+                    dot.textContent = i;
+                } else {
+                    dot.textContent = i;
+                }
+            }
+
+            // Update step lines
+            for (let i = 1; i < totalSteps; i++) {
+                const line = document.getElementById('stepLine' + i);
+                if (i < currentStep) {
+                    line.classList.add('completed');
+                } else {
+                    line.classList.remove('completed');
+                }
+            }
+
+            // Update buttons
+            const btnNext = document.getElementById('btnNext');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnSend = document.getElementById('btnSend');
+
+            btnPrev.style.display = currentStep > 1 ? '' : 'none';
+            btnNext.style.display = currentStep < totalSteps ? '' : 'none';
+            btnSend.style.display = currentStep === totalSteps ? '' : 'none';
+        }
+
+        // ── Recipient Count ──
+        const segmentCounts = {
+            all: 1847,
+            champion: 156,
+            loyal: 312,
+            potential: 428,
+            recent: 534,
+            at_risk: 267,
+            dormant: 150,
+            champion_loyal: 468
+        };
+
+        function updateRecipientCount() {
+            const seg = document.getElementById('campaignSegment').value;
+            const countEl = document.getElementById('recipientCount');
+            const numEl = document.getElementById('recipientNumber');
+
+            if (seg && segmentCounts[seg]) {
+                countEl.style.display = 'flex';
+                numEl.textContent = segmentCounts[seg].toLocaleString('ar-SA');
+            } else {
+                countEl.style.display = 'none';
+            }
+        }
+
+        // ── Message Preview ──
+        function updatePreview() {
+            const content = document.getElementById('messageContent').value;
+            const container = document.getElementById('waPreviewContent');
+
+            if (!content.trim()) {
+                container.innerHTML = '<div class="wa-preview-empty">اكتب رسالتك لمشاهدة المعاينة</div>';
+                return;
+            }
+
+            // Replace variables with demo values
+            let preview = content
+                .replace(/\{name\}/g, 'أحمد')
+                .replace(/\{store_name\}/g, RibhShell.storeName);
+
+            container.innerHTML = `
+                <div class="wa-bubble">
+                    <div class="wa-bubble-text">${escapeHTML(preview)}</div>
+                    <div class="wa-bubble-time">
+                        <span>10:30 م</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 8 22 12 18 16"></polyline><polyline points="12 4 16 8 12 12"></polyline></svg>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ── Variable Insertion ──
+        function insertVariable(variable) {
+            const textarea = document.getElementById('messageContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, start) + variable + text.substring(end);
+            textarea.focus();
+
+            const newPos = start + variable.length;
+            textarea.setSelectionRange(newPos, newPos);
+            updatePreview();
+        }
+
+        // ── Schedule Selection ──
+        let scheduleType = 'now';
+
+        function selectSchedule(type) {
+            scheduleType = type;
+            const optNow = document.getElementById('optionNow');
+            const optSchedule = document.getElementById('optionSchedule');
+            const dtPicker = document.getElementById('scheduleDatetime');
+
+            optNow.classList.remove('selected');
+            optSchedule.classList.remove('selected');
+            dtPicker.classList.remove('visible');
+
+            if (type === 'now') {
+                optNow.classList.add('selected');
+            } else {
+                optSchedule.classList.add('selected');
+                dtPicker.classList.add('visible');
+            }
+        }
+
+        // ── Summary ──
+        function updateSummary() {
+            const name = document.getElementById('campaignName').value || '-';
+            const channelEl = document.getElementById('campaignChannel');
+            const channel = channelEl.options[channelEl.selectedIndex].text;
+            const segmentEl = document.getElementById('campaignSegment');
+            const segment = segmentEl.selectedIndex > 0 ? segmentEl.options[segmentEl.selectedIndex].text : '-';
+            const seg = segmentEl.value;
+            const count = seg && segmentCounts[seg] ? segmentCounts[seg].toLocaleString('ar-SA') : '0';
+
+            document.getElementById('summaryName').textContent = name;
+            document.getElementById('summaryChannel').textContent = channel;
+            document.getElementById('summarySegment').textContent = segment.replace(/\s*\([\d,]+\)/, '');
+            document.getElementById('summaryRecipients').textContent = count;
+        }
+
+        // ── Send Campaign (demo) ──
+        function sendCampaign() {
+            const name = document.getElementById('campaignName').value.trim();
+            if (!name) {
+                currentStep = 1;
+                updateStepUI();
+                const inp = document.getElementById('campaignName');
+                inp.focus();
+                inp.style.borderColor = 'var(--danger)';
+                setTimeout(() => inp.style.borderColor = '', 2000);
+                return;
+            }
+
+            const segmentEl = document.getElementById('campaignSegment');
+            const seg = segmentEl.value;
+            const count = seg && segmentCounts[seg] ? segmentCounts[seg] : 0;
+
+            const channelMap = { whatsapp: 'واتساب', email: 'بريد إلكتروني', sms: 'رسائل قصيرة' };
+            const channelVal = document.getElementById('campaignChannel').value;
+
+            if (scheduleType === 'now') {
+                campaigns.unshift({
+                    id: 'camp_new_' + Date.now(),
+                    name: name,
+                    status: 'sent',
+                    statusLabel: 'مرسلة',
+                    date: 'الآن',
+                    channel: channelMap[channelVal] || 'واتساب',
+                    recipients: count,
+                    delivered: Math.round(count * 0.987),
+                    deliveredPct: 98.7,
+                    opened: Math.round(count * 0.94),
+                    openedPct: 94.0,
+                    clicked: Math.round(count * 0.28),
+                    clickedPct: 28.0,
+                    revenue: 0
+                });
+            } else {
+                const dt = document.getElementById('scheduleInput').value;
+                let dateStr = 'تاريخ غير محدد';
+                if (dt) {
+                    const d = new Date(dt);
+                    dateStr = d.toLocaleDateString('ar-SA', { day: 'numeric', month: 'long', year: 'numeric' });
+                }
+
+                campaigns.splice(1, 0, {
+                    id: 'camp_new_' + Date.now(),
+                    name: name,
+                    status: 'scheduled',
+                    statusLabel: 'مجدولة',
+                    date: dateStr,
+                    dateLabel: 'مجدول في',
+                    channel: channelMap[channelVal] || 'واتساب',
+                    recipients: count,
+                    target: segmentEl.options[segmentEl.selectedIndex].text.replace(/\s*\([\d,]+\)/, '')
+                });
+            }
+
+            closeCreateModal();
+            renderCampaigns(currentFilter);
+        }
+
+        // ── Save Draft (demo) ──
+        function saveDraft() {
+            const name = document.getElementById('campaignName').value.trim() || 'حملة بدون عنوان';
+            const channelMap = { whatsapp: 'واتساب', email: 'بريد إلكتروني', sms: 'رسائل قصيرة' };
+            const channelVal = document.getElementById('campaignChannel').value;
+            const segmentEl = document.getElementById('campaignSegment');
+
+            campaigns.push({
+                id: 'camp_draft_' + Date.now(),
+                name: name,
+                status: 'draft',
+                statusLabel: 'مسودة',
+                channel: channelMap[channelVal] || 'واتساب',
+                target: segmentEl.selectedIndex > 0 ? segmentEl.options[segmentEl.selectedIndex].text.replace(/\s*\([\d,]+\)/, '') : 'غير محدد'
+            });
+
+            closeCreateModal();
+            renderCampaigns(currentFilter);
+        }
+
+        // ── Close modal on overlay click ──
+        document.getElementById('createCampaignModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCreateModal();
+        });
+
+        // ── Close modal on Escape ──
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCreateModal();
+        });
+
+        // ── Initialize ──
+        renderCampaigns();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

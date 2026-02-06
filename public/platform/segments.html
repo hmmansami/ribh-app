@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - الشرائح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="shared/shell.css">
+    <style>
+        /* ── Segment Cards Grid ── */
+        .segments-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .segment-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 0;
+            transition: all 0.2s var(--ease);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .segment-card:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .segment-card-bar {
+            height: 4px;
+            width: 100%;
+        }
+
+        .segment-card-body {
+            padding: 20px;
+        }
+
+        .segment-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .segment-card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .segment-card-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .segment-card-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .segment-card-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        .segment-card-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .segment-card-count {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .segment-card-count-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .segment-card-meta {
+            display: flex;
+            gap: 16px;
+        }
+
+        .segment-card-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .segment-card-meta-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .segment-card-meta-label {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        /* ── Distribution Card ── */
+        .distribution-card {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .distribution-chart {
+            flex-shrink: 0;
+        }
+
+        .distribution-chart canvas {
+            display: block;
+        }
+
+        .distribution-legend {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            transition: background 0.15s var(--ease);
+        }
+
+        .legend-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .legend-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .legend-count {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            min-width: 40px;
+            text-align: left;
+        }
+
+        .legend-pct {
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 40px;
+            text-align: left;
+        }
+
+        /* ── Custom Segments Table ── */
+        .custom-segment-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .condition-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .condition-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .condition-and {
+            padding: 2px 6px;
+            font-size: 9px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .table-action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+
+        .table-action-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        .table-action-btn.delete:hover {
+            background: var(--danger-dim);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+
+        .table-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ── Condition Builder ── */
+        .condition-builder {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .condition-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .condition-row .select,
+        .condition-row .input {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .condition-row .select {
+            max-width: 160px;
+        }
+
+        .condition-row .input {
+            max-width: 140px;
+        }
+
+        .condition-remove-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.15s var(--ease);
+        }
+
+        .condition-remove-btn:hover {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        .condition-remove-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .condition-joiner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 0;
+        }
+
+        .joiner-toggle {
+            display: flex;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+        }
+
+        .joiner-toggle button {
+            padding: 4px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: inherit;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+
+        .joiner-toggle button.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+        }
+
+        .add-condition-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px;
+            margin-top: 8px;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+            width: 100%;
+        }
+
+        .add-condition-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .add-condition-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .preview-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            background: var(--primary-dim);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .preview-count svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ── Page Header ── */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-header-info h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .page-header-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .segments-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .distribution-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .distribution-chart {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .segments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .condition-row {
+                flex-wrap: wrap;
+            }
+
+            .condition-row .select,
+            .condition-row .input {
+                max-width: 100%;
+                flex: 1 1 100%;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="page-body" style="display:none">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-header-info">
+                <h2>شرائح العملاء</h2>
+                <p>قسّم عملاءك إلى شرائح ذكية لاستهداف أدق وتسويق أفعل</p>
+            </div>
+            <button class="btn btn-primary" onclick="openCreateModal()">
+                <i data-lucide="plus"></i>
+                إنشاء شريحة جديدة
+            </button>
+        </div>
+
+        <!-- Segment Overview Cards -->
+        <div class="segments-grid stagger" id="segmentsGrid"></div>
+
+        <!-- Segment Distribution -->
+        <div class="card mb-24 animate-in" style="animation-delay: 300ms">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">توزيع العملاء</div>
+                    <div class="card-subtitle">نظرة شاملة على توزيع العملاء حسب الشرائح</div>
+                </div>
+            </div>
+            <div class="distribution-card">
+                <div class="distribution-chart">
+                    <canvas id="distributionDonut" width="220" height="220" style="width:220px;height:220px;"></canvas>
+                </div>
+                <div class="distribution-legend" id="distributionLegend"></div>
+            </div>
+        </div>
+
+        <!-- Custom Segments Table -->
+        <div class="card animate-in" style="animation-delay: 400ms">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">الشرائح المخصصة</div>
+                    <div class="card-subtitle">شرائح مخصصة أنشأتها لاستهداف مجموعات محددة من العملاء</div>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="openCreateModal()">
+                    <i data-lucide="plus"></i>
+                    شريحة جديدة
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>الشريحة</th>
+                            <th>الشروط</th>
+                            <th>العملاء</th>
+                            <th>آخر تحديث</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="customSegmentsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Create Segment Modal -->
+        <div class="modal-overlay" id="createSegmentModal">
+            <div class="modal" style="max-width: 640px;">
+                <div class="modal-header">
+                    <div class="modal-title">إنشاء شريحة جديدة</div>
+                    <button class="modal-close" onclick="closeCreateModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Segment Name -->
+                    <div class="input-group">
+                        <label class="input-label">اسم الشريحة</label>
+                        <input type="text" class="input" id="segmentNameInput" placeholder="مثال: عملاء الرياض VIP">
+                    </div>
+
+                    <!-- Condition Builder -->
+                    <div class="input-group">
+                        <label class="input-label">الشروط</label>
+                        <div class="condition-builder" id="conditionBuilder">
+                            <!-- Condition rows injected here -->
+                        </div>
+                        <button class="add-condition-btn" onclick="addConditionRow()">
+                            <i data-lucide="plus"></i>
+                            إضافة شرط
+                        </button>
+                    </div>
+
+                    <!-- Preview Count -->
+                    <div class="preview-count" id="previewCount">
+                        <i data-lucide="users"></i>
+                        <span>هذه الشريحة ستشمل ~<strong id="previewNumber">0</strong> عميل</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="saveSegment()">
+                        <i data-lucide="check"></i>
+                        حفظ الشريحة
+                    </button>
+                    <button class="btn btn-ghost" onclick="closeCreateModal()">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="shared/shell.js"></script>
+    <script>
+        RibhShell.init('segments');
+
+        // ── Data ──
+        const segments = RibhAPI.demo.segments;
+        const totalCustomers = segments.reduce((sum, s) => sum + s.count, 0);
+
+        const customSegments = [
+            {
+                name: 'عملاء الرياض VIP',
+                conditions: [
+                    { prop: 'المدينة', op: '=', val: 'الرياض' },
+                    { prop: 'طلبات', op: '>', val: '5' }
+                ],
+                joiner: 'AND',
+                count: 89,
+                updated: 'منذ ساعة'
+            },
+            {
+                name: 'مشتري العطور',
+                conditions: [
+                    { prop: 'فئة المنتج', op: '=', val: 'عطور' }
+                ],
+                joiner: 'AND',
+                count: 234,
+                updated: 'منذ 3 ساعات'
+            },
+            {
+                name: 'عملاء بقيمة عالية',
+                conditions: [
+                    { prop: 'CLV', op: '>', val: '5,000 ر.س' }
+                ],
+                joiner: 'AND',
+                count: 156,
+                updated: 'منذ ساعة'
+            },
+            {
+                name: 'مهددون بالخسارة - 30 يوم',
+                conditions: [
+                    { prop: 'آخر طلب', op: '>', val: '30 يوم' },
+                    { prop: 'طلبات', op: '>', val: '3' }
+                ],
+                joiner: 'AND',
+                count: 67,
+                updated: 'منذ 2 ساعة'
+            }
+        ];
+
+        // ── Render Segment Cards ──
+        function renderSegmentCards() {
+            const grid = document.getElementById('segmentsGrid');
+            grid.innerHTML = segments.map(seg => {
+                const avgCLV = Math.round(seg.revenue / seg.count);
+                return `
+                    <div class="segment-card animate-in" onclick="window.location.href='customers.html?segment=${seg.id}'">
+                        <div class="segment-card-bar" style="background: ${seg.color}"></div>
+                        <div class="segment-card-body">
+                            <div class="segment-card-header">
+                                <div class="segment-card-icon" style="background: ${seg.color}20; color: ${seg.color}">
+                                    <i data-lucide="${seg.icon}"></i>
+                                </div>
+                                <div>
+                                    <div class="segment-card-name">${seg.name}</div>
+                                    <div class="segment-card-desc">${seg.description}</div>
+                                </div>
+                            </div>
+                            <div class="segment-card-stats">
+                                <div>
+                                    <div class="segment-card-count" style="color: ${seg.color}">${seg.count.toLocaleString('ar-SA')}</div>
+                                    <div class="segment-card-count-label">عميل</div>
+                                </div>
+                                <div class="segment-card-meta">
+                                    <div class="segment-card-meta-item">
+                                        <span class="segment-card-meta-value">${formatCurrency(seg.revenue)}</span>
+                                        <span class="segment-card-meta-label">إجمالي الإيرادات</span>
+                                    </div>
+                                    <div class="segment-card-meta-item">
+                                        <span class="segment-card-meta-value">${formatCurrency(avgCLV)}</span>
+                                        <span class="segment-card-meta-label">متوسط CLV</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── Render Distribution Chart ──
+        function renderDistribution() {
+            const data = {
+                values: segments.map(s => s.count),
+                colors: segments.map(s => s.color),
+                centerText: totalCustomers.toLocaleString('ar-SA'),
+                centerSub: 'إجمالي العملاء'
+            };
+            RibhCharts.drawDonut('distributionDonut', data);
+
+            const legend = document.getElementById('distributionLegend');
+            legend.innerHTML = segments.map(seg => {
+                const pct = ((seg.count / totalCustomers) * 100).toFixed(1);
+                return `
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background: ${seg.color}"></div>
+                        <span class="legend-name">${seg.name}</span>
+                        <span class="legend-count">${seg.count.toLocaleString('ar-SA')}</span>
+                        <span class="legend-pct">${pct}%</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── Render Custom Segments Table ──
+        function renderCustomSegments() {
+            const tbody = document.getElementById('customSegmentsBody');
+            tbody.innerHTML = customSegments.map((seg, idx) => {
+                const conditionsHTML = seg.conditions.map((c, ci) => {
+                    let html = `<span class="condition-badge">${c.prop} ${c.op} ${c.val}</span>`;
+                    if (ci < seg.conditions.length - 1) {
+                        html += `<span class="condition-and">${seg.joiner}</span>`;
+                    }
+                    return html;
+                }).join('');
+
+                return `
+                    <tr>
+                        <td>
+                            <span class="custom-segment-name">${seg.name}</span>
+                        </td>
+                        <td>
+                            <div class="condition-badges">
+                                ${conditionsHTML}
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-weight:700; color:var(--text)">${seg.count.toLocaleString('ar-SA')}</span>
+                        </td>
+                        <td>
+                            <span class="text-muted text-sm">${seg.updated}</span>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="table-action-btn" title="تعديل" onclick="editCustomSegment(${idx})">
+                                    <i data-lucide="pencil"></i>
+                                </button>
+                                <button class="table-action-btn delete" title="حذف" onclick="deleteCustomSegment(${idx})">
+                                    <i data-lucide="trash-2"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ── Modal Functions ──
+        let conditionCount = 0;
+        let currentJoiner = 'AND';
+
+        function openCreateModal() {
+            const modal = document.getElementById('createSegmentModal');
+            modal.classList.add('open');
+            document.getElementById('segmentNameInput').value = '';
+            document.getElementById('conditionBuilder').innerHTML = '';
+            conditionCount = 0;
+            addConditionRow();
+            updatePreviewCount();
+            lucide.createIcons();
+        }
+
+        function closeCreateModal() {
+            document.getElementById('createSegmentModal').classList.remove('open');
+        }
+
+        function addConditionRow() {
+            const builder = document.getElementById('conditionBuilder');
+            const rowId = conditionCount++;
+
+            // Add joiner between rows if not the first
+            if (rowId > 0) {
+                const joiner = document.createElement('div');
+                joiner.className = 'condition-joiner';
+                joiner.id = `joiner-${rowId}`;
+                joiner.innerHTML = `
+                    <div class="joiner-toggle">
+                        <button class="${currentJoiner === 'AND' ? 'active' : ''}" onclick="setJoiner('AND', this)">AND</button>
+                        <button class="${currentJoiner === 'OR' ? 'active' : ''}" onclick="setJoiner('OR', this)">OR</button>
+                    </div>
+                `;
+                builder.appendChild(joiner);
+            }
+
+            const row = document.createElement('div');
+            row.className = 'condition-row';
+            row.id = `condition-${rowId}`;
+            row.innerHTML = `
+                <select class="select" onchange="updatePreviewCount()">
+                    <option value="">الخاصية...</option>
+                    <option value="last_order">آخر طلب</option>
+                    <option value="order_count">عدد الطلبات</option>
+                    <option value="revenue">الإيرادات</option>
+                    <option value="city">المدينة</option>
+                    <option value="segment">الشريحة</option>
+                    <option value="clv">CLV</option>
+                    <option value="churn_risk">خطر الخسارة</option>
+                </select>
+                <select class="select" onchange="updatePreviewCount()">
+                    <option value="">العملية...</option>
+                    <option value="eq">يساوي</option>
+                    <option value="gt">أكبر من</option>
+                    <option value="lt">أصغر من</option>
+                    <option value="contains">يحتوي</option>
+                    <option value="in_last">في آخر X يوم</option>
+                </select>
+                <input type="text" class="input" placeholder="القيمة..." oninput="updatePreviewCount()">
+                <button class="condition-remove-btn" onclick="removeConditionRow(${rowId})" title="حذف الشرط">
+                    <i data-lucide="x"></i>
+                </button>
+            `;
+            builder.appendChild(row);
+            lucide.createIcons();
+            updatePreviewCount();
+        }
+
+        function removeConditionRow(rowId) {
+            const row = document.getElementById(`condition-${rowId}`);
+            const joiner = document.getElementById(`joiner-${rowId}`);
+            if (row) row.remove();
+            if (joiner) joiner.remove();
+
+            // If we removed the first row, also remove the joiner of the next row
+            const builder = document.getElementById('conditionBuilder');
+            const firstChild = builder.firstElementChild;
+            if (firstChild && firstChild.classList.contains('condition-joiner')) {
+                firstChild.remove();
+            }
+
+            updatePreviewCount();
+        }
+
+        function setJoiner(type, btn) {
+            currentJoiner = type;
+            // Update all joiner toggles
+            document.querySelectorAll('.joiner-toggle button').forEach(b => {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.joiner-toggle').forEach(toggle => {
+                const buttons = toggle.querySelectorAll('button');
+                buttons.forEach(b => {
+                    if (b.textContent === type) {
+                        b.classList.add('active');
+                    }
+                });
+            });
+            updatePreviewCount();
+        }
+
+        function updatePreviewCount() {
+            const rows = document.querySelectorAll('.condition-row');
+            let filledCount = 0;
+            rows.forEach(row => {
+                const selects = row.querySelectorAll('select');
+                const input = row.querySelector('input');
+                if (selects[0]?.value && selects[1]?.value && input?.value) {
+                    filledCount++;
+                }
+            });
+
+            // Generate a fake but plausible count based on conditions
+            let fakeCount;
+            if (filledCount === 0) {
+                fakeCount = totalCustomers;
+            } else if (filledCount === 1) {
+                fakeCount = Math.floor(Math.random() * 300) + 100;
+            } else if (filledCount === 2) {
+                fakeCount = currentJoiner === 'AND'
+                    ? Math.floor(Math.random() * 100) + 30
+                    : Math.floor(Math.random() * 500) + 200;
+            } else {
+                fakeCount = currentJoiner === 'AND'
+                    ? Math.floor(Math.random() * 50) + 10
+                    : Math.floor(Math.random() * 600) + 300;
+            }
+
+            document.getElementById('previewNumber').textContent = fakeCount.toLocaleString('ar-SA');
+        }
+
+        function saveSegment() {
+            const name = document.getElementById('segmentNameInput').value.trim();
+            if (!name) {
+                document.getElementById('segmentNameInput').focus();
+                document.getElementById('segmentNameInput').style.borderColor = 'var(--danger)';
+                setTimeout(() => {
+                    document.getElementById('segmentNameInput').style.borderColor = '';
+                }, 2000);
+                return;
+            }
+
+            // Collect conditions
+            const rows = document.querySelectorAll('.condition-row');
+            const conditions = [];
+            let valid = true;
+            rows.forEach(row => {
+                const selects = row.querySelectorAll('select');
+                const input = row.querySelector('input');
+                if (selects[0]?.value && selects[1]?.value && input?.value) {
+                    conditions.push({
+                        prop: selects[0].options[selects[0].selectedIndex].text,
+                        op: selects[1].options[selects[1].selectedIndex].text,
+                        val: input.value
+                    });
+                }
+            });
+
+            if (conditions.length === 0) {
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            // Add to table (demo)
+            const previewNum = document.getElementById('previewNumber').textContent;
+            customSegments.push({
+                name: name,
+                conditions: conditions.map(c => ({ prop: c.prop, op: c.op === 'يساوي' ? '=' : c.op === 'أكبر من' ? '>' : c.op === 'أصغر من' ? '<' : c.op, val: c.val })),
+                joiner: currentJoiner,
+                count: parseInt(previewNum.replace(/[^\d]/g, '')) || 0,
+                updated: 'الآن'
+            });
+
+            renderCustomSegments();
+            closeCreateModal();
+            lucide.createIcons();
+        }
+
+        function editCustomSegment(idx) {
+            const seg = customSegments[idx];
+            openCreateModal();
+            document.getElementById('segmentNameInput').value = seg.name;
+
+            // Clear default and rebuild conditions
+            document.getElementById('conditionBuilder').innerHTML = '';
+            conditionCount = 0;
+            currentJoiner = seg.joiner || 'AND';
+
+            seg.conditions.forEach((c, i) => {
+                addConditionRow();
+                const rows = document.querySelectorAll('.condition-row');
+                const row = rows[rows.length - 1];
+                // We cannot perfectly map back, but this shows the interaction
+            });
+
+            updatePreviewCount();
+        }
+
+        function deleteCustomSegment(idx) {
+            customSegments.splice(idx, 1);
+            renderCustomSegments();
+            lucide.createIcons();
+        }
+
+        // ── Close modal on overlay click ──
+        document.getElementById('createSegmentModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCreateModal();
+        });
+
+        // ── Close modal on Escape ──
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCreateModal();
+        });
+
+        // ── Initialize ──
+        renderSegmentCards();
+        renderDistribution();
+        renderCustomSegments();
+        lucide.createIcons();
+    </script>
+</body>
+</html>

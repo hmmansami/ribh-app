@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - الإعدادات</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="shared/shell.css">
+    <style>
+        /* ── Settings Layout ── */
+        .settings-layout {
+            display: flex;
+            gap: 24px;
+            min-height: calc(100dvh - var(--topbar-height) - 56px);
+        }
+
+        /* ── Vertical Tabs ── */
+        .settings-tabs {
+            width: 200px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .settings-tab {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            transition: all 0.15s var(--ease);
+            text-align: right;
+            width: 100%;
+            white-space: nowrap;
+        }
+
+        .settings-tab:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .settings-tab.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .settings-tab svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            opacity: 0.7;
+        }
+
+        .settings-tab.active svg {
+            opacity: 1;
+        }
+
+        /* ── Content Area ── */
+        .settings-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .settings-panel {
+            display: none;
+            animation: fadeIn 0.3s var(--ease) both;
+        }
+
+        .settings-panel.active {
+            display: block;
+        }
+
+        .settings-section {
+            margin-bottom: 28px;
+        }
+
+        .settings-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .settings-section-desc {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* ── Form Grid ── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-grid .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* ── Setting Row (toggle rows) ── */
+        .setting-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-row:last-child {
+            border-bottom: none;
+        }
+
+        .setting-row-info {
+            flex: 1;
+        }
+
+        .setting-row-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+
+        .setting-row-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+        }
+
+        /* ── WhatsApp Status Card ── */
+        .wa-status-card {
+            padding: 20px;
+            border-radius: var(--radius-lg);
+            border: 1px solid;
+            margin-bottom: 24px;
+        }
+
+        .wa-status-card.connected {
+            background: rgba(37, 211, 102, 0.06);
+            border-color: rgba(37, 211, 102, 0.25);
+        }
+
+        .wa-status-card.disconnected {
+            background: rgba(245, 158, 11, 0.06);
+            border-color: rgba(245, 158, 11, 0.25);
+        }
+
+        .wa-status-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .wa-status-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .wa-status-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .wa-status-card.connected .wa-status-icon {
+            background: var(--whatsapp-dim);
+            color: var(--whatsapp);
+        }
+
+        .wa-status-card.disconnected .wa-status-icon {
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+
+        .wa-status-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .wa-status-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .wa-phone {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            direction: ltr;
+            text-align: left;
+        }
+
+        /* ── QR Code Placeholder ── */
+        .qr-placeholder {
+            width: 180px;
+            height: 180px;
+            background: var(--bg-surface-2);
+            border: 2px dashed var(--border-strong);
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px auto;
+            color: var(--text-dim);
+            gap: 8px;
+        }
+
+        .qr-placeholder svg {
+            width: 48px;
+            height: 48px;
+            opacity: 0.4;
+        }
+
+        .qr-placeholder span {
+            font-size: 11px;
+        }
+
+        /* ── Channel Card ── */
+        .channel-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: border-color 0.2s var(--ease);
+        }
+
+        .channel-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .channel-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .channel-card-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .channel-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-icon.whatsapp {
+            background: var(--whatsapp-dim);
+            color: var(--whatsapp);
+        }
+
+        .channel-icon.email {
+            background: var(--info-dim);
+            color: var(--info);
+        }
+
+        .channel-icon.sms {
+            background: var(--secondary-dim);
+            color: var(--secondary);
+        }
+
+        .channel-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .channel-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .channel-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .channel-config {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Team Member Card ── */
+        .team-member {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+        }
+
+        .team-member-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .team-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .team-member-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .team-member-email {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        /* ── Plan Card ── */
+        .plan-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .plan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .plan-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .plan-price {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .plan-features {
+            list-style: none;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        .plan-feature svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        /* ── Usage Card ── */
+        .usage-item {
+            margin-bottom: 20px;
+        }
+
+        .usage-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .usage-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .usage-value {
+            font-size: 12px;
+            color: var(--text-muted);
+            direction: ltr;
+        }
+
+        /* ── Time Range Picker ── */
+        .time-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-range .input {
+            width: 110px;
+        }
+
+        .time-range-sep {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--bg-surface-2);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 999;
+            opacity: 0;
+            transition: all 0.3s var(--ease);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
+        /* ── Textarea ── */
+        .textarea {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            transition: border-color 0.15s var(--ease);
+            outline: none;
+            direction: rtl;
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.6;
+        }
+
+        .textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .textarea::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* ── Invoice download link ── */
+        .invoice-link {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: opacity 0.15s var(--ease);
+        }
+
+        .invoice-link:hover {
+            opacity: 0.8;
+        }
+
+        .invoice-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ── Save Footer ── */
+        .save-footer {
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 20px;
+            margin-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .settings-layout {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .settings-tabs {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                gap: 4px;
+                padding-bottom: 4px;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .settings-tabs::-webkit-scrollbar {
+                display: none;
+            }
+
+            .settings-tab {
+                flex-shrink: 0;
+                padding: 8px 14px;
+                font-size: 12px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .plan-features {
+                grid-template-columns: 1fr;
+            }
+
+            .wa-status-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .channel-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="page-body" style="display:none">
+
+        <div class="settings-layout">
+            <!-- Vertical Tabs -->
+            <div class="settings-tabs" id="settingsTabs">
+                <button class="settings-tab active" data-tab="store" onclick="switchTab('store')">
+                    <i data-lucide="store"></i>
+                    <span>المتجر</span>
+                </button>
+                <button class="settings-tab" data-tab="whatsapp" onclick="switchTab('whatsapp')">
+                    <i data-lucide="message-circle"></i>
+                    <span>واتساب</span>
+                </button>
+                <button class="settings-tab" data-tab="channels" onclick="switchTab('channels')">
+                    <i data-lucide="radio"></i>
+                    <span>القنوات</span>
+                </button>
+                <button class="settings-tab" data-tab="automation" onclick="switchTab('automation')">
+                    <i data-lucide="bot"></i>
+                    <span>الأتمتة</span>
+                </button>
+                <button class="settings-tab" data-tab="notifications" onclick="switchTab('notifications')">
+                    <i data-lucide="bell"></i>
+                    <span>الإشعارات</span>
+                </button>
+                <button class="settings-tab" data-tab="team" onclick="switchTab('team')">
+                    <i data-lucide="users"></i>
+                    <span>الفريق</span>
+                </button>
+                <button class="settings-tab" data-tab="billing" onclick="switchTab('billing')">
+                    <i data-lucide="credit-card"></i>
+                    <span>الفوترة</span>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="settings-content">
+
+                <!-- ═══════════ Tab 1: Store ═══════════ -->
+                <div class="settings-panel active" id="panel-store">
+                    <div class="settings-section">
+                        <div class="settings-section-title">إعدادات المتجر</div>
+                        <div class="settings-section-desc">معلومات المتجر الأساسية وإعدادات العرض</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label class="input-label">اسم المتجر</label>
+                                <input type="text" class="input" value="متجري" id="storeName">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">المنصة</label>
+                                <div style="position:relative;">
+                                    <input type="text" class="input" value="سلة" disabled style="padding-left:60px;">
+                                    <span class="badge badge-primary" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);">متصل</span>
+                                </div>
+                            </div>
+                            <div class="input-group full-width">
+                                <label class="input-label">رابط المتجر</label>
+                                <input type="url" class="input" value="https://my-store.salla.sa" placeholder="https://your-store.salla.sa" dir="ltr" style="text-align:left;">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">العملة</label>
+                                <select class="select">
+                                    <option selected>ريال سعودي (SAR)</option>
+                                    <option>درهم إماراتي (AED)</option>
+                                    <option>دينار كويتي (KWD)</option>
+                                    <option>ريال عماني (OMR)</option>
+                                    <option>دينار بحريني (BHD)</option>
+                                    <option>ريال قطري (QAR)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">المنطقة الزمنية</label>
+                                <select class="select">
+                                    <option selected>Asia/Riyadh (توقيت السعودية)</option>
+                                    <option>Asia/Dubai (توقيت الإمارات)</option>
+                                    <option>Asia/Kuwait (توقيت الكويت)</option>
+                                    <option>Asia/Bahrain (توقيت البحرين)</option>
+                                    <option>Asia/Qatar (توقيت قطر)</option>
+                                    <option>Asia/Muscat (توقيت عمان)</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">اللغة</label>
+                                <select class="select">
+                                    <option selected>العربية</option>
+                                    <option>English</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="save-footer">
+                            <button class="btn btn-primary" onclick="saveSettings('store')">
+                                <i data-lucide="check"></i>
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 2: WhatsApp ═══════════ -->
+                <div class="settings-panel" id="panel-whatsapp">
+                    <div class="settings-section">
+                        <div class="settings-section-title">اتصال واتساب</div>
+                        <div class="settings-section-desc">إدارة ربط حساب واتساب وإعدادات المراسلة</div>
+                    </div>
+
+                    <!-- Connected State -->
+                    <div class="wa-status-card connected" id="waConnected">
+                        <div class="wa-status-header">
+                            <div class="wa-status-info">
+                                <div class="wa-status-icon">
+                                    <i data-lucide="message-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="wa-status-title">واتساب متصل</div>
+                                    <div class="wa-status-sub">متصل منذ 3 أيام</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <div class="wa-phone">+966 50 123 4567</div>
+                                <button class="btn btn-danger btn-sm" onclick="toggleWaConnection()">
+                                    <i data-lucide="unplug"></i>
+                                    قطع الاتصال
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Disconnected State (hidden by default) -->
+                    <div class="wa-status-card disconnected" id="waDisconnected" style="display:none;">
+                        <div class="wa-status-header">
+                            <div class="wa-status-info">
+                                <div class="wa-status-icon">
+                                    <i data-lucide="alert-triangle"></i>
+                                </div>
+                                <div>
+                                    <div class="wa-status-title">واتساب غير متصل</div>
+                                    <div class="wa-status-sub">امسح رمز QR من تطبيق واتساب لربط الحساب</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="qr-placeholder">
+                            <i data-lucide="qr-code"></i>
+                            <span>رمز QR سيظهر هنا</span>
+                        </div>
+                        <div style="text-align:center;">
+                            <button class="btn btn-primary" onclick="toggleWaConnection()">
+                                <i data-lucide="link"></i>
+                                اربط حساب واتساب
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Message Settings -->
+                    <div class="settings-section mt-24">
+                        <div class="settings-section-title">إعدادات الرسائل</div>
+                        <div class="settings-section-desc">تحكم في طريقة وتوقيت إرسال الرسائل</div>
+                    </div>
+
+                    <div class="card mb-24">
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">ساعات العمل</div>
+                                <div class="setting-row-desc">إرسال الرسائل فقط خلال ساعات محددة</div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <div class="time-range" id="businessHoursRange">
+                                    <input type="time" class="input" value="09:00" style="width:110px;">
+                                    <span class="time-range-sep">إلى</span>
+                                    <input type="time" class="input" value="22:00" style="width:110px;">
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-grid mt-16">
+                            <div class="input-group">
+                                <label class="input-label">الحد الأقصى للرسائل يومياً</label>
+                                <input type="number" class="input" value="200" min="1" max="1000">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">تأخير بين الرسائل</label>
+                                <select class="select">
+                                    <option value="30" selected>30 ثانية</option>
+                                    <option value="60">دقيقة</option>
+                                    <option value="120">دقيقتين</option>
+                                </select>
+                            </div>
+                            <div class="input-group full-width">
+                                <label class="input-label">رسالة الرد التلقائي</label>
+                                <textarea class="textarea" placeholder="اكتب رسالة الرد التلقائي عندما يراسلك أحد خارج ساعات العمل...">شكراً لتواصلك معنا! سنرد عليك خلال ساعات العمل من 9 صباحاً إلى 10 مساءً.</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Account Protection -->
+                    <div class="settings-section">
+                        <div class="settings-section-title">حماية الحساب</div>
+                        <div class="settings-section-desc">إعدادات متقدمة لحماية حساب واتساب من الحظر</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">وضع مكافحة الحظر</div>
+                                <div class="setting-row-desc">تطبيق حدود ذكية لتجنب حظر الحساب</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">محاكاة الكتابة</div>
+                                <div class="setting-row-desc">إظهار حالة "يكتب..." قبل إرسال الرسائل</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">تنويع الرسائل</div>
+                                <div class="setting-row-desc">تعديل طفيف تلقائي في نص كل رسالة لتجنب التكرار</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="save-footer">
+                            <button class="btn btn-primary" onclick="saveSettings('whatsapp')">
+                                <i data-lucide="check"></i>
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 3: Channels ═══════════ -->
+                <div class="settings-panel" id="panel-channels">
+                    <div class="settings-section">
+                        <div class="settings-section-title">قنوات التواصل</div>
+                        <div class="settings-section-desc">إدارة قنوات الإرسال المتعددة والتكاملات</div>
+                    </div>
+
+                    <!-- WhatsApp Channel -->
+                    <div class="channel-card">
+                        <div class="channel-card-header">
+                            <div class="channel-card-info">
+                                <div class="channel-icon whatsapp">
+                                    <i data-lucide="message-circle"></i>
+                                </div>
+                                <div>
+                                    <div class="channel-name">واتساب</div>
+                                    <div class="channel-desc">القناة الرئيسية للتواصل مع العملاء</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span class="badge badge-whatsapp">القناة الرئيسية</span>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="channel-config">
+                            <a href="#" onclick="switchTab('whatsapp');return false;" style="color:var(--primary);font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:4px;">
+                                <i data-lucide="settings" style="width:14px;height:14px;"></i>
+                                إعدادات واتساب التفصيلية
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Email Channel -->
+                    <div class="channel-card">
+                        <div class="channel-card-header">
+                            <div class="channel-card-info">
+                                <div class="channel-icon email">
+                                    <i data-lucide="mail"></i>
+                                </div>
+                                <div>
+                                    <div class="channel-name">البريد الإلكتروني</div>
+                                    <div class="channel-desc">إرسال حملات وتنبيهات عبر الإيميل</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <span class="badge badge-info">AWS SES</span>
+                                <label class="toggle">
+                                    <input type="checkbox" id="emailToggle" onchange="toggleChannelConfig('email', this.checked)">
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="channel-config" id="emailConfig" style="display:none;">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label class="input-label">اسم المرسل</label>
+                                    <input type="text" class="input" placeholder="اسم المتجر">
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">بريد المرسل</label>
+                                    <input type="email" class="input" placeholder="noreply@store.com" dir="ltr" style="text-align:left;">
+                                </div>
+                            </div>
+                            <div class="save-footer" style="border-top:none;padding-top:8px;">
+                                <button class="btn btn-primary btn-sm" onclick="saveSettings('email')">
+                                    <i data-lucide="check"></i>
+                                    حفظ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMS Channel -->
+                    <div class="channel-card">
+                        <div class="channel-card-header">
+                            <div class="channel-card-info">
+                                <div class="channel-icon sms">
+                                    <i data-lucide="smartphone"></i>
+                                </div>
+                                <div>
+                                    <div class="channel-name">الرسائل القصيرة</div>
+                                    <div class="channel-desc">إرسال SMS للعملاء كقناة احتياطية</div>
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <label class="toggle">
+                                    <input type="checkbox" id="smsToggle" onchange="toggleChannelConfig('sms', this.checked)">
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="channel-config" id="smsConfig" style="display:none;">
+                            <div class="form-grid">
+                                <div class="input-group">
+                                    <label class="input-label">مزود الخدمة</label>
+                                    <select class="select">
+                                        <option>Twilio</option>
+                                        <option>AWS SNS</option>
+                                    </select>
+                                </div>
+                                <div class="input-group">
+                                    <label class="input-label">معرّف المرسل (Sender ID)</label>
+                                    <input type="text" class="input" placeholder="MYSTORE" dir="ltr" style="text-align:left;">
+                                </div>
+                            </div>
+                            <div class="save-footer" style="border-top:none;padding-top:8px;">
+                                <button class="btn btn-primary btn-sm" onclick="saveSettings('sms')">
+                                    <i data-lucide="check"></i>
+                                    حفظ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 4: Automation ═══════════ -->
+                <div class="settings-panel" id="panel-automation">
+                    <div class="settings-section">
+                        <div class="settings-section-title">إعدادات الأتمتة الافتراضية</div>
+                        <div class="settings-section-desc">القيم الافتراضية المطبقة على جميع التسلسلات الآلية</div>
+                    </div>
+
+                    <div class="card mb-24">
+                        <div class="card-header">
+                            <div class="card-title">إعدادات السلة المتروكة</div>
+                        </div>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label class="input-label">مدة انتظار السلة المتروكة</label>
+                                <select class="select">
+                                    <option>15 دقيقة</option>
+                                    <option selected>30 دقيقة</option>
+                                    <option>ساعة</option>
+                                    <option>ساعتين</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">عدد المحاولات</label>
+                                <input type="number" class="input" value="3" min="1" max="5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-24">
+                        <div class="card-header">
+                            <div class="card-title">العروض والخصومات</div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">تفعيل العروض التلقائية</div>
+                                <div class="setting-row-desc">إرسال عروض خصم تلقائية مع رسائل الاسترداد</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked id="autoOffersToggle">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="form-grid mt-16" id="discountSettings">
+                            <div class="input-group">
+                                <label class="input-label">نسبة الخصم الافتراضية</label>
+                                <select class="select">
+                                    <option>5%</option>
+                                    <option selected>10%</option>
+                                    <option>15%</option>
+                                    <option>20%</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">إعدادات عامة</div>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">إلغاء عند الشراء</div>
+                                <div class="setting-row-desc">إيقاف التسلسل تلقائياً عند إتمام العميل عملية الشراء</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">ساعات الهدوء</div>
+                                <div class="setting-row-desc">عدم إرسال رسائل آلية خلال فترة محددة</div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:16px;">
+                                <div class="time-range" id="quietHoursRange">
+                                    <input type="time" class="input" value="23:00" style="width:110px;">
+                                    <span class="time-range-sep">إلى</span>
+                                    <input type="time" class="input" value="08:00" style="width:110px;">
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" checked>
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="save-footer">
+                            <button class="btn btn-primary" onclick="saveSettings('automation')">
+                                <i data-lucide="check"></i>
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 5: Notifications ═══════════ -->
+                <div class="settings-panel" id="panel-notifications">
+                    <div class="settings-section">
+                        <div class="settings-section-title">تفضيلات الإشعارات</div>
+                        <div class="settings-section-desc">اختر التنبيهات التي تريد تلقيها</div>
+                    </div>
+
+                    <div class="card mb-24">
+                        <div class="card-header">
+                            <div class="card-title">تنبيهات البريد الإلكتروني</div>
+                            <span class="badge badge-info">
+                                <i data-lucide="mail" style="width:12px;height:12px;"></i>
+                                البريد
+                            </span>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">سلة مستردة</div>
+                                <div class="setting-row-desc">تنبيه عند استرداد سلة متروكة بنجاح</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">طلب جديد</div>
+                                <div class="setting-row-desc">تنبيه عند وصول طلب جديد عبر الحملات</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">عميل جديد</div>
+                                <div class="setting-row-desc">تنبيه عند تسجيل عميل جديد في المتجر</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">تقرير يومي</div>
+                                <div class="setting-row-desc">ملخص يومي بأداء الحملات والاسترداد</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">تنبيهات واتساب</div>
+                            <span class="badge badge-whatsapp">
+                                <i data-lucide="message-circle" style="width:12px;height:12px;"></i>
+                                واتساب
+                            </span>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">انقطاع الاتصال</div>
+                                <div class="setting-row-desc">تنبيه فوري عند فقدان اتصال واتساب</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="setting-row">
+                            <div class="setting-row-info">
+                                <div class="setting-row-label">وصول الحد اليومي</div>
+                                <div class="setting-row-desc">تنبيه عند الوصول للحد الأقصى من الرسائل اليومية</div>
+                            </div>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="toggle-track"></span>
+                            </label>
+                        </div>
+                        <div class="save-footer">
+                            <button class="btn btn-primary" onclick="saveSettings('notifications')">
+                                <i data-lucide="check"></i>
+                                حفظ التغييرات
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 6: Team ═══════════ -->
+                <div class="settings-panel" id="panel-team">
+                    <div class="settings-section">
+                        <div class="settings-section-title">إدارة الفريق</div>
+                        <div class="settings-section-desc">أضف أعضاء فريقك وحدد صلاحياتهم</div>
+                    </div>
+
+                    <!-- Current Admin -->
+                    <div class="team-member">
+                        <div class="team-member-info">
+                            <div class="team-avatar">أ</div>
+                            <div>
+                                <div class="team-member-name">أحمد المالك</div>
+                                <div class="team-member-email">admin@mystore.com</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <span class="badge badge-primary">مدير</span>
+                            <span class="text-xs text-muted">أنت</span>
+                        </div>
+                    </div>
+
+                    <!-- Empty State for Team Members -->
+                    <div class="card mt-16">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i data-lucide="user-plus"></i>
+                            </div>
+                            <div class="empty-state-title">أضف أعضاء فريقك</div>
+                            <div class="empty-state-desc">أضف أعضاء فريقك لإدارة المتجر معاً. يمكنك تحديد صلاحيات كل عضو.</div>
+                            <button class="btn btn-primary" onclick="showInviteModal()">
+                                <i data-lucide="user-plus"></i>
+                                دعوة عضو
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ Tab 7: Billing ═══════════ -->
+                <div class="settings-panel" id="panel-billing">
+                    <div class="settings-section">
+                        <div class="settings-section-title">الخطة والفوترة</div>
+                        <div class="settings-section-desc">إدارة اشتراكك ومعلومات الدفع</div>
+                    </div>
+
+                    <!-- Current Plan -->
+                    <div class="plan-card">
+                        <div class="plan-header">
+                            <div>
+                                <div class="plan-name">الخطة الاحترافية</div>
+                                <div class="plan-price">299 ر.س / شهر</div>
+                            </div>
+                            <button class="btn btn-secondary">
+                                <i data-lucide="arrow-up-circle"></i>
+                                تغيير الخطة
+                            </button>
+                        </div>
+                        <ul class="plan-features">
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>5,000 رسالة شهرياً</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>5,000 عميل</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>تسلسلات آلية غير محدودة</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>شرائح عملاء متقدمة</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>تقارير وتحليلات مفصلة</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>دعم فني بالأولوية</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>قنوات متعددة (واتساب + إيميل)</span>
+                            </li>
+                            <li class="plan-feature">
+                                <i data-lucide="check-circle-2"></i>
+                                <span>3 أعضاء فريق</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Usage This Month -->
+                    <div class="card mb-24">
+                        <div class="card-header">
+                            <div class="card-title">الاستخدام هذا الشهر</div>
+                            <span class="badge badge-neutral">فبراير 2026</span>
+                        </div>
+
+                        <div class="usage-item">
+                            <div class="usage-header">
+                                <span class="usage-label">الرسائل المرسلة</span>
+                                <span class="usage-value">1,234 / 5,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: 24.7%"></div>
+                            </div>
+                        </div>
+
+                        <div class="usage-item">
+                            <div class="usage-header">
+                                <span class="usage-label">العملاء</span>
+                                <span class="usage-value">1,847 / 5,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-bar-fill" style="width: 36.9%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing History -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">سجل الفواتير</div>
+                        </div>
+                        <div class="table-container" style="border:none;">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>التاريخ</th>
+                                        <th>المبلغ</th>
+                                        <th>الحالة</th>
+                                        <th>الفاتورة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1 فبراير 2026</td>
+                                        <td style="font-weight:600;color:var(--text);">299 ر.س</td>
+                                        <td><span class="badge badge-success">مدفوع</span></td>
+                                        <td>
+                                            <span class="invoice-link">
+                                                <i data-lucide="download"></i>
+                                                تحميل
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1 يناير 2026</td>
+                                        <td style="font-weight:600;color:var(--text);">299 ر.س</td>
+                                        <td><span class="badge badge-success">مدفوع</span></td>
+                                        <td>
+                                            <span class="invoice-link">
+                                                <i data-lucide="download"></i>
+                                                تحميل
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>1 ديسمبر 2025</td>
+                                        <td style="font-weight:600;color:var(--text);">299 ر.س</td>
+                                        <td><span class="badge badge-success">مدفوع</span></td>
+                                        <td>
+                                            <span class="invoice-link">
+                                                <i data-lucide="download"></i>
+                                                تحميل
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Invite Modal -->
+        <div class="modal-overlay" id="inviteModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">دعوة عضو جديد</div>
+                    <button class="modal-close" onclick="closeInviteModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label class="input-label">البريد الإلكتروني</label>
+                        <input type="email" class="input" placeholder="member@example.com" dir="ltr" style="text-align:left;">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">الاسم</label>
+                        <input type="text" class="input" placeholder="اسم العضو">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">الصلاحية</label>
+                        <select class="select">
+                            <option>مدير — وصول كامل</option>
+                            <option selected>محرر — تعديل الحملات والأتمتة</option>
+                            <option>مشاهد — قراءة فقط</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="sendInvite()">
+                        <i data-lucide="send"></i>
+                        إرسال الدعوة
+                    </button>
+                    <button class="btn btn-ghost" onclick="closeInviteModal()">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <i data-lucide="check-circle-2"></i>
+            <span id="toastMessage">تم الحفظ بنجاح</span>
+        </div>
+
+    </div>
+    <script src="shared/shell.js"></script>
+    <script>
+        RibhShell.init('settings');
+
+        // ── Tab Switching ──
+        function switchTab(tabId) {
+            // Update tab buttons
+            document.querySelectorAll('.settings-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tabId);
+            });
+
+            // Update panels
+            document.querySelectorAll('.settings-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            const targetPanel = document.getElementById('panel-' + tabId);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+
+            // Re-init lucide for new icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // ── WhatsApp Connection Toggle ──
+        function toggleWaConnection() {
+            const connected = document.getElementById('waConnected');
+            const disconnected = document.getElementById('waDisconnected');
+
+            if (connected.style.display !== 'none') {
+                connected.style.display = 'none';
+                disconnected.style.display = 'block';
+            } else {
+                connected.style.display = 'block';
+                disconnected.style.display = 'none';
+            }
+
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        // ── Channel Config Toggle ──
+        function toggleChannelConfig(channel, show) {
+            const config = document.getElementById(channel + 'Config');
+            if (config) {
+                config.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        // ── Save Settings ──
+        function saveSettings(section) {
+            // Save store name to localStorage if it's the store section
+            if (section === 'store') {
+                const nameInput = document.getElementById('storeName');
+                if (nameInput && nameInput.value) {
+                    localStorage.setItem('ribh_store_name', nameInput.value);
+                }
+            }
+
+            showToast('تم حفظ الإعدادات بنجاح');
+        }
+
+        // ── Toast ──
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // ── Invite Modal ──
+        function showInviteModal() {
+            const modal = document.getElementById('inviteModal');
+            if (modal) modal.classList.add('open');
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
+
+        function closeInviteModal() {
+            const modal = document.getElementById('inviteModal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function sendInvite() {
+            closeInviteModal();
+            showToast('تم إرسال الدعوة بنجاح');
+        }
+
+        // Close modal on overlay click
+        document.addEventListener('click', function(e) {
+            if (e.target.id === 'inviteModal') {
+                closeInviteModal();
+            }
+        });
+
+        // Handle URL hash for direct tab linking
+        function checkHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash) {
+                const validTabs = ['store', 'whatsapp', 'channels', 'automation', 'notifications', 'team', 'billing'];
+                if (validTabs.includes(hash)) {
+                    switchTab(hash);
+                }
+            }
+        }
+        checkHash();
+        window.addEventListener('hashchange', checkHash);
+    </script>
+</body>
+</html>
