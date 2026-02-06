@@ -910,11 +910,29 @@
             }
             // Simulate sending
             closeWaModal();
-            alert('تم إرسال الرسالة بنجاح إلى ' + customer.name + ' عبر واتساب');
+            showToast('تم إرسال الرسالة بنجاح إلى ' + customer.name + ' عبر واتساب');
         }
 
         function editCustomer() {
-            alert('سيتم فتح نموذج تعديل بيانات العميل');
+            showToast('سيتم فتح نموذج تعديل بيانات العميل');
+        }
+
+        // ── Toast ──
+        function showToast(message) {
+            let toast = document.getElementById('customerToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customerToast';
+                toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-surface-2);border:1px solid var(--primary);color:var(--text);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(80px)';
+            }, 2500);
         }
 
         // Close modal on overlay click

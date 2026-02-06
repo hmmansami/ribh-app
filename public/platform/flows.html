@@ -735,8 +735,17 @@
                 ? '<span class="badge badge-success">نشط</span>'
                 : '<span class="badge badge-neutral">مسودة</span>';
 
-            // Update stats
+            // Update stats and re-render with current filter
             updateStats();
+            renderFlows(currentFilter);
+        });
+
+        // ── Flow Details Button ──
+        document.getElementById('flowsList').addEventListener('click', function(e) {
+            const detailsBtn = e.target.closest('.flow-details-btn');
+            if (!detailsBtn) return;
+            const flowId = detailsBtn.dataset.flowId;
+            if (flowId) window.location.href = 'flow-builder.html?id=' + flowId;
         });
 
         function updateStats() {
@@ -808,7 +817,7 @@
                         ${tpl.steps} خطوات
                     </div>
                     <br>
-                    <a href="flow-builder.html?template=${tpl.title}" class="btn btn-secondary btn-sm">
+                    <a href="flow-builder.html?template=${encodeURIComponent(tpl.title)}" class="btn btn-secondary btn-sm">
                         <i data-lucide="copy" style="width:14px;height:14px"></i>
                         استخدم القالب
                     </a>

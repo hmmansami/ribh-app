@@ -625,8 +625,9 @@
         /* ── Channel Bar Chart ── */
         function renderChannelChart() {
             const channels = Object.values(channelData);
+            const m = rangeMultipliers[currentRange];
             RibhCharts.drawBarChart('channelChart', {
-                values: channels.map(c => c.converted),
+                values: channels.map(c => Math.round(c.converted * m.revenue)),
                 labels: channels.map(c => c.name),
                 colors: channels.map(c => c.color)
             });

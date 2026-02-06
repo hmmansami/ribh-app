@@ -86,9 +86,9 @@ const RibhShell = {
             </div>
         `;
 
-        // Move page body content
+        // Remove original page-body to prevent duplicate IDs
         const pageBody = document.getElementById('page-body');
-        if (pageBody) pageBody.style.display = 'none';
+        if (pageBody) pageBody.remove();
     },
 
     renderNav() {

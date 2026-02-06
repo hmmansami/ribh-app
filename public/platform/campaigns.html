@@ -605,6 +605,39 @@
             gap: 8px;
         }
 
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--bg-surface-2);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 999;
+            opacity: 0;
+            transition: all 0.3s var(--ease);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
         /* ── Responsive ── */
         @media (max-width: 768px) {
             .page-header {
@@ -756,6 +789,12 @@
 
         <!-- Campaigns List -->
         <div class="campaigns-list stagger" id="campaignsList"></div>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast">
+            <i data-lucide="check-circle-2"></i>
+            <span id="toastMessage">تم الحفظ بنجاح</span>
+        </div>
 
         <!-- Create Campaign Modal -->
         <div class="modal-overlay" id="createCampaignModal">
@@ -1399,6 +1438,7 @@
 
             closeCreateModal();
             renderCampaigns(currentFilter);
+            showToast(scheduleType === 'now' ? 'تم إرسال الحملة بنجاح' : 'تمت جدولة الحملة بنجاح');
         }
 
         // ── Save Draft (demo) ──
@@ -1419,6 +1459,18 @@
 
             closeCreateModal();
             renderCampaigns(currentFilter);
+            showToast('تم حفظ المسودة بنجاح');
+        }
+
+        // ── Toast ──
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMessage');
+            if (!toast || !toastMsg) return;
+
+            toastMsg.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
         // ── Close modal on overlay click ──

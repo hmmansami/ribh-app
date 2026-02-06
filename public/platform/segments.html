@@ -446,6 +446,44 @@
                 gap: 12px;
             }
         }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            padding: 12px 24px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            z-index: 300;
+            opacity: 0;
+            transition: all 0.3s var(--ease);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.toast-success {
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary);
+        }
+
+        .toast.toast-error {
+            border-color: rgba(239, 68, 68, 0.3);
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
     </style>
 </head>
 <body>
@@ -716,10 +754,12 @@
         // ── Modal Functions ──
         let conditionCount = 0;
         let currentJoiner = 'AND';
+        let editingIndex = -1;
 
         function openCreateModal() {
             const modal = document.getElementById('createSegmentModal');
             modal.classList.add('open');
+            editingIndex = -1;
             document.getElementById('segmentNameInput').value = '';
             document.getElementById('conditionBuilder').innerHTML = '';
             conditionCount = 0;
@@ -736,8 +776,8 @@
             const builder = document.getElementById('conditionBuilder');
             const rowId = conditionCount++;
 
-            // Add joiner between rows if not the first
-            if (rowId > 0) {
+            // Add joiner between rows if there are existing rows
+            if (builder.querySelector('.condition-row')) {
                 const joiner = document.createElement('div');
                 joiner.className = 'condition-joiner';
                 joiner.id = `joiner-${rowId}`;
@@ -845,6 +885,20 @@
             document.getElementById('previewNumber').textContent = fakeCount.toLocaleString('ar-SA');
         }
 
+        function showToast(message, type = 'success') {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
         function saveSegment() {
             const name = document.getElementById('segmentNameInput').value.trim();
             if (!name) {
@@ -876,17 +930,29 @@
                 valid = false;
             }
 
-            if (!valid) return;
+            if (!valid) {
+                showToast('يرجى إضافة شرط واحد على الأقل', 'error');
+                return;
+            }
 
-            // Add to table (demo)
+            // Add/update in table (demo)
             const previewNum = document.getElementById('previewNumber').textContent;
-            customSegments.push({
+            const segData = {
                 name: name,
                 conditions: conditions.map(c => ({ prop: c.prop, op: c.op === 'يساوي' ? '=' : c.op === 'أكبر من' ? '>' : c.op === 'أصغر من' ? '<' : c.op, val: c.val })),
                 joiner: currentJoiner,
                 count: parseInt(previewNum.replace(/[^\d]/g, '')) || 0,
                 updated: 'الآن'
-            });
+            };
+
+            if (editingIndex >= 0) {
+                customSegments[editingIndex] = segData;
+                editingIndex = -1;
+                showToast('تم تحديث الشريحة بنجاح');
+            } else {
+                customSegments.push(segData);
+                showToast('تم إنشاء الشريحة بنجاح');
+            }
 
             renderCustomSegments();
             closeCreateModal();
@@ -896,6 +962,7 @@
         function editCustomSegment(idx) {
             const seg = customSegments[idx];
             openCreateModal();
+            editingIndex = idx;
             document.getElementById('segmentNameInput').value = seg.name;
 
             // Clear default and rebuild conditions
