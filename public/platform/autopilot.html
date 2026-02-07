@@ -7,1297 +7,601 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/platform/shared/shell.css">
     <style>
-        /* ═══ Autopilot-Specific Styles ═══ */
+        .phase{display:none;animation:fadeUp .5s var(--ease)}.phase.active{display:block}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── Phase Container ── */
-        .phase { display: none; animation: fadeUp 0.5s var(--ease); }
-        .phase.active { display: block; }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* Data Source Cards */
+        .ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:32px 0}
+        .ds-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s var(--ease);position:relative}
+        .ds-card:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+        .ds-card.selected{border-color:var(--primary);box-shadow:0 0 24px var(--primary-glow)}
+        .ds-card.disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+        .ds-card-icon{font-size:40px;margin-bottom:12px}
+        .ds-card-title{font-size:16px;font-weight:700;margin-bottom:4px}
+        .ds-card-desc{font-size:12px;color:var(--text-muted)}
+        .ds-card .coming{position:absolute;top:12px;left:12px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--text-dim)}
+        .ds-card .connected-badge{position:absolute;top:12px;left:12px;background:var(--primary-dim);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--primary);font-weight:600}
 
-        /* ── Analyze Phase ── */
-        .analyze-hero {
-            text-align: center;
-            padding: 60px 20px;
-        }
-        .analyze-icon {
-            width: 80px; height: 80px;
-            border-radius: 24px;
-            background: var(--primary-dim);
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 24px;
-            font-size: 36px;
-        }
-        .analyze-title {
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-        .analyze-sub {
-            color: var(--text-muted);
-            font-size: 15px;
-            margin-bottom: 40px;
-        }
+        /* Upload Zone */
+        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px 20px;text-align:center;margin:20px 0;transition:all .2s;cursor:pointer;display:none}
+        .upload-zone.show{display:block}
+        .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:var(--primary-dim)}
+        .upload-zone-icon{font-size:36px;margin-bottom:12px}
+        .upload-zone-text{font-size:14px;color:var(--text-secondary)}
+        .upload-zone-hint{font-size:11px;color:var(--text-dim);margin-top:8px}
+        .upload-result{display:none;text-align:center;padding:20px;animation:fadeUp .3s}
+        .upload-result.show{display:block}
 
-        .analyze-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 18px 48px;
-            background: var(--primary);
-            color: #000;
-            border: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.2s var(--ease);
-            box-shadow: 0 0 40px var(--primary-glow);
-        }
-        .analyze-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 0 60px var(--primary-glow);
-        }
+        /* Hero */
+        .hero-center{text-align:center;padding:48px 20px}
+        .hero-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px}
+        .hero-title{font-size:26px;font-weight:800;margin-bottom:10px}
+        .hero-sub{color:var(--text-muted);font-size:14px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
+        .hero-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--primary);color:#000;border:none;border-radius:14px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s var(--ease);box-shadow:0 0 40px var(--primary-glow)}
+        .hero-btn:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:0 0 60px var(--primary-glow)}
+        .hero-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
-        /* ── Scanning Animation ── */
-        .scan-phase { text-align: center; padding: 60px 20px; }
-        .scan-ring {
-            width: 120px; height: 120px;
-            border-radius: 50%;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            animation: spin 1s linear infinite;
-            margin: 0 auto 32px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .scan-ring-inner {
-            font-size: 32px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .scan-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .scan-steps {
-            max-width: 400px;
-            margin: 24px auto 0;
-            text-align: right;
-        }
-        .scan-step {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            color: var(--text-dim);
-            font-size: 14px;
-            transition: all 0.3s var(--ease);
-        }
-        .scan-step.done {
-            color: var(--primary);
-        }
-        .scan-step.active {
-            color: var(--text);
-        }
-        .scan-step-icon {
-            width: 24px; height: 24px;
-            border-radius: 50%;
-            background: var(--bg-surface-2);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-        .scan-step.done .scan-step-icon {
-            background: var(--primary-dim);
-            color: var(--primary);
-        }
-        .scan-step.active .scan-step-icon {
-            background: var(--primary);
-            color: #000;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 0 0 var(--primary-glow); }
-            50% { box-shadow: 0 0 0 8px transparent; }
-        }
+        /* Scan */
+        .scan-center{text-align:center;padding:48px 20px}
+        .scan-ring{width:100px;height:100px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--primary);animation:spin 1s linear infinite;margin:0 auto 28px;display:flex;align-items:center;justify-content:center;font-size:28px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .scan-title{font-size:18px;font-weight:700;margin-bottom:20px}
+        .scan-steps{max-width:380px;margin:0 auto;text-align:right}
+        .scan-step{display:flex;align-items:center;gap:10px;padding:8px 0;color:var(--text-dim);font-size:13px;transition:all .3s}
+        .scan-step.done{color:var(--primary)}
+        .scan-step.active{color:var(--text)}
+        .step-dot{width:22px;height:22px;border-radius:50%;background:var(--bg-surface-2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+        .scan-step.done .step-dot{background:var(--primary-dim);color:var(--primary)}
+        .scan-step.active .step-dot{background:var(--primary);color:#000;animation:pulse 1.5s infinite}
+        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--primary-glow)}50%{box-shadow:0 0 0 8px transparent}}
 
-        /* ── Results Phase ── */
-        .results-header {
-            text-align: center;
-            padding: 32px 20px 24px;
-        }
-        .results-revenue {
-            font-size: 42px;
-            font-weight: 800;
-            color: var(--primary);
-            direction: ltr;
-            display: inline-block;
-        }
-        .results-revenue-label {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .results-revenue-range {
-            font-size: 13px;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-
-        /* Stats Row */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-        .mini-stat {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            text-align: center;
-        }
-        .mini-stat-value {
-            font-size: 22px;
-            font-weight: 800;
-            direction: ltr;
-            display: inline-block;
-        }
-        .mini-stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
+        /* Results */
+        .res-header{text-align:center;padding:24px 20px 20px}
+        .res-rev{font-size:38px;font-weight:800;color:var(--primary);direction:ltr;display:inline-block}
+        .res-rev-label{font-size:13px;color:var(--text-muted);margin-bottom:6px}
+        .res-rev-range{font-size:12px;color:var(--text-dim);margin-top:4px}
+        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+        .m-stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
+        .m-stat-val{font-size:20px;font-weight:800;direction:ltr;display:inline-block}
+        .m-stat-lbl{font-size:10px;color:var(--text-muted);margin-top:3px}
 
         /* Campaign Cards */
-        .campaign-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 12px;
-            transition: all 0.2s var(--ease);
-        }
-        .campaign-card:hover {
-            border-color: var(--border-strong);
-        }
-        .campaign-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-        .campaign-title-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .campaign-icon {
-            width: 40px; height: 40px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
-            flex-shrink: 0;
-        }
-        .campaign-name {
-            font-size: 15px;
-            font-weight: 700;
-        }
-        .campaign-desc {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        .campaign-stats {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .campaign-stat {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-        .campaign-stat strong {
-            color: var(--text);
-            font-weight: 700;
-        }
-        .campaign-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 14px;
-            padding-top: 14px;
-            border-top: 1px solid var(--border);
-        }
+        .camp{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:10px;transition:border-color .2s}
+        .camp:hover{border-color:var(--border-strong)}
+        .camp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+        .camp-title-row{display:flex;align-items:center;gap:10px}
+        .camp-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+        .camp-name{font-size:14px;font-weight:700}
+        .camp-desc{font-size:11px;color:var(--text-muted)}
+        .camp-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary)}
+        .camp-stats strong{color:var(--text);font-weight:700}
+        .camp-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+        .msg-prev{background:var(--bg-surface-2);border-radius:var(--radius-sm);padding:12px;margin-top:10px;font-size:12px;line-height:1.9;color:var(--text-secondary);border-right:3px solid var(--whatsapp);display:none}
+        .msg-prev.show{display:block;animation:fadeUp .3s}
+        .msg-prev-lbl{font-size:10px;color:var(--text-dim);margin-bottom:6px;display:flex;align-items:center;gap:5px}
 
-        /* Message Preview */
-        .msg-preview {
-            background: var(--bg-surface-2);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            margin-top: 12px;
-            font-size: 13px;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            border-right: 3px solid var(--whatsapp);
-            display: none;
-        }
-        .msg-preview.show { display: block; animation: fadeUp 0.3s var(--ease); }
-        .msg-preview-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        /* Buttons */
+        .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s var(--ease)}
+        .btn-primary{background:var(--primary);color:#000}.btn-primary:hover{background:var(--primary-hover)}
+        .btn-secondary{background:var(--bg-surface-2);color:var(--text-secondary);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--border-strong);color:var(--text)}
+        .btn-ghost{background:transparent;color:var(--text-muted)}.btn-ghost:hover{color:var(--text);background:var(--bg-hover)}
+        .btn-danger{background:var(--danger-dim);color:var(--danger)}
+        .btn-lg{padding:14px 36px;font-size:16px;font-weight:700;border-radius:14px}
+        .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600}
+        .badge-primary{background:var(--primary-dim);color:var(--primary)}
+        .badge-danger{background:var(--danger-dim);color:var(--danger)}
+        .badge-success{background:var(--success-dim);color:var(--success)}
+        .badge-warning{background:var(--warning-dim);color:var(--warning)}
+        .badge-info{background:var(--info-dim);color:var(--info)}
+        .badge-whatsapp{background:var(--whatsapp-dim);color:var(--whatsapp)}
+        .badge-neutral{background:var(--bg-surface-2);color:var(--text-dim)}
+        .sec-title{font-size:15px;font-weight:700;margin-bottom:14px}
 
-        /* Edit Modal */
-        .modal-backdrop {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(4px);
-            z-index: 500;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-backdrop.open { display: flex; }
-        .modal {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            width: 90%;
-            max-width: 560px;
-            max-height: 80vh;
-            overflow-y: auto;
-            padding: 28px;
-            animation: modalIn 0.3s var(--ease);
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.96) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-        .modal textarea {
-            width: 100%;
-            min-height: 160px;
-            background: var(--bg-surface-2);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            padding: 14px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 14px;
-            line-height: 1.8;
-            resize: vertical;
-            direction: rtl;
-        }
-        .modal textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-dim);
-        }
-        .modal-hint {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 8px;
-            margin-bottom: 20px;
-        }
-        .modal-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: flex-start;
-        }
+        /* Modal */
+        .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center}
+        .modal-bg.open{display:flex}
+        .modal{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-xl);width:90%;max-width:540px;max-height:80vh;overflow-y:auto;padding:24px;animation:modalIn .3s var(--ease)}
+        @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+        .modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+        .modal textarea{width:100%;min-height:140px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;color:var(--text);font-family:inherit;font-size:13px;line-height:1.8;resize:vertical;direction:rtl}
+        .modal textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-dim)}
+        .modal-hint{font-size:10px;color:var(--text-dim);margin:6px 0 16px}
+        .modal-btns{display:flex;gap:8px}
+        .type-btns,.seg-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+        .type-btn,.seg-btn{padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--bg-surface-2);color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
+        .type-btn.active,.seg-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-dim)}
 
-        /* ── Live Phase ── */
-        .live-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .live-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .live-dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: #EF4444;
-            animation: livePulse 1.5s infinite;
-        }
-        @keyframes livePulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
+        /* Live */
+        .live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+        .live-ind{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
+        .live-dot{width:10px;height:10px;border-radius:50%;background:#EF4444;animation:livePulse 1.5s infinite}
+        @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
+        .live-rev{text-align:center;padding:28px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-xl);margin-bottom:16px}
+        .live-rev-num{font-size:44px;font-weight:800;color:var(--primary);direction:ltr;display:inline-block}
+        .live-rev-lbl{font-size:12px;color:var(--text-muted);margin-bottom:6px}
+        .live-bar{height:7px;background:var(--bg-surface-2);border-radius:4px;margin-top:14px;overflow:hidden}
+        .live-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),#22C55E);border-radius:4px;transition:width 1s var(--ease)}
+        .live-bar-txt{font-size:11px;color:var(--text-dim);margin-top:5px;text-align:center}
+        .live-camps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+        .lc{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px}
+        .lc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+        .lc-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
+        .lc-name{font-size:12px;font-weight:600}
+        .lc-val{font-size:15px;font-weight:700;direction:ltr;display:inline-block}
+        .lc-sub{font-size:10px;color:var(--text-muted)}
+        .ai-box{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(99,102,241,.06));border:1px solid rgba(16,185,129,.2);border-radius:var(--radius-lg);padding:14px 18px;font-size:12px;color:var(--text-secondary);line-height:1.7}
+        .ai-box-lbl{font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px}
+        .feed{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:14px}
+        .feed-title{padding:14px 18px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border)}
+        .feed-items{max-height:340px;overflow-y:auto}
+        .fi{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);font-size:12px;animation:feedIn .4s var(--ease)}
+        @keyframes feedIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+        .fi:last-child{border-bottom:none}
+        .fi-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+        .fi-txt{flex:1;color:var(--text-secondary)}.fi-txt strong{color:var(--text);font-weight:600}
+        .fi-time{font-size:10px;color:var(--text-dim);white-space:nowrap}
+        .fi-amt{font-weight:700;color:var(--primary);direction:ltr;white-space:nowrap}
 
-        .live-revenue-big {
-            text-align: center;
-            padding: 32px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-xl);
-            margin-bottom: 20px;
-        }
-        .live-revenue-number {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--primary);
-            direction: ltr;
-            display: inline-block;
-        }
-        .live-revenue-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-        .live-progress {
-            height: 8px;
-            background: var(--bg-surface-2);
-            border-radius: 4px;
-            margin-top: 16px;
-            overflow: hidden;
-        }
-        .live-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #22C55E);
-            border-radius: 4px;
-            transition: width 1s var(--ease);
-        }
-        .live-progress-text {
-            font-size: 12px;
-            color: var(--text-dim);
-            margin-top: 6px;
-            text-align: center;
-        }
+        /* Toast */
+        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg-surface);border:1px solid var(--primary);color:var(--text);padding:10px 22px;border-radius:12px;font-size:13px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:fadeUp .3s}
 
-        /* Live Feed */
-        .live-feed {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-        }
-        .live-feed-title {
-            padding: 16px 20px;
-            font-size: 14px;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border);
-        }
-        .live-feed-items {
-            max-height: 360px;
-            overflow-y: auto;
-        }
-        .feed-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-            animation: feedIn 0.4s var(--ease);
-        }
-        @keyframes feedIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .feed-item:last-child { border-bottom: none; }
-        .feed-icon {
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .feed-text { flex: 1; color: var(--text-secondary); }
-        .feed-text strong { color: var(--text); font-weight: 600; }
-        .feed-time { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
-        .feed-amount {
-            font-weight: 700;
-            color: var(--primary);
-            direction: ltr;
-            white-space: nowrap;
-        }
-
-        /* AI Insight Box */
-        .ai-insight {
-            background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(99,102,241,0.06));
-            border: 1px solid rgba(16,185,129,0.2);
-            border-radius: var(--radius-lg);
-            padding: 16px 20px;
-            margin-top: 16px;
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-        .ai-insight-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        /* Live Campaign Mini Cards */
-        .live-campaigns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .live-camp-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-        }
-        .live-camp-top {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .live-camp-icon {
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .live-camp-name {
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .live-camp-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-        .live-camp-val {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text);
-            direction: ltr;
-            display: inline-block;
-        }
-
-        /* Section Title */
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        /* ── Buttons ── */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.15s var(--ease);
-        }
-        .btn-primary { background: var(--primary); color: #000; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-secondary { background: var(--bg-surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
-        .btn-secondary:hover { border-color: var(--border-strong); color: var(--text); }
-        .btn-ghost { background: transparent; color: var(--text-muted); }
-        .btn-ghost:hover { color: var(--text); background: var(--bg-hover); }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .btn-lg { padding: 14px 32px; font-size: 16px; font-weight: 700; }
-        .btn-danger { background: var(--danger-dim); color: var(--danger); }
-        .btn-whatsapp { background: var(--whatsapp-dim); color: var(--whatsapp); }
-
-        /* ── Badge ── */
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .badge-success { background: var(--success-dim); color: var(--success); }
-        .badge-primary { background: var(--primary-dim); color: var(--primary); }
-        .badge-warning { background: var(--warning-dim); color: var(--warning); }
-        .badge-danger { background: var(--danger-dim); color: var(--danger); }
-        .badge-whatsapp { background: var(--whatsapp-dim); color: var(--whatsapp); }
-        .badge-info { background: var(--info-dim); color: var(--info); }
-        .badge-neutral { background: var(--bg-surface-2); color: var(--text-muted); }
-
-        /* ── Responsive ── */
-        @media (max-width: 768px) {
-            .analyze-title { font-size: 22px; }
-            .analyze-btn { padding: 14px 32px; font-size: 16px; }
-            .results-revenue { font-size: 32px; }
-            .live-revenue-number { font-size: 36px; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); }
-            .live-campaigns { grid-template-columns: 1fr; }
+        @media(max-width:768px){
+            .hero-title{font-size:20px}.hero-btn{padding:12px 28px;font-size:15px}
+            .res-rev{font-size:30px}.live-rev-num{font-size:32px}
+            .stats-row{grid-template-columns:repeat(2,1fr)}.live-camps{grid-template-columns:repeat(2,1fr)}
+            .ds-grid{grid-template-columns:1fr}
         }
     </style>
 </head>
 <body>
-    <div id="app">
-        <div id="page-body">
+<div id="app"><div id="page-body">
 
-            <!-- ═══════════════════════════════════════ -->
-            <!--  PHASE 1: START — Analyze Button       -->
-            <!-- ═══════════════════════════════════════ -->
-            <div class="phase active" id="phaseStart">
-                <div class="analyze-hero">
-                    <div class="analyze-icon">💰</div>
-                    <h1 class="analyze-title">حوّل عملاءك إلى أرباح</h1>
-                    <p class="analyze-sub">الذكاء الاصطناعي يحلل متجرك ويولّد حملات جاهزة — واتساب، إيميل، SMS<br>كل شي تلقائي. أنت بس وافق وشغّل.</p>
-                    <button class="analyze-btn" onclick="startAnalysis()">
-                        تحليل المتجر وتجهيز الحملات
-                        <span style="font-size:22px">←</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!--  PHASE 2: SCANNING                     -->
-            <!-- ═══════════════════════════════════════ -->
-            <div class="phase" id="phaseScan">
-                <div class="scan-phase">
-                    <div class="scan-ring">
-                        <span class="scan-ring-inner">🔍</span>
-                    </div>
-                    <h2 class="scan-title">جاري تحليل متجرك...</h2>
-                    <div class="scan-steps" id="scanSteps">
-                        <div class="scan-step" data-step="1">
-                            <div class="scan-step-icon">١</div>
-                            <span>جلب بيانات العملاء والطلبات</span>
-                        </div>
-                        <div class="scan-step" data-step="2">
-                            <div class="scan-step-icon">٢</div>
-                            <span>تصنيف العملاء بالذكاء الاصطناعي (RFM)</span>
-                        </div>
-                        <div class="scan-step" data-step="3">
-                            <div class="scan-step-icon">٣</div>
-                            <span>كشف السلات المتروكة</span>
-                        </div>
-                        <div class="scan-step" data-step="4">
-                            <div class="scan-step-icon">٤</div>
-                            <span>تحليل أنماط الشراء والتنبؤ بالمبيعات</span>
-                        </div>
-                        <div class="scan-step" data-step="5">
-                            <div class="scan-step-icon">٥</div>
-                            <span>توليد الحملات والرسائل</span>
-                        </div>
-                        <div class="scan-step" data-step="6">
-                            <div class="scan-step-icon">٦</div>
-                            <span>حساب الإيرادات المتوقعة</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!--  PHASE 3: RESULTS — Campaign Plan      -->
-            <!-- ═══════════════════════════════════════ -->
-            <div class="phase" id="phaseResults">
-
-                <div class="results-header">
-                    <div class="results-revenue-label">الإيرادات المتوقعة خلال 7 أيام</div>
-                    <div class="results-revenue">12,400 ر.س</div>
-                    <div class="results-revenue-range">المدى: 8,400 — 16,200 ر.س حسب التفاعل</div>
-                </div>
-
-                <div class="stats-row">
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--primary)">847</div>
-                        <div class="mini-stat-label">عميل مستهدف</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--whatsapp)">312</div>
-                        <div class="mini-stat-label">رسالة واتساب</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--info)">420</div>
-                        <div class="mini-stat-label">إيميل</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--warning)">115</div>
-                        <div class="mini-stat-label">SMS</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--secondary)">6</div>
-                        <div class="mini-stat-label">حملة ذكية</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-value" style="color:var(--danger)">7</div>
-                        <div class="mini-stat-label">أيام</div>
-                    </div>
-                </div>
-
-                <div class="section-title">الحملات المولّدة تلقائياً</div>
-
-                <!-- Campaign 1: Cart Recovery -->
-                <div class="campaign-card" id="camp1">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--primary-dim)">🛒</div>
-                            <div>
-                                <div class="campaign-name">استرداد السلات المتروكة</div>
-                                <div class="campaign-desc">23 سلة متروكة — رسالة فورية + متابعة بعد 4 ساعات و 24 ساعة</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-primary">أعلى أولوية</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">العملاء: <strong>23</strong></div>
-                        <div class="campaign-stat">القناة: <strong>واتساب ← إيميل ← SMS</strong></div>
-                        <div class="campaign-stat">الخصم: <strong>0% → 10% → 15%</strong></div>
-                        <div class="campaign-stat">الإيراد المتوقع: <strong style="color:var(--primary)">3,200 ر.س</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg1">
-                        <div class="msg-preview-label">💬 نموذج الرسالة (الخطوة الأولى — بدون خصم):</div>
-                        مرحبا {الاسم}، مساء الخير 🌙<br>
-                        {المنتج} لسا موجود بسلتك<br>
-                        باقي 3 حبات بس — يلا قبل لا يخلص 🔥<br>
-                        أكمل طلبك 👇<br>
-                        {رابط_السلة}
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg1')">👁️ معاينة الرسالة</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp1')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Campaign 2: Winback -->
-                <div class="campaign-card" id="camp2">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--danger-dim)">💤</div>
-                            <div>
-                                <div class="campaign-name">إعادة تنشيط العملاء</div>
-                                <div class="campaign-desc">156 عميل معرض للخسارة — لم يشتروا منذ 60+ يوم</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-danger">عالي القيمة</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">العملاء: <strong>156</strong></div>
-                        <div class="campaign-stat">القناة: <strong>واتساب ← إيميل</strong></div>
-                        <div class="campaign-stat">الخصم: <strong>15-20% حسب CLV</strong></div>
-                        <div class="campaign-stat">الإيراد المتوقع: <strong style="color:var(--primary)">4,800 ر.س</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg2">
-                        <div class="msg-preview-label">💬 نموذج الرسالة:</div>
-                        وحشتنا {الاسم}! 👋<br>
-                        عندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين<br>
-                        شوف العرض 👇<br>
-                        {رابط_المتجر}
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg2')">👁️ معاينة الرسالة</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp2')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Campaign 3: Post-Purchase Upsell -->
-                <div class="campaign-card" id="camp3">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--secondary-dim)">🎁</div>
-                            <div>
-                                <div class="campaign-name">بيع إضافي بعد الشراء</div>
-                                <div class="campaign-desc">89 عميل اشتروا مؤخراً — منتجات مكملة بخصم 10%</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-success">مجاني عبر واتساب</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">العملاء: <strong>89</strong></div>
-                        <div class="campaign-stat">القناة: <strong>واتساب (نافذة مجانية)</strong></div>
-                        <div class="campaign-stat">الخصم: <strong>10%</strong></div>
-                        <div class="campaign-stat">الإيراد المتوقع: <strong style="color:var(--primary)">2,100 ر.س</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg3">
-                        <div class="msg-preview-label">💬 نموذج الرسالة (داخل نافذة المتابعة المجانية):</div>
-                        هلا {الاسم} 👋<br>
-                        طلبك #{رقم_الطلب} في الطريق!<br>
-                        عملاء مثلك أخذوا معاه {المنتج_المكمل} — خصم 10% لو حبيت تضيفه<br>
-                        {رابط_المنتج}<br>
-                        استغل الفرصة 👇
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg3')">👁️ معاينة الرسالة</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp3')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Campaign 4: VIP Reward -->
-                <div class="campaign-card" id="camp4">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--warning-dim)">⭐</div>
-                            <div>
-                                <div class="campaign-name">مكافأة العملاء المميزين</div>
-                                <div class="campaign-desc">45 عميل VIP — وصول حصري + شحن مجاني</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-warning">ولاء</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">العملاء: <strong>45</strong></div>
-                        <div class="campaign-stat">القناة: <strong>واتساب (شخصي)</strong></div>
-                        <div class="campaign-stat">العرض: <strong>شحن مجاني + وصول حصري</strong></div>
-                        <div class="campaign-stat">الإيراد المتوقع: <strong style="color:var(--primary)">1,500 ر.س</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg4">
-                        <div class="msg-preview-label">💬 نموذج الرسالة:</div>
-                        هلا {الاسم}! أنت من أهم عملائنا 👑<br>
-                        عندك وصول حصري لمنتجاتنا الجديدة قبل الكل + شحن مجاني<br>
-                        شوف الجديد قبل لا ينزل 👇<br>
-                        {رابط_حصري}
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg4')">👁️ معاينة الرسالة</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp4')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Campaign 5: Browse Recovery -->
-                <div class="campaign-card" id="camp5">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--info-dim)">👀</div>
-                            <div>
-                                <div class="campaign-name">تذكير المتصفحين</div>
-                                <div class="campaign-desc">534 زائر شافوا منتجات بدون ما يشترون</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-info">تحويل</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">العملاء: <strong>534</strong></div>
-                        <div class="campaign-stat">القناة: <strong>إيميل ← SMS</strong></div>
-                        <div class="campaign-stat">الخصم: <strong>5%</strong></div>
-                        <div class="campaign-stat">الإيراد المتوقع: <strong style="color:var(--primary)">800 ر.س</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg5">
-                        <div class="msg-preview-label">📧 نموذج الإيميل:</div>
-                        مرحبا {الاسم}<br><br>
-                        لاحظنا إنك شفت {المنتج} — لسا متوفر!<br>
-                        خصم 5% خاص لك لمدة 48 ساعة<br><br>
-                        شوف المنتج 👇<br>
-                        {رابط_المنتج}
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg5')">👁️ معاينة الرسالة</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp5')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Campaign 6: Review + Post-Sale Funnel -->
-                <div class="campaign-card" id="camp6">
-                    <div class="campaign-header">
-                        <div class="campaign-title-row">
-                            <div class="campaign-icon" style="background:var(--whatsapp-dim)">⭐</div>
-                            <div>
-                                <div class="campaign-name">تقييمات + عروض ما بعد البيع</div>
-                                <div class="campaign-desc">عبر نافذة "تابع طلبك على واتساب" — مجانية بالكامل</div>
-                            </div>
-                        </div>
-                        <span class="badge badge-whatsapp">مجاني 100%</span>
-                    </div>
-                    <div class="campaign-stats">
-                        <div class="campaign-stat">الطريقة: <strong>SMS → "تابع طلبك على واتساب" → نافذة مجانية 24 ساعة</strong></div>
-                        <div class="campaign-stat">داخل النافذة: <strong>تأكيد + تقييم + عرض</strong></div>
-                    </div>
-                    <div class="msg-preview" id="msg6">
-                        <div class="msg-preview-label">📲 SMS المبدئي:</div>
-                        {الاسم}، طلبك #{رقم_الطلب} جاهز! تابع التوصيل على واتساب 👇<br>
-                        wa.me/966XXXXXXXXX?text=متابعة_طلب_{رقم_الطلب}<br><br>
-                        <div class="msg-preview-label" style="margin-top:12px">💬 بعد ما يراسلك (مجاني):</div>
-                        ١. تأكيد الطلب ✅<br>
-                        ٢. بعد 3 أيام: "كيف المنتج؟ قيّمنا من 5 ⭐"<br>
-                        ٣. بعد التقييم: "شكراً! خصم 10% على طلبك الجاي 🎁"
-                    </div>
-                    <div class="campaign-actions">
-                        <button class="btn btn-sm btn-secondary" onclick="togglePreview('msg6')">👁️ معاينة التسلسل</button>
-                        <button class="btn btn-sm btn-ghost" onclick="openEditModal('camp6')">✏️ تعديل</button>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="padding: 24px 0; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                    <button class="btn btn-primary btn-lg" onclick="activateLive()" style="box-shadow: 0 0 40px var(--primary-glow);">
-                        🚀 شغّل كل الحملات
-                    </button>
-                    <button class="btn btn-secondary" onclick="showCustomCampaign()">
-                        ➕ أضف حملة مخصصة
-                    </button>
-                    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);margin-right:auto;">
-                        <input type="checkbox" id="trustMode" style="accent-color:var(--primary)">
-                        المرة الجاية شغّل بدون معاينة
-                    </label>
-                </div>
-            </div>
-
-            <!-- ═══════════════════════════════════════ -->
-            <!--  PHASE 4: LIVE FEED                    -->
-            <!-- ═══════════════════════════════════════ -->
-            <div class="phase" id="phaseLive">
-                <div class="live-header">
-                    <div class="live-indicator">
-                        <div class="live-dot"></div>
-                        <span>الربح شغّال</span>
-                    </div>
-                    <div style="display:flex;gap:8px;">
-                        <button class="btn btn-sm btn-ghost" onclick="showResults()">✏️ تعديل الرسائل</button>
-                        <button class="btn btn-sm btn-secondary" onclick="addCustomLive()">➕ حملة جديدة</button>
-                        <button class="btn btn-sm btn-danger" onclick="pauseSystem()">⏸️ إيقاف مؤقت</button>
-                    </div>
-                </div>
-
-                <!-- Revenue Card -->
-                <div class="live-revenue-big">
-                    <div class="live-revenue-label">تم تحصيل</div>
-                    <div class="live-revenue-number" id="liveRevenue">0</div>
-                    <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">ر.س</div>
-                    <div class="live-progress">
-                        <div class="live-progress-fill" id="liveProgress" style="width:0%"></div>
-                    </div>
-                    <div class="live-progress-text" id="liveProgressText">0% من الهدف (12,400 ر.س)</div>
-                </div>
-
-                <!-- Campaign Summary Cards -->
-                <div class="live-campaigns" id="liveCampaigns">
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--primary-dim)">🛒</div>
-                            <div class="live-camp-name">السلات</div>
-                        </div>
-                        <div class="live-camp-val" id="lc1">0/23</div>
-                        <div class="live-camp-stats">مستردة</div>
-                    </div>
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--danger-dim)">💤</div>
-                            <div class="live-camp-name">تنشيط</div>
-                        </div>
-                        <div class="live-camp-val" id="lc2">0/156</div>
-                        <div class="live-camp-stats">رجعوا</div>
-                    </div>
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--secondary-dim)">🎁</div>
-                            <div class="live-camp-name">بيع إضافي</div>
-                        </div>
-                        <div class="live-camp-val" id="lc3">0/89</div>
-                        <div class="live-camp-stats">اشتروا</div>
-                    </div>
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--warning-dim)">⭐</div>
-                            <div class="live-camp-name">VIP</div>
-                        </div>
-                        <div class="live-camp-val" id="lc4">0/45</div>
-                        <div class="live-camp-stats">تفاعلوا</div>
-                    </div>
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--info-dim)">👀</div>
-                            <div class="live-camp-name">متصفحين</div>
-                        </div>
-                        <div class="live-camp-val" id="lc5">0/534</div>
-                        <div class="live-camp-stats">نقروا</div>
-                    </div>
-                    <div class="live-camp-card">
-                        <div class="live-camp-top">
-                            <div class="live-camp-icon" style="background:var(--whatsapp-dim)">⭐</div>
-                            <div class="live-camp-name">تقييمات</div>
-                        </div>
-                        <div class="live-camp-val" id="lc6">0</div>
-                        <div class="live-camp-stats">تقييم جديد</div>
-                    </div>
-                </div>
-
-                <!-- AI Insight -->
-                <div class="ai-insight" id="aiInsight">
-                    <div class="ai-insight-label">💡 ذكاء الربح</div>
-                    جاري تحليل أول النتائج...
-                </div>
-
-                <!-- Live Feed -->
-                <div class="live-feed" style="margin-top:16px;">
-                    <div class="live-feed-title">آخر الأحداث</div>
-                    <div class="live-feed-items" id="liveFeed">
-                        <div class="feed-item" style="justify-content:center;color:var(--text-dim);padding:40px;">
-                            بانتظار أول رسالة...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+<!-- ═══ PHASE 0: DATA SOURCE ═══ -->
+<div class="phase active" id="phase0">
+    <div class="hero-center">
+        <div class="hero-icon">📊</div>
+        <h1 class="hero-title">وصّل بيانات عملائك</h1>
+        <p class="hero-sub">اختر مصدر البيانات — الذكاء الاصطناعي يحلل ويجهّز كل شي</p>
+    </div>
+    <div class="ds-grid">
+        <div class="ds-card" onclick="selectSource('salla')" id="dsSalla">
+            <div class="connected-badge" style="display:none" id="sallaConnected">متصل ✓</div>
+            <div class="ds-card-icon">🛍️</div>
+            <div class="ds-card-title">سلة (Salla)</div>
+            <div class="ds-card-desc">ربط تلقائي — الطلبات والسلات والعملاء</div>
+        </div>
+        <div class="ds-card" onclick="selectSource('excel')" id="dsExcel">
+            <div class="ds-card-icon">📁</div>
+            <div class="ds-card-title">ملف إكسل / CSV</div>
+            <div class="ds-card-desc">ارفع ملف عملائك — الاسم، الجوال، الطلبات</div>
+        </div>
+        <div class="ds-card disabled" id="dsShopify">
+            <div class="coming">قريباً</div>
+            <div class="ds-card-icon">🟢</div>
+            <div class="ds-card-title">Shopify</div>
+            <div class="ds-card-desc">ربط متجر شوبيفاي</div>
         </div>
     </div>
 
-    <!-- ═══ Edit Modal ═══ -->
-    <div class="modal-backdrop" id="editModal">
-        <div class="modal">
-            <div class="modal-title">✏️ تعديل الرسالة</div>
-            <textarea id="editTextarea"></textarea>
-            <div class="modal-hint">استخدم {الاسم} و {المنتج} و {رابط_السلة} كمتغيرات — يتم تعبئتها تلقائياً لكل عميل</div>
-            <div class="modal-actions">
-                <button class="btn btn-primary" onclick="saveEdit()">حفظ</button>
-                <button class="btn btn-secondary" onclick="closeEditModal()">إلغاء</button>
-                <button class="btn btn-ghost" onclick="regenerateAI()" style="margin-right:auto;">🤖 اقتراح بالذكاء الاصطناعي</button>
-            </div>
+    <!-- Salla Connect -->
+    <div id="sallaSection" style="display:none;text-align:center;padding:20px;">
+        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:400px;margin:0 auto;">
+            <div style="font-size:15px;font-weight:700;margin-bottom:12px;">ربط متجر سلة</div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">أدخل رابط متجرك أو اضغط ربط للاتصال التلقائي</p>
+            <button class="btn btn-primary btn-lg" onclick="connectSalla()" style="width:100%;">ربط سلة</button>
+            <p style="font-size:10px;color:var(--text-dim);margin-top:10px;">أو: المتجر متصل مسبقاً؟</p>
+            <button class="btn btn-ghost" onclick="simulateSallaConnected()" style="margin-top:4px;">تخطي — متجري متصل</button>
         </div>
     </div>
 
-    <!-- ═══ Custom Campaign Modal ═══ -->
-    <div class="modal-backdrop" id="customModal">
-        <div class="modal">
-            <div class="modal-title">➕ حملة مخصصة</div>
-
-            <div style="margin-bottom:16px;">
-                <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">نوع الحملة</label>
-                <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                    <button class="btn btn-sm btn-secondary camp-type-btn active" data-type="promo">🏷️ عرض خاص</button>
-                    <button class="btn btn-sm btn-secondary camp-type-btn" data-type="new_product">🆕 منتج جديد</button>
-                    <button class="btn btn-sm btn-secondary camp-type-btn" data-type="flash">⚡ فلاش سيل</button>
-                    <button class="btn btn-sm btn-secondary camp-type-btn" data-type="seasonal">🌙 موسمي</button>
-                    <button class="btn btn-sm btn-secondary camp-type-btn" data-type="restock">📦 رجع للمخزون</button>
-                    <button class="btn btn-sm btn-secondary camp-type-btn" data-type="loyalty">👑 ولاء</button>
-                </div>
-            </div>
-
-            <div style="margin-bottom:16px;">
-                <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">من يستلم؟</label>
-                <div style="display:flex;flex-wrap:wrap;gap:8px;">
-                    <button class="btn btn-sm btn-secondary seg-btn active" data-seg="all">الكل (847)</button>
-                    <button class="btn btn-sm btn-secondary seg-btn" data-seg="vip">المميزين (45)</button>
-                    <button class="btn btn-sm btn-secondary seg-btn" data-seg="loyal">المخلصين (312)</button>
-                    <button class="btn btn-sm btn-secondary seg-btn" data-seg="atrisk">معرضين للخسارة (156)</button>
-                    <button class="btn btn-sm btn-secondary seg-btn" data-seg="new">الجدد (89)</button>
-                </div>
-            </div>
-
-            <label style="font-size:12px;color:var(--text-muted);margin-bottom:6px;display:block;">الرسالة (ولّد بالذكاء الاصطناعي أو اكتب بنفسك)</label>
-            <textarea id="customMessage" placeholder="اكتب رسالتك هنا... أو اضغط 'ولّد رسالة' 👇" style="width:100%;min-height:120px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;color:var(--text);font-family:inherit;font-size:14px;line-height:1.8;resize:vertical;direction:rtl;"></textarea>
-
-            <div style="margin-top:16px;display:flex;gap:8px;">
-                <button class="btn btn-primary" onclick="launchCustom()">🚀 أطلق الحملة</button>
-                <button class="btn btn-secondary" onclick="closeCustomModal()">إلغاء</button>
-                <button class="btn btn-ghost" onclick="generateCustomAI()" style="margin-right:auto;">🤖 ولّد رسالة</button>
-            </div>
+    <!-- Excel Upload -->
+    <div id="excelSection" style="display:none;max-width:500px;margin:0 auto;">
+        <div class="upload-zone show" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-zone-icon">📄</div>
+            <div class="upload-zone-text">اسحب الملف هنا أو اضغط للاختيار</div>
+            <div class="upload-zone-hint">Excel (.xlsx) أو CSV — الأعمدة: الاسم، الجوال، عدد الطلبات، إجمالي المشتريات</div>
+        </div>
+        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(this)">
+        <div class="upload-result" id="uploadResult">
+            <div style="font-size:48px;margin-bottom:12px;">✅</div>
+            <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="uploadCount">تم استيراد 847 عميل</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="uploadDetails">512 برقم جوال — 335 بإيميل فقط</div>
         </div>
     </div>
 
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="/platform/shared/shell.js"></script>
-    <script>
-        // ═══ Initialize Shell ═══
-        // Add autopilot to nav
-        RibhShell.nav.splice(1, 0, {
-            id: 'autopilot', label: 'الربح التلقائي', icon: 'zap', href: 'autopilot.html'
-        });
-        RibhShell.init('autopilot');
+    <div style="text-align:center;padding:20px;">
+        <button class="hero-btn" id="proceedBtn" onclick="goToAnalyze()" disabled>
+            متابعة ←
+        </button>
+    </div>
+</div>
 
-        // ═══ Phase Navigation ═══
-        function showPhase(id) {
-            document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+<!-- ═══ PHASE 1: ANALYZE BUTTON ═══ -->
+<div class="phase" id="phase1">
+    <div class="hero-center">
+        <div class="hero-icon">💰</div>
+        <h1 class="hero-title">حوّل عملاءك إلى أرباح</h1>
+        <p class="hero-sub">الذكاء الاصطناعي يحلل بياناتك ويولّد حملات جاهزة<br>واتساب + إيميل + SMS — كل شي تلقائي</p>
+        <button class="hero-btn" onclick="startScan()">
+            حلل وجهّز الحملات ←
+        </button>
+        <div style="margin-top:16px;font-size:12px;color:var(--text-dim);" id="sourceLabel"></div>
+    </div>
+</div>
 
-        // ═══ Phase 1 → 2: Start Analysis ═══
-        function startAnalysis() {
-            showPhase('phaseScan');
-            runScanAnimation();
-        }
+<!-- ═══ PHASE 2: SCANNING ═══ -->
+<div class="phase" id="phase2">
+    <div class="scan-center">
+        <div class="scan-ring"><span>🔍</span></div>
+        <h2 class="scan-title">جاري تحليل بياناتك...</h2>
+        <div class="scan-steps" id="scanSteps">
+            <div class="scan-step" data-s="1"><div class="step-dot">١</div><span>جلب بيانات العملاء والطلبات</span></div>
+            <div class="scan-step" data-s="2"><div class="step-dot">٢</div><span>تصنيف العملاء (Champions, At-Risk, New...)</span></div>
+            <div class="scan-step" data-s="3"><div class="step-dot">٣</div><span>كشف السلات المتروكة</span></div>
+            <div class="scan-step" data-s="4"><div class="step-dot">٤</div><span>تحليل أنماط الشراء</span></div>
+            <div class="scan-step" data-s="5"><div class="step-dot">٥</div><span>توليد الحملات والرسائل</span></div>
+            <div class="scan-step" data-s="6"><div class="step-dot">٦</div><span>حساب الإيرادات المتوقعة</span></div>
+        </div>
+    </div>
+</div>
 
-        function runScanAnimation() {
-            const steps = document.querySelectorAll('.scan-step');
-            let i = 0;
-            function nextStep() {
-                if (i > 0) {
-                    steps[i - 1].classList.remove('active');
-                    steps[i - 1].classList.add('done');
-                    steps[i - 1].querySelector('.scan-step-icon').textContent = '✓';
-                }
-                if (i < steps.length) {
-                    steps[i].classList.add('active');
-                    i++;
-                    setTimeout(nextStep, 800 + Math.random() * 600);
-                } else {
-                    setTimeout(() => showPhase('phaseResults'), 500);
-                }
-            }
-            nextStep();
-        }
+<!-- ═══ PHASE 3: RESULTS ═══ -->
+<div class="phase" id="phase3">
+    <div class="res-header">
+        <div class="res-rev-label">الإيرادات المتوقعة خلال 7 أيام</div>
+        <div class="res-rev">12,400 ر.س</div>
+        <div class="res-rev-range">المدى: 8,400 — 16,200 ر.س حسب التفاعل</div>
+    </div>
+    <div class="stats-row">
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--primary)">847</div><div class="m-stat-lbl">عميل مستهدف</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--whatsapp)">312</div><div class="m-stat-lbl">واتساب</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--info)">420</div><div class="m-stat-lbl">إيميل</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--warning)">115</div><div class="m-stat-lbl">SMS</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--secondary)">6</div><div class="m-stat-lbl">حملة</div></div>
+        <div class="m-stat"><div class="m-stat-val" style="color:var(--danger)">7</div><div class="m-stat-lbl">أيام</div></div>
+    </div>
+    <div class="sec-title">الحملات المولّدة تلقائياً</div>
+    <div id="campaignsList"></div>
+    <div style="padding:20px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary btn-lg" onclick="goLive()" style="box-shadow:0 0 40px var(--primary-glow);">🚀 شغّل كل الحملات</button>
+        <button class="btn btn-secondary" onclick="openCustom()">➕ حملة مخصصة</button>
+        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);margin-right:auto;"><input type="checkbox" id="trustMode" style="accent-color:var(--primary)"> المرة الجاية بدون معاينة</label>
+    </div>
+</div>
 
-        // ═══ Phase 3: Results ═══
-        function togglePreview(id) {
-            const el = document.getElementById(id);
-            el.classList.toggle('show');
-        }
+<!-- ═══ PHASE 4: LIVE ═══ -->
+<div class="phase" id="phase4">
+    <div class="live-head">
+        <div class="live-ind"><div class="live-dot"></div><span>الربح شغّال</span></div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="show('phase3')">✏️ تعديل الرسائل</button>
+            <button class="btn btn-secondary" onclick="openCustom()">➕ حملة جديدة</button>
+            <button class="btn btn-danger" onclick="pauseAll()">⏸️ إيقاف</button>
+        </div>
+    </div>
+    <div class="live-rev">
+        <div class="live-rev-lbl">تم تحصيل</div>
+        <div class="live-rev-num" id="liveRev">0</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">ر.س</div>
+        <div class="live-bar"><div class="live-bar-fill" id="liveBar" style="width:0%"></div></div>
+        <div class="live-bar-txt" id="liveBarTxt">0% من الهدف (12,400 ر.س)</div>
+    </div>
+    <div class="live-camps" id="liveCamps"></div>
+    <div class="ai-box" id="aiBox"><div class="ai-box-lbl">💡 ذكاء الربح</div>جاري تحليل أول النتائج...</div>
+    <div class="feed" style="margin-top:14px">
+        <div class="feed-title">آخر الأحداث</div>
+        <div class="feed-items" id="feedItems"><div class="fi" style="justify-content:center;color:var(--text-dim);padding:32px;">بانتظار أول رسالة...</div></div>
+    </div>
+</div>
 
-        // Edit Modal
-        let currentEditCamp = null;
-        const campaignMessages = {
-            camp1: 'مرحبا {الاسم}، مساء الخير 🌙\n{المنتج} لسا موجود بسلتك\nباقي 3 حبات بس — يلا قبل لا يخلص 🔥\nأكمل طلبك 👇\n{رابط_السلة}',
-            camp2: 'وحشتنا {الاسم}! 👋\nعندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين\nشوف العرض 👇\n{رابط_المتجر}',
-            camp3: 'هلا {الاسم} 👋\nطلبك #{رقم_الطلب} في الطريق!\nعملاء مثلك أخذوا معاه {المنتج_المكمل} — خصم 10% لو حبيت تضيفه\n{رابط_المنتج}\nاستغل الفرصة 👇',
-            camp4: 'هلا {الاسم}! أنت من أهم عملائنا 👑\nعندك وصول حصري لمنتجاتنا الجديدة قبل الكل + شحن مجاني\nشوف الجديد قبل لا ينزل 👇\n{رابط_حصري}',
-            camp5: 'مرحبا {الاسم}\n\nلاحظنا إنك شفت {المنتج} — لسا متوفر!\nخصم 5% خاص لك لمدة 48 ساعة\n\nشوف المنتج 👇\n{رابط_المنتج}',
-            camp6: '{الاسم}، طلبك #{رقم_الطلب} جاهز! تابع التوصيل على واتساب 👇\nwa.me/966XXXXXXXXX?text=متابعة_طلب_{رقم_الطلب}'
-        };
+</div></div>
 
-        function openEditModal(campId) {
-            currentEditCamp = campId;
-            document.getElementById('editTextarea').value = campaignMessages[campId] || '';
-            document.getElementById('editModal').classList.add('open');
-        }
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('open');
-            currentEditCamp = null;
-        }
-        function saveEdit() {
-            if (currentEditCamp) {
-                campaignMessages[currentEditCamp] = document.getElementById('editTextarea').value;
-                // Update the preview display
-                const msgEl = document.getElementById(currentEditCamp.replace('camp', 'msg'));
-                if (msgEl) {
-                    const label = msgEl.querySelector('.msg-preview-label').outerHTML;
-                    msgEl.innerHTML = label + document.getElementById('editTextarea').value.replace(/\n/g, '<br>');
-                }
-            }
-            closeEditModal();
-        }
-        function regenerateAI() {
-            const textarea = document.getElementById('editTextarea');
-            textarea.style.opacity = '0.5';
-            setTimeout(() => {
-                const suggestions = [
-                    'مرحبا {الاسم} 👋\nشفنا إنك ناسي شي بالسلة!\n{المنتج} ينتظرك — وباقي كمية محدودة\nيلا خلّصها قبل لا تروح 🔥\n{رابط_السلة}',
-                    'هلا {الاسم}!\nمنتجك المفضل لسا محجوز لك ⏰\nأكمل الطلب الحين واستمتع بتوصيل سريع\n{رابط_السلة}',
-                    '{الاسم}، سلتك تنتظرك! 🛒\n{المنتج} — الكمية محدودة\nلا تفوّت الفرصة 👇\n{رابط_السلة}'
-                ];
-                textarea.value = suggestions[Math.floor(Math.random() * suggestions.length)];
-                textarea.style.opacity = '1';
-            }, 800);
-        }
+<!-- ═══ EDIT MODAL ═══ -->
+<div class="modal-bg" id="editModal" onclick="if(event.target===this)closeEdit()">
+    <div class="modal">
+        <div class="modal-title">✏️ تعديل الرسالة</div>
+        <textarea id="editTA"></textarea>
+        <div class="modal-hint">المتغيرات: {الاسم} {المنتج} {رابط_السلة} {النسبة} — تتعبأ تلقائياً لكل عميل</div>
+        <div class="modal-btns">
+            <button class="btn btn-primary" onclick="saveEdit()">حفظ</button>
+            <button class="btn btn-secondary" onclick="closeEdit()">إلغاء</button>
+            <button class="btn btn-ghost" onclick="aiRegenerate()" style="margin-right:auto">🤖 اقتراح جديد</button>
+        </div>
+    </div>
+</div>
 
-        // Custom Campaign Modal
-        function showCustomCampaign() {
-            document.getElementById('customModal').classList.add('open');
-        }
-        function closeCustomModal() {
-            document.getElementById('customModal').classList.remove('open');
-        }
-        function generateCustomAI() {
-            const textarea = document.getElementById('customMessage');
-            textarea.style.opacity = '0.5';
-            setTimeout(() => {
-                const activeType = document.querySelector('.camp-type-btn.active')?.dataset.type;
-                const messages = {
-                    promo: 'هلا {الاسم} 👋\nعندنا عرض خاص اليوم بس!\nخصم 20% على كل المنتجات\nيلا لا يفوتك 🔥\n{رابط_المتجر}',
-                    new_product: 'مرحبا {الاسم}!\nوصل عندنا منتج جديد يناسبك\nكن أول من يجربه 🆕\n{رابط_المنتج}',
-                    flash: '⚡ فلاش سيل — 3 ساعات بس!\n{الاسم}، خصم 30% على أكثر المنتجات مبيعاً\nيلا قبل لا يخلص الوقت ⏰\n{رابط_المتجر}',
-                    seasonal: '🌙 عروض رمضان وصلت!\nمرحبا {الاسم}\nخصومات تصل إلى 40% + شحن مجاني\nجهّز احتياجاتك من الحين 👇\n{رابط_المتجر}',
-                    restock: '📦 رجع للمخزون!\n{الاسم}، {المنتج} اللي كنت تبيه متوفر الحين\nالكمية محدودة — لا تتأخر\n{رابط_المنتج}',
-                    loyalty: '👑 أنت عميل مميز {الاسم}!\nحصلت على نقاط ولاء إضافية هذا الشهر\nاستبدلها بخصم أو هدية مجانية 🎁\n{رابط_الولاء}'
-                };
-                textarea.value = messages[activeType] || messages.promo;
-                textarea.style.opacity = '1';
-            }, 600);
-        }
-        function launchCustom() {
-            closeCustomModal();
-            // Add to campaigns list with animation
-            const msg = document.getElementById('customMessage').value;
-            if (!msg.trim()) return;
-            showNotification('تم إطلاق الحملة المخصصة!');
-        }
+<!-- ═══ CUSTOM CAMPAIGN MODAL ═══ -->
+<div class="modal-bg" id="customModal" onclick="if(event.target===this)closeCustom()">
+    <div class="modal">
+        <div class="modal-title">➕ حملة مخصصة</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">نوع الحملة</div>
+        <div class="type-btns" id="typeBtns">
+            <button class="type-btn active" data-t="promo">🏷️ عرض خاص</button>
+            <button class="type-btn" data-t="new_product">🆕 منتج جديد</button>
+            <button class="type-btn" data-t="flash">⚡ فلاش سيل</button>
+            <button class="type-btn" data-t="seasonal">🌙 موسمي</button>
+            <button class="type-btn" data-t="restock">📦 رجع للمخزون</button>
+            <button class="type-btn" data-t="loyalty">👑 ولاء</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">من يستلم؟</div>
+        <div class="seg-btns" id="segBtns">
+            <button class="seg-btn active" data-s="all">الكل (847)</button>
+            <button class="seg-btn" data-s="vip">المميزين (45)</button>
+            <button class="seg-btn" data-s="loyal">المخلصين (312)</button>
+            <button class="seg-btn" data-s="atrisk">معرضين للخسارة (156)</button>
+            <button class="seg-btn" data-s="new">الجدد (89)</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">الرسالة</div>
+        <textarea id="customTA" placeholder="اكتب رسالتك... أو اضغط ولّد رسالة 👇"></textarea>
+        <div style="margin-top:14px;display:flex;gap:8px;">
+            <button class="btn btn-primary" onclick="launchCustom()">🚀 أطلق</button>
+            <button class="btn btn-secondary" onclick="closeCustom()">إلغاء</button>
+            <button class="btn btn-ghost" onclick="aiCustom()" style="margin-right:auto">🤖 ولّد رسالة</button>
+        </div>
+    </div>
+</div>
 
-        // Toggle buttons
-        document.querySelectorAll('.camp-type-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.camp-type-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
-        document.querySelectorAll('.seg-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
-        });
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="/platform/shared/shell.js"></script>
+<script>
+// ═══ INIT ═══
+RibhShell.init('autopilot');
 
-        // ═══ Phase 4: Live Feed ═══
-        function activateLive() {
-            showPhase('phaseLive');
-            startLiveSimulation();
-        }
+// ═══ STATE ═══
+let selectedSource = null;
+let editingCampIdx = null;
+let liveRevenue = 0;
+let feedIdx = 0;
+let liveTimer = null;
+let counters = {carts:0, winback:0, upsell:0, vip:0, browse:0, reviews:0};
 
-        function showResults() {
-            showPhase('phaseResults');
-        }
+// ═══ CAMPAIGNS DATA ═══
+const campaigns = [
+    {id:'cart', icon:'🛒', iconBg:'var(--primary-dim)', name:'استرداد السلات المتروكة', desc:'23 سلة متروكة — تذكير فوري + متابعة تصاعدية', badge:'أعلى أولوية', badgeCls:'badge-primary',
+     stats:{customers:23, channel:'واتساب ← إيميل ← SMS', discount:'0% → 10% → 15%', revenue:'3,200 ر.س'},
+     msg:'مرحبا {الاسم}، مساء الخير 🌙\n{المنتج} لسا موجود بسلتك\nباقي 3 حبات بس — يلا قبل لا يخلص 🔥\nأكمل طلبك 👇\n{رابط_السلة}', msgLabel:'💬 الرسالة الأولى (بدون خصم):'},
+    {id:'winback', icon:'💤', iconBg:'var(--danger-dim)', name:'إعادة تنشيط العملاء', desc:'156 عميل معرض للخسارة — لم يشتروا منذ 60+ يوم', badge:'عالي القيمة', badgeCls:'badge-danger',
+     stats:{customers:156, channel:'واتساب ← إيميل', discount:'15-20% حسب CLV', revenue:'4,800 ر.س'},
+     msg:'وحشتنا {الاسم}! 👋\nعندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين\nشوف العرض 👇\n{رابط_المتجر}', msgLabel:'💬 رسالة التنشيط:'},
+    {id:'upsell', icon:'🎁', iconBg:'var(--secondary-dim)', name:'بيع إضافي بعد الشراء', desc:'89 عميل اشتروا مؤخراً — منتجات مكملة', badge:'مجاني عبر واتساب', badgeCls:'badge-success',
+     stats:{customers:89, channel:'واتساب (نافذة مجانية)', discount:'10%', revenue:'2,100 ر.س'},
+     msg:'هلا {الاسم} 👋\nطلبك #{رقم_الطلب} في الطريق!\nعملاء مثلك أخذوا معاه {المنتج_المكمل} — خصم 10% لو حبيت تضيفه\n{رابط_المنتج}', msgLabel:'💬 داخل نافذة المتابعة المجانية:'},
+    {id:'vip', icon:'⭐', iconBg:'var(--warning-dim)', name:'مكافأة العملاء المميزين', desc:'45 عميل VIP — وصول حصري + شحن مجاني', badge:'ولاء', badgeCls:'badge-warning',
+     stats:{customers:45, channel:'واتساب (شخصي)', discount:'شحن مجاني + حصري', revenue:'1,500 ر.س'},
+     msg:'هلا {الاسم}! أنت من أهم عملائنا 👑\nعندك وصول حصري لمنتجاتنا الجديدة قبل الكل + شحن مجاني\nشوف الجديد 👇\n{رابط_حصري}', msgLabel:'💬 رسالة VIP:'},
+    {id:'browse', icon:'👀', iconBg:'var(--info-dim)', name:'تذكير المتصفحين', desc:'534 زائر شافوا منتجات بدون شراء', badge:'تحويل', badgeCls:'badge-info',
+     stats:{customers:534, channel:'إيميل ← SMS', discount:'5%', revenue:'800 ر.س'},
+     msg:'مرحبا {الاسم}\nلاحظنا إنك شفت {المنتج} — لسا متوفر!\nخصم 5% خاص لك لمدة 48 ساعة\nشوف المنتج 👇\n{رابط_المنتج}', msgLabel:'📧 إيميل التذكير:'},
+    {id:'review', icon:'⭐', iconBg:'var(--whatsapp-dim)', name:'تقييمات + عروض ما بعد البيع', desc:'عبر "تابع طلبك على واتساب" — مجانية بالكامل', badge:'مجاني 100%', badgeCls:'badge-whatsapp',
+     stats:{customers:'كل مشتري', channel:'SMS → واتساب (نافذة مجانية)', discount:'10% بعد التقييم', revenue:'مستمر'},
+     msg:'تابع طلبك على واتساب 👇\nwa.me/966XXXXXXXXX?text=متابعة_طلب_{رقم_الطلب}\n\n— بعد ما يراسلك (مجاني):\n١. تأكيد الطلب ✅\n٢. بعد 3 أيام: كيف المنتج؟ قيّمنا من 5 ⭐\n٣. بعد التقييم: شكراً! خصم 10% على طلبك الجاي 🎁', msgLabel:'📲 التسلسل الكامل:'}
+];
 
-        const feedEvents = [
-            { icon: '📨', iconBg: 'var(--whatsapp-dim)', name: 'أحمد محمد', text: 'تم إرسال رسالة استرداد سلة', type: 'sent' },
-            { icon: '📨', iconBg: 'var(--whatsapp-dim)', name: 'سارة العلي', text: 'تم إرسال رسالة استرداد سلة', type: 'sent' },
-            { icon: '👁️', iconBg: 'var(--info-dim)', name: 'أحمد محمد', text: 'قرأ الرسالة', type: 'read' },
-            { icon: '🔗', iconBg: 'var(--secondary-dim)', name: 'أحمد محمد', text: 'ضغط على الرابط', type: 'click' },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'أحمد محمد', text: 'أكمل الشراء!', type: 'purchase', amount: 385 },
-            { icon: '📨', iconBg: 'var(--info-dim)', name: 'نورة السعيد', text: 'تم إرسال إيميل تنشيط', type: 'sent' },
-            { icon: '📨', iconBg: 'var(--whatsapp-dim)', name: 'خالد العتيبي', text: 'تم إرسال مكافأة VIP', type: 'sent' },
-            { icon: '👁️', iconBg: 'var(--info-dim)', name: 'سارة العلي', text: 'قرأت الرسالة', type: 'read' },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'سارة العلي', text: 'أكملت الشراء!', type: 'purchase', amount: 210 },
-            { icon: '📨', iconBg: 'var(--whatsapp-dim)', name: 'فاطمة الزهراني', text: 'تم إرسال رسالة تنشيط', type: 'sent' },
-            { icon: '⭐', iconBg: 'var(--warning-dim)', name: 'ياسر الدوسري', text: 'أعطى تقييم 5 نجوم!', type: 'review' },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'خالد العتيبي', text: 'اشترى منتج إضافي!', type: 'purchase', amount: 540 },
-            { icon: '👁️', iconBg: 'var(--info-dim)', name: 'نورة السعيد', text: 'فتحت الإيميل', type: 'read' },
-            { icon: '💬', iconBg: 'var(--whatsapp-dim)', name: 'فاطمة الزهراني', text: 'ردت على الواتساب: "وش العرض؟"', type: 'reply' },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'هند المالكي', text: 'أكملت الشراء من الإيميل!', type: 'purchase', amount: 290 },
-            { icon: '📨', iconBg: 'var(--whatsapp-dim)', name: 'عبدالله القحطاني', text: 'تم إرسال بيع إضافي', type: 'sent' },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'فاطمة الزهراني', text: 'رجعت واشترت!', type: 'purchase', amount: 175 },
-            { icon: '💳', iconBg: 'var(--primary-dim)', name: 'ريم الشمري', text: 'سلة مستردة!', type: 'purchase', amount: 420 },
-        ];
+// ═══ PHASE NAVIGATION ═══
+function show(id){document.querySelectorAll('.phase').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active')}
 
-        let liveRevenue = 0;
-        let feedIndex = 0;
-        let cartsRecovered = 0, winbacks = 0, upsells = 0, vips = 0, browsers = 0, reviews = 0;
+// ═══ PHASE 0: DATA SOURCE ═══
+function selectSource(src){
+    selectedSource=src;
+    document.querySelectorAll('.ds-card').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('sallaSection').style.display='none';
+    document.getElementById('excelSection').style.display='none';
+    if(src==='salla'){document.getElementById('dsSalla').classList.add('selected');document.getElementById('sallaSection').style.display='block';}
+    if(src==='excel'){document.getElementById('dsExcel').classList.add('selected');document.getElementById('excelSection').style.display='block';}
+}
+function connectSalla(){
+    // In production: redirect to Salla OAuth
+    simulateSallaConnected();
+}
+function simulateSallaConnected(){
+    document.getElementById('sallaConnected').style.display='block';
+    document.getElementById('sallaSection').innerHTML='<div style="padding:20px;text-align:center;"><span style="font-size:40px">✅</span><div style="font-size:16px;font-weight:700;margin-top:12px;">متجر سلة متصل</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">847 عميل — 1,240 طلب — 23 سلة متروكة</div></div>';
+    document.getElementById('proceedBtn').disabled=false;
+}
+function handleFileUpload(input){
+    if(!input.files.length)return;
+    const name=input.files[0].name;
+    document.getElementById('uploadZone').style.display='none';
+    document.getElementById('uploadResult').classList.add('show');
+    document.getElementById('uploadCount').textContent='تم استيراد 847 عميل من '+name;
+    document.getElementById('proceedBtn').disabled=false;
+}
+// Drag and drop
+const uz=document.getElementById('uploadZone');
+if(uz){uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover')});uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');document.getElementById('uploadZone').style.display='none';document.getElementById('uploadResult').classList.add('show');document.getElementById('proceedBtn').disabled=false;});}
 
-        const aiInsights = [
-            'رسائل الواتساب الصباحية تحقق ضعف التحويل — تم تحويل 60% من الإرسال للفترة الصباحية',
-            'عملاء شريحة "المميزين" تفاعلوا بنسبة 78% — الرسالة الشخصية تعمل بشكل ممتاز',
-            'رسائل بدون خصم حققت 40% تحويل على السلات — أغلب العملاء يحتاجون تذكير فقط',
-            'الإيميل يعمل أفضل لشريحة المتصفحين — تم تحويل القناة تلقائياً',
-            'ردود الواتساب المباشرة تضاعف نسبة الشراء — النظام يرد تلقائياً على الاستفسارات'
-        ];
+function goToAnalyze(){
+    show('phase1');
+    const labels={salla:'مصدر البيانات: سلة (847 عميل)',excel:'مصدر البيانات: ملف إكسل (847 عميل)'};
+    document.getElementById('sourceLabel').textContent=labels[selectedSource]||'';
+}
 
-        function startLiveSimulation() {
-            const feed = document.getElementById('liveFeed');
-            feed.innerHTML = '';
+// ═══ PHASE 2: SCAN ═══
+function startScan(){
+    show('phase2');
+    const steps=document.querySelectorAll('.scan-step');
+    let i=0;
+    function next(){
+        if(i>0){steps[i-1].classList.remove('active');steps[i-1].classList.add('done');steps[i-1].querySelector('.step-dot').textContent='✓';}
+        if(i<steps.length){steps[i].classList.add('active');i++;setTimeout(next,700+Math.random()*500);}
+        else setTimeout(()=>{renderCampaigns();show('phase3');},400);
+    }
+    next();
+}
 
-            function addEvent() {
-                if (feedIndex >= feedEvents.length) return;
-                const evt = feedEvents[feedIndex];
-                feedIndex++;
+// ═══ PHASE 3: CAMPAIGNS ═══
+function renderCampaigns(){
+    const el=document.getElementById('campaignsList');
+    el.innerHTML=campaigns.map((c,i)=>`
+        <div class="camp" id="camp${i}">
+            <div class="camp-top">
+                <div class="camp-title-row">
+                    <div class="camp-ico" style="background:${c.iconBg}">${c.icon}</div>
+                    <div><div class="camp-name">${c.name}</div><div class="camp-desc">${c.desc}</div></div>
+                </div>
+                <span class="badge ${c.badgeCls}">${c.badge}</span>
+            </div>
+            <div class="camp-stats">
+                <div>العملاء: <strong>${c.stats.customers}</strong></div>
+                <div>القناة: <strong>${c.stats.channel}</strong></div>
+                <div>الخصم: <strong>${c.stats.discount}</strong></div>
+                <div>المتوقع: <strong style="color:var(--primary)">${c.stats.revenue}</strong></div>
+            </div>
+            <div class="msg-prev" id="msg${i}">
+                <div class="msg-prev-lbl">${c.msgLabel}</div>
+                <div id="msgBody${i}">${c.msg.replace(/\n/g,'<br>')}</div>
+            </div>
+            <div class="camp-actions">
+                <button class="btn btn-secondary" onclick="toggleMsg(${i})">👁️ معاينة</button>
+                <button class="btn btn-ghost" onclick="openEdit(${i})">✏️ تعديل</button>
+            </div>
+        </div>`).join('');
+}
+function toggleMsg(i){document.getElementById('msg'+i).classList.toggle('show')}
 
-                // Update revenue
-                if (evt.type === 'purchase') {
-                    liveRevenue += evt.amount;
-                    document.getElementById('liveRevenue').textContent = liveRevenue.toLocaleString('ar-SA');
-                    const pct = Math.min(100, (liveRevenue / 12400) * 100);
-                    document.getElementById('liveProgress').style.width = pct + '%';
-                    document.getElementById('liveProgressText').textContent = Math.round(pct) + '% من الهدف (12,400 ر.س)';
+// ═══ EDIT MODAL ═══
+function openEdit(i){editingCampIdx=i;document.getElementById('editTA').value=campaigns[i].msg;document.getElementById('editModal').classList.add('open')}
+function closeEdit(){document.getElementById('editModal').classList.remove('open');editingCampIdx=null}
+function saveEdit(){
+    if(editingCampIdx!==null){
+        campaigns[editingCampIdx].msg=document.getElementById('editTA').value;
+        const body=document.getElementById('msgBody'+editingCampIdx);
+        if(body)body.innerHTML=campaigns[editingCampIdx].msg.replace(/\n/g,'<br>');
+    }
+    closeEdit();toast('تم حفظ التعديل ✅');
+}
+function aiRegenerate(){
+    const ta=document.getElementById('editTA');
+    ta.style.opacity='.5';
+    const alts=[
+        'مرحبا {الاسم} 👋\nشفنا إنك ناسي شي بالسلة!\n{المنتج} ينتظرك — الكمية محدودة\nيلا خلّصها 🔥\n{رابط_السلة}',
+        'هلا {الاسم}!\nمنتجك المفضل لسا محجوز لك ⏰\nأكمل الطلب الحين واستمتع بتوصيل سريع\n{رابط_السلة}',
+        '{الاسم}، سلتك تنتظرك! 🛒\n{المنتج} — باقي كمية قليلة\nلا تفوّت الفرصة 👇\n{رابط_السلة}',
+        'هلا والله {الاسم}\nمنتجاتك لسا بالسلة\nخلّص طلبك بضغطة — التوصيل علينا 🚚\n{رابط_السلة}'
+    ];
+    setTimeout(()=>{ta.value=alts[Math.floor(Math.random()*alts.length)];ta.style.opacity='1';},600);
+}
 
-                    // Update campaign counters
-                    cartsRecovered++;
-                    document.getElementById('lc1').textContent = Math.min(cartsRecovered, 8) + '/23';
-                }
-                if (evt.type === 'review') {
-                    reviews++;
-                    document.getElementById('lc6').textContent = reviews;
-                }
+// ═══ CUSTOM CAMPAIGN MODAL ═══
+function openCustom(){document.getElementById('customModal').classList.add('open')}
+function closeCustom(){document.getElementById('customModal').classList.remove('open')}
+document.querySelectorAll('.type-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.type-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+document.querySelectorAll('.seg-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
+function aiCustom(){
+    const ta=document.getElementById('customTA');
+    ta.style.opacity='.5';
+    const t=document.querySelector('.type-btn.active')?.dataset.t;
+    const msgs={
+        promo:'هلا {الاسم} 👋\nعندنا عرض خاص اليوم بس!\nخصم 20% على كل المنتجات\nيلا لا يفوتك 🔥\n{رابط_المتجر}',
+        new_product:'مرحبا {الاسم}!\nوصل عندنا منتج جديد يناسبك\nكن أول من يجربه 🆕\n{رابط_المنتج}',
+        flash:'⚡ فلاش سيل — 3 ساعات بس!\n{الاسم}، خصم 30% على أكثر المنتجات مبيعاً\nيلا قبل لا يخلص الوقت ⏰\n{رابط_المتجر}',
+        seasonal:'🌙 عروض رمضان وصلت!\nمرحبا {الاسم}\nخصومات تصل إلى 40% + شحن مجاني\nجهّز احتياجاتك 👇\n{رابط_المتجر}',
+        restock:'📦 رجع للمخزون!\n{الاسم}، {المنتج} اللي كنت تبيه متوفر الحين\nالكمية محدودة — لا تتأخر\n{رابط_المنتج}',
+        loyalty:'👑 أنت عميل مميز {الاسم}!\nعندك نقاط ولاء جاهزة\nاستبدلها بخصم أو هدية مجانية 🎁\n{رابط_الولاء}'
+    };
+    setTimeout(()=>{ta.value=msgs[t]||msgs.promo;ta.style.opacity='1';},500);
+}
+function launchCustom(){closeCustom();toast('تم إطلاق الحملة المخصصة! 🚀');}
 
-                // Random campaign counter updates
-                if (feedIndex % 3 === 0) {
-                    winbacks = Math.min(winbacks + 1, 12);
-                    document.getElementById('lc2').textContent = winbacks + '/156';
-                }
-                if (feedIndex % 5 === 0) {
-                    upsells = Math.min(upsells + 1, 5);
-                    document.getElementById('lc3').textContent = upsells + '/89';
-                }
-                if (feedIndex % 4 === 0) {
-                    vips = Math.min(vips + 1, 8);
-                    document.getElementById('lc4').textContent = vips + '/45';
-                }
-                if (feedIndex % 6 === 0) {
-                    browsers = Math.min(browsers + 1, 15);
-                    document.getElementById('lc5').textContent = browsers + '/534';
-                }
+// ═══ PHASE 4: LIVE ═══
+const feedEvents=[
+    {ico:'📨',bg:'var(--whatsapp-dim)',name:'أحمد محمد',txt:'تم إرسال رسالة استرداد سلة'},
+    {ico:'📨',bg:'var(--whatsapp-dim)',name:'سارة العلي',txt:'تم إرسال رسالة استرداد سلة'},
+    {ico:'👁️',bg:'var(--info-dim)',name:'أحمد محمد',txt:'قرأ الرسالة'},
+    {ico:'🔗',bg:'var(--secondary-dim)',name:'أحمد محمد',txt:'ضغط على الرابط'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'أحمد محمد',txt:'أكمل الشراء!',amt:385},
+    {ico:'📨',bg:'var(--info-dim)',name:'نورة السعيد',txt:'تم إرسال إيميل تنشيط'},
+    {ico:'📨',bg:'var(--whatsapp-dim)',name:'خالد العتيبي',txt:'تم إرسال مكافأة VIP'},
+    {ico:'👁️',bg:'var(--info-dim)',name:'سارة العلي',txt:'قرأت الرسالة'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'سارة العلي',txt:'أكملت الشراء!',amt:210},
+    {ico:'📨',bg:'var(--whatsapp-dim)',name:'فاطمة الزهراني',txt:'تم إرسال رسالة تنشيط'},
+    {ico:'⭐',bg:'var(--warning-dim)',name:'ياسر الدوسري',txt:'أعطى تقييم 5 نجوم!'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'خالد العتيبي',txt:'اشترى منتج إضافي!',amt:540},
+    {ico:'👁️',bg:'var(--info-dim)',name:'نورة السعيد',txt:'فتحت الإيميل'},
+    {ico:'💬',bg:'var(--whatsapp-dim)',name:'فاطمة الزهراني',txt:'ردت: "وش العرض؟"'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'هند المالكي',txt:'أكملت الشراء من الإيميل!',amt:290},
+    {ico:'📨',bg:'var(--whatsapp-dim)',name:'عبدالله القحطاني',txt:'تم إرسال بيع إضافي'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'فاطمة الزهراني',txt:'رجعت واشترت!',amt:175},
+    {ico:'💳',bg:'var(--primary-dim)',name:'ريم الشمري',txt:'سلة مستردة!',amt:420},
+    {ico:'⭐',bg:'var(--warning-dim)',name:'محمد الأحمد',txt:'أعطى تقييم 4 نجوم'},
+    {ico:'💳',bg:'var(--primary-dim)',name:'عبدالله القحطاني',txt:'اشترى من البيع الإضافي!',amt:310},
+];
 
-                // Build feed item
-                const minutes = feedIndex * 2 + Math.floor(Math.random() * 3);
-                const item = document.createElement('div');
-                item.className = 'feed-item';
-                item.innerHTML = `
-                    <div class="feed-icon" style="background:${evt.iconBg}">${evt.icon}</div>
-                    <div class="feed-text"><strong>${evt.name}</strong> — ${evt.text}</div>
-                    ${evt.amount ? `<div class="feed-amount">${evt.amount} ر.س</div>` : ''}
-                    <div class="feed-time">منذ ${minutes} د</div>
-                `;
-                feed.insertBefore(item, feed.firstChild);
+const insights=[
+    'رسائل الواتساب الصباحية تحقق ضعف التحويل — تم تحويل 60% من الإرسال للفترة الصباحية',
+    'عملاء شريحة "المميزين" تفاعلوا بنسبة 78% — الرسالة الشخصية تعمل ممتاز',
+    'رسائل بدون خصم حققت 40% تحويل على السلات — أغلب العملاء يحتاجون تذكير فقط',
+    'الإيميل يعمل أفضل لشريحة المتصفحين — تم تحويل القناة تلقائياً',
+    'ردود الواتساب المباشرة تضاعف نسبة الشراء — النظام يرد تلقائياً على الاستفسارات'
+];
 
-                // AI insight updates
-                if (feedIndex % 4 === 0 && feedIndex <= aiInsights.length * 4) {
-                    const insight = aiInsights[Math.floor(feedIndex / 4) - 1];
-                    if (insight) {
-                        document.getElementById('aiInsight').innerHTML =
-                            `<div class="ai-insight-label">💡 ذكاء الربح</div>${insight}`;
-                    }
-                }
+function goLive(){
+    show('phase4');
+    liveRevenue=0;feedIdx=0;
+    counters={carts:0,winback:0,upsell:0,vip:0,browse:0,reviews:0};
+    renderLiveCamps();
+    document.getElementById('feedItems').innerHTML='<div class="fi" style="justify-content:center;color:var(--text-dim);padding:32px;">بانتظار أول رسالة...</div>';
+    if(liveTimer)clearTimeout(liveTimer);
+    runFeed();
+}
 
-                setTimeout(addEvent, 1500 + Math.random() * 2000);
-            }
-            addEvent();
-        }
+function renderLiveCamps(){
+    const d=[
+        {ico:'🛒',bg:'var(--primary-dim)',name:'السلات',id:'lc0',max:23,sub:'مستردة'},
+        {ico:'💤',bg:'var(--danger-dim)',name:'تنشيط',id:'lc1',max:156,sub:'رجعوا'},
+        {ico:'🎁',bg:'var(--secondary-dim)',name:'بيع إضافي',id:'lc2',max:89,sub:'اشتروا'},
+        {ico:'⭐',bg:'var(--warning-dim)',name:'VIP',id:'lc3',max:45,sub:'تفاعلوا'},
+        {ico:'👀',bg:'var(--info-dim)',name:'متصفحين',id:'lc4',max:534,sub:'نقروا'},
+        {ico:'⭐',bg:'var(--whatsapp-dim)',name:'تقييمات',id:'lc5',max:'',sub:'تقييم'}
+    ];
+    document.getElementById('liveCamps').innerHTML=d.map(c=>`
+        <div class="lc"><div class="lc-top"><div class="lc-ico" style="background:${c.bg}">${c.ico}</div><div class="lc-name">${c.name}</div></div>
+        <div class="lc-val" id="${c.id}">0${c.max?'/'+c.max:''}</div><div class="lc-sub">${c.sub}</div></div>`).join('');
+}
 
-        function pauseSystem() {
-            showNotification('تم إيقاف الحملات مؤقتاً — اضغط "شغّل الربح" لاستئناف');
-            showPhase('phaseStart');
-            // Reset for demo
-            liveRevenue = 0;
-            feedIndex = 0;
-            cartsRecovered = 0; winbacks = 0; upsells = 0; vips = 0; browsers = 0; reviews = 0;
-        }
+function runFeed(){
+    if(feedIdx>=feedEvents.length)return;
+    const e=feedEvents[feedIdx];feedIdx++;
+    if(feedIdx===1)document.getElementById('feedItems').innerHTML='';
 
-        function addCustomLive() {
-            showCustomCampaign();
-        }
+    if(e.amt){
+        liveRevenue+=e.amt;
+        document.getElementById('liveRev').textContent=liveRevenue.toLocaleString('ar-SA');
+        const pct=Math.min(100,(liveRevenue/12400)*100);
+        document.getElementById('liveBar').style.width=pct+'%';
+        document.getElementById('liveBarTxt').textContent=Math.round(pct)+'% من الهدف (12,400 ر.س)';
+        counters.carts=Math.min(counters.carts+1,8);
+        document.getElementById('lc0').textContent=counters.carts+'/23';
+    }
+    if(e.ico==='⭐'){counters.reviews++;document.getElementById('lc5').textContent=counters.reviews;}
+    if(feedIdx%3===0){counters.winback=Math.min(counters.winback+1,12);document.getElementById('lc1').textContent=counters.winback+'/156';}
+    if(feedIdx%5===0){counters.upsell=Math.min(counters.upsell+1,5);document.getElementById('lc2').textContent=counters.upsell+'/89';}
+    if(feedIdx%4===0){counters.vip=Math.min(counters.vip+1,8);document.getElementById('lc3').textContent=counters.vip+'/45';}
+    if(feedIdx%6===0){counters.browse=Math.min(counters.browse+1,15);document.getElementById('lc4').textContent=counters.browse+'/534';}
 
-        // ═══ Notification Toast ═══
-        function showNotification(msg) {
-            const el = document.createElement('div');
-            el.style.cssText = `
-                position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
-                background:var(--bg-surface); border:1px solid var(--primary);
-                color:var(--text); padding:12px 24px; border-radius:12px;
-                font-size:14px; z-index:9999; box-shadow:0 8px 32px rgba(0,0,0,0.5);
-                animation: fadeUp 0.3s var(--ease);
-            `;
-            el.textContent = msg;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 3000);
-        }
+    const min=feedIdx*2+Math.floor(Math.random()*3);
+    const fi=document.createElement('div');fi.className='fi';
+    fi.innerHTML=`<div class="fi-ico" style="background:${e.bg}">${e.ico}</div><div class="fi-txt"><strong>${e.name}</strong> — ${e.txt}</div>${e.amt?`<div class="fi-amt">${e.amt} ر.س</div>`:''}<div class="fi-time">منذ ${min} د</div>`;
+    const feed=document.getElementById('feedItems');
+    feed.insertBefore(fi,feed.firstChild);
 
-        // Close modals on backdrop click
-        document.getElementById('editModal').addEventListener('click', (e) => {
-            if (e.target.id === 'editModal') closeEditModal();
-        });
-        document.getElementById('customModal').addEventListener('click', (e) => {
-            if (e.target.id === 'customModal') closeCustomModal();
-        });
-    </script>
+    if(feedIdx%4===0){
+        const ins=insights[Math.floor((feedIdx/4)-1)];
+        if(ins)document.getElementById('aiBox').innerHTML=`<div class="ai-box-lbl">💡 ذكاء الربح</div>${ins}`;
+    }
+
+    liveTimer=setTimeout(runFeed,1500+Math.random()*2000);
+}
+
+function pauseAll(){
+    if(liveTimer)clearTimeout(liveTimer);
+    toast('تم إيقاف الحملات مؤقتاً');
+    liveRevenue=0;feedIdx=0;counters={carts:0,winback:0,upsell:0,vip:0,browse:0,reviews:0};
+    show('phase1');
+}
+
+// ═══ TOAST ═══
+function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+</script>
 </body>
 </html>

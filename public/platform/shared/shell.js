@@ -9,15 +9,8 @@ const RibhShell = {
 
     nav: [
         { section: 'الرئيسية' },
-        { id: 'dashboard', label: 'لوحة التحكم', icon: 'layout-dashboard', href: 'dashboard.html' },
-        { section: 'العملاء' },
-        { id: 'customers', label: 'العملاء', icon: 'users', href: 'customers.html', badge: '' },
-        { id: 'segments', label: 'الشرائح', icon: 'pie-chart', href: 'segments.html' },
-        { section: 'التسويق' },
-        { id: 'flows', label: 'الأتمتة', icon: 'git-branch', href: 'flows.html' },
+        { id: 'autopilot', label: 'الربح التلقائي', icon: 'zap', href: 'autopilot.html' },
         { id: 'campaigns', label: 'الحملات', icon: 'send', href: 'campaigns.html' },
-        { section: 'البيانات' },
-        { id: 'analytics', label: 'التحليلات', icon: 'bar-chart-3', href: 'analytics.html' },
         { section: 'النظام' },
         { id: 'settings', label: 'الإعدادات', icon: 'settings', href: 'settings.html' },
     ],
