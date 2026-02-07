@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH — منشئ النوافذ المنبثقة</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+    <style>
+        /* ── Builder Layout ── */
+        .builder-layout {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 24px;
+            min-height: calc(100dvh - var(--topbar-height) - 56px);
+        }
+
+        /* ── Config Panel (Left) ── */
+        .config-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .config-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+        }
+
+        .config-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-section-title svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary);
+        }
+
+        /* ── Popup Type Selector ── */
+        .type-cards {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .type-card {
+            background: var(--bg-surface-2);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s var(--ease);
+        }
+
+        .type-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .type-card.active {
+            border-color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .type-card-icon {
+            font-size: 28px;
+            margin-bottom: 6px;
+        }
+
+        .type-card-label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .type-card.active .type-card-label {
+            color: var(--primary);
+        }
+
+        /* ── Segment Editor ── */
+        .segments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .segment-row {
+            display: grid;
+            grid-template-columns: 32px 1fr 80px 70px 28px;
+            gap: 8px;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            transition: border-color 0.15s var(--ease);
+        }
+
+        .segment-row:hover {
+            border-color: var(--border-strong);
+        }
+
+        .segment-color {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .segment-color::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .segment-color::-webkit-color-swatch {
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+        }
+
+        .segment-label-input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12.5px;
+            font-weight: 600;
+            outline: none;
+            width: 100%;
+            direction: rtl;
+        }
+
+        .segment-label-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .segment-code-input,
+        .segment-prob-input {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 11px;
+            padding: 5px 8px;
+            outline: none;
+            text-align: center;
+            direction: ltr;
+        }
+
+        .segment-code-input:focus,
+        .segment-prob-input:focus {
+            border-color: var(--primary);
+        }
+
+        .segment-remove {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            font-size: 14px;
+        }
+
+        .segment-remove:hover {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        .segment-header-row {
+            display: grid;
+            grid-template-columns: 32px 1fr 80px 70px 28px;
+            gap: 8px;
+            padding: 0 12px 6px;
+            font-size: 10px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        .add-segment-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-muted);
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            margin-top: 4px;
+        }
+
+        .add-segment-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .prob-total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            margin-top: 8px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .prob-total-value {
+            font-weight: 700;
+        }
+
+        .prob-total-value.valid {
+            color: var(--success);
+        }
+
+        .prob-total-value.invalid {
+            color: var(--danger);
+        }
+
+        /* ── Settings Inputs ── */
+        .setting-row {
+            margin-bottom: 14px;
+        }
+
+        .setting-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12.5px;
+            outline: none;
+            direction: rtl;
+            transition: border-color 0.15s;
+        }
+
+        .setting-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .setting-select {
+            appearance: none;
+            width: 100%;
+            padding: 9px 12px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12.5px;
+            cursor: pointer;
+            direction: rtl;
+            outline: none;
+        }
+
+        .setting-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .collect-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .collect-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .collect-field-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .collect-field-info .field-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .field-badge.required {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        .field-badge.optional {
+            background: var(--bg-surface);
+            color: var(--text-dim);
+        }
+
+        /* Mini Toggle */
+        .mini-toggle {
+            position: relative;
+            width: 36px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .mini-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .mini-toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s var(--ease);
+        }
+
+        .mini-toggle input:checked + .mini-toggle-track {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .mini-toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.2s var(--ease);
+        }
+
+        .mini-toggle input:checked + .mini-toggle-track::after {
+            transform: translateX(-16px);
+        }
+
+        /* ── Save Button ── */
+        .save-bar {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .btn-save {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .btn-save:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-preview-trigger {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--secondary-dim);
+            color: var(--secondary);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-preview-trigger:hover {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        /* ── Preview Panel (Right) ── */
+        .preview-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: calc(var(--topbar-height) + 28px);
+            max-height: calc(100dvh - var(--topbar-height) - 56px);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preview-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .preview-device-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .preview-device-btn {
+            width: 32px;
+            height: 28px;
+            border-radius: 6px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+
+        .preview-device-btn.active {
+            background: var(--bg-surface-2);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .preview-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: #030303;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+
+        /* Simulated store background */
+        .preview-viewport::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        /* ── Popup Preview Container ── */
+        .popup-overlay-preview {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+            z-index: 2;
+        }
+
+        .popup-card {
+            background: linear-gradient(145deg, #111111, #0a0a0a);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        .popup-close-btn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.15s;
+            z-index: 5;
+        }
+
+        .popup-close-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: var(--text);
+        }
+
+        .popup-top {
+            text-align: center;
+            padding: 24px 20px 12px;
+        }
+
+        .popup-title-text {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.5;
+            margin-bottom: 4px;
+        }
+
+        .popup-subtitle-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── Wheel Container ── */
+        .wheel-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 20px;
+        }
+
+        .wheel-wrapper {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .wheel-canvas-wrap {
+            width: 280px;
+            height: 280px;
+            position: relative;
+        }
+
+        #wheelCanvas {
+            width: 280px;
+            height: 280px;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+
+        #wheelCanvas.spinning {
+            /* rotation set via JS */
+        }
+
+        /* Wheel pointer (top) */
+        .wheel-pointer {
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 22px solid var(--primary);
+            filter: drop-shadow(0 2px 6px rgba(16,185,129,0.5));
+            z-index: 3;
+        }
+
+        /* Center button */
+        .wheel-center-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border: 3px solid rgba(255,255,255,0.2);
+            color: #000;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.3;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .wheel-center-btn:hover {
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 6px 28px rgba(16,185,129,0.6);
+        }
+
+        .wheel-center-btn:active {
+            transform: translate(-50%, -50%) scale(0.97);
+        }
+
+        .wheel-center-btn.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* ── Phone Input Area ── */
+        .popup-form {
+            padding: 8px 24px 24px;
+        }
+
+        .popup-phone-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            text-align: center;
+            outline: none;
+            direction: ltr;
+            letter-spacing: 1px;
+            transition: border-color 0.2s;
+            margin-bottom: 10px;
+        }
+
+        .popup-phone-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .popup-phone-input::placeholder {
+            color: var(--text-dim);
+            letter-spacing: 0;
+        }
+
+        .popup-submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary), #059669);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .popup-submit-btn:hover {
+            opacity: 0.9;
+        }
+
+        .popup-powered {
+            text-align: center;
+            padding: 10px;
+            font-size: 9px;
+            color: var(--text-dim);
+        }
+
+        /* ── Win Result Overlay ── */
+        .win-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            z-index: 10;
+            border-radius: 20px;
+            animation: fadeIn 0.3s var(--ease);
+        }
+
+        .win-overlay.show {
+            display: flex;
+        }
+
+        .win-emoji {
+            font-size: 60px;
+            margin-bottom: 12px;
+            animation: bounceIn 0.5s var(--ease);
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        .win-text {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .win-prize {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .win-code {
+            display: inline-block;
+            padding: 8px 24px;
+            background: var(--primary-dim);
+            border: 1px dashed var(--primary);
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+            direction: ltr;
+            margin-bottom: 16px;
+        }
+
+        .win-close-btn {
+            padding: 10px 28px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* ── Confetti ── */
+        .confetti-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 11;
+            border-radius: 20px;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            animation: confettiFall linear forwards;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(720deg) scale(0.3);
+                opacity: 0;
+            }
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,.5);
+            animation: fadeInUp 0.3s var(--ease);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(16px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        /* ── Generated Code Modal ── */
+        .code-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+
+        .code-modal-overlay.open {
+            display: flex;
+        }
+
+        .code-modal {
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: modalIn 0.2s var(--ease);
+        }
+
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .code-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-modal-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .code-modal-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .code-modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        .code-modal-body {
+            padding: 24px;
+        }
+
+        .code-block {
+            background: #0a0a0a;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            color: var(--primary);
+            line-height: 1.7;
+            direction: ltr;
+            text-align: left;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .code-copy-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            padding: 10px;
+            margin-top: 12px;
+            background: var(--primary-dim);
+            border: 1px solid rgba(16,185,129,0.25);
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .code-copy-btn:hover {
+            background: rgba(16,185,129,0.2);
+        }
+
+        .code-instructions {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
+        }
+
+        .code-instructions strong {
+            color: var(--text);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .builder-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-panel {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
+
+            .preview-viewport {
+                min-height: 520px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .type-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .segment-row {
+                grid-template-columns: 28px 1fr 60px 50px 24px;
+                gap: 4px;
+                padding: 8px;
+            }
+
+            .wheel-wrapper,
+            .wheel-canvas-wrap {
+                width: 240px;
+                height: 240px;
+            }
+
+            #wheelCanvas {
+                width: 240px;
+                height: 240px;
+            }
+
+            .wheel-center-btn {
+                width: 58px;
+                height: 58px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app"><div id="page-body">
+
+<div class="builder-layout">
+
+    <!-- ═══ LEFT: Configuration Panel ═══ -->
+    <div class="config-panel">
+
+        <!-- Popup Type -->
+        <div class="config-section">
+            <div class="config-section-title">
+                <i data-lucide="layout-template"></i>
+                نوع النافذة المنبثقة
+            </div>
+            <div class="type-cards">
+                <div class="type-card active" data-type="wheel" onclick="selectType('wheel')">
+                    <div class="type-card-icon">🎡</div>
+                    <div class="type-card-label">عجلة الحظ</div>
+                </div>
+                <div class="type-card" data-type="giftbox" onclick="selectType('giftbox')">
+                    <div class="type-card-icon">🎁</div>
+                    <div class="type-card-label">صندوق الهدية</div>
+                </div>
+                <div class="type-card" data-type="form" onclick="selectType('form')">
+                    <div class="type-card-icon">📋</div>
+                    <div class="type-card-label">نموذج بسيط</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wheel Segments -->
+        <div class="config-section" id="segmentsSection">
+            <div class="config-section-title">
+                <i data-lucide="pie-chart"></i>
+                شرائح العجلة
+            </div>
+            <div class="segment-header-row">
+                <span>اللون</span>
+                <span>العنوان</span>
+                <span>كود الخصم</span>
+                <span>الاحتمال</span>
+                <span></span>
+            </div>
+            <div class="segments-list" id="segmentsList">
+                <!-- Segments injected by JS -->
+            </div>
+            <button class="add-segment-btn" onclick="addSegment()">+ إضافة شريحة</button>
+            <div class="prob-total">
+                <span>إجمالي الاحتمالات</span>
+                <span class="prob-total-value" id="probTotal">100%</span>
+            </div>
+        </div>
+
+        <!-- Popup Settings -->
+        <div class="config-section">
+            <div class="config-section-title">
+                <i data-lucide="settings-2"></i>
+                إعدادات النافذة
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">العنوان الرئيسي</label>
+                <input type="text" class="setting-input" id="popupTitle" value="ادر العجلة واحصل على عرض خاص!" oninput="updatePreview()">
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">العنوان الفرعي</label>
+                <input type="text" class="setting-input" id="popupSubtitle" value="أدخل رقمك واحصل على فرصة فورية" oninput="updatePreview()">
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">شرط الظهور</label>
+                <select class="setting-select" id="triggerType">
+                    <option value="exit_intent" selected>عند محاولة الخروج (Exit Intent)</option>
+                    <option value="delay">بعد مدة زمنية محددة</option>
+                    <option value="scroll">بعد نسبة تمرير محددة</option>
+                </select>
+            </div>
+
+            <div class="setting-row" id="delayRow" style="display:none;">
+                <label class="setting-label">المدة (ثواني)</label>
+                <input type="number" class="setting-input" id="triggerDelay" value="5" min="1" max="120" style="direction:ltr;text-align:center;">
+            </div>
+
+            <div class="setting-row" id="scrollRow" style="display:none;">
+                <label class="setting-label">نسبة التمرير (%)</label>
+                <input type="number" class="setting-input" id="triggerScroll" value="50" min="10" max="100" style="direction:ltr;text-align:center;">
+            </div>
+
+            <div class="setting-row">
+                <label class="setting-label">تكرار الظهور</label>
+                <select class="setting-select" id="showFrequency">
+                    <option value="once" selected>مرة واحدة لكل زائر</option>
+                    <option value="daily">مرة في اليوم</option>
+                    <option value="weekly">مرة في الأسبوع</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Collect Fields -->
+        <div class="config-section">
+            <div class="config-section-title">
+                <i data-lucide="user-check"></i>
+                البيانات المطلوبة
+            </div>
+            <div class="collect-fields">
+                <div class="collect-field">
+                    <div class="collect-field-info">
+                        <span>رقم الجوال</span>
+                        <span class="field-badge required">مطلوب</span>
+                    </div>
+                    <label class="mini-toggle">
+                        <input type="checkbox" checked disabled>
+                        <div class="mini-toggle-track"></div>
+                    </label>
+                </div>
+                <div class="collect-field">
+                    <div class="collect-field-info">
+                        <span>البريد الإلكتروني</span>
+                        <span class="field-badge optional">اختياري</span>
+                    </div>
+                    <label class="mini-toggle">
+                        <input type="checkbox" id="collectEmail">
+                        <div class="mini-toggle-track"></div>
+                    </label>
+                </div>
+                <div class="collect-field">
+                    <div class="collect-field-info">
+                        <span>الاسم</span>
+                        <span class="field-badge optional">اختياري</span>
+                    </div>
+                    <label class="mini-toggle">
+                        <input type="checkbox" id="collectName">
+                        <div class="mini-toggle-track"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="save-bar">
+            <button class="btn-save" onclick="saveAndGenerate()">
+                <i data-lucide="code-2" style="width:16px;height:16px;"></i>
+                حفظ وتوليد الكود
+            </button>
+            <button class="btn-preview-trigger" onclick="spinWheel()">
+                🎡 جرّب العجلة
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ═══ RIGHT: Live Preview ═══ -->
+    <div class="preview-panel">
+        <div class="preview-header">
+            <div class="preview-header-title">معاينة مباشرة</div>
+            <div class="preview-device-btns">
+                <button class="preview-device-btn active" onclick="setDevice('desktop', this)" title="سطح المكتب">🖥</button>
+                <button class="preview-device-btn" onclick="setDevice('mobile', this)" title="الجوال">📱</button>
+            </div>
+        </div>
+        <div class="preview-viewport" id="previewViewport">
+
+            <div class="popup-overlay-preview" id="popupPreview">
+                <div class="popup-card" id="popupCard">
+
+                    <button class="popup-close-btn">&times;</button>
+
+                    <div class="popup-top">
+                        <div class="popup-title-text" id="previewTitle">ادر العجلة واحصل على عرض خاص!</div>
+                        <div class="popup-subtitle-text" id="previewSubtitle">أدخل رقمك واحصل على فرصة فورية</div>
+                    </div>
+
+                    <div class="wheel-container">
+                        <div class="wheel-wrapper">
+                            <div class="wheel-canvas-wrap">
+                                <div class="wheel-pointer"></div>
+                                <canvas id="wheelCanvas" width="560" height="560"></canvas>
+                                <button class="wheel-center-btn" id="spinBtn" onclick="spinWheel()">ادر<br>العجلة</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="popup-form">
+                        <input type="tel" class="popup-phone-input" placeholder="05XXXXXXXX" dir="ltr" readonly>
+                        <button class="popup-submit-btn">احصل على عرضك</button>
+                    </div>
+
+                    <div class="popup-powered">Powered by RIBH</div>
+
+                    <!-- Win Result -->
+                    <div class="win-overlay" id="winOverlay">
+                        <div class="win-emoji">🎉</div>
+                        <div class="win-text">مبروك!</div>
+                        <div class="win-prize" id="winPrize"></div>
+                        <div class="win-code" id="winCode"></div>
+                        <button class="win-close-btn" onclick="resetWheel()">اغلاق</button>
+                    </div>
+
+                    <!-- Confetti -->
+                    <div class="confetti-container" id="confettiContainer"></div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+</div></div>
+
+<!-- Code Modal -->
+<div class="code-modal-overlay" id="codeModal">
+    <div class="code-modal">
+        <div class="code-modal-header">
+            <div class="code-modal-title">كود التضمين</div>
+            <button class="code-modal-close" onclick="closeCodeModal()">&times;</button>
+        </div>
+        <div class="code-modal-body">
+            <div class="code-block" id="generatedCode"></div>
+            <button class="code-copy-btn" onclick="copyCode()">
+                <i data-lucide="copy" style="width:14px;height:14px;"></i>
+                نسخ الكود
+            </button>
+            <div class="code-instructions">
+                <strong>طريقة التركيب:</strong><br>
+                ١. انسخ الكود أعلاه<br>
+                ٢. اذهب إلى لوحة تحكم سلة ← التصميم ← أكواد مخصصة<br>
+                ٣. الصق الكود في قسم "قبل إغلاق body"<br>
+                ٤. احفظ التغييرات — النافذة ستظهر تلقائياً للزوار
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="/platform/shared/shell.js"></script>
+<script>
+RibhShell.init('settings');
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+const SEGMENT_COLORS = ['#10B981', '#6366F1', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899'];
+
+let segments = [
+    { label: 'خصم ١٠%', code: 'RIBH10', probability: 30, color: '#10B981' },
+    { label: 'شحن مجاني', code: 'FREESHIP', probability: 25, color: '#6366F1' },
+    { label: 'خصم ٢٠%', code: 'RIBH20', probability: 15, color: '#F59E0B' },
+    { label: 'هدية مجانية', code: 'GIFT', probability: 5, color: '#EF4444' },
+    { label: 'خصم ١٥%', code: 'RIBH15', probability: 20, color: '#3B82F6' },
+    { label: 'حظ أفضل المرة الجاية', code: '', probability: 5, color: '#EC4899' },
+];
+
+let currentType = 'wheel';
+let isSpinning = false;
+let currentRotation = 0;
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+renderSegmentsList();
+drawWheel();
+bindTriggerToggle();
+
+// ═══════════════════════════════════════
+//  POPUP TYPE
+// ═══════════════════════════════════════
+function selectType(type) {
+    currentType = type;
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[data-type="${type}"]`).classList.add('active');
+
+    const segSection = document.getElementById('segmentsSection');
+    segSection.style.display = type === 'wheel' ? 'block' : 'none';
+
+    updatePreview();
+}
+
+// ═══════════════════════════════════════
+//  SEGMENTS EDITOR
+// ═══════════════════════════════════════
+function renderSegmentsList() {
+    const list = document.getElementById('segmentsList');
+    list.innerHTML = segments.map((seg, i) => `
+        <div class="segment-row" data-index="${i}">
+            <input type="color" class="segment-color" value="${seg.color}" onchange="updateSegment(${i}, 'color', this.value)">
+            <input type="text" class="segment-label-input" value="${seg.label}" placeholder="اسم الجائزة" oninput="updateSegment(${i}, 'label', this.value)">
+            <input type="text" class="segment-code-input" value="${seg.code}" placeholder="كود" oninput="updateSegment(${i}, 'code', this.value)">
+            <input type="number" class="segment-prob-input" value="${seg.probability}" min="0" max="100" oninput="updateSegment(${i}, 'probability', parseInt(this.value)||0)">
+            <button class="segment-remove" onclick="removeSegment(${i})" title="حذف">&times;</button>
+        </div>
+    `).join('');
+    updateProbTotal();
+    drawWheel();
+}
+
+function updateSegment(index, field, value) {
+    segments[index][field] = value;
+    if (field === 'probability') updateProbTotal();
+    drawWheel();
+}
+
+function addSegment() {
+    const nextColor = SEGMENT_COLORS[segments.length % SEGMENT_COLORS.length];
+    segments.push({ label: 'جائزة جديدة', code: 'NEW', probability: 10, color: nextColor });
+    renderSegmentsList();
+}
+
+function removeSegment(index) {
+    if (segments.length <= 2) {
+        toast('يجب أن يكون هناك شريحتين على الأقل');
+        return;
+    }
+    segments.splice(index, 1);
+    renderSegmentsList();
+}
+
+function updateProbTotal() {
+    const total = segments.reduce((sum, s) => sum + s.probability, 0);
+    const el = document.getElementById('probTotal');
+    el.textContent = total + '%';
+    el.className = 'prob-total-value ' + (total === 100 ? 'valid' : 'invalid');
+}
+
+// ═══════════════════════════════════════
+//  TRIGGER TOGGLE
+// ═══════════════════════════════════════
+function bindTriggerToggle() {
+    const sel = document.getElementById('triggerType');
+    sel.addEventListener('change', function() {
+        document.getElementById('delayRow').style.display = this.value === 'delay' ? 'block' : 'none';
+        document.getElementById('scrollRow').style.display = this.value === 'scroll' ? 'block' : 'none';
+    });
+}
+
+// ═══════════════════════════════════════
+//  PREVIEW UPDATE
+// ═══════════════════════════════════════
+function updatePreview() {
+    document.getElementById('previewTitle').textContent = document.getElementById('popupTitle').value;
+    document.getElementById('previewSubtitle').textContent = document.getElementById('popupSubtitle').value;
+}
+
+function setDevice(device, btn) {
+    document.querySelectorAll('.preview-device-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const preview = document.getElementById('popupPreview');
+    if (device === 'mobile') {
+        preview.style.maxWidth = '340px';
+    } else {
+        preview.style.maxWidth = '460px';
+    }
+}
+
+// ═══════════════════════════════════════
+//  DRAW WHEEL (Canvas)
+// ═══════════════════════════════════════
+function drawWheel() {
+    const canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const size = canvas.width;
+    const center = size / 2;
+    const radius = center - 8;
+
+    ctx.clearRect(0, 0, size, size);
+
+    if (segments.length === 0) return;
+
+    const total = segments.reduce((s, seg) => s + seg.probability, 0) || 1;
+    let startAngle = -Math.PI / 2; // start from top
+
+    segments.forEach((seg, i) => {
+        const sliceAngle = (seg.probability / total) * Math.PI * 2;
+
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, startAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = seg.color;
+        ctx.fill();
+
+        // Slice border
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Inner highlight
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, startAngle, startAngle + sliceAngle);
+        ctx.closePath();
+        const grad = ctx.createRadialGradient(center, center, 0, center, center, radius);
+        grad.addColorStop(0, 'rgba(255,255,255,0.12)');
+        grad.addColorStop(0.5, 'rgba(255,255,255,0)');
+        grad.addColorStop(1, 'rgba(0,0,0,0.15)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Text
+        const textAngle = startAngle + sliceAngle / 2;
+        const textRadius = radius * 0.65;
+        const textX = center + Math.cos(textAngle) * textRadius;
+        const textY = center + Math.sin(textAngle) * textRadius;
+
+        ctx.save();
+        ctx.translate(textX, textY);
+        ctx.rotate(textAngle + Math.PI / 2);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 22px "IBM Plex Sans Arabic", sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.5)';
+        ctx.shadowBlur = 4;
+
+        // Truncate long labels
+        let label = seg.label;
+        if (label.length > 14) label = label.substring(0, 13) + '..';
+        ctx.fillText(label, 0, 0);
+
+        ctx.restore();
+
+        startAngle += sliceAngle;
+    });
+
+    // Outer ring
+    ctx.beginPath();
+    ctx.arc(center, center, radius, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Inner circle decoration
+    ctx.beginPath();
+    ctx.arc(center, center, 42, 0, Math.PI * 2);
+    ctx.fillStyle = '#111';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dot markers on edge
+    const dotCount = segments.length * 3;
+    for (let i = 0; i < dotCount; i++) {
+        const angle = (i / dotCount) * Math.PI * 2;
+        const dx = center + Math.cos(angle) * (radius - 6);
+        const dy = center + Math.sin(angle) * (radius - 6);
+        ctx.beginPath();
+        ctx.arc(dx, dy, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.fill();
+    }
+}
+
+// ═══════════════════════════════════════
+//  SPIN WHEEL
+// ═══════════════════════════════════════
+function spinWheel() {
+    if (isSpinning) return;
+    isSpinning = true;
+
+    const spinBtn = document.getElementById('spinBtn');
+    spinBtn.classList.add('disabled');
+
+    // Pick winner based on probability
+    const total = segments.reduce((s, seg) => s + seg.probability, 0);
+    let rand = Math.random() * total;
+    let winner = 0;
+    for (let i = 0; i < segments.length; i++) {
+        rand -= segments[i].probability;
+        if (rand <= 0) {
+            winner = i;
+            break;
+        }
+    }
+
+    // Calculate angle for the winning segment
+    const segAngles = [];
+    let cumAngle = 0;
+    for (let i = 0; i < segments.length; i++) {
+        const sliceAngle = (segments[i].probability / total) * 360;
+        segAngles.push({ start: cumAngle, end: cumAngle + sliceAngle, mid: cumAngle + sliceAngle / 2 });
+        cumAngle += sliceAngle;
+    }
+
+    // Target: the pointer is at top (0 degrees). We need the winner segment's mid to align with top.
+    // The wheel rotates clockwise. Pointer is at top.
+    // After rotation, the segment at (360 - rotationDeg) mod 360 is at top.
+    // So we want: (360 - targetRotation%360) = winnerMid  =>  targetRotation = 360 - winnerMid
+    const winnerMid = segAngles[winner].mid;
+    const targetBase = 360 - winnerMid;
+    // Add full spins (5-8 full rotations)
+    const fullSpins = (5 + Math.floor(Math.random() * 4)) * 360;
+    const targetRotation = currentRotation + fullSpins + ((targetBase - (currentRotation % 360)) + 360) % 360;
+
+    const canvas = document.getElementById('wheelCanvas');
+    canvas.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+    canvas.style.transform = `rotate(${targetRotation}deg)`;
+    currentRotation = targetRotation;
+
+    setTimeout(() => {
+        showWinResult(winner);
+        isSpinning = false;
+        spinBtn.classList.remove('disabled');
+    }, 4200);
+}
+
+function showWinResult(winnerIndex) {
+    const seg = segments[winnerIndex];
+    document.getElementById('winPrize').textContent = seg.label;
+    document.getElementById('winCode').textContent = seg.code || '---';
+    document.getElementById('winCode').style.display = seg.code ? 'inline-block' : 'none';
+    document.getElementById('winOverlay').classList.add('show');
+    launchConfetti();
+}
+
+function resetWheel() {
+    document.getElementById('winOverlay').classList.remove('show');
+    document.getElementById('confettiContainer').innerHTML = '';
+}
+
+// ═══════════════════════════════════════
+//  CONFETTI
+// ═══════════════════════════════════════
+function launchConfetti() {
+    const container = document.getElementById('confettiContainer');
+    container.innerHTML = '';
+    const colors = ['#10B981', '#6366F1', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899', '#FAFAFA', '#22C55E'];
+
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const left = Math.random() * 100;
+        const size = 4 + Math.random() * 8;
+        const duration = 1.5 + Math.random() * 2;
+        const delay = Math.random() * 0.8;
+        const shape = Math.random() > 0.5 ? '50%' : '2px';
+
+        piece.style.cssText = `
+            left: ${left}%;
+            width: ${size}px;
+            height: ${size}px;
+            background: ${color};
+            border-radius: ${shape};
+            animation-duration: ${duration}s;
+            animation-delay: ${delay}s;
+        `;
+        container.appendChild(piece);
+    }
+
+    // Clean up after animation
+    setTimeout(() => {
+        container.innerHTML = '';
+    }, 4000);
+}
+
+// ═══════════════════════════════════════
+//  SAVE & GENERATE CODE
+// ═══════════════════════════════════════
+function saveAndGenerate() {
+    // Validate
+    const total = segments.reduce((s, seg) => s + seg.probability, 0);
+    if (total !== 100) {
+        toast('إجمالي الاحتمالات يجب أن يكون ١٠٠% — الحالي: ' + total + '%');
+        return;
+    }
+
+    const config = {
+        type: currentType,
+        segments: segments,
+        title: document.getElementById('popupTitle').value,
+        subtitle: document.getElementById('popupSubtitle').value,
+        trigger: document.getElementById('triggerType').value,
+        triggerDelay: parseInt(document.getElementById('triggerDelay').value) || 5,
+        triggerScroll: parseInt(document.getElementById('triggerScroll').value) || 50,
+        frequency: document.getElementById('showFrequency').value,
+        collectEmail: document.getElementById('collectEmail').checked,
+        collectName: document.getElementById('collectName').checked,
+    };
+
+    const embedCode = generateEmbedCode(config);
+    document.getElementById('generatedCode').textContent = embedCode;
+    document.getElementById('codeModal').classList.add('open');
+
+    toast('تم حفظ الإعدادات وتوليد الكود');
+}
+
+function generateEmbedCode(config) {
+    return `<!-- RIBH Popup Widget -->
+<script>
+(function(){
+  var c=${JSON.stringify({
+    type: config.type,
+    title: config.title,
+    subtitle: config.subtitle,
+    trigger: config.trigger,
+    triggerDelay: config.triggerDelay,
+    triggerScroll: config.triggerScroll,
+    frequency: config.frequency,
+    collectEmail: config.collectEmail,
+    collectName: config.collectName,
+    segments: config.segments.map(s => ({
+      label: s.label,
+      code: s.code,
+      probability: s.probability,
+      color: s.color
+    }))
+  })};
+  var s=document.createElement('script');
+  s.src='https://ribh-484706.web.app/widget/exit-popup.js';
+  s.async=true;
+  s.onload=function(){RibhPopup.init(c)};
+  document.head.appendChild(s);
+})();
+<\/script>
+<!-- End RIBH Popup Widget -->`;
+}
+
+function closeCodeModal() {
+    document.getElementById('codeModal').classList.remove('open');
+}
+
+function copyCode() {
+    const code = document.getElementById('generatedCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        toast('تم نسخ الكود');
+    }).catch(() => {
+        // Fallback
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        toast('تم نسخ الكود');
+    });
+}
+
+// ═══════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════
+function toast(msg) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+</script>
+</body>
+</html>

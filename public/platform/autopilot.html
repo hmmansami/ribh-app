@@ -687,6 +687,76 @@
         </div>
     </div>
 
+    <!-- Engine: Browse Abandonment -->
+    <div class="engine-card inactive" data-engine="browse">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--info-dim)">👀</div>
+                <div class="engine-text">
+                    <div class="engine-name">تصفح بدون شراء (Browse Abandonment)</div>
+                    <div class="engine-desc">زائر شاف منتج ولا أضافه للسلة — ذكّره بالمنتج + عرض</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~١٢,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('browse', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('browse')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-browse">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--info)">٥٣٤</div><div class="engine-stat-lbl">زائر تصفح بدون شراء</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٥-٨%</div><div class="engine-stat-lbl">نسبة تحويل متوقعة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--primary)">~١٢K</div><div class="engine-stat-lbl">ر.س إيرادات متوقعة</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('browse')">تفعيل المحرك</button>
+                <button class="btn btn-secondary" onclick="location.href='flow-editor.html?type=browse'">تخصيص</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Birthday -->
+    <div class="engine-card inactive" data-engine="birthday">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:rgba(236,72,153,.12)">🎂</div>
+                <div class="engine-text">
+                    <div class="engine-name">أعياد الميلاد والمناسبات</div>
+                    <div class="engine-desc">رسالة تهنئة تلقائية + عرض خاص في يوم ميلاد العميل</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~٦,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('birthday', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('birthday')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-birthday">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:rgba(236,72,153,1)">١٥٦</div><div class="engine-stat-lbl">عميل عنده تاريخ ميلاد</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٤٠-٦٠%</div><div class="engine-stat-lbl">نسبة فتح متوقعة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--warning)">١٥-٢٥%</div><div class="engine-stat-lbl">خصم مقترح</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('birthday')">تفعيل المحرك</button>
+                <button class="btn btn-secondary" onclick="location.href='flow-editor.html?type=birthday'">تخصيص</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Engine: Custom Campaigns -->
     <div class="engine-card active" data-engine="campaigns">
         <div class="engine-top">
@@ -830,7 +900,7 @@
 <div class="ai-insight">
     <div class="ai-insight-label">💡 ذكاء الربح — توصيات AI</div>
     <div class="ai-insight-text">
-        تفعيل محرك <strong>الاستمرارية</strong> ومحرك <strong>زيادة المبيعات</strong> يمكن يضيف <strong>~٣٨,٠٠٠ ر.س</strong> شهرياً لمتجرك. عندك ٢٤٠ عميل يشترون بانتظام و ٥٠+ فرصة upsell جاهزة. فعّلهم بضغطة وحدة.
+        عندك <strong>٤ محركات غير مفعّلة</strong> تقدر تضيف <strong>~٧٩,٠٠٠ ر.س</strong> شهرياً: الاستمرارية (~١٨K) + زيادة المبيعات (~٢٠K) + تصفح بدون شراء (~١٢K) + جذب الزوار (~١٥K) + أعياد الميلاد (~٦K). فعّلهم بضغطة وحدة.
     </div>
 </div>
 
@@ -933,6 +1003,8 @@ function getEngineName(id) {
         continuity: 'الاستمرارية',
         reviews: 'التقييمات',
         campaigns: 'الحملات',
+        browse: 'تصفح بدون شراء',
+        birthday: 'أعياد الميلاد',
         upsell: 'زيادة المبيعات',
         downsell: 'عرض بديل',
         attraction: 'جذب واستقطاب'

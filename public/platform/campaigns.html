@@ -605,6 +605,82 @@
             gap: 8px;
         }
 
+        /* ── Message Templates ── */
+        .templates-section {
+            margin-bottom: 28px;
+        }
+        .templates-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .templates-section-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+        }
+        .template-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s var(--ease);
+        }
+        .template-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .template-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .template-card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .template-card-name {
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .template-card-channel {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+        .template-card-preview {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            max-height: 52px;
+            overflow: hidden;
+            border-right: 2px solid var(--whatsapp);
+            padding-right: 10px;
+        }
+        .template-card-stats {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+        .template-card-stats strong {
+            color: var(--text-secondary);
+        }
+
         /* ── Toast ── */
         .toast {
             position: fixed;
@@ -783,6 +859,104 @@
                 <div class="stat-card-change up">
                     <i data-lucide="trending-up"></i>
                     +22.5%
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Templates Library -->
+        <div class="templates-section">
+            <div class="templates-section-header">
+                <div class="templates-section-title">📋 قوالب الرسائل الجاهزة</div>
+                <span style="font-size:11px;color:var(--text-dim);">اختر قالب وأطلق حملة بضغطة</span>
+            </div>
+            <div class="templates-grid">
+                <div class="template-card" onclick="useTemplate('cart')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--primary-dim)">🛒</div>
+                        <div>
+                            <div class="template-card-name">تذكير سلة متروكة</div>
+                            <div class="template-card-channel">واتساب</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">مرحبا {الاسم}، لاحظنا إن سلتك فيها منتجات رائعة! {المنتج} لسا موجود — يلا أكمل طلبك قبل لا يخلص 🔥</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٨٧%</strong></span><span>تحويل: <strong>٢٨%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('winback')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--danger-dim)">💤</div>
+                        <div>
+                            <div class="template-card-name">إعادة تنشيط عميل</div>
+                            <div class="template-card-channel">واتساب</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">وحشتنا {الاسم}! 👋 عندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين. شوف العرض الحصري 👇</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٧٢%</strong></span><span>تحويل: <strong>١٨%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('welcome')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--info-dim)">👋</div>
+                        <div>
+                            <div class="template-card-name">ترحيب عميل جديد</div>
+                            <div class="template-card-channel">واتساب</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">أهلاً {الاسم}! 🎉 يسعدنا انضمامك لعائلة {اسم_المتجر}. عندك خصم ١٠% على أول طلب — استخدم الكود: WELCOME10</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٩٢%</strong></span><span>تحويل: <strong>٢٦%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('flash')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--warning-dim)">⚡</div>
+                        <div>
+                            <div class="template-card-name">فلاش سيل</div>
+                            <div class="template-card-channel">واتساب + SMS</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">⚡ فلاش سيل — ٣ ساعات بس! {الاسم}، خصم ٣٠% على أكثر المنتجات مبيعاً. يلا قبل لا يخلص الوقت ⏰</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٨١%</strong></span><span>تحويل: <strong>٢٢%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('seasonal')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--secondary-dim)">🌙</div>
+                        <div>
+                            <div class="template-card-name">عرض موسمي / رمضان</div>
+                            <div class="template-card-channel">واتساب + إيميل</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">🌙 رمضان كريم {الاسم}! جهّزنا لك عروض حصرية — خصومات تصل ٤٠% + شحن مجاني. جهّز احتياجاتك 👇</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٨٥%</strong></span><span>تحويل: <strong>٢٤%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('review')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--whatsapp-dim)">⭐</div>
+                        <div>
+                            <div class="template-card-name">طلب تقييم</div>
+                            <div class="template-card-channel">واتساب (مجاني)</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">هلا {الاسم}! وصلك طلبك؟ نتمنى يعجبك ❤️ قيّمنا من ٥ واحصل على خصم ١٠% على طلبك الجاي 🎁</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٩٤%</strong></span><span>تحويل: <strong>٣٥%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('restock')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:rgba(236,72,153,.12)">📦</div>
+                        <div>
+                            <div class="template-card-name">رجع للمخزون</div>
+                            <div class="template-card-channel">واتساب</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">📦 {الاسم}، {المنتج} اللي كنت تبيه رجع متوفر! الكمية محدودة — لا تتأخر وأطلبه الحين 👇</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٧٨%</strong></span><span>تحويل: <strong>٣١%</strong></span></div>
+                </div>
+                <div class="template-card" onclick="useTemplate('vip')">
+                    <div class="template-card-header">
+                        <div class="template-card-icon" style="background:var(--warning-dim)">👑</div>
+                        <div>
+                            <div class="template-card-name">مكافأة VIP</div>
+                            <div class="template-card-channel">واتساب (شخصي)</div>
+                        </div>
+                    </div>
+                    <div class="template-card-preview">👑 {الاسم}، أنت من أهم عملائنا! عندك وصول حصري لمنتجاتنا الجديدة + شحن مجاني دائم. شوف الجديد 👇</div>
+                    <div class="template-card-stats"><span>فتح: <strong>٨٩%</strong></span><span>تحويل: <strong>٢٠%</strong></span></div>
                 </div>
             </div>
         </div>
@@ -1482,6 +1656,25 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeCreateModal();
         });
+
+        // ── Template Usage ──
+        const templateMessages = {
+            cart: 'مرحبا {الاسم}، لاحظنا إن سلتك فيها منتجات رائعة!\n{المنتج} لسا موجود — يلا أكمل طلبك قبل لا يخلص 🔥\n{رابط_السلة}',
+            winback: 'وحشتنا {الاسم}! 👋\nعندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين\nشوف العرض الحصري 👇\n{رابط_المتجر}',
+            welcome: 'أهلاً {الاسم}! 🎉\nيسعدنا انضمامك لعائلة {اسم_المتجر}\nعندك خصم ١٠% على أول طلب — استخدم الكود: WELCOME10\n{رابط_المتجر}',
+            flash: '⚡ فلاش سيل — ٣ ساعات بس!\n{الاسم}، خصم ٣٠% على أكثر المنتجات مبيعاً\nيلا قبل لا يخلص الوقت ⏰\n{رابط_المتجر}',
+            seasonal: '🌙 رمضان كريم {الاسم}!\nجهّزنا لك عروض حصرية — خصومات تصل ٤٠% + شحن مجاني\nجهّز احتياجاتك 👇\n{رابط_المتجر}',
+            review: 'هلا {الاسم}! وصلك طلبك؟ 📦\nنتمنى يعجبك ❤️\nقيّمنا من ٥ واحصل على خصم ١٠% على طلبك الجاي 🎁\n{رابط_التقييم}',
+            restock: '📦 {الاسم}، {المنتج} اللي كنت تبيه رجع متوفر!\nالكمية محدودة — لا تتأخر وأطلبه الحين 👇\n{رابط_المنتج}',
+            vip: '👑 {الاسم}، أنت من أهم عملائنا!\nعندك وصول حصري لمنتجاتنا الجديدة + شحن مجاني دائم\nشوف الجديد 👇\n{رابط_حصري}'
+        };
+        function useTemplate(type) {
+            openCreateModal();
+            setTimeout(() => {
+                const ta = document.getElementById('campaignMessage');
+                if (ta && templateMessages[type]) ta.value = templateMessages[type];
+            }, 100);
+        }
 
         // ── Initialize ──
         renderCampaigns();

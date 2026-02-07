@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH — محرر التسلسل</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+    <style>
+        /* ── Flow Editor Layout ── */
+        .flow-editor-wrapper {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+        .flow-main {
+            flex: 1;
+            min-width: 0;
+        }
+        .flow-sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: calc(var(--topbar-height) + 28px);
+        }
+
+        /* ── Flow Header Bar ── */
+        .flow-header {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 18px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .flow-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            transition: all 0.15s var(--ease);
+            white-space: nowrap;
+        }
+        .flow-back:hover {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
+        .flow-header-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+        }
+        .flow-name-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+        .flow-name-input {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text);
+            font-size: 17px;
+            font-weight: 700;
+            font-family: inherit;
+            outline: none;
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            width: 100%;
+            direction: rtl;
+            transition: border-color 0.15s var(--ease);
+        }
+        .flow-name-input:hover {
+            border-color: var(--border);
+        }
+        .flow-name-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+        .flow-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .flow-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .flow-status-badge.active {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+        .flow-status-badge.draft {
+            background: var(--bg-surface-2);
+            color: var(--text-muted);
+        }
+        .flow-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        .flow-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .flow-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .flow-toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.2s var(--ease);
+        }
+        .flow-toggle input:checked + .flow-toggle-track {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .flow-toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.2s var(--ease);
+        }
+        .flow-toggle input:checked + .flow-toggle-track::after {
+            transform: translateX(-20px);
+        }
+        .flow-perf-summary {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 11.5px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+        .flow-perf-summary span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .flow-perf-summary .perf-val {
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        /* ── Step Timeline ── */
+        .steps-timeline {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── Connector Line + Add Button ── */
+        .step-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .connector-line {
+            width: 2px;
+            height: 20px;
+            background: var(--border-strong);
+        }
+        .connector-add {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 1px dashed var(--border-strong);
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 300;
+            transition: all 0.2s var(--ease);
+            line-height: 1;
+        }
+        .connector-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-dim);
+            transform: scale(1.15);
+        }
+
+        /* ── Step Cards (shared) ── */
+        .step-card {
+            width: 100%;
+            max-width: 640px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s var(--ease);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.35s var(--ease) both;
+        }
+        .step-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: var(--shadow-md);
+        }
+        .step-card.expanded {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+        .step-card-accent {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+        }
+
+        .step-card-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+        }
+        .step-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+        .step-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .step-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+        .step-subtitle {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .step-preview {
+            font-size: 11.5px;
+            color: var(--text-dim);
+            margin-top: 4px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-style: italic;
+        }
+        .step-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .step-stats {
+            font-size: 10.5px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .step-stats span {
+            white-space: nowrap;
+        }
+        .step-number {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-dim);
+            background: var(--bg-surface-2);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── Condition Card Branches ── */
+        .step-branches {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .branch-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .branch-yes {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+        .branch-no {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        /* ── Expanded Edit Panel ── */
+        .step-edit-panel {
+            display: none;
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--border);
+            animation: fadeUp 0.25s var(--ease);
+        }
+        .step-card.expanded .step-edit-panel {
+            display: block;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .edit-section {
+            margin-top: 16px;
+        }
+        .edit-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .edit-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px 14px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            line-height: 1.8;
+            resize: vertical;
+            outline: none;
+            direction: rtl;
+            transition: border-color 0.15s var(--ease);
+        }
+        .edit-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+        .edit-select {
+            appearance: none;
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            direction: rtl;
+            outline: none;
+        }
+        .edit-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+        .var-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .var-btn {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--secondary-dim);
+            color: var(--secondary);
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+        .var-btn:hover {
+            background: rgba(99, 102, 241, 0.22);
+        }
+        .channel-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .channel-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--bg-surface-2);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+            font-family: inherit;
+        }
+        .channel-option:hover {
+            border-color: var(--border-strong);
+            color: var(--text);
+        }
+        .channel-option.selected {
+            border-color: var(--whatsapp);
+            background: var(--whatsapp-dim);
+            color: var(--whatsapp);
+        }
+        .channel-option.selected-sms {
+            border-color: var(--warning);
+            background: var(--warning-dim);
+            color: var(--warning);
+        }
+        .channel-option.selected-email {
+            border-color: var(--info);
+            background: var(--info-dim);
+            color: var(--info);
+        }
+        .edit-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        .edit-row > * {
+            flex: 1;
+        }
+        .edit-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Condition Edit ── */
+        .condition-branches-edit {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .condition-branch-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .condition-branch-row.yes {
+            background: var(--success-dim);
+            color: var(--success);
+        }
+        .condition-branch-row.no {
+            background: var(--danger-dim);
+            color: var(--danger);
+        }
+
+        /* ── Trigger Edit ── */
+        .trigger-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .trigger-filter-row .edit-select {
+            width: auto;
+            min-width: 120px;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+        .trigger-filter-row .filter-val {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 10px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12px;
+            width: 80px;
+            outline: none;
+            direction: rtl;
+        }
+
+        /* ── Add Step Button (bottom) ── */
+        .add-step-bottom {
+            display: flex;
+            justify-content: center;
+            margin-top: 12px;
+            margin-bottom: 24px;
+        }
+        .add-step-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            background: var(--bg-surface-2);
+            border: 1px dashed var(--border-strong);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+        }
+        .add-step-btn:hover {
+            background: var(--primary-dim);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ── Add Step Dropdown ── */
+        .add-step-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-raised);
+            border: 1px solid var(--border-strong);
+            border-radius: var(--radius-md);
+            padding: 6px;
+            min-width: 200px;
+            box-shadow: var(--shadow-lg);
+            z-index: 60;
+            display: none;
+            animation: fadeUp 0.15s var(--ease);
+        }
+        .add-step-dropdown.open {
+            display: block;
+        }
+        .add-step-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.12s var(--ease);
+            border: none;
+            background: none;
+            width: 100%;
+            font-family: inherit;
+            text-align: right;
+        }
+        .add-step-option:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+        .add-step-option .opt-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* ── Right Sidebar ── */
+        .sidebar-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+        }
+        .sidebar-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .sidebar-panel-body {
+            padding: 20px;
+        }
+        .sidebar-stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .sidebar-stat-row:last-child {
+            border-bottom: none;
+        }
+        .sidebar-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .sidebar-stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .sidebar-stat-value.highlight {
+            color: var(--primary);
+        }
+
+        /* Funnel Mini Chart */
+        .funnel-chart {
+            margin-top: 16px;
+        }
+        .funnel-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .funnel-bar-wrap {
+            flex: 1;
+            min-width: 0;
+        }
+        .funnel-bar-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+        .funnel-bar-name {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .funnel-bar-val {
+            color: var(--text-muted);
+            direction: ltr;
+            display: inline-block;
+        }
+        .funnel-bar {
+            height: 8px;
+            background: var(--bg-surface-2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .funnel-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s var(--ease);
+        }
+
+        .sidebar-save-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .sidebar-panel + .sidebar-panel {
+            margin-top: 16px;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,.5);
+            animation: fadeUp 0.3s var(--ease);
+        }
+
+        /* ── Stagger animation for steps ── */
+        .steps-timeline .step-card:nth-child(1) { animation-delay: 0ms; }
+        .steps-timeline .step-card:nth-child(2) { animation-delay: 40ms; }
+        .steps-timeline .step-card:nth-child(3) { animation-delay: 80ms; }
+        .steps-timeline .step-card:nth-child(4) { animation-delay: 120ms; }
+        .steps-timeline .step-card:nth-child(5) { animation-delay: 160ms; }
+        .steps-timeline .step-card:nth-child(6) { animation-delay: 200ms; }
+        .steps-timeline .step-card:nth-child(7) { animation-delay: 240ms; }
+        .steps-timeline .step-card:nth-child(8) { animation-delay: 280ms; }
+        .steps-timeline .step-card:nth-child(9) { animation-delay: 320ms; }
+        .steps-timeline .step-card:nth-child(10) { animation-delay: 360ms; }
+        .steps-timeline .step-card:nth-child(11) { animation-delay: 400ms; }
+        .steps-timeline .step-card:nth-child(12) { animation-delay: 440ms; }
+        .steps-timeline .step-card:nth-child(13) { animation-delay: 480ms; }
+        .steps-timeline .step-card:nth-child(14) { animation-delay: 520ms; }
+        .steps-timeline .step-card:nth-child(15) { animation-delay: 560ms; }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .flow-editor-wrapper {
+                flex-direction: column;
+            }
+            .flow-sidebar {
+                width: 100%;
+                position: static;
+                order: -1;
+            }
+            .flow-sidebar-panels {
+                display: flex;
+                gap: 16px;
+            }
+            .flow-sidebar-panels .sidebar-panel {
+                flex: 1;
+            }
+        }
+        @media (max-width: 768px) {
+            .flow-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .flow-header-divider {
+                display: none;
+            }
+            .flow-header-actions {
+                justify-content: space-between;
+            }
+            .flow-perf-summary {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .step-card {
+                max-width: 100%;
+            }
+            .flow-sidebar-panels {
+                flex-direction: column;
+            }
+            .step-card-head {
+                flex-wrap: wrap;
+            }
+            .step-meta {
+                width: 100%;
+                justify-content: flex-start;
+                margin-top: 4px;
+            }
+            .channel-selector {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app"><div id="page-body">
+
+<!-- ═══ FLOW HEADER BAR ═══ -->
+<div class="flow-header">
+    <button class="flow-back" onclick="location.href='flows.html'">
+        <span style="display:inline-block;transform:scaleX(-1);">&#8592;</span>
+        العودة للأتمتة
+    </button>
+    <div class="flow-header-divider"></div>
+    <div class="flow-name-wrap">
+        <input type="text" class="flow-name-input" id="flowName" value="استرداد السلة المتروكة" onfocus="this.select()">
+    </div>
+    <div class="flow-header-actions">
+        <div class="flow-status-badge active" id="flowStatusBadge">
+            <span class="flow-status-dot"></span>
+            <span id="flowStatusText">نشط</span>
+        </div>
+        <label class="flow-toggle" title="تفعيل / إيقاف">
+            <input type="checkbox" id="flowToggle" checked onchange="toggleFlowStatus(this.checked)">
+            <div class="flow-toggle-track"></div>
+        </label>
+    </div>
+    <div class="flow-perf-summary">
+        <span>أُرسلت <span class="perf-val">٣,٤٥٠</span></span>
+        <span>تحويل <span class="perf-val" style="color:var(--success)">٩٨٠</span></span>
+        <span>إيرادات <span class="perf-val" style="color:var(--primary)">٢٨,٥٠٠ ر.س</span></span>
+    </div>
+</div>
+
+<!-- ═══ MAIN LAYOUT: Steps + Sidebar ═══ -->
+<div class="flow-editor-wrapper">
+
+    <!-- ── Steps Timeline ── -->
+    <div class="flow-main">
+        <div class="steps-timeline" id="stepsTimeline">
+            <!-- Steps will be rendered by JS -->
+        </div>
+
+        <div class="add-step-bottom">
+            <button class="add-step-btn" onclick="showAddStepMenu(null, event)">+ إضافة خطوة</button>
+        </div>
+    </div>
+
+    <!-- ── Right Sidebar ── -->
+    <div class="flow-sidebar">
+        <div class="flow-sidebar-panels">
+            <div class="sidebar-panel">
+                <div class="sidebar-panel-header">أداء التسلسل</div>
+                <div class="sidebar-panel-body">
+                    <div class="sidebar-stat-row">
+                        <span class="sidebar-stat-label">الإيرادات</span>
+                        <span class="sidebar-stat-value highlight">٢٨,٥٠٠ ر.س</span>
+                    </div>
+                    <div class="sidebar-stat-row">
+                        <span class="sidebar-stat-label">نسبة التحويل</span>
+                        <span class="sidebar-stat-value">٢٨.٤%</span>
+                    </div>
+                    <div class="sidebar-stat-row">
+                        <span class="sidebar-stat-label">الرسائل المرسلة</span>
+                        <span class="sidebar-stat-value">٣,٤٥٠</span>
+                    </div>
+                    <div class="sidebar-stat-row">
+                        <span class="sidebar-stat-label">عمليات الشراء</span>
+                        <span class="sidebar-stat-value">٩٨٠</span>
+                    </div>
+
+                    <!-- Funnel Chart -->
+                    <div class="funnel-chart">
+                        <div class="funnel-step">
+                            <div class="funnel-bar-wrap">
+                                <div class="funnel-bar-label">
+                                    <span class="funnel-bar-name">أُرسلت</span>
+                                    <span class="funnel-bar-val">٣,٤٥٠</span>
+                                </div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-bar-fill" style="width:100%;background:var(--primary);"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-bar-wrap">
+                                <div class="funnel-bar-label">
+                                    <span class="funnel-bar-name">قُرأت</span>
+                                    <span class="funnel-bar-val">٣,٠٠١</span>
+                                </div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-bar-fill" style="width:87%;background:var(--info);"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-bar-wrap">
+                                <div class="funnel-bar-label">
+                                    <span class="funnel-bar-name">نقرات</span>
+                                    <span class="funnel-bar-val">١,٥٨٠</span>
+                                </div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-bar-fill" style="width:45.8%;background:var(--warning);"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="funnel-step">
+                            <div class="funnel-bar-wrap">
+                                <div class="funnel-bar-label">
+                                    <span class="funnel-bar-name">اشتروا</span>
+                                    <span class="funnel-bar-val">٩٨٠</span>
+                                </div>
+                                <div class="funnel-bar">
+                                    <div class="funnel-bar-fill" style="width:28.4%;background:var(--success);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary sidebar-save-btn" onclick="saveFlow()">حفظ التعديلات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div></div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="/platform/shared/shell.js"></script>
+<script>
+RibhShell.init('flows');
+
+// ═══════════════════════════════════════════════════
+//  FLOW DATA MODEL
+// ═══════════════════════════════════════════════════
+
+const flowSteps = [
+    {
+        id: 's1',
+        type: 'trigger',
+        title: 'المحفز: عميل ترك السلة',
+        subtitle: 'يبدأ التسلسل عند ترك سلة بقيمة أكثر من ٥٠ ر.س',
+        icon: '\u26A1',
+        triggerType: 'cart_abandoned',
+        filterField: 'cart_value',
+        filterOp: 'gte',
+        filterValue: '50'
+    },
+    {
+        id: 's2',
+        type: 'wait',
+        title: 'انتظر ساعة واحدة',
+        icon: '\u23F1\uFE0F',
+        waitValue: '1h'
+    },
+    {
+        id: 's3',
+        type: 'message',
+        title: 'الرسالة الأولى \u2014 تذكير بدون خصم',
+        icon: '\uD83D\uDCAC',
+        channel: 'whatsapp',
+        messageText: '\u0645\u0631\u062D\u0628\u0627 {\u0627\u0644\u0627\u0633\u0645}\u060C \u0633\u0644\u062A\u0643 \u0644\u0633\u0627 \u0645\u0648\u062C\u0648\u062F\u0629 \uD83D\uDED2\n\n\u0639\u0646\u062F\u0643 {\u0627\u0644\u0645\u0646\u062A\u062C} \u0628\u0627\u0646\u062A\u0638\u0627\u0631\u0643. \u0623\u0643\u0645\u0644 \u0637\u0644\u0628\u0643 \u0627\u0644\u062D\u064A\u0646 \u0642\u0628\u0644 \u0645\u0627 \u064A\u062E\u0644\u0635 \u0627\u0644\u0645\u062E\u0632\u0648\u0646 \uD83D\uDE4F\n\n{\u0631\u0627\u0628\u0637_\u0627\u0644\u0633\u0644\u0629}',
+        preview: '\u0645\u0631\u062D\u0628\u0627 {\u0627\u0644\u0627\u0633\u0645}\u060C \u0633\u0644\u062A\u0643 \u0644\u0633\u0627 \u0645\u0648\u062C\u0648\u062F\u0629...',
+        stats: { sent: 3450, read: '87%' }
+    },
+    {
+        id: 's4',
+        type: 'condition',
+        title: '\u0625\u0630\u0627 \u0644\u0645 \u064A\u0634\u062A\u0631\u064A \u062E\u0644\u0627\u0644 \u0662\u0664 \u0633\u0627\u0639\u0629',
+        icon: '\uD83D\uDD00',
+        conditionType: 'no_purchase',
+        conditionWindow: '24h',
+        branchYes: '\u0627\u0634\u062A\u0631\u0649 (stops flow)',
+        branchNo: '\u0644\u0645 \u064A\u0634\u062A\u0631\u064A (continues)'
+    },
+    {
+        id: 's5',
+        type: 'wait',
+        title: 'انتظر ٢٤ ساعة',
+        icon: '\u23F1\uFE0F',
+        waitValue: '24h'
+    },
+    {
+        id: 's6',
+        type: 'message',
+        title: '\u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0627\u0644\u062B\u0627\u0646\u064A\u0629 \u2014 \u0645\u0639 \u062E\u0635\u0645 \u0661\u0660%',
+        icon: '\uD83D\uDCAC',
+        channel: 'whatsapp',
+        messageText: '\u0645\u0631\u062D\u0628\u0627 {\u0627\u0644\u0627\u0633\u0645}\u060C \u0639\u0646\u062F\u0646\u0627 \u062E\u0635\u0645 \u0661\u0660% \u062E\u0627\u0635 \u0644\u0643 \uD83C\uDF81\n\n\u0627\u0633\u062A\u062E\u062F\u0645 \u0627\u0644\u0643\u0648\u062F: RIBH10 \u0639\u0646\u062F \u0625\u0643\u0645\u0627\u0644 \u0637\u0644\u0628\u0643 \u0645\u0646 {\u0627\u0644\u0645\u0646\u062A\u062C}\n\n\u0627\u0644\u0639\u0631\u0636 \u064A\u0646\u062A\u0647\u064A \u062E\u0644\u0627\u0644 \u0662\u0664 \u0633\u0627\u0639\u0629 \u2B07\uFE0F\n{\u0631\u0627\u0628\u0637_\u0627\u0644\u0633\u0644\u0629}',
+        preview: '\u0645\u0631\u062D\u0628\u0627 {\u0627\u0644\u0627\u0633\u0645}\u060C \u0639\u0646\u062F\u0646\u0627 \u062E\u0635\u0645 \u0661\u0660% \u062E\u0627\u0635 \u0644\u0643...',
+        stats: { sent: 1200, converted: 340 }
+    },
+    {
+        id: 's7',
+        type: 'condition',
+        title: '\u0625\u0630\u0627 \u0644\u0645 \u064A\u0634\u062A\u0631\u064A \u062E\u0644\u0627\u0644 \u0664\u0668 \u0633\u0627\u0639\u0629',
+        icon: '\uD83D\uDD00',
+        conditionType: 'no_purchase',
+        conditionWindow: '48h',
+        branchYes: '\u0627\u0634\u062A\u0631\u0649 (stops flow)',
+        branchNo: '\u0644\u0645 \u064A\u0634\u062A\u0631\u064A (continues)'
+    },
+    {
+        id: 's8',
+        type: 'message',
+        title: '\u0627\u0644\u0631\u0633\u0627\u0644\u0629 \u0627\u0644\u0623\u062E\u064A\u0631\u0629 \u2014 \u0622\u062E\u0631 \u0641\u0631\u0635\u0629 \u0661\u0665%',
+        icon: '\uD83D\uDCAC',
+        channel: 'sms+email',
+        messageText: '\u0622\u062E\u0631 \u0641\u0631\u0635\u0629 {\u0627\u0644\u0627\u0633\u0645}! \u062E\u0635\u0645 \u0661\u0665% \u0639\u0644\u0649 \u0633\u0644\u062A\u0643 \uD83D\uDD25\n\n\u0627\u0644\u0643\u0648\u062F: RIBH15 \u2014 \u0635\u0627\u0644\u062D \u0644\u0645\u062F\u0629 \u0661\u0662 \u0633\u0627\u0639\u0629 \u0641\u0642\u0637\n\n{\u0631\u0627\u0628\u0637_\u0627\u0644\u0633\u0644\u0629}',
+        preview: '\u0622\u062E\u0631 \u0641\u0631\u0635\u0629 {\u0627\u0644\u0627\u0633\u0645}! \u062E\u0635\u0645 \u0661\u0665% \u0639\u0644\u0649 \u0633\u0644\u062A\u0643...',
+        stats: { sent: 400, converted: 120 }
+    }
+];
+
+const waitOptions = [
+    { value: '15m', label: '١٥ دقيقة' },
+    { value: '30m', label: '٣٠ دقيقة' },
+    { value: '1h', label: 'ساعة واحدة' },
+    { value: '2h', label: 'ساعتين' },
+    { value: '6h', label: '٦ ساعات' },
+    { value: '12h', label: '١٢ ساعة' },
+    { value: '24h', label: '٢٤ ساعة' },
+    { value: 'custom', label: 'مخصص...' }
+];
+
+const conditionTypes = [
+    { value: 'no_purchase', label: 'لم يشتري' },
+    { value: 'no_open', label: 'لم يفتح الرسالة' },
+    { value: 'no_click', label: 'لم ينقر الرابط' },
+    { value: 'cart_value', label: 'قيمة السلة' },
+    { value: 'custom', label: 'شرط مخصص' }
+];
+
+const triggerTypes = [
+    { value: 'cart_abandoned', label: 'ترك السلة' },
+    { value: 'new_customer', label: 'عميل جديد' },
+    { value: 'order_completed', label: 'أكمل طلب' },
+    { value: 'browse_abandon', label: 'تصفح بدون شراء' },
+    { value: 'custom_event', label: 'حدث مخصص' }
+];
+
+let expandedStepId = null;
+let openDropdownIdx = null;
+
+// ═══════════════════════════════════════════════════
+//  RENDER FUNCTIONS
+// ═══════════════════════════════════════════════════
+
+function renderSteps() {
+    const container = document.getElementById('stepsTimeline');
+    let html = '';
+
+    flowSteps.forEach((step, idx) => {
+        // Step card
+        html += renderStepCard(step, idx);
+
+        // Connector after every step (except last)
+        if (idx < flowSteps.length - 1) {
+            html += renderConnector(idx);
+        }
+    });
+
+    container.innerHTML = html;
+
+    // Re-bind textarea heights
+    container.querySelectorAll('.edit-textarea').forEach(ta => {
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+    });
+}
+
+function renderStepCard(step, idx) {
+    const isExpanded = expandedStepId === step.id;
+    const expandedClass = isExpanded ? 'expanded' : '';
+    let accentColor, iconBg;
+
+    switch (step.type) {
+        case 'trigger':
+            accentColor = 'var(--primary)';
+            iconBg = 'var(--primary-dim)';
+            break;
+        case 'wait':
+            accentColor = 'var(--bg-surface-2)';
+            iconBg = 'var(--bg-surface-2)';
+            break;
+        case 'message':
+            accentColor = step.channel === 'whatsapp' ? 'var(--whatsapp)' :
+                          step.channel === 'sms+email' ? 'var(--warning)' : 'var(--info)';
+            iconBg = step.channel === 'whatsapp' ? 'var(--whatsapp-dim)' :
+                     step.channel === 'sms+email' ? 'var(--warning-dim)' : 'var(--info-dim)';
+            break;
+        case 'condition':
+            accentColor = 'var(--warning)';
+            iconBg = 'var(--warning-dim)';
+            break;
+        default:
+            accentColor = 'var(--border)';
+            iconBg = 'var(--bg-surface-2)';
+    }
+
+    let metaHTML = '';
+    if (step.type === 'message') {
+        // Channel badges
+        if (step.channel === 'whatsapp') {
+            metaHTML += '<span class="step-badge" style="background:var(--whatsapp-dim);color:var(--whatsapp);">\uD83D\uDCF1 واتساب</span>';
+        } else if (step.channel === 'sms+email') {
+            metaHTML += '<span class="step-badge" style="background:var(--warning-dim);color:var(--warning);">SMS</span>';
+            metaHTML += '<span class="step-badge" style="background:var(--info-dim);color:var(--info);">\u0625\u064A\u0645\u064A\u0644</span>';
+        } else if (step.channel === 'email') {
+            metaHTML += '<span class="step-badge" style="background:var(--info-dim);color:var(--info);">\u0625\u064A\u0645\u064A\u0644</span>';
+        } else if (step.channel === 'sms') {
+            metaHTML += '<span class="step-badge" style="background:var(--warning-dim);color:var(--warning);">SMS</span>';
+        }
+        // Stats
+        if (step.stats) {
+            let statParts = [];
+            if (step.stats.sent) statParts.push('\u0623\u064F\u0631\u0633\u0644\u062A ' + toArabicNum(step.stats.sent));
+            if (step.stats.read) statParts.push('\u0642\u064F\u0631\u0623\u062A ' + step.stats.read);
+            if (step.stats.converted) statParts.push('\u062A\u062D\u0648\u064A\u0644 ' + toArabicNum(step.stats.converted));
+            if (statParts.length) {
+                metaHTML += '<span class="step-stats">' + statParts.map(s => '<span>' + s + '</span>').join('') + '</span>';
+            }
+        }
+    }
+
+    let previewHTML = '';
+    if (step.type === 'message' && step.preview) {
+        previewHTML = '<div class="step-preview">"' + escapeHtml(step.preview) + '"</div>';
+    }
+
+    let branchHTML = '';
+    if (step.type === 'condition') {
+        branchHTML = `<div class="step-branches">
+            <span class="branch-pill branch-yes">\u2705 \u0627\u0634\u062A\u0631\u0649 (\u064A\u0648\u0642\u0641 \u0627\u0644\u062A\u0633\u0644\u0633\u0644)</span>
+            <span class="branch-pill branch-no">\u274C \u0644\u0645 \u064A\u0634\u062A\u0631\u064A (\u064A\u0643\u0645\u0644)</span>
+        </div>`;
+    }
+
+    // Edit panel
+    let editPanelHTML = renderEditPanel(step, idx);
+
+    return `
+        <div class="step-card ${expandedClass}" data-step-id="${step.id}" onclick="toggleStep('${step.id}', event)">
+            <div class="step-card-accent" style="background:${accentColor}"></div>
+            <span class="step-number">${toArabicNum(idx + 1)}</span>
+            <div class="step-card-head">
+                <div class="step-icon" style="background:${iconBg}">${step.icon}</div>
+                <div class="step-info">
+                    <div class="step-title">${escapeHtml(step.title)}</div>
+                    ${step.subtitle ? '<div class="step-subtitle">' + escapeHtml(step.subtitle) + '</div>' : ''}
+                    ${previewHTML}
+                    ${branchHTML}
+                </div>
+                <div class="step-meta">
+                    ${metaHTML}
+                </div>
+            </div>
+            ${editPanelHTML}
+        </div>
+    `;
+}
+
+function renderEditPanel(step, idx) {
+    let inner = '';
+
+    switch (step.type) {
+        case 'trigger':
+            inner = `
+                <div class="edit-section">
+                    <label class="edit-label">نوع المحفز</label>
+                    <select class="edit-select" onchange="updateStep('${step.id}','triggerType',this.value)" onclick="event.stopPropagation()">
+                        ${triggerTypes.map(t => `<option value="${t.value}" ${step.triggerType === t.value ? 'selected' : ''}>${t.label}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="edit-section">
+                    <label class="edit-label">شرط التصفية</label>
+                    <div class="trigger-filter-row" onclick="event.stopPropagation()">
+                        <span style="color:var(--text-secondary);font-weight:600;">قيمة السلة</span>
+                        <select class="edit-select" onchange="updateStep('${step.id}','filterOp',this.value)">
+                            <option value="gte" ${step.filterOp === 'gte' ? 'selected' : ''}>أكثر من</option>
+                            <option value="lte" ${step.filterOp === 'lte' ? 'selected' : ''}>أقل من</option>
+                            <option value="eq" ${step.filterOp === 'eq' ? 'selected' : ''}>يساوي</option>
+                        </select>
+                        <input type="number" class="filter-val" value="${step.filterValue || 50}" onchange="updateStep('${step.id}','filterValue',this.value)">
+                        <span style="color:var(--text-muted);">ر.س</span>
+                    </div>
+                </div>
+                <div class="edit-actions">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();saveStep('${step.id}')">حفظ</button>
+                    <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deleteStep('${step.id}');" style="color:var(--danger);">حذف الخطوة</button>
+                </div>
+            `;
+            break;
+
+        case 'wait':
+            inner = `
+                <div class="edit-section">
+                    <label class="edit-label">مدة الانتظار</label>
+                    <select class="edit-select" onchange="updateStep('${step.id}','waitValue',this.value);updateWaitTitle('${step.id}',this.value)" onclick="event.stopPropagation()">
+                        ${waitOptions.map(w => `<option value="${w.value}" ${step.waitValue === w.value ? 'selected' : ''}>${w.label}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="edit-actions">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();saveStep('${step.id}')">حفظ</button>
+                    <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deleteStep('${step.id}');" style="color:var(--danger);">حذف الخطوة</button>
+                </div>
+            `;
+            break;
+
+        case 'message':
+            inner = `
+                <div class="edit-section">
+                    <label class="edit-label">القناة</label>
+                    <div class="channel-selector" onclick="event.stopPropagation()">
+                        <button class="channel-option ${step.channel === 'whatsapp' ? 'selected' : ''}" onclick="setChannel('${step.id}','whatsapp',this)">\uD83D\uDCF1 واتساب</button>
+                        <button class="channel-option ${step.channel === 'sms' || step.channel === 'sms+email' ? 'selected-sms' : ''}" onclick="setChannel('${step.id}','sms',this)">SMS</button>
+                        <button class="channel-option ${step.channel === 'email' || step.channel === 'sms+email' ? 'selected-email' : ''}" onclick="setChannel('${step.id}','email',this)">\u0625\u064A\u0645\u064A\u0644</button>
+                    </div>
+                </div>
+                <div class="edit-section">
+                    <label class="edit-label">نص الرسالة</label>
+                    <textarea class="edit-textarea" id="msg-${step.id}" onclick="event.stopPropagation()" oninput="updateStep('${step.id}','messageText',this.value)">${escapeHtml(step.messageText || '')}</textarea>
+                    <div class="var-buttons" onclick="event.stopPropagation()">
+                        <button class="var-btn" onclick="insertVar('${step.id}','{الاسم}')">{الاسم}</button>
+                        <button class="var-btn" onclick="insertVar('${step.id}','{المنتج}')">{المنتج}</button>
+                        <button class="var-btn" onclick="insertVar('${step.id}','{رابط_السلة}')">{رابط_السلة}</button>
+                        <button class="var-btn" onclick="insertVar('${step.id}','{كود_الخصم}')">{كود_الخصم}</button>
+                        <button class="var-btn" onclick="insertVar('${step.id}','{قيمة_السلة}')">{قيمة_السلة}</button>
+                    </div>
+                </div>
+                <div class="edit-actions">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();saveStep('${step.id}')">حفظ</button>
+                    <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deleteStep('${step.id}');" style="color:var(--danger);">حذف الخطوة</button>
+                </div>
+            `;
+            break;
+
+        case 'condition':
+            inner = `
+                <div class="edit-section">
+                    <label class="edit-label">نوع الشرط</label>
+                    <select class="edit-select" onchange="updateStep('${step.id}','conditionType',this.value)" onclick="event.stopPropagation()">
+                        ${conditionTypes.map(c => `<option value="${c.value}" ${step.conditionType === c.value ? 'selected' : ''}>${c.label}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="edit-section">
+                    <label class="edit-label">مدة الانتظار للتحقق</label>
+                    <select class="edit-select" onchange="updateStep('${step.id}','conditionWindow',this.value)" onclick="event.stopPropagation()">
+                        ${waitOptions.filter(w => w.value !== 'custom').map(w => `<option value="${w.value}" ${step.conditionWindow === w.value ? 'selected' : ''}>${w.label}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="edit-section">
+                    <label class="edit-label">المسارات</label>
+                    <div class="condition-branches-edit" onclick="event.stopPropagation()">
+                        <div class="condition-branch-row yes">\u2705 تحقق الشرط \u2192 يوقف التسلسل</div>
+                        <div class="condition-branch-row no">\u274C لم يتحقق \u2192 يكمل للخطوة التالية</div>
+                    </div>
+                </div>
+                <div class="edit-actions">
+                    <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();saveStep('${step.id}')">حفظ</button>
+                    <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();deleteStep('${step.id}');" style="color:var(--danger);">حذف الخطوة</button>
+                </div>
+            `;
+            break;
+    }
+
+    return `<div class="step-edit-panel">${inner}</div>`;
+}
+
+function renderConnector(afterIdx) {
+    return `
+        <div class="step-connector" style="position:relative;">
+            <div class="connector-line"></div>
+            <button class="connector-add" onclick="event.stopPropagation();showAddStepMenu(${afterIdx}, event)" title="إضافة خطوة">+</button>
+            <div class="connector-line"></div>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════════
+//  INTERACTION HANDLERS
+// ═══════════════════════════════════════════════════
+
+function toggleStep(stepId, event) {
+    // Avoid toggling if clicking inside edit panel interactive elements
+    if (event && event.target.closest('.step-edit-panel')) return;
+
+    if (expandedStepId === stepId) {
+        expandedStepId = null;
+    } else {
+        expandedStepId = stepId;
+    }
+    renderSteps();
+}
+
+function updateStep(stepId, key, value) {
+    const step = flowSteps.find(s => s.id === stepId);
+    if (step) step[key] = value;
+}
+
+function updateWaitTitle(stepId, value) {
+    const step = flowSteps.find(s => s.id === stepId);
+    if (!step) return;
+    const opt = waitOptions.find(w => w.value === value);
+    if (opt) {
+        step.title = '\u0627\u0646\u062A\u0638\u0631 ' + opt.label;
+    }
+}
+
+function setChannel(stepId, channel, btn) {
+    const step = flowSteps.find(s => s.id === stepId);
+    if (!step) return;
+    step.channel = channel;
+    renderSteps();
+    // Re-expand
+    expandedStepId = stepId;
+    renderSteps();
+}
+
+function insertVar(stepId, variable) {
+    const ta = document.getElementById('msg-' + stepId);
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const text = ta.value;
+    ta.value = text.substring(0, start) + variable + text.substring(end);
+    ta.selectionStart = ta.selectionEnd = start + variable.length;
+    ta.focus();
+    updateStep(stepId, 'messageText', ta.value);
+}
+
+function saveStep(stepId) {
+    toast('\u062A\u0645 \u062D\u0641\u0638 \u0627\u0644\u062E\u0637\u0648\u0629');
+    expandedStepId = null;
+    renderSteps();
+}
+
+function deleteStep(stepId) {
+    const idx = flowSteps.findIndex(s => s.id === stepId);
+    if (idx < 0) return;
+    if (flowSteps[idx].type === 'trigger') {
+        toast('\u0644\u0627 \u064A\u0645\u0643\u0646 \u062D\u0630\u0641 \u0627\u0644\u0645\u062D\u0641\u0632');
+        return;
+    }
+    flowSteps.splice(idx, 1);
+    expandedStepId = null;
+    renderSteps();
+    toast('\u062A\u0645 \u062D\u0630\u0641 \u0627\u0644\u062E\u0637\u0648\u0629');
+}
+
+// ═══════════════════════════════════════════════════
+//  ADD STEP MENU
+// ═══════════════════════════════════════════════════
+
+let addStepAfterIdx = null;
+
+function showAddStepMenu(afterIdx, event) {
+    event.stopPropagation();
+    // Remove any existing dropdown
+    closeAddStepMenu();
+
+    addStepAfterIdx = afterIdx;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'add-step-dropdown open';
+    dropdown.id = 'addStepDropdown';
+    dropdown.innerHTML = `
+        <button class="add-step-option" onclick="addStep('message')">
+            <span class="opt-icon" style="background:var(--whatsapp-dim)">\uD83D\uDCAC</span>
+            رسالة
+        </button>
+        <button class="add-step-option" onclick="addStep('wait')">
+            <span class="opt-icon" style="background:var(--bg-surface-2)">\u23F1\uFE0F</span>
+            انتظار
+        </button>
+        <button class="add-step-option" onclick="addStep('condition')">
+            <span class="opt-icon" style="background:var(--warning-dim)">\uD83D\uDD00</span>
+            شرط
+        </button>
+    `;
+
+    // Position the dropdown near the click
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = (event.clientY + 8) + 'px';
+    dropdown.style.left = (event.clientX - 100) + 'px';
+    dropdown.style.transform = 'none';
+    document.body.appendChild(dropdown);
+
+    // Close on outside click (delayed to not immediately close)
+    setTimeout(() => {
+        document.addEventListener('click', closeAddStepMenu, { once: true });
+    }, 10);
+}
+
+function closeAddStepMenu() {
+    const existing = document.getElementById('addStepDropdown');
+    if (existing) existing.remove();
+}
+
+function addStep(type) {
+    closeAddStepMenu();
+
+    const newId = 's' + Date.now();
+    let newStep;
+
+    switch (type) {
+        case 'message':
+            newStep = {
+                id: newId,
+                type: 'message',
+                title: '\u0631\u0633\u0627\u0644\u0629 \u062C\u062F\u064A\u062F\u0629',
+                icon: '\uD83D\uDCAC',
+                channel: 'whatsapp',
+                messageText: '',
+                preview: '',
+                stats: null
+            };
+            break;
+        case 'wait':
+            newStep = {
+                id: newId,
+                type: 'wait',
+                title: '\u0627\u0646\u062A\u0638\u0631 \u0633\u0627\u0639\u0629 \u0648\u0627\u062D\u062F\u0629',
+                icon: '\u23F1\uFE0F',
+                waitValue: '1h'
+            };
+            break;
+        case 'condition':
+            newStep = {
+                id: newId,
+                type: 'condition',
+                title: '\u0634\u0631\u0637 \u062C\u062F\u064A\u062F',
+                icon: '\uD83D\uDD00',
+                conditionType: 'no_purchase',
+                conditionWindow: '24h',
+                branchYes: '\u062A\u062D\u0642\u0642',
+                branchNo: '\u0644\u0645 \u064A\u062A\u062D\u0642\u0642'
+            };
+            break;
+    }
+
+    if (addStepAfterIdx !== null && addStepAfterIdx >= 0) {
+        flowSteps.splice(addStepAfterIdx + 1, 0, newStep);
+    } else {
+        flowSteps.push(newStep);
+    }
+
+    expandedStepId = newId;
+    renderSteps();
+    toast('\u062A\u0645\u062A \u0625\u0636\u0627\u0641\u0629 \u062E\u0637\u0648\u0629 \u062C\u062F\u064A\u062F\u0629');
+
+    // Scroll to new step
+    setTimeout(() => {
+        const el = document.querySelector(`[data-step-id="${newId}"]`);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+}
+
+// ═══════════════════════════════════════════════════
+//  FLOW-LEVEL ACTIONS
+// ═══════════════════════════════════════════════════
+
+function toggleFlowStatus(isActive) {
+    const badge = document.getElementById('flowStatusBadge');
+    const text = document.getElementById('flowStatusText');
+    if (isActive) {
+        badge.className = 'flow-status-badge active';
+        text.textContent = '\u0646\u0634\u0637';
+        toast('\u0627\u0644\u062A\u0633\u0644\u0633\u0644 \u0646\u0634\u0637 \u0627\u0644\u0622\u0646');
+    } else {
+        badge.className = 'flow-status-badge draft';
+        text.textContent = '\u0645\u0633\u0648\u062F\u0629';
+        toast('\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u0627\u0644\u062A\u0633\u0644\u0633\u0644');
+    }
+}
+
+function saveFlow() {
+    const name = document.getElementById('flowName').value;
+    toast('\u062A\u0645 \u062D\u0641\u0638 "' + name + '"');
+}
+
+// ═══════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════
+
+function toArabicNum(n) {
+    const arabicDigits = ['\u0660','\u0661','\u0662','\u0663','\u0664','\u0665','\u0666','\u0667','\u0668','\u0669'];
+    return String(n).replace(/\d/g, d => arabicDigits[d]).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+// ═══ INIT ═══
+renderSteps();
+</script>
+</body>
+</html>

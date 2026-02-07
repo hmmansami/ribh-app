@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH — صندوق الوارد</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+    <style>
+        /* ── Override page-content for full-height inbox ── */
+        .page-content {
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column;
+            overflow: hidden;
+            max-width: 100% !important;
+        }
+
+        /* ── Inbox Layout ── */
+        .inbox-container {
+            display: flex;
+            flex: 1;
+            height: calc(100dvh - var(--topbar-height));
+            overflow: hidden;
+        }
+
+        /* ── Conversation List (right side in RTL) ── */
+        .conv-list {
+            width: 360px;
+            min-width: 360px;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-raised);
+        }
+
+        .conv-list-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .conv-list-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .conv-count {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: var(--primary-dim);
+            color: var(--primary);
+        }
+
+        .conv-search {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .conv-search input {
+            width: 100%;
+            padding: 9px 38px 9px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 12.5px;
+            outline: none;
+            transition: border-color 0.15s var(--ease);
+            direction: rtl;
+        }
+
+        .conv-search input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .conv-search input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .conv-search svg {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 15px;
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        /* ── Filter Tabs ── */
+        .conv-filters {
+            display: flex;
+            gap: 4px;
+            padding: 4px;
+            background: var(--bg-surface);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+
+        .conv-filter {
+            flex: 1;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s var(--ease);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .conv-filter:hover {
+            color: var(--text);
+        }
+
+        .conv-filter.active {
+            background: var(--bg-surface-2);
+            color: var(--text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ── Conversation Items ── */
+        .conv-items {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .conv-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.1s var(--ease);
+            position: relative;
+        }
+
+        .conv-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .conv-item.active {
+            background: var(--bg-active);
+            border-right: 3px solid var(--primary);
+        }
+
+        .conv-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .conv-avatar.online::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 1px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--whatsapp);
+            border: 2px solid var(--bg-raised);
+        }
+
+        .conv-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conv-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .conv-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .conv-name .badge {
+            font-size: 9px;
+            padding: 1px 6px;
+        }
+
+        .conv-time {
+            font-size: 10px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .conv-preview {
+            font-size: 12px;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .conv-preview-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .conv-unread-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .conv-unread-count {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 6px;
+            border-radius: 10px;
+            background: var(--primary);
+            color: #000;
+            flex-shrink: 0;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        /* ── Chat Panel ── */
+        .chat-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg);
+            min-width: 0;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-raised);
+        }
+
+        .chat-header-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .chat-header-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header-phone {
+            font-size: 11px;
+            color: var(--text-muted);
+            direction: ltr;
+            display: inline-block;
+            margin-top: 1px;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-header-btn {
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .chat-header-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .chat-header-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Chat Messages Area */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--bg);
+            /* subtle WhatsApp-like pattern */
+            background-image: radial-gradient(circle at 20% 50%, rgba(16,185,129,0.02) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 20%, rgba(99,102,241,0.02) 0%, transparent 50%);
+        }
+
+        .chat-date-divider {
+            text-align: center;
+            margin: 12px 0;
+        }
+
+        .chat-date-divider span {
+            font-size: 10.5px;
+            color: var(--text-dim);
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Message Bubbles */
+        .msg-row {
+            display: flex;
+            margin-bottom: 2px;
+        }
+
+        .msg-row.sent {
+            justify-content: flex-start; /* RTL: sent = left */
+        }
+
+        .msg-row.received {
+            justify-content: flex-end; /* RTL: received = right */
+        }
+
+        .msg-bubble {
+            max-width: 65%;
+            padding: 9px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.65;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .msg-row.sent .msg-bubble {
+            background: rgba(37, 211, 102, 0.12);
+            border: 1px solid rgba(37, 211, 102, 0.15);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg-row.received .msg-bubble {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-meta {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 4px;
+            justify-content: flex-end;
+        }
+
+        .msg-time {
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        .msg-status {
+            font-size: 12px;
+            line-height: 1;
+        }
+
+        .msg-status.sent-check {
+            color: var(--text-dim);
+        }
+
+        .msg-status.delivered {
+            color: var(--text-dim);
+        }
+
+        .msg-status.read {
+            color: #53BDEB;
+        }
+
+        .msg-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+        }
+
+        .msg-type-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Chat Input Area */
+        .chat-input-area {
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-raised);
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .chat-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 11px 14px;
+            padding-left: 44px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            direction: rtl;
+            min-height: 42px;
+            max-height: 120px;
+            transition: border-color 0.15s var(--ease);
+            line-height: 1.5;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .chat-emoji-btn {
+            position: absolute;
+            left: 12px;
+            bottom: 10px;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+            transition: color 0.15s;
+            display: flex;
+            align-items: center;
+        }
+
+        .chat-emoji-btn:hover {
+            color: var(--text);
+        }
+
+        .chat-emoji-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .chat-action-btns {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+        }
+
+        .chat-action-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+            position: relative;
+        }
+
+        .chat-action-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .chat-action-btn.send-btn {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #000;
+        }
+
+        .chat-action-btn.send-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .chat-action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ── Templates Dropdown ── */
+        .templates-dropdown {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            width: 340px;
+            background: var(--bg-raised);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: none;
+            animation: fadeUp 0.2s var(--ease);
+        }
+
+        .templates-dropdown.open {
+            display: block;
+        }
+
+        .templates-dropdown-header {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .templates-dropdown-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px;
+            display: flex;
+        }
+
+        .templates-dropdown-close svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .template-item {
+            padding: 10px 14px;
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: background 0.1s var(--ease);
+            border-bottom: 1px solid var(--border);
+            line-height: 1.6;
+        }
+
+        .template-item:last-child {
+            border-bottom: none;
+        }
+
+        .template-item:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Customer Info Sidebar ── */
+        .customer-sidebar {
+            width: 0;
+            overflow: hidden;
+            border-right: none;
+            background: var(--bg-raised);
+            transition: width 0.25s var(--ease), min-width 0.25s var(--ease), border-width 0.25s var(--ease);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .customer-sidebar.open {
+            width: 280px;
+            min-width: 280px;
+            border-right: 1px solid var(--border);
+        }
+
+        .customer-sidebar-inner {
+            width: 280px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .cs-header {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cs-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--bg-surface-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            margin: 0 auto 10px;
+        }
+
+        .cs-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .cs-phone {
+            font-size: 12px;
+            color: var(--text-muted);
+            direction: ltr;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .cs-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .cs-stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .cs-stat-label {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .cs-stat-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .cs-stat-value.green {
+            color: var(--primary);
+        }
+
+        .cs-stat-value.red {
+            color: var(--danger);
+        }
+
+        .cs-stat-value.blue {
+            color: var(--info);
+        }
+
+        .cs-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .cs-action-btn {
+            width: 100%;
+            padding: 9px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s var(--ease);
+            border: 1px solid var(--border);
+            background: var(--bg-surface);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .cs-action-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+            border-color: var(--border-strong);
+        }
+
+        .cs-action-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* ── Empty Chat State ── */
+        .chat-empty {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-empty-inner {
+            text-align: center;
+        }
+
+        .chat-empty-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: var(--radius-xl);
+            background: var(--whatsapp-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .chat-empty-icon svg {
+            width: 32px;
+            height: 32px;
+            color: var(--whatsapp);
+        }
+
+        .chat-empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .chat-empty-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ── Needs Reply Indicator ── */
+        .needs-reply-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: var(--warning-dim);
+            color: var(--warning);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,.5);
+            animation: fadeUp 0.3s var(--ease);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .customer-sidebar.open {
+                width: 240px;
+                min-width: 240px;
+            }
+            .customer-sidebar-inner {
+                width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .inbox-container {
+                flex-direction: column;
+                height: auto;
+            }
+            .conv-list {
+                width: 100%;
+                min-width: 100%;
+                border-left: none;
+                border-bottom: 1px solid var(--border);
+                max-height: 40dvh;
+            }
+            .chat-panel {
+                height: 60dvh;
+            }
+            .customer-sidebar {
+                display: none;
+            }
+            .msg-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="app"><div id="page-body">
+
+<!-- ═══ INBOX CONTAINER ═══ -->
+<div class="inbox-container">
+
+    <!-- ═══ CONVERSATION LIST (right side in RTL) ═══ -->
+    <div class="conv-list">
+        <div class="conv-list-header">
+            <div class="conv-list-title">
+                <span>المحادثات</span>
+                <span class="conv-count" id="convCount">٦</span>
+            </div>
+            <div class="conv-search">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                <input type="text" placeholder="ابحث عن محادثة..." id="convSearch" oninput="filterConversations()">
+            </div>
+            <div class="conv-filters">
+                <button class="conv-filter active" data-filter="all" onclick="setFilter('all')">الكل</button>
+                <button class="conv-filter" data-filter="unread" onclick="setFilter('unread')">غير مقروءة</button>
+                <button class="conv-filter" data-filter="needs_reply" onclick="setFilter('needs_reply')">بحاجة رد</button>
+            </div>
+        </div>
+        <div class="conv-items" id="convItems">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+    <!-- ═══ CHAT PANEL ═══ -->
+    <div class="chat-panel" id="chatPanel">
+        <!-- Empty state shown initially -->
+        <div class="chat-empty" id="chatEmpty">
+            <div class="chat-empty-inner">
+                <div class="chat-empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div class="chat-empty-title">صندوق الوارد</div>
+                <div class="chat-empty-desc">اختر محادثة للبدء — أو ابحث عن عميل</div>
+            </div>
+        </div>
+
+        <!-- Chat view (hidden until conversation selected) -->
+        <div id="chatView" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+            <div class="chat-header" id="chatHeader">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Rendered by JS -->
+            </div>
+            <div class="chat-input-area">
+                <div class="chat-action-btns">
+                    <div style="position:relative;">
+                        <button class="chat-action-btn" id="templateBtn" title="قوالب الرد السريع" onclick="toggleTemplates()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+                        </button>
+                        <div class="templates-dropdown" id="templatesDropdown">
+                            <div class="templates-dropdown-header">
+                                <span>قوالب الرد السريع</span>
+                                <button class="templates-dropdown-close" onclick="toggleTemplates()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                            <div class="template-item" onclick="useTemplate(this)">شكرا لتواصلك! كيف أقدر أساعدك؟</div>
+                            <div class="template-item" onclick="useTemplate(this)">طلبك #{رقم} في الطريق 🚚</div>
+                            <div class="template-item" onclick="useTemplate(this)">عندنا عرض خاص لك — خصم {نسبة}%</div>
+                            <div class="template-item" onclick="useTemplate(this)">تم تحديث طلبك ✅</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-wrapper">
+                    <textarea class="chat-input" id="chatInput" placeholder="اكتب رسالة..." rows="1" onkeydown="handleInputKeydown(event)" oninput="autoResizeInput()"></textarea>
+                    <button class="chat-emoji-btn" title="إيموجي">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                    </button>
+                </div>
+                <div class="chat-action-btns">
+                    <button class="chat-action-btn send-btn" title="إرسال" onclick="sendMessage()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ CUSTOMER SIDEBAR (collapsible) ═══ -->
+    <div class="customer-sidebar" id="customerSidebar">
+        <div class="customer-sidebar-inner" id="customerSidebarInner">
+            <!-- Rendered by JS -->
+        </div>
+    </div>
+
+</div>
+
+</div></div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="/platform/shared/shell.js"></script>
+<script>
+RibhShell.init('inbox');
+
+// ═══════════════════════════════════════════════
+// DEMO DATA
+// ═══════════════════════════════════════════════
+
+const conversations = [
+    {
+        id: 'conv1',
+        name: 'أحمد محمد',
+        phone: '+966501234567',
+        segment: 'champion',
+        avatar: 'أح',
+        online: true,
+        unread: 0,
+        needsReply: false,
+        lastTime: 'منذ ٥ د',
+        lastPreview: 'تمام، طلبت من السلة. شكرا على العرض!',
+        clv: '٨,٩٠٠',
+        churnRisk: '١٢%',
+        churnLevel: 'green',
+        orders: '١٢',
+        lastOrder: 'منذ ٣ أيام',
+        messages: [
+            { type: 'date', text: 'اليوم' },
+            { dir: 'sent', text: 'مرحبا أحمد! لاحظنا إن عندك سلة متروكة فيها منتجات رهيبة 🛒', time: '١٠:٣٠ ص', status: 'read', msgType: 'cart_recovery', msgTypeLabel: 'استرداد سلة' },
+            { dir: 'sent', text: 'عندنا عرض خاص لك — خصم ١٥% على السلة كلها! الكود: AHMED15', time: '١٠:٣٠ ص', status: 'read', msgType: 'offer', msgTypeLabel: 'عرض خاص' },
+            { dir: 'received', text: 'أهلا! وش المنتجات اللي بالسلة؟', time: '١٠:٤٥ ص' },
+            { dir: 'sent', text: 'عندك:\n• عطر ماركة فاخرة — ٣٨٠ ر.س\n• كريم عناية — ١٢٠ ر.س\n\nالمجموع ٥٠٠ ر.س وبالخصم يصير ٤٢٥ ر.س فقط!', time: '١٠:٤٧ ص', status: 'read' },
+            { dir: 'received', text: 'تمام، طلبت من السلة. شكرا على العرض!', time: '١١:٠٢ ص' },
+            { dir: 'sent', text: 'الله يسعدك! طلبك #٤٥٢١ قيد التجهيز 🎉', time: '١١:٠٥ ص', status: 'read' },
+        ]
+    },
+    {
+        id: 'conv2',
+        name: 'سارة العلي',
+        phone: '+966551234567',
+        segment: 'loyal',
+        avatar: 'سا',
+        online: false,
+        unread: 0,
+        needsReply: false,
+        lastTime: 'منذ ٣٠ د',
+        lastPreview: 'يعطيك العافية، العروض عندكم دايم حلوة 😍',
+        clv: '٦,٤٠٠',
+        churnRisk: '١٨%',
+        churnLevel: 'green',
+        orders: '٨',
+        lastOrder: 'منذ ٦ أيام',
+        messages: [
+            { type: 'date', text: 'اليوم' },
+            { dir: 'sent', text: 'أهلا سارة! 🌟 كعميلة مميزة، جهزنا لك عرض حصري — خصم ٢٠% على طلبك الجاي', time: '٩:١٥ ص', status: 'read', msgType: 'exclusive_offer', msgTypeLabel: 'عرض حصري' },
+            { dir: 'sent', text: 'الكود: SARA20\nصالح لمدة ٤٨ ساعة ⏰', time: '٩:١٥ ص', status: 'read' },
+            { dir: 'received', text: 'واو! شكرا كثير 🥰', time: '٩:٤٠ ص' },
+            { dir: 'received', text: 'يعطيك العافية، العروض عندكم دايم حلوة 😍', time: '٩:٤١ ص' },
+            { dir: 'sent', text: 'تسلمين يا سارة! دايم نهتم بعملائنا المميزين ❤️', time: '٩:٤٥ ص', status: 'read' },
+        ]
+    },
+    {
+        id: 'conv3',
+        name: 'خالد العتيبي',
+        phone: '+966561234567',
+        segment: 'at_risk',
+        avatar: 'خا',
+        online: true,
+        unread: 2,
+        needsReply: true,
+        lastTime: 'منذ ١٠ د',
+        lastPreview: 'طيب وش الحل؟ أبي أرجع المنتج',
+        clv: '١٢,٥٠٠',
+        churnRisk: '٦٨%',
+        churnLevel: 'red',
+        orders: '١٥',
+        lastOrder: 'منذ ٢ أيام',
+        messages: [
+            { type: 'date', text: 'أمس' },
+            { dir: 'sent', text: 'مرحبا خالد! وش رأيك بآخر طلب؟ نتمنى يكون عجبك 😊', time: '٤:٠٠ م', status: 'read', msgType: 'post_purchase', msgTypeLabel: 'ما بعد الشراء' },
+            { type: 'date', text: 'اليوم' },
+            { dir: 'received', text: 'المنتج ما كان زي ما توقعت بصراحة', time: '١١:٢٠ ص' },
+            { dir: 'sent', text: 'نأسف لذلك خالد! ممكن تعطينا تفاصيل أكثر عشان نساعدك؟', time: '١١:٢٢ ص', status: 'read' },
+            { dir: 'received', text: 'اللون مختلف عن الصورة واللي وصلني أصغر من المتوقع', time: '١١:٣٥ ص' },
+            { dir: 'received', text: 'طيب وش الحل؟ أبي أرجع المنتج', time: '١١:٣٦ ص' },
+        ]
+    },
+    {
+        id: 'conv4',
+        name: 'نورة السعيد',
+        phone: '+966531234567',
+        segment: 'recent',
+        avatar: 'نو',
+        online: false,
+        unread: 0,
+        needsReply: false,
+        lastTime: 'منذ ١ س',
+        lastPreview: 'شكرا! وصلني الطلب بسرعة ماشاء الله',
+        clv: '٢,١٠٠',
+        churnRisk: '٤٥%',
+        churnLevel: 'blue',
+        orders: '٣',
+        lastOrder: 'منذ ٢٣ يوم',
+        messages: [
+            { type: 'date', text: 'أمس' },
+            { dir: 'sent', text: 'أهلا نورة! مرحبا فيك في عائلة متجرنا 🎉\nكأول عميلة، عندك خصم ١٠% على طلبك الجاي!\nالكود: WELCOME10', time: '٢:٠٠ م', status: 'read', msgType: 'welcome', msgTypeLabel: 'ترحيب' },
+            { dir: 'received', text: 'أهلا! شكرا على الترحيب 🥰', time: '٢:٣٠ م' },
+            { type: 'date', text: 'اليوم' },
+            { dir: 'sent', text: 'طلبك #٣٧٨٩ تم شحنه! رقم التتبع: SA789456123 📦', time: '٨:٣٠ ص', status: 'delivered', msgType: 'shipping', msgTypeLabel: 'شحن' },
+            { dir: 'received', text: 'شكرا! وصلني الطلب بسرعة ماشاء الله', time: '١:٠٠ م' },
+            { dir: 'sent', text: 'يسعدنا! نتمنى يعجبك المنتج. لا تنسين تقيمينا ⭐⭐⭐⭐⭐', time: '١:٠٥ م', status: 'read' },
+        ]
+    },
+    {
+        id: 'conv5',
+        name: 'فاطمة الزهراني',
+        phone: '+966571234567',
+        segment: 'dormant',
+        avatar: 'فا',
+        online: false,
+        unread: 0,
+        needsReply: false,
+        lastTime: 'منذ ٣ أيام',
+        lastPreview: 'وشتقنا لك! عندنا عرض خاص للرجعة — خصم ٢٥%',
+        clv: '٨٠٠',
+        churnRisk: '٧٢%',
+        churnLevel: 'red',
+        orders: '٢',
+        lastOrder: 'منذ ٤٨ يوم',
+        messages: [
+            { type: 'date', text: 'منذ ٣ أيام' },
+            { dir: 'sent', text: 'أهلا فاطمة! وشتقنا لك 💚\nما شفناك من فترة..', time: '١١:٠٠ ص', status: 'delivered', msgType: 'winback', msgTypeLabel: 'استعادة' },
+            { dir: 'sent', text: 'وشتقنا لك! عندنا عرض خاص للرجعة — خصم ٢٥%\nالكود: COMEBACK25\nصالح ٧ أيام ⏰', time: '١١:٠٠ ص', status: 'delivered' },
+        ]
+    },
+    {
+        id: 'conv6',
+        name: 'ياسر الدوسري',
+        phone: '+966521234567',
+        segment: 'champion',
+        avatar: 'يا',
+        online: true,
+        unread: 1,
+        needsReply: true,
+        lastTime: 'منذ ١٥ د',
+        lastPreview: 'ممتاز جدا! وش جديدكم هالأسبوع؟',
+        clv: '٧,٨٠٠',
+        churnRisk: '١٤%',
+        churnLevel: 'green',
+        orders: '١٠',
+        lastOrder: 'منذ ٤ أيام',
+        messages: [
+            { type: 'date', text: 'أمس' },
+            { dir: 'sent', text: 'ياسر! تقييمك يهمنا كثير ⭐\nكيف كانت تجربتك مع آخر طلب؟', time: '٥:٠٠ م', status: 'read', msgType: 'review', msgTypeLabel: 'طلب تقييم' },
+            { dir: 'received', text: 'بصراحة ممتاز! التغليف كان فخم والمنتج أصلي 💯', time: '٥:٣٠ م' },
+            { dir: 'sent', text: 'يسعدنا جدا! تقدر تعطينا تقييم من هنا:\nhttps://store.example.com/review/4521\nوبنرسلك كود خصم ١٠% كشكر 🎁', time: '٥:٣٢ م', status: 'read' },
+            { dir: 'received', text: 'حطيت تقييم ٥ نجوم ✅', time: '٥:٤٥ م' },
+            { dir: 'sent', text: 'تسلم يا بطل! هذا كود الخصم: YASSER10 🎉', time: '٥:٤٧ م', status: 'read' },
+            { type: 'date', text: 'اليوم' },
+            { dir: 'received', text: 'ممتاز جدا! وش جديدكم هالأسبوع؟', time: '٢:٤٥ م' },
+        ]
+    }
+];
+
+// Segment helpers
+const segmentNames = {
+    champion: 'بطل',
+    loyal: 'مخلص',
+    potential: 'واعد',
+    recent: 'جديد',
+    at_risk: 'معرض للخسارة',
+    dormant: 'خامل'
+};
+
+const segmentBadgeClass = {
+    champion: 'badge-success',
+    loyal: 'badge-secondary',
+    potential: 'badge-info',
+    recent: 'badge-warning',
+    at_risk: 'badge-danger',
+    dormant: 'badge-neutral'
+};
+
+const msgTypeIcons = {
+    cart_recovery: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>',
+    offer: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>',
+    exclusive_offer: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    welcome: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+    post_purchase: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+    shipping: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>',
+    winback: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>',
+    review: '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+};
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+
+let activeConvId = null;
+let activeFilter = 'all';
+let customerSidebarOpen = false;
+
+// ═══════════════════════════════════════════════
+// RENDER CONVERSATIONS
+// ═══════════════════════════════════════════════
+
+function renderConversations() {
+    const container = document.getElementById('convItems');
+    const searchTerm = document.getElementById('convSearch').value.trim();
+
+    let filtered = conversations;
+
+    // Apply filter
+    if (activeFilter === 'unread') {
+        filtered = filtered.filter(c => c.unread > 0);
+    } else if (activeFilter === 'needs_reply') {
+        filtered = filtered.filter(c => c.needsReply);
+    }
+
+    // Apply search
+    if (searchTerm) {
+        filtered = filtered.filter(c =>
+            c.name.includes(searchTerm) ||
+            c.phone.includes(searchTerm) ||
+            c.lastPreview.includes(searchTerm)
+        );
+    }
+
+    // Update count
+    document.getElementById('convCount').textContent = toArabicNum(filtered.length);
+
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px 20px;">
+                <div style="font-size:13px; color:var(--text-muted);">لا توجد محادثات</div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map(c => {
+        const isActive = c.id === activeConvId;
+        const segName = segmentNames[c.segment] || c.segment;
+        const segClass = segmentBadgeClass[c.segment] || 'badge-neutral';
+
+        let rightIndicator = '';
+        if (c.unread > 0) {
+            rightIndicator = `<span class="conv-unread-count">${toArabicNum(c.unread)}</span>`;
+        }
+        if (c.needsReply) {
+            rightIndicator += ` <span class="needs-reply-badge">بحاجة رد</span>`;
+        }
+
+        return `
+            <div class="conv-item ${isActive ? 'active' : ''}" onclick="selectConversation('${c.id}')">
+                <div class="conv-avatar ${c.online ? 'online' : ''}">${c.avatar}</div>
+                <div class="conv-body">
+                    <div class="conv-top-row">
+                        <div class="conv-name">
+                            <span>${c.name}</span>
+                            <span class="badge ${segClass}">${segName}</span>
+                        </div>
+                        <span class="conv-time">${c.lastTime}</span>
+                    </div>
+                    <div class="conv-preview">
+                        <span class="conv-preview-text">${c.lastPreview}</span>
+                        ${rightIndicator}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// SELECT CONVERSATION
+// ═══════════════════════════════════════════════
+
+function selectConversation(convId) {
+    activeConvId = convId;
+    const conv = conversations.find(c => c.id === convId);
+    if (!conv) return;
+
+    // Mark as read
+    conv.unread = 0;
+
+    // Show chat view
+    document.getElementById('chatEmpty').style.display = 'none';
+    const chatView = document.getElementById('chatView');
+    chatView.style.display = 'flex';
+
+    // Render header
+    renderChatHeader(conv);
+
+    // Render messages
+    renderMessages(conv);
+
+    // Render customer sidebar content
+    renderCustomerSidebar(conv);
+
+    // Re-render conversations to update active state
+    renderConversations();
+
+    // Scroll to bottom
+    const msgContainer = document.getElementById('chatMessages');
+    setTimeout(() => {
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }, 50);
+
+    // Focus input
+    document.getElementById('chatInput').focus();
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CHAT HEADER
+// ═══════════════════════════════════════════════
+
+function renderChatHeader(conv) {
+    const segName = segmentNames[conv.segment] || conv.segment;
+    const segClass = segmentBadgeClass[conv.segment] || 'badge-neutral';
+
+    document.getElementById('chatHeader').innerHTML = `
+        <div class="chat-header-info">
+            <div class="chat-header-avatar">${conv.avatar}</div>
+            <div>
+                <div class="chat-header-name">
+                    ${conv.name}
+                    <span class="badge ${segClass}">${segName}</span>
+                </div>
+                <div class="chat-header-phone">${conv.phone}</div>
+            </div>
+        </div>
+        <div class="chat-header-actions">
+            <button class="chat-header-btn" onclick="toggleCustomerSidebar()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <span>ملف العميل</span>
+            </button>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER MESSAGES
+// ═══════════════════════════════════════════════
+
+function renderMessages(conv) {
+    const container = document.getElementById('chatMessages');
+
+    container.innerHTML = conv.messages.map(msg => {
+        if (msg.type === 'date') {
+            return `<div class="chat-date-divider"><span>${msg.text}</span></div>`;
+        }
+
+        const isSent = msg.dir === 'sent';
+        let statusIcon = '';
+        if (isSent && msg.status) {
+            if (msg.status === 'read') {
+                statusIcon = '<span class="msg-status read">✓✓</span>';
+            } else if (msg.status === 'delivered') {
+                statusIcon = '<span class="msg-status delivered">✓✓</span>';
+            } else {
+                statusIcon = '<span class="msg-status sent-check">✓</span>';
+            }
+        }
+
+        let typeLabel = '';
+        if (isSent && msg.msgType && msgTypeIcons[msg.msgType]) {
+            typeLabel = `<div class="msg-type-badge">${msgTypeIcons[msg.msgType]} ${msg.msgTypeLabel}</div>`;
+        }
+
+        // Convert newlines to <br>
+        const textHtml = msg.text.replace(/\n/g, '<br>');
+
+        return `
+            <div class="msg-row ${isSent ? 'sent' : 'received'}">
+                <div class="msg-bubble">
+                    ${typeLabel}
+                    <div>${textHtml}</div>
+                    <div class="msg-meta">
+                        <span class="msg-time">${msg.time}</span>
+                        ${statusIcon}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CUSTOMER SIDEBAR
+// ═══════════════════════════════════════════════
+
+function renderCustomerSidebar(conv) {
+    const segName = segmentNames[conv.segment] || conv.segment;
+    const segClass = segmentBadgeClass[conv.segment] || 'badge-neutral';
+
+    document.getElementById('customerSidebarInner').innerHTML = `
+        <div class="cs-header">
+            <div class="cs-avatar">${conv.avatar}</div>
+            <div class="cs-name">${conv.name}</div>
+            <div class="cs-phone">${conv.phone}</div>
+            <span class="badge ${segClass}" style="font-size:11px; padding:3px 12px;">${segName}</span>
+        </div>
+        <div class="cs-stats">
+            <div class="cs-stat-row">
+                <span class="cs-stat-label">القيمة الدائمة (CLV)</span>
+                <span class="cs-stat-value green">${conv.clv} ر.س</span>
+            </div>
+            <div class="cs-stat-row">
+                <span class="cs-stat-label">خطر المغادرة</span>
+                <span class="cs-stat-value ${conv.churnLevel}">${conv.churnRisk}</span>
+            </div>
+            <div class="cs-stat-row">
+                <span class="cs-stat-label">إجمالي الطلبات</span>
+                <span class="cs-stat-value">${conv.orders}</span>
+            </div>
+            <div class="cs-stat-row">
+                <span class="cs-stat-label">آخر طلب</span>
+                <span class="cs-stat-value">${conv.lastOrder}</span>
+            </div>
+        </div>
+        <div class="cs-actions">
+            <button class="cs-action-btn" onclick="toast('جاري فتح ملف العميل...')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                عرض الملف الكامل
+            </button>
+            <button class="cs-action-btn" onclick="toast('جاري فتح الطلبات...')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                عرض الطلبات
+            </button>
+        </div>
+    `;
+}
+
+// ═══════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════
+
+function setFilter(filter) {
+    activeFilter = filter;
+    document.querySelectorAll('.conv-filter').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+    renderConversations();
+}
+
+function filterConversations() {
+    renderConversations();
+}
+
+function toggleCustomerSidebar() {
+    const sidebar = document.getElementById('customerSidebar');
+    customerSidebarOpen = !customerSidebarOpen;
+    sidebar.classList.toggle('open', customerSidebarOpen);
+}
+
+function toggleTemplates() {
+    const dropdown = document.getElementById('templatesDropdown');
+    dropdown.classList.toggle('open');
+}
+
+function useTemplate(el) {
+    const text = el.textContent;
+    document.getElementById('chatInput').value = text;
+    document.getElementById('templatesDropdown').classList.remove('open');
+    document.getElementById('chatInput').focus();
+    autoResizeInput();
+}
+
+function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !activeConvId) return;
+
+    const conv = conversations.find(c => c.id === activeConvId);
+    if (!conv) return;
+
+    // Create timestamp
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const period = hours >= 12 ? 'م' : 'ص';
+    const h12 = hours > 12 ? hours - 12 : hours || 12;
+    const timeStr = toArabicNum(h12) + ':' + toArabicNum(parseInt(minutes)) + ' ' + period;
+
+    // Add message
+    conv.messages.push({
+        dir: 'sent',
+        text: text,
+        time: timeStr,
+        status: 'delivered'
+    });
+
+    // Update preview
+    conv.lastPreview = text.length > 50 ? text.substring(0, 50) + '...' : text;
+    conv.lastTime = 'الآن';
+    conv.needsReply = false;
+
+    // Re-render
+    renderMessages(conv);
+    renderConversations();
+
+    // Clear input
+    input.value = '';
+    autoResizeInput();
+
+    // Scroll to bottom
+    const msgContainer = document.getElementById('chatMessages');
+    setTimeout(() => {
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+    }, 50);
+
+    toast('تم إرسال الرسالة');
+}
+
+function handleInputKeydown(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+function autoResizeInput() {
+    const input = document.getElementById('chatInput');
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+}
+
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+
+function toArabicNum(num) {
+    const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+    return String(num).replace(/[0-9]/g, d => arabicDigits[d]);
+}
+
+function toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
+
+// ═══════════════════════════════════════════════
+// CLOSE TEMPLATES ON OUTSIDE CLICK
+// ═══════════════════════════════════════════════
+
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('templatesDropdown');
+    const btn = document.getElementById('templateBtn');
+    if (dropdown && dropdown.classList.contains('open')) {
+        if (!dropdown.contains(e.target) && e.target !== btn && !btn.contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    }
+});
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+
+renderConversations();
+</script>
+</body>
+</html>
