@@ -3,605 +3,972 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIBH — الربح التلقائي</title>
+    <title>RIBH — محركات الربح</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/platform/shared/shell.css">
     <style>
-        .phase{display:none;animation:fadeUp .5s var(--ease)}.phase.active{display:block}
-        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        /* ── Revenue Hero ── */
+        .rev-hero {
+            text-align: center;
+            padding: 32px 20px 24px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .rev-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--primary));
+        }
+        .rev-hero-label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .rev-hero-num {
+            font-size: 52px;
+            font-weight: 800;
+            color: var(--primary);
+            direction: ltr;
+            display: inline-block;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        .rev-hero-curr {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .rev-hero-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 12px;
+            background: var(--success-dim);
+            color: var(--success);
+        }
+        .rev-hero-breakdown {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        .rev-bd-item {
+            text-align: center;
+        }
+        .rev-bd-val {
+            font-size: 18px;
+            font-weight: 800;
+            direction: ltr;
+            display: inline-block;
+        }
+        .rev-bd-lbl {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
 
-        /* Data Source Cards */
-        .ds-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:32px 0}
-        .ds-card{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px 20px;text-align:center;cursor:pointer;transition:all .2s var(--ease);position:relative}
-        .ds-card:hover{border-color:var(--border-strong);transform:translateY(-2px)}
-        .ds-card.selected{border-color:var(--primary);box-shadow:0 0 24px var(--primary-glow)}
-        .ds-card.disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
-        .ds-card-icon{font-size:40px;margin-bottom:12px}
-        .ds-card-title{font-size:16px;font-weight:700;margin-bottom:4px}
-        .ds-card-desc{font-size:12px;color:var(--text-muted)}
-        .ds-card .coming{position:absolute;top:12px;left:12px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--text-dim)}
-        .ds-card .connected-badge{position:absolute;top:12px;left:12px;background:var(--primary-dim);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--primary);font-weight:600}
+        /* ── Section Headers ── */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            margin-top: 8px;
+        }
+        .section-header h2 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .section-header .section-badge {
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        .section-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
 
-        /* Upload Zone */
-        .upload-zone{border:2px dashed var(--border);border-radius:var(--radius-lg);padding:40px 20px;text-align:center;margin:20px 0;transition:all .2s;cursor:pointer;display:none}
-        .upload-zone.show{display:block}
-        .upload-zone:hover,.upload-zone.dragover{border-color:var(--primary);background:var(--primary-dim)}
-        .upload-zone-icon{font-size:36px;margin-bottom:12px}
-        .upload-zone-text{font-size:14px;color:var(--text-secondary)}
-        .upload-zone-hint{font-size:11px;color:var(--text-dim);margin-top:8px}
-        .upload-result{display:none;text-align:center;padding:20px;animation:fadeUp .3s}
-        .upload-result.show{display:block}
+        /* ── Engine Cards ── */
+        .engines-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        .engine-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.2s var(--ease);
+            position: relative;
+        }
+        .engine-card:hover {
+            border-color: var(--border-strong);
+        }
+        .engine-card.active {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        .engine-card.inactive {
+            opacity: 0.85;
+        }
+        .engine-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .engine-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex: 1;
+            min-width: 0;
+        }
+        .engine-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .engine-text {
+            flex: 1;
+            min-width: 0;
+        }
+        .engine-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .engine-desc {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .engine-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+        .engine-revenue {
+            text-align: left;
+        }
+        .engine-rev-val {
+            font-size: 18px;
+            font-weight: 800;
+            direction: ltr;
+            display: inline-block;
+            color: var(--primary);
+        }
+        .engine-rev-val.potential {
+            color: var(--warning);
+        }
+        .engine-rev-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+        .engine-rev-lbl.potential {
+            color: var(--warning);
+        }
 
-        /* Hero */
-        .hero-center{text-align:center;padding:48px 20px}
-        .hero-icon{width:80px;height:80px;border-radius:24px;background:var(--primary-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px}
-        .hero-title{font-size:26px;font-weight:800;margin-bottom:10px}
-        .hero-sub{color:var(--text-muted);font-size:14px;margin-bottom:32px;max-width:500px;margin-left:auto;margin-right:auto}
-        .hero-btn{display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--primary);color:#000;border:none;border-radius:14px;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s var(--ease);box-shadow:0 0 40px var(--primary-glow)}
-        .hero-btn:hover{background:var(--primary-hover);transform:translateY(-2px);box-shadow:0 0 60px var(--primary-glow)}
-        .hero-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+        /* Toggle */
+        .engine-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .engine-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .engine-toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--bg-surface-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.2s var(--ease);
+        }
+        .engine-toggle input:checked + .engine-toggle-track {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .engine-toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            right: 2px;
+            transition: transform 0.2s var(--ease);
+        }
+        .engine-toggle input:checked + .engine-toggle-track::after {
+            transform: translateX(-20px);
+        }
 
-        /* Scan */
-        .scan-center{text-align:center;padding:48px 20px}
-        .scan-ring{width:100px;height:100px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--primary);animation:spin 1s linear infinite;margin:0 auto 28px;display:flex;align-items:center;justify-content:center;font-size:28px}
-        @keyframes spin{to{transform:rotate(360deg)}}
-        .scan-title{font-size:18px;font-weight:700;margin-bottom:20px}
-        .scan-steps{max-width:380px;margin:0 auto;text-align:right}
-        .scan-step{display:flex;align-items:center;gap:10px;padding:8px 0;color:var(--text-dim);font-size:13px;transition:all .3s}
-        .scan-step.done{color:var(--primary)}
-        .scan-step.active{color:var(--text)}
-        .step-dot{width:22px;height:22px;border-radius:50%;background:var(--bg-surface-2);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
-        .scan-step.done .step-dot{background:var(--primary-dim);color:var(--primary)}
-        .scan-step.active .step-dot{background:var(--primary);color:#000;animation:pulse 1.5s infinite}
-        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--primary-glow)}50%{box-shadow:0 0 0 8px transparent}}
+        /* Engine Details (expandable) */
+        .engine-details {
+            display: none;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            animation: fadeUp 0.3s var(--ease);
+        }
+        .engine-details.open {
+            display: block;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .engine-stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .engine-stat {
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            text-align: center;
+        }
+        .engine-stat-val {
+            font-size: 16px;
+            font-weight: 800;
+            direction: ltr;
+            display: inline-block;
+        }
+        .engine-stat-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .engine-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
 
-        /* Results */
-        .res-header{text-align:center;padding:24px 20px 20px}
-        .res-rev{font-size:38px;font-weight:800;color:var(--primary);direction:ltr;display:inline-block}
-        .res-rev-label{font-size:13px;color:var(--text-muted);margin-bottom:6px}
-        .res-rev-range{font-size:12px;color:var(--text-dim);margin-top:4px}
-        .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
-        .m-stat{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:center}
-        .m-stat-val{font-size:20px;font-weight:800;direction:ltr;display:inline-block}
-        .m-stat-lbl{font-size:10px;color:var(--text-muted);margin-top:3px}
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.15s var(--ease);
+        }
+        .btn-primary { background: var(--primary); color: #000; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-secondary { background: var(--bg-surface-2); color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--border-strong); color: var(--text); }
+        .btn-ghost { background: transparent; color: var(--text-muted); }
+        .btn-ghost:hover { color: var(--text); background: var(--bg-hover); }
+        .btn-lg { padding: 14px 36px; font-size: 16px; font-weight: 700; border-radius: 14px; }
 
-        /* Campaign Cards */
-        .camp{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:10px;transition:border-color .2s}
-        .camp:hover{border-color:var(--border-strong)}
-        .camp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px}
-        .camp-title-row{display:flex;align-items:center;gap:10px}
-        .camp-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-        .camp-name{font-size:14px;font-weight:700}
-        .camp-desc{font-size:11px;color:var(--text-muted)}
-        .camp-stats{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text-secondary)}
-        .camp-stats strong{color:var(--text);font-weight:700}
-        .camp-actions{display:flex;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
-        .msg-prev{background:var(--bg-surface-2);border-radius:var(--radius-sm);padding:12px;margin-top:10px;font-size:12px;line-height:1.9;color:var(--text-secondary);border-right:3px solid var(--whatsapp);display:none}
-        .msg-prev.show{display:block;animation:fadeUp .3s}
-        .msg-prev-lbl{font-size:10px;color:var(--text-dim);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+        /* ── Activity Feed ── */
+        .activity-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        .activity-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .activity-header h3 {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .activity-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .activity-live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: livePulse 2s infinite;
+        }
+        @keyframes livePulse { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+        .activity-items {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-ico {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .activity-txt {
+            flex: 1;
+            color: var(--text-secondary);
+        }
+        .activity-txt strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+        .activity-amt {
+            font-weight: 700;
+            color: var(--primary);
+            direction: ltr;
+            white-space: nowrap;
+        }
+        .activity-time {
+            font-size: 10px;
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
 
-        /* Buttons */
-        .btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;border:none;cursor:pointer;font-family:inherit;transition:all .15s var(--ease)}
-        .btn-primary{background:var(--primary);color:#000}.btn-primary:hover{background:var(--primary-hover)}
-        .btn-secondary{background:var(--bg-surface-2);color:var(--text-secondary);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--border-strong);color:var(--text)}
-        .btn-ghost{background:transparent;color:var(--text-muted)}.btn-ghost:hover{color:var(--text);background:var(--bg-hover)}
-        .btn-danger{background:var(--danger-dim);color:var(--danger)}
-        .btn-lg{padding:14px 36px;font-size:16px;font-weight:700;border-radius:14px}
-        .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600}
-        .badge-primary{background:var(--primary-dim);color:var(--primary)}
-        .badge-danger{background:var(--danger-dim);color:var(--danger)}
-        .badge-success{background:var(--success-dim);color:var(--success)}
-        .badge-warning{background:var(--warning-dim);color:var(--warning)}
-        .badge-info{background:var(--info-dim);color:var(--info)}
-        .badge-whatsapp{background:var(--whatsapp-dim);color:var(--whatsapp)}
-        .badge-neutral{background:var(--bg-surface-2);color:var(--text-dim)}
-        .sec-title{font-size:15px;font-weight:700;margin-bottom:14px}
+        /* ── Excel Import (bottom) ── */
+        .import-section {
+            margin-top: 32px;
+            padding: 20px;
+            background: var(--bg-surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            text-align: center;
+        }
+        .import-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .import-section-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
 
-        /* Modal */
-        .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center}
-        .modal-bg.open{display:flex}
-        .modal{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-xl);width:90%;max-width:540px;max-height:80vh;overflow-y:auto;padding:24px;animation:modalIn .3s var(--ease)}
-        @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-        .modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
-        .modal textarea{width:100%;min-height:140px;background:var(--bg-surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;color:var(--text);font-family:inherit;font-size:13px;line-height:1.8;resize:vertical;direction:rtl}
-        .modal textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-dim)}
-        .modal-hint{font-size:10px;color:var(--text-dim);margin:6px 0 16px}
-        .modal-btns{display:flex;gap:8px}
-        .type-btns,.seg-btns{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
-        .type-btn,.seg-btn{padding:6px 12px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;border:1px solid var(--border);background:var(--bg-surface-2);color:var(--text-muted);cursor:pointer;font-family:inherit;transition:all .15s}
-        .type-btn.active,.seg-btn.active{border-color:var(--primary);color:var(--primary);background:var(--primary-dim)}
+        /* ── Divider ── */
+        .section-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0 20px;
+        }
 
-        /* Live */
-        .live-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
-        .live-ind{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700}
-        .live-dot{width:10px;height:10px;border-radius:50%;background:#EF4444;animation:livePulse 1.5s infinite}
-        @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.4}}
-        .live-rev{text-align:center;padding:28px;background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-xl);margin-bottom:16px}
-        .live-rev-num{font-size:44px;font-weight:800;color:var(--primary);direction:ltr;display:inline-block}
-        .live-rev-lbl{font-size:12px;color:var(--text-muted);margin-bottom:6px}
-        .live-bar{height:7px;background:var(--bg-surface-2);border-radius:4px;margin-top:14px;overflow:hidden}
-        .live-bar-fill{height:100%;background:linear-gradient(90deg,var(--primary),#22C55E);border-radius:4px;transition:width 1s var(--ease)}
-        .live-bar-txt{font-size:11px;color:var(--text-dim);margin-top:5px;text-align:center}
-        .live-camps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
-        .lc{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px}
-        .lc-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-        .lc-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px}
-        .lc-name{font-size:12px;font-weight:600}
-        .lc-val{font-size:15px;font-weight:700;direction:ltr;display:inline-block}
-        .lc-sub{font-size:10px;color:var(--text-muted)}
-        .ai-box{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(99,102,241,.06));border:1px solid rgba(16,185,129,.2);border-radius:var(--radius-lg);padding:14px 18px;font-size:12px;color:var(--text-secondary);line-height:1.7}
-        .ai-box-lbl{font-size:10px;font-weight:700;color:var(--primary);margin-bottom:4px}
-        .feed{background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-top:14px}
-        .feed-title{padding:14px 18px;font-size:13px;font-weight:700;border-bottom:1px solid var(--border)}
-        .feed-items{max-height:340px;overflow-y:auto}
-        .fi{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--border);font-size:12px;animation:feedIn .4s var(--ease)}
-        @keyframes feedIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-        .fi:last-child{border-bottom:none}
-        .fi-ico{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
-        .fi-txt{flex:1;color:var(--text-secondary)}.fi-txt strong{color:var(--text);font-weight:600}
-        .fi-time{font-size:10px;color:var(--text-dim);white-space:nowrap}
-        .fi-amt{font-weight:700;color:var(--primary);direction:ltr;white-space:nowrap}
+        /* ── AI Insight Box ── */
+        .ai-insight {
+            background: linear-gradient(135deg, rgba(16,185,129,.06), rgba(99,102,241,.04));
+            border: 1px solid rgba(16,185,129,.15);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-top: 20px;
+        }
+        .ai-insight-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .ai-insight-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
 
-        /* Toast */
-        .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg-surface);border:1px solid var(--primary);color:var(--text);padding:10px 22px;border-radius:12px;font-size:13px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:fadeUp .3s}
+        /* ── Expand button ── */
+        .engine-expand {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.15s;
+            font-size: 11px;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .engine-expand:hover {
+            color: var(--text);
+            background: var(--bg-hover);
+        }
 
-        @media(max-width:768px){
-            .hero-title{font-size:20px}.hero-btn{padding:12px 28px;font-size:15px}
-            .res-rev{font-size:30px}.live-rev-num{font-size:32px}
-            .stats-row{grid-template-columns:repeat(2,1fr)}.live-camps{grid-template-columns:repeat(2,1fr)}
-            .ds-grid{grid-template-columns:1fr}
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-surface);
+            border: 1px solid var(--primary);
+            color: var(--text);
+            padding: 10px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,.5);
+            animation: fadeUp 0.3s var(--ease);
+        }
+
+        @media (max-width: 768px) {
+            .rev-hero-num { font-size: 36px; }
+            .rev-hero-breakdown { gap: 16px; flex-wrap: wrap; }
+            .engine-right { flex-direction: column; gap: 8px; align-items: flex-end; }
+            .engine-stats-row { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
 <body>
 <div id="app"><div id="page-body">
 
-<!-- ═══ PHASE 0: DATA SOURCE ═══ -->
-<div class="phase active" id="phase0">
-    <div class="hero-center">
-        <div class="hero-icon">📊</div>
-        <h1 class="hero-title">وصّل بيانات عملائك</h1>
-        <p class="hero-sub">اختر مصدر البيانات — الذكاء الاصطناعي يحلل ويجهّز كل شي</p>
-    </div>
-    <div class="ds-grid">
-        <div class="ds-card" onclick="selectSource('salla')" id="dsSalla">
-            <div class="connected-badge" style="display:none" id="sallaConnected">متصل ✓</div>
-            <div class="ds-card-icon">🛍️</div>
-            <div class="ds-card-title">سلة (Salla)</div>
-            <div class="ds-card-desc">ربط تلقائي — الطلبات والسلات والعملاء</div>
+<!-- ═══ REVENUE HERO ═══ -->
+<div class="rev-hero">
+    <div class="rev-hero-label">إجمالي الربح هذا الشهر</div>
+    <div class="rev-hero-num" id="totalRevenue">٤٧,٢٠٠</div>
+    <div class="rev-hero-curr">ر.س</div>
+    <div class="rev-hero-change">↑ ٢٣% عن الشهر الماضي</div>
+    <div class="rev-hero-breakdown">
+        <div class="rev-bd-item">
+            <div class="rev-bd-val" style="color:var(--whatsapp)">٣٢,١٠٠</div>
+            <div class="rev-bd-lbl">واتساب</div>
         </div>
-        <div class="ds-card" onclick="selectSource('excel')" id="dsExcel">
-            <div class="ds-card-icon">📁</div>
-            <div class="ds-card-title">ملف إكسل / CSV</div>
-            <div class="ds-card-desc">ارفع ملف عملائك — الاسم، الجوال، الطلبات</div>
+        <div class="rev-bd-item">
+            <div class="rev-bd-val" style="color:var(--info)">١٠,٤٠٠</div>
+            <div class="rev-bd-lbl">إيميل</div>
         </div>
-        <div class="ds-card disabled" id="dsShopify">
-            <div class="coming">قريباً</div>
-            <div class="ds-card-icon">🟢</div>
-            <div class="ds-card-title">Shopify</div>
-            <div class="ds-card-desc">ربط متجر شوبيفاي</div>
-        </div>
-    </div>
-
-    <!-- Salla Connect -->
-    <div id="sallaSection" style="display:none;text-align:center;padding:20px;">
-        <div style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;max-width:400px;margin:0 auto;">
-            <div style="font-size:15px;font-weight:700;margin-bottom:12px;">ربط متجر سلة</div>
-            <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">أدخل رابط متجرك أو اضغط ربط للاتصال التلقائي</p>
-            <button class="btn btn-primary btn-lg" onclick="connectSalla()" style="width:100%;">ربط سلة</button>
-            <p style="font-size:10px;color:var(--text-dim);margin-top:10px;">أو: المتجر متصل مسبقاً؟</p>
-            <button class="btn btn-ghost" onclick="simulateSallaConnected()" style="margin-top:4px;">تخطي — متجري متصل</button>
-        </div>
-    </div>
-
-    <!-- Excel Upload -->
-    <div id="excelSection" style="display:none;max-width:500px;margin:0 auto;">
-        <div class="upload-zone show" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-zone-icon">📄</div>
-            <div class="upload-zone-text">اسحب الملف هنا أو اضغط للاختيار</div>
-            <div class="upload-zone-hint">Excel (.xlsx) أو CSV — الأعمدة: الاسم، الجوال، عدد الطلبات، إجمالي المشتريات</div>
-        </div>
-        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(this)">
-        <div class="upload-result" id="uploadResult">
-            <div style="font-size:48px;margin-bottom:12px;">✅</div>
-            <div style="font-size:16px;font-weight:700;margin-bottom:4px;" id="uploadCount">تم استيراد 847 عميل</div>
-            <div style="font-size:12px;color:var(--text-muted);" id="uploadDetails">512 برقم جوال — 335 بإيميل فقط</div>
-        </div>
-    </div>
-
-    <div style="text-align:center;padding:20px;">
-        <button class="hero-btn" id="proceedBtn" onclick="goToAnalyze()" disabled>
-            متابعة ←
-        </button>
-    </div>
-</div>
-
-<!-- ═══ PHASE 1: ANALYZE BUTTON ═══ -->
-<div class="phase" id="phase1">
-    <div class="hero-center">
-        <div class="hero-icon">💰</div>
-        <h1 class="hero-title">حوّل عملاءك إلى أرباح</h1>
-        <p class="hero-sub">الذكاء الاصطناعي يحلل بياناتك ويولّد حملات جاهزة<br>واتساب + إيميل + SMS — كل شي تلقائي</p>
-        <button class="hero-btn" onclick="startScan()">
-            حلل وجهّز الحملات ←
-        </button>
-        <div style="margin-top:16px;font-size:12px;color:var(--text-dim);" id="sourceLabel"></div>
-    </div>
-</div>
-
-<!-- ═══ PHASE 2: SCANNING ═══ -->
-<div class="phase" id="phase2">
-    <div class="scan-center">
-        <div class="scan-ring"><span>🔍</span></div>
-        <h2 class="scan-title">جاري تحليل بياناتك...</h2>
-        <div class="scan-steps" id="scanSteps">
-            <div class="scan-step" data-s="1"><div class="step-dot">١</div><span>جلب بيانات العملاء والطلبات</span></div>
-            <div class="scan-step" data-s="2"><div class="step-dot">٢</div><span>تصنيف العملاء (Champions, At-Risk, New...)</span></div>
-            <div class="scan-step" data-s="3"><div class="step-dot">٣</div><span>كشف السلات المتروكة</span></div>
-            <div class="scan-step" data-s="4"><div class="step-dot">٤</div><span>تحليل أنماط الشراء</span></div>
-            <div class="scan-step" data-s="5"><div class="step-dot">٥</div><span>توليد الحملات والرسائل</span></div>
-            <div class="scan-step" data-s="6"><div class="step-dot">٦</div><span>حساب الإيرادات المتوقعة</span></div>
+        <div class="rev-bd-item">
+            <div class="rev-bd-val" style="color:var(--warning)">٤,٧٠٠</div>
+            <div class="rev-bd-lbl">SMS</div>
         </div>
     </div>
 </div>
 
-<!-- ═══ PHASE 3: RESULTS ═══ -->
-<div class="phase" id="phase3">
-    <div class="res-header">
-        <div class="res-rev-label">الإيرادات المتوقعة خلال 7 أيام</div>
-        <div class="res-rev">12,400 ر.س</div>
-        <div class="res-rev-range">المدى: 8,400 — 16,200 ر.س حسب التفاعل</div>
+<!-- ═══ MESSAGE ENGINES (WhatsApp/SMS/Email) ═══ -->
+<div class="section-header">
+    <h2>محركات الرسائل</h2>
+    <span class="section-badge" style="background:var(--whatsapp-dim);color:var(--whatsapp);">واتساب • SMS • إيميل</span>
+</div>
+<div class="section-desc">رسائل تلقائية مخصصة لكل عميل — تُرسل بالوقت المناسب عبر القناة الأنسب</div>
+
+<div class="engines-grid" id="messageEngines">
+
+    <!-- Engine: Cart Recovery -->
+    <div class="engine-card active" data-engine="cart_recovery">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--primary-dim)">🛒</div>
+                <div class="engine-text">
+                    <div class="engine-name">استرداد السلات المتروكة</div>
+                    <div class="engine-desc">٤٧ سلة متروكة → ١٩ مستردة — تسلسل: تذكير → خصم → آخر فرصة</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val">١٢,٤٠٠</div>
+                    <div class="engine-rev-lbl">ر.س هذا الشهر</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" checked onchange="toggleEngine('cart_recovery', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('cart_recovery')">تفاصيل ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-cart_recovery">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--primary)">٤٧</div><div class="engine-stat-lbl">سلة متروكة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">١٩</div><div class="engine-stat-lbl">مستردة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--whatsapp)">٤٠%</div><div class="engine-stat-lbl">نسبة الاسترداد</div></div>
+                <div class="engine-stat"><div class="engine-stat-val">٣</div><div class="engine-stat-lbl">رسائل بالتسلسل</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=cart_recovery'">تعديل التسلسل</button>
+                <button class="btn btn-ghost" onclick="location.href='analytics.html?engine=cart_recovery'">التحليلات</button>
+            </div>
+        </div>
     </div>
-    <div class="stats-row">
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--primary)">847</div><div class="m-stat-lbl">عميل مستهدف</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--whatsapp)">312</div><div class="m-stat-lbl">واتساب</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--info)">420</div><div class="m-stat-lbl">إيميل</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--warning)">115</div><div class="m-stat-lbl">SMS</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--secondary)">6</div><div class="m-stat-lbl">حملة</div></div>
-        <div class="m-stat"><div class="m-stat-val" style="color:var(--danger)">7</div><div class="m-stat-lbl">أيام</div></div>
+
+    <!-- Engine: Winback -->
+    <div class="engine-card active" data-engine="winback">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--danger-dim)">💤</div>
+                <div class="engine-text">
+                    <div class="engine-name">إعادة تنشيط العملاء</div>
+                    <div class="engine-desc">١٢٠ عميل خامل → ٣٤ عادوا — رسائل بعد ٣٠ و ٦٠ و ٩٠ يوم</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val">٨,٣٠٠</div>
+                    <div class="engine-rev-lbl">ر.س هذا الشهر</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" checked onchange="toggleEngine('winback', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('winback')">تفاصيل ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-winback">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--danger)">١٢٠</div><div class="engine-stat-lbl">عميل خامل</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٣٤</div><div class="engine-stat-lbl">عادوا للشراء</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--whatsapp)">٢٨%</div><div class="engine-stat-lbl">نسبة العودة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val">٢٤٤</div><div class="engine-stat-lbl">ر.س متوسط الطلب</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=winback'">تعديل التسلسل</button>
+                <button class="btn btn-ghost" onclick="location.href='analytics.html?engine=winback'">التحليلات</button>
+            </div>
+        </div>
     </div>
-    <div class="sec-title">الحملات المولّدة تلقائياً</div>
-    <div id="campaignsList"></div>
-    <div style="padding:20px 0;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-        <button class="btn btn-primary btn-lg" onclick="goLive()" style="box-shadow:0 0 40px var(--primary-glow);">🚀 شغّل كل الحملات</button>
-        <button class="btn btn-secondary" onclick="openCustom()">➕ حملة مخصصة</button>
-        <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted);margin-right:auto;"><input type="checkbox" id="trustMode" style="accent-color:var(--primary)"> المرة الجاية بدون معاينة</label>
+
+    <!-- Engine: Welcome -->
+    <div class="engine-card active" data-engine="welcome">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--info-dim)">👋</div>
+                <div class="engine-text">
+                    <div class="engine-name">ترحيب العملاء الجدد</div>
+                    <div class="engine-desc">٨٩ عميل جديد → ٢٣ اشتروا — رسالة ترحيب + عرض أول طلب</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val">٥,٢٠٠</div>
+                    <div class="engine-rev-lbl">ر.س هذا الشهر</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" checked onchange="toggleEngine('welcome', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('welcome')">تفاصيل ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-welcome">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--info)">٨٩</div><div class="engine-stat-lbl">عميل جديد</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٢٣</div><div class="engine-stat-lbl">اشتروا</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--whatsapp)">٢٦%</div><div class="engine-stat-lbl">نسبة التحويل</div></div>
+                <div class="engine-stat"><div class="engine-stat-val">١٠%</div><div class="engine-stat-lbl">خصم أول طلب</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=welcome'">تعديل التسلسل</button>
+                <button class="btn btn-ghost" onclick="location.href='analytics.html?engine=welcome'">التحليلات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Continuity -->
+    <div class="engine-card inactive" data-engine="continuity">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--secondary-dim)">🔄</div>
+                <div class="engine-text">
+                    <div class="engine-name">الاستمرارية — تذكير إعادة الطلب</div>
+                    <div class="engine-desc">منتجات تنتهي؟ ذكّر عملاءك بإعادة الطلب في الوقت المناسب</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~١٨,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('continuity', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('continuity')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-continuity">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--secondary)">٢٤٠</div><div class="engine-stat-lbl">عميل مؤهل</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--warning)">٤٥</div><div class="engine-stat-lbl">يوم متوسط دورة الشراء</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--primary)">~١٨K</div><div class="engine-stat-lbl">ر.س إيرادات متوقعة</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('continuity')">تفعيل المحرك</button>
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=continuity'">تخصيص</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Reviews -->
+    <div class="engine-card active" data-engine="reviews">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--warning-dim)">⭐</div>
+                <div class="engine-text">
+                    <div class="engine-name">جمع التقييمات</div>
+                    <div class="engine-desc">٤٥ تقييم هذا الشهر — تلقائي بعد التوصيل + خصم بعد التقييم</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val">٣,١٠٠</div>
+                    <div class="engine-rev-lbl">ر.س من عروض ما بعد التقييم</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" checked onchange="toggleEngine('reviews', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('reviews')">تفاصيل ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-reviews">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--warning)">⭐ ٤.٧</div><div class="engine-stat-lbl">متوسط التقييم</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٤٥</div><div class="engine-stat-lbl">تقييم هذا الشهر</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--whatsapp)">مجاني</div><div class="engine-stat-lbl">عبر نافذة واتساب</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=reviews'">تعديل التسلسل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Custom Campaigns -->
+    <div class="engine-card active" data-engine="campaigns">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:rgba(236,72,153,.12)">📣</div>
+                <div class="engine-text">
+                    <div class="engine-name">حملات مخصصة</div>
+                    <div class="engine-desc">أنشئ حملة بضغطة — AI يولّد الرسالة + يختار الجمهور المناسب</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val">١٨,٢٠٠</div>
+                    <div class="engine-rev-lbl">ر.س من الحملات</div>
+                </div>
+                <button class="btn btn-primary" onclick="location.href='campaigns.html'" style="gap:6px;">حملة جديدة ←</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══ ON-SITE ENGINES (Salla Integration) ═══ -->
+<div class="section-divider"></div>
+<div class="section-header">
+    <h2>محركات الموقع</h2>
+    <span class="section-badge" style="background:var(--secondary-dim);color:var(--secondary);">كود مدمج مع سلة</span>
+</div>
+<div class="section-desc">أكواد تُضاف لمتجرك تلقائياً — تعمل داخل صفحات المنتجات والسلة والدفع</div>
+
+<div class="engines-grid" id="siteEngines">
+
+    <!-- Engine: Upsell -->
+    <div class="engine-card inactive" data-engine="upsell">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--success-dim)">💰</div>
+                <div class="engine-text">
+                    <div class="engine-name">زيادة المبيعات (Upsell)</div>
+                    <div class="engine-desc">عروض ذكية في صفحة الدفع — "أضف هذا المنتج بخصم ١٥%"</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~٢٠,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('upsell', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('upsell')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-upsell">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">~٢٠K</div><div class="engine-stat-lbl">ر.س إيرادات متوقعة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--info)">صفحة الدفع</div><div class="engine-stat-lbl">مكان العرض</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--warning)">١٠-٣٠%</div><div class="engine-stat-lbl">نسبة تحويل متوقعة</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('upsell')">تفعيل وربط بسلة</button>
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=upsell'">تخصيص المنتجات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Downsell -->
+    <div class="engine-card inactive" data-engine="downsell">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:var(--warning-dim)">🏷️</div>
+                <div class="engine-text">
+                    <div class="engine-name">عرض بديل (Downsell)</div>
+                    <div class="engine-desc">العميل رفض الـ Upsell? اعرض منتج أرخص أو خصم أكبر</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~٨,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('downsell', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('downsell')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-downsell">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--warning)">~٨K</div><div class="engine-stat-lbl">ر.س إيرادات متوقعة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--info)">بعد رفض الـ Upsell</div><div class="engine-stat-lbl">متى يظهر</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--danger)">١٥-٢٥%</div><div class="engine-stat-lbl">خصم مقترح</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('downsell')">تفعيل</button>
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=downsell'">تخصيص</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Engine: Attraction / Capture -->
+    <div class="engine-card inactive" data-engine="attraction">
+        <div class="engine-top">
+            <div class="engine-info">
+                <div class="engine-icon" style="background:rgba(236,72,153,.12)">🧲</div>
+                <div class="engine-text">
+                    <div class="engine-name">جذب واستقطاب (Attraction)</div>
+                    <div class="engine-desc">نافذة خروج ذكية — اجمع أرقام الزوار قبل ما يطلعون + عرض ترحيبي</div>
+                </div>
+            </div>
+            <div class="engine-right">
+                <div class="engine-revenue">
+                    <div class="engine-rev-val potential">~١٥,٠٠٠</div>
+                    <div class="engine-rev-lbl potential">ر.س متوقعة شهرياً</div>
+                </div>
+                <label class="engine-toggle">
+                    <input type="checkbox" onchange="toggleEngine('attraction', this.checked)">
+                    <div class="engine-toggle-track"></div>
+                </label>
+                <button class="engine-expand" onclick="toggleDetails('attraction')">إعداد ↓</button>
+            </div>
+        </div>
+        <div class="engine-details" id="details-attraction">
+            <div class="engine-stats-row">
+                <div class="engine-stat"><div class="engine-stat-val" style="color:rgba(236,72,153,1)">~١٥K</div><div class="engine-stat-lbl">ر.س إيرادات متوقعة</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--info)">نافذة خروج</div><div class="engine-stat-lbl">نوع العرض</div></div>
+                <div class="engine-stat"><div class="engine-stat-val" style="color:var(--success)">٥-١٠%</div><div class="engine-stat-lbl">نسبة تحويل متوقعة</div></div>
+            </div>
+            <div class="engine-actions">
+                <button class="btn btn-primary" onclick="activateEngine('attraction')">تفعيل وربط بسلة</button>
+                <button class="btn btn-secondary" onclick="location.href='flows.html?type=attraction'">تخصيص النافذة</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ═══ AI INSIGHT ═══ -->
+<div class="ai-insight">
+    <div class="ai-insight-label">💡 ذكاء الربح — توصيات AI</div>
+    <div class="ai-insight-text">
+        تفعيل محرك <strong>الاستمرارية</strong> ومحرك <strong>زيادة المبيعات</strong> يمكن يضيف <strong>~٣٨,٠٠٠ ر.س</strong> شهرياً لمتجرك. عندك ٢٤٠ عميل يشترون بانتظام و ٥٠+ فرصة upsell جاهزة. فعّلهم بضغطة وحدة.
     </div>
 </div>
 
-<!-- ═══ PHASE 4: LIVE ═══ -->
-<div class="phase" id="phase4">
-    <div class="live-head">
-        <div class="live-ind"><div class="live-dot"></div><span>الربح شغّال</span></div>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn btn-ghost" onclick="show('phase3')">✏️ تعديل الرسائل</button>
-            <button class="btn btn-secondary" onclick="openCustom()">➕ حملة جديدة</button>
-            <button class="btn btn-danger" onclick="pauseAll()">⏸️ إيقاف</button>
+<!-- ═══ LIVE ACTIVITY FEED ═══ -->
+<div class="activity-card">
+    <div class="activity-header">
+        <h3>آخر الأحداث</h3>
+        <div class="activity-live">
+            <div class="activity-live-dot"></div>
+            <span>مباشر</span>
         </div>
     </div>
-    <div class="live-rev">
-        <div class="live-rev-lbl">تم تحصيل</div>
-        <div class="live-rev-num" id="liveRev">0</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:2px">ر.س</div>
-        <div class="live-bar"><div class="live-bar-fill" id="liveBar" style="width:0%"></div></div>
-        <div class="live-bar-txt" id="liveBarTxt">0% من الهدف (12,400 ر.س)</div>
+    <div class="activity-items" id="activityFeed">
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--primary-dim)">💳</div>
+            <div class="activity-txt"><strong>أحمد محمد</strong> — أكمل الشراء من رسالة استرداد سلة</div>
+            <div class="activity-amt">٣٨٥ ر.س</div>
+            <div class="activity-time">منذ 3 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--whatsapp-dim)">📨</div>
+            <div class="activity-txt"><strong>سارة العلي</strong> — قرأت رسالة الترحيب</div>
+            <div class="activity-time">منذ 5 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--primary-dim)">💳</div>
+            <div class="activity-txt"><strong>خالد العتيبي</strong> — رجع واشترى من رسالة التنشيط</div>
+            <div class="activity-amt">٥٤٠ ر.س</div>
+            <div class="activity-time">منذ 12 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--warning-dim)">⭐</div>
+            <div class="activity-txt"><strong>نورة السعيد</strong> — أعطت تقييم ٥ نجوم</div>
+            <div class="activity-time">منذ 18 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--whatsapp-dim)">📨</div>
+            <div class="activity-txt"><strong>فاطمة الزهراني</strong> — تم إرسال رسالة تنشيط</div>
+            <div class="activity-time">منذ 25 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--primary-dim)">💳</div>
+            <div class="activity-txt"><strong>ريم الشمري</strong> — سلة مستردة!</div>
+            <div class="activity-amt">٤٢٠ ر.س</div>
+            <div class="activity-time">منذ 32 د</div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-ico" style="background:var(--info-dim)">📧</div>
+            <div class="activity-txt"><strong>عبدالله القحطاني</strong> — فتح إيميل حملة العروض</div>
+            <div class="activity-time">منذ 40 د</div>
+        </div>
     </div>
-    <div class="live-camps" id="liveCamps"></div>
-    <div class="ai-box" id="aiBox"><div class="ai-box-lbl">💡 ذكاء الربح</div>جاري تحليل أول النتائج...</div>
-    <div class="feed" style="margin-top:14px">
-        <div class="feed-title">آخر الأحداث</div>
-        <div class="feed-items" id="feedItems"><div class="fi" style="justify-content:center;color:var(--text-dim);padding:32px;">بانتظار أول رسالة...</div></div>
-    </div>
+</div>
+
+<!-- ═══ EXCEL IMPORT (bottom) ═══ -->
+<div class="import-section">
+    <div class="import-section-title">عندك أرقام عملاء إضافية؟</div>
+    <div class="import-section-desc">ارفع ملف Excel أو CSV لإضافة عملاء جدد — سيتم تصنيفهم تلقائياً</div>
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileUpload(this)">
+    <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">📄 رفع ملف عملاء</button>
 </div>
 
 </div></div>
 
-<!-- ═══ EDIT MODAL ═══ -->
-<div class="modal-bg" id="editModal" onclick="if(event.target===this)closeEdit()">
-    <div class="modal">
-        <div class="modal-title">✏️ تعديل الرسالة</div>
-        <textarea id="editTA"></textarea>
-        <div class="modal-hint">المتغيرات: {الاسم} {المنتج} {رابط_السلة} {النسبة} — تتعبأ تلقائياً لكل عميل</div>
-        <div class="modal-btns">
-            <button class="btn btn-primary" onclick="saveEdit()">حفظ</button>
-            <button class="btn btn-secondary" onclick="closeEdit()">إلغاء</button>
-            <button class="btn btn-ghost" onclick="aiRegenerate()" style="margin-right:auto">🤖 اقتراح جديد</button>
-        </div>
-    </div>
-</div>
-
-<!-- ═══ CUSTOM CAMPAIGN MODAL ═══ -->
-<div class="modal-bg" id="customModal" onclick="if(event.target===this)closeCustom()">
-    <div class="modal">
-        <div class="modal-title">➕ حملة مخصصة</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">نوع الحملة</div>
-        <div class="type-btns" id="typeBtns">
-            <button class="type-btn active" data-t="promo">🏷️ عرض خاص</button>
-            <button class="type-btn" data-t="new_product">🆕 منتج جديد</button>
-            <button class="type-btn" data-t="flash">⚡ فلاش سيل</button>
-            <button class="type-btn" data-t="seasonal">🌙 موسمي</button>
-            <button class="type-btn" data-t="restock">📦 رجع للمخزون</button>
-            <button class="type-btn" data-t="loyalty">👑 ولاء</button>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">من يستلم؟</div>
-        <div class="seg-btns" id="segBtns">
-            <button class="seg-btn active" data-s="all">الكل (847)</button>
-            <button class="seg-btn" data-s="vip">المميزين (45)</button>
-            <button class="seg-btn" data-s="loyal">المخلصين (312)</button>
-            <button class="seg-btn" data-s="atrisk">معرضين للخسارة (156)</button>
-            <button class="seg-btn" data-s="new">الجدد (89)</button>
-        </div>
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px">الرسالة</div>
-        <textarea id="customTA" placeholder="اكتب رسالتك... أو اضغط ولّد رسالة 👇"></textarea>
-        <div style="margin-top:14px;display:flex;gap:8px;">
-            <button class="btn btn-primary" onclick="launchCustom()">🚀 أطلق</button>
-            <button class="btn btn-secondary" onclick="closeCustom()">إلغاء</button>
-            <button class="btn btn-ghost" onclick="aiCustom()" style="margin-right:auto">🤖 ولّد رسالة</button>
-        </div>
-    </div>
-</div>
-
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="/platform/shared/shell.js"></script>
 <script>
-// ═══ INIT ═══
 RibhShell.init('autopilot');
 
-// ═══ STATE ═══
-let selectedSource = null;
-let editingCampIdx = null;
-let liveRevenue = 0;
-let feedIdx = 0;
-let liveTimer = null;
-let counters = {carts:0, winback:0, upsell:0, vip:0, browse:0, reviews:0};
-
-// ═══ CAMPAIGNS DATA ═══
-const campaigns = [
-    {id:'cart', icon:'🛒', iconBg:'var(--primary-dim)', name:'استرداد السلات المتروكة', desc:'23 سلة متروكة — تذكير فوري + متابعة تصاعدية', badge:'أعلى أولوية', badgeCls:'badge-primary',
-     stats:{customers:23, channel:'واتساب ← إيميل ← SMS', discount:'0% → 10% → 15%', revenue:'3,200 ر.س'},
-     msg:'مرحبا {الاسم}، مساء الخير 🌙\n{المنتج} لسا موجود بسلتك\nباقي 3 حبات بس — يلا قبل لا يخلص 🔥\nأكمل طلبك 👇\n{رابط_السلة}', msgLabel:'💬 الرسالة الأولى (بدون خصم):'},
-    {id:'winback', icon:'💤', iconBg:'var(--danger-dim)', name:'إعادة تنشيط العملاء', desc:'156 عميل معرض للخسارة — لم يشتروا منذ 60+ يوم', badge:'عالي القيمة', badgeCls:'badge-danger',
-     stats:{customers:156, channel:'واتساب ← إيميل', discount:'15-20% حسب CLV', revenue:'4,800 ر.س'},
-     msg:'وحشتنا {الاسم}! 👋\nعندنا جديد يناسبك — خصم {النسبة}% لأنك من عملائنا المميزين\nشوف العرض 👇\n{رابط_المتجر}', msgLabel:'💬 رسالة التنشيط:'},
-    {id:'upsell', icon:'🎁', iconBg:'var(--secondary-dim)', name:'بيع إضافي بعد الشراء', desc:'89 عميل اشتروا مؤخراً — منتجات مكملة', badge:'مجاني عبر واتساب', badgeCls:'badge-success',
-     stats:{customers:89, channel:'واتساب (نافذة مجانية)', discount:'10%', revenue:'2,100 ر.س'},
-     msg:'هلا {الاسم} 👋\nطلبك #{رقم_الطلب} في الطريق!\nعملاء مثلك أخذوا معاه {المنتج_المكمل} — خصم 10% لو حبيت تضيفه\n{رابط_المنتج}', msgLabel:'💬 داخل نافذة المتابعة المجانية:'},
-    {id:'vip', icon:'⭐', iconBg:'var(--warning-dim)', name:'مكافأة العملاء المميزين', desc:'45 عميل VIP — وصول حصري + شحن مجاني', badge:'ولاء', badgeCls:'badge-warning',
-     stats:{customers:45, channel:'واتساب (شخصي)', discount:'شحن مجاني + حصري', revenue:'1,500 ر.س'},
-     msg:'هلا {الاسم}! أنت من أهم عملائنا 👑\nعندك وصول حصري لمنتجاتنا الجديدة قبل الكل + شحن مجاني\nشوف الجديد 👇\n{رابط_حصري}', msgLabel:'💬 رسالة VIP:'},
-    {id:'browse', icon:'👀', iconBg:'var(--info-dim)', name:'تذكير المتصفحين', desc:'534 زائر شافوا منتجات بدون شراء', badge:'تحويل', badgeCls:'badge-info',
-     stats:{customers:534, channel:'إيميل ← SMS', discount:'5%', revenue:'800 ر.س'},
-     msg:'مرحبا {الاسم}\nلاحظنا إنك شفت {المنتج} — لسا متوفر!\nخصم 5% خاص لك لمدة 48 ساعة\nشوف المنتج 👇\n{رابط_المنتج}', msgLabel:'📧 إيميل التذكير:'},
-    {id:'review', icon:'⭐', iconBg:'var(--whatsapp-dim)', name:'تقييمات + عروض ما بعد البيع', desc:'عبر "تابع طلبك على واتساب" — مجانية بالكامل', badge:'مجاني 100%', badgeCls:'badge-whatsapp',
-     stats:{customers:'كل مشتري', channel:'SMS → واتساب (نافذة مجانية)', discount:'10% بعد التقييم', revenue:'مستمر'},
-     msg:'تابع طلبك على واتساب 👇\nwa.me/966XXXXXXXXX?text=متابعة_طلب_{رقم_الطلب}\n\n— بعد ما يراسلك (مجاني):\n١. تأكيد الطلب ✅\n٢. بعد 3 أيام: كيف المنتج؟ قيّمنا من 5 ⭐\n٣. بعد التقييم: شكراً! خصم 10% على طلبك الجاي 🎁', msgLabel:'📲 التسلسل الكامل:'}
-];
-
-// ═══ PHASE NAVIGATION ═══
-function show(id){document.querySelectorAll('.phase').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active')}
-
-// ═══ PHASE 0: DATA SOURCE ═══
-function selectSource(src){
-    selectedSource=src;
-    document.querySelectorAll('.ds-card').forEach(c=>c.classList.remove('selected'));
-    document.getElementById('sallaSection').style.display='none';
-    document.getElementById('excelSection').style.display='none';
-    if(src==='salla'){document.getElementById('dsSalla').classList.add('selected');document.getElementById('sallaSection').style.display='block';}
-    if(src==='excel'){document.getElementById('dsExcel').classList.add('selected');document.getElementById('excelSection').style.display='block';}
-}
-function connectSalla(){
-    // In production: redirect to Salla OAuth
-    simulateSallaConnected();
-}
-function simulateSallaConnected(){
-    document.getElementById('sallaConnected').style.display='block';
-    document.getElementById('sallaSection').innerHTML='<div style="padding:20px;text-align:center;"><span style="font-size:40px">✅</span><div style="font-size:16px;font-weight:700;margin-top:12px;">متجر سلة متصل</div><div style="font-size:12px;color:var(--text-muted);margin-top:4px;">847 عميل — 1,240 طلب — 23 سلة متروكة</div></div>';
-    document.getElementById('proceedBtn').disabled=false;
-}
-function handleFileUpload(input){
-    if(!input.files.length)return;
-    const name=input.files[0].name;
-    document.getElementById('uploadZone').style.display='none';
-    document.getElementById('uploadResult').classList.add('show');
-    document.getElementById('uploadCount').textContent='تم استيراد 847 عميل من '+name;
-    document.getElementById('proceedBtn').disabled=false;
-}
-// Drag and drop
-const uz=document.getElementById('uploadZone');
-if(uz){uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover')});uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('dragover');document.getElementById('uploadZone').style.display='none';document.getElementById('uploadResult').classList.add('show');document.getElementById('proceedBtn').disabled=false;});}
-
-function goToAnalyze(){
-    show('phase1');
-    const labels={salla:'مصدر البيانات: سلة (847 عميل)',excel:'مصدر البيانات: ملف إكسل (847 عميل)'};
-    document.getElementById('sourceLabel').textContent=labels[selectedSource]||'';
-}
-
-// ═══ PHASE 2: SCAN ═══
-function startScan(){
-    show('phase2');
-    const steps=document.querySelectorAll('.scan-step');
-    let i=0;
-    function next(){
-        if(i>0){steps[i-1].classList.remove('active');steps[i-1].classList.add('done');steps[i-1].querySelector('.step-dot').textContent='✓';}
-        if(i<steps.length){steps[i].classList.add('active');i++;setTimeout(next,700+Math.random()*500);}
-        else setTimeout(()=>{renderCampaigns();show('phase3');},400);
+// ═══ ENGINE TOGGLES ═══
+function toggleEngine(engineId, enabled) {
+    const card = document.querySelector(`[data-engine="${engineId}"]`);
+    if (!card) return;
+    if (enabled) {
+        card.classList.remove('inactive');
+        card.classList.add('active');
+        toast(getEngineName(engineId) + ' — تم التفعيل ✅');
+    } else {
+        card.classList.remove('active');
+        card.classList.add('inactive');
+        toast(getEngineName(engineId) + ' — تم الإيقاف');
     }
-    next();
 }
 
-// ═══ PHASE 3: CAMPAIGNS ═══
-function renderCampaigns(){
-    const el=document.getElementById('campaignsList');
-    el.innerHTML=campaigns.map((c,i)=>`
-        <div class="camp" id="camp${i}">
-            <div class="camp-top">
-                <div class="camp-title-row">
-                    <div class="camp-ico" style="background:${c.iconBg}">${c.icon}</div>
-                    <div><div class="camp-name">${c.name}</div><div class="camp-desc">${c.desc}</div></div>
-                </div>
-                <span class="badge ${c.badgeCls}">${c.badge}</span>
-            </div>
-            <div class="camp-stats">
-                <div>العملاء: <strong>${c.stats.customers}</strong></div>
-                <div>القناة: <strong>${c.stats.channel}</strong></div>
-                <div>الخصم: <strong>${c.stats.discount}</strong></div>
-                <div>المتوقع: <strong style="color:var(--primary)">${c.stats.revenue}</strong></div>
-            </div>
-            <div class="msg-prev" id="msg${i}">
-                <div class="msg-prev-lbl">${c.msgLabel}</div>
-                <div id="msgBody${i}">${c.msg.replace(/\n/g,'<br>')}</div>
-            </div>
-            <div class="camp-actions">
-                <button class="btn btn-secondary" onclick="toggleMsg(${i})">👁️ معاينة</button>
-                <button class="btn btn-ghost" onclick="openEdit(${i})">✏️ تعديل</button>
-            </div>
-        </div>`).join('');
-}
-function toggleMsg(i){document.getElementById('msg'+i).classList.toggle('show')}
-
-// ═══ EDIT MODAL ═══
-function openEdit(i){editingCampIdx=i;document.getElementById('editTA').value=campaigns[i].msg;document.getElementById('editModal').classList.add('open')}
-function closeEdit(){document.getElementById('editModal').classList.remove('open');editingCampIdx=null}
-function saveEdit(){
-    if(editingCampIdx!==null){
-        campaigns[editingCampIdx].msg=document.getElementById('editTA').value;
-        const body=document.getElementById('msgBody'+editingCampIdx);
-        if(body)body.innerHTML=campaigns[editingCampIdx].msg.replace(/\n/g,'<br>');
+function activateEngine(engineId) {
+    const card = document.querySelector(`[data-engine="${engineId}"]`);
+    if (!card) return;
+    const toggle = card.querySelector('input[type="checkbox"]');
+    if (toggle) {
+        toggle.checked = true;
+        toggleEngine(engineId, true);
     }
-    closeEdit();toast('تم حفظ التعديل ✅');
-}
-function aiRegenerate(){
-    const ta=document.getElementById('editTA');
-    ta.style.opacity='.5';
-    const alts=[
-        'مرحبا {الاسم} 👋\nشفنا إنك ناسي شي بالسلة!\n{المنتج} ينتظرك — الكمية محدودة\nيلا خلّصها 🔥\n{رابط_السلة}',
-        'هلا {الاسم}!\nمنتجك المفضل لسا محجوز لك ⏰\nأكمل الطلب الحين واستمتع بتوصيل سريع\n{رابط_السلة}',
-        '{الاسم}، سلتك تنتظرك! 🛒\n{المنتج} — باقي كمية قليلة\nلا تفوّت الفرصة 👇\n{رابط_السلة}',
-        'هلا والله {الاسم}\nمنتجاتك لسا بالسلة\nخلّص طلبك بضغطة — التوصيل علينا 🚚\n{رابط_السلة}'
-    ];
-    setTimeout(()=>{ta.value=alts[Math.floor(Math.random()*alts.length)];ta.style.opacity='1';},600);
 }
 
-// ═══ CUSTOM CAMPAIGN MODAL ═══
-function openCustom(){document.getElementById('customModal').classList.add('open')}
-function closeCustom(){document.getElementById('customModal').classList.remove('open')}
-document.querySelectorAll('.type-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.type-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
-document.querySelectorAll('.seg-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.seg-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active')}));
-function aiCustom(){
-    const ta=document.getElementById('customTA');
-    ta.style.opacity='.5';
-    const t=document.querySelector('.type-btn.active')?.dataset.t;
-    const msgs={
-        promo:'هلا {الاسم} 👋\nعندنا عرض خاص اليوم بس!\nخصم 20% على كل المنتجات\nيلا لا يفوتك 🔥\n{رابط_المتجر}',
-        new_product:'مرحبا {الاسم}!\nوصل عندنا منتج جديد يناسبك\nكن أول من يجربه 🆕\n{رابط_المنتج}',
-        flash:'⚡ فلاش سيل — 3 ساعات بس!\n{الاسم}، خصم 30% على أكثر المنتجات مبيعاً\nيلا قبل لا يخلص الوقت ⏰\n{رابط_المتجر}',
-        seasonal:'🌙 عروض رمضان وصلت!\nمرحبا {الاسم}\nخصومات تصل إلى 40% + شحن مجاني\nجهّز احتياجاتك 👇\n{رابط_المتجر}',
-        restock:'📦 رجع للمخزون!\n{الاسم}، {المنتج} اللي كنت تبيه متوفر الحين\nالكمية محدودة — لا تتأخر\n{رابط_المنتج}',
-        loyalty:'👑 أنت عميل مميز {الاسم}!\nعندك نقاط ولاء جاهزة\nاستبدلها بخصم أو هدية مجانية 🎁\n{رابط_الولاء}'
+function getEngineName(id) {
+    const names = {
+        cart_recovery: 'استرداد السلات',
+        winback: 'إعادة التنشيط',
+        welcome: 'ترحيب الجدد',
+        continuity: 'الاستمرارية',
+        reviews: 'التقييمات',
+        campaigns: 'الحملات',
+        upsell: 'زيادة المبيعات',
+        downsell: 'عرض بديل',
+        attraction: 'جذب واستقطاب'
     };
-    setTimeout(()=>{ta.value=msgs[t]||msgs.promo;ta.style.opacity='1';},500);
-}
-function launchCustom(){closeCustom();toast('تم إطلاق الحملة المخصصة! 🚀');}
-
-// ═══ PHASE 4: LIVE ═══
-const feedEvents=[
-    {ico:'📨',bg:'var(--whatsapp-dim)',name:'أحمد محمد',txt:'تم إرسال رسالة استرداد سلة'},
-    {ico:'📨',bg:'var(--whatsapp-dim)',name:'سارة العلي',txt:'تم إرسال رسالة استرداد سلة'},
-    {ico:'👁️',bg:'var(--info-dim)',name:'أحمد محمد',txt:'قرأ الرسالة'},
-    {ico:'🔗',bg:'var(--secondary-dim)',name:'أحمد محمد',txt:'ضغط على الرابط'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'أحمد محمد',txt:'أكمل الشراء!',amt:385},
-    {ico:'📨',bg:'var(--info-dim)',name:'نورة السعيد',txt:'تم إرسال إيميل تنشيط'},
-    {ico:'📨',bg:'var(--whatsapp-dim)',name:'خالد العتيبي',txt:'تم إرسال مكافأة VIP'},
-    {ico:'👁️',bg:'var(--info-dim)',name:'سارة العلي',txt:'قرأت الرسالة'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'سارة العلي',txt:'أكملت الشراء!',amt:210},
-    {ico:'📨',bg:'var(--whatsapp-dim)',name:'فاطمة الزهراني',txt:'تم إرسال رسالة تنشيط'},
-    {ico:'⭐',bg:'var(--warning-dim)',name:'ياسر الدوسري',txt:'أعطى تقييم 5 نجوم!'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'خالد العتيبي',txt:'اشترى منتج إضافي!',amt:540},
-    {ico:'👁️',bg:'var(--info-dim)',name:'نورة السعيد',txt:'فتحت الإيميل'},
-    {ico:'💬',bg:'var(--whatsapp-dim)',name:'فاطمة الزهراني',txt:'ردت: "وش العرض؟"'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'هند المالكي',txt:'أكملت الشراء من الإيميل!',amt:290},
-    {ico:'📨',bg:'var(--whatsapp-dim)',name:'عبدالله القحطاني',txt:'تم إرسال بيع إضافي'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'فاطمة الزهراني',txt:'رجعت واشترت!',amt:175},
-    {ico:'💳',bg:'var(--primary-dim)',name:'ريم الشمري',txt:'سلة مستردة!',amt:420},
-    {ico:'⭐',bg:'var(--warning-dim)',name:'محمد الأحمد',txt:'أعطى تقييم 4 نجوم'},
-    {ico:'💳',bg:'var(--primary-dim)',name:'عبدالله القحطاني',txt:'اشترى من البيع الإضافي!',amt:310},
-];
-
-const insights=[
-    'رسائل الواتساب الصباحية تحقق ضعف التحويل — تم تحويل 60% من الإرسال للفترة الصباحية',
-    'عملاء شريحة "المميزين" تفاعلوا بنسبة 78% — الرسالة الشخصية تعمل ممتاز',
-    'رسائل بدون خصم حققت 40% تحويل على السلات — أغلب العملاء يحتاجون تذكير فقط',
-    'الإيميل يعمل أفضل لشريحة المتصفحين — تم تحويل القناة تلقائياً',
-    'ردود الواتساب المباشرة تضاعف نسبة الشراء — النظام يرد تلقائياً على الاستفسارات'
-];
-
-function goLive(){
-    show('phase4');
-    liveRevenue=0;feedIdx=0;
-    counters={carts:0,winback:0,upsell:0,vip:0,browse:0,reviews:0};
-    renderLiveCamps();
-    document.getElementById('feedItems').innerHTML='<div class="fi" style="justify-content:center;color:var(--text-dim);padding:32px;">بانتظار أول رسالة...</div>';
-    if(liveTimer)clearTimeout(liveTimer);
-    runFeed();
+    return names[id] || id;
 }
 
-function renderLiveCamps(){
-    const d=[
-        {ico:'🛒',bg:'var(--primary-dim)',name:'السلات',id:'lc0',max:23,sub:'مستردة'},
-        {ico:'💤',bg:'var(--danger-dim)',name:'تنشيط',id:'lc1',max:156,sub:'رجعوا'},
-        {ico:'🎁',bg:'var(--secondary-dim)',name:'بيع إضافي',id:'lc2',max:89,sub:'اشتروا'},
-        {ico:'⭐',bg:'var(--warning-dim)',name:'VIP',id:'lc3',max:45,sub:'تفاعلوا'},
-        {ico:'👀',bg:'var(--info-dim)',name:'متصفحين',id:'lc4',max:534,sub:'نقروا'},
-        {ico:'⭐',bg:'var(--whatsapp-dim)',name:'تقييمات',id:'lc5',max:'',sub:'تقييم'}
-    ];
-    document.getElementById('liveCamps').innerHTML=d.map(c=>`
-        <div class="lc"><div class="lc-top"><div class="lc-ico" style="background:${c.bg}">${c.ico}</div><div class="lc-name">${c.name}</div></div>
-        <div class="lc-val" id="${c.id}">0${c.max?'/'+c.max:''}</div><div class="lc-sub">${c.sub}</div></div>`).join('');
+// ═══ EXPAND/COLLAPSE DETAILS ═══
+function toggleDetails(engineId) {
+    const details = document.getElementById('details-' + engineId);
+    if (!details) return;
+    const isOpen = details.classList.contains('open');
+    // Close all others
+    document.querySelectorAll('.engine-details.open').forEach(d => d.classList.remove('open'));
+    // Toggle this one
+    if (!isOpen) details.classList.add('open');
 }
 
-function runFeed(){
-    if(feedIdx>=feedEvents.length)return;
-    const e=feedEvents[feedIdx];feedIdx++;
-    if(feedIdx===1)document.getElementById('feedItems').innerHTML='';
-
-    if(e.amt){
-        liveRevenue+=e.amt;
-        document.getElementById('liveRev').textContent=liveRevenue.toLocaleString('ar-SA');
-        const pct=Math.min(100,(liveRevenue/12400)*100);
-        document.getElementById('liveBar').style.width=pct+'%';
-        document.getElementById('liveBarTxt').textContent=Math.round(pct)+'% من الهدف (12,400 ر.س)';
-        counters.carts=Math.min(counters.carts+1,8);
-        document.getElementById('lc0').textContent=counters.carts+'/23';
-    }
-    if(e.ico==='⭐'){counters.reviews++;document.getElementById('lc5').textContent=counters.reviews;}
-    if(feedIdx%3===0){counters.winback=Math.min(counters.winback+1,12);document.getElementById('lc1').textContent=counters.winback+'/156';}
-    if(feedIdx%5===0){counters.upsell=Math.min(counters.upsell+1,5);document.getElementById('lc2').textContent=counters.upsell+'/89';}
-    if(feedIdx%4===0){counters.vip=Math.min(counters.vip+1,8);document.getElementById('lc3').textContent=counters.vip+'/45';}
-    if(feedIdx%6===0){counters.browse=Math.min(counters.browse+1,15);document.getElementById('lc4').textContent=counters.browse+'/534';}
-
-    const min=feedIdx*2+Math.floor(Math.random()*3);
-    const fi=document.createElement('div');fi.className='fi';
-    fi.innerHTML=`<div class="fi-ico" style="background:${e.bg}">${e.ico}</div><div class="fi-txt"><strong>${e.name}</strong> — ${e.txt}</div>${e.amt?`<div class="fi-amt">${e.amt} ر.س</div>`:''}<div class="fi-time">منذ ${min} د</div>`;
-    const feed=document.getElementById('feedItems');
-    feed.insertBefore(fi,feed.firstChild);
-
-    if(feedIdx%4===0){
-        const ins=insights[Math.floor((feedIdx/4)-1)];
-        if(ins)document.getElementById('aiBox').innerHTML=`<div class="ai-box-lbl">💡 ذكاء الربح</div>${ins}`;
-    }
-
-    liveTimer=setTimeout(runFeed,1500+Math.random()*2000);
-}
-
-function pauseAll(){
-    if(liveTimer)clearTimeout(liveTimer);
-    toast('تم إيقاف الحملات مؤقتاً');
-    liveRevenue=0;feedIdx=0;counters={carts:0,winback:0,upsell:0,vip:0,browse:0,reviews:0};
-    show('phase1');
+// ═══ FILE UPLOAD ═══
+function handleFileUpload(input) {
+    if (!input.files.length) return;
+    const name = input.files[0].name;
+    toast('تم رفع ' + name + ' — جاري استيراد العملاء...');
+    setTimeout(() => {
+        toast('تم استيراد ٨٤٧ عميل جديد ✅');
+    }, 2000);
 }
 
 // ═══ TOAST ═══
-function toast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),3000);}
+function toast(msg) {
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.textContent = msg;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3000);
+}
 </script>
 </body>
 </html>

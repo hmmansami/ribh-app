@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - التحليلات</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="shared/shell.css">
+    <style>
+        /* ── Analytics Page Styles ── */
+        .analytics-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .chart-canvas {
+            width: 100%;
+            height: 280px;
+            display: block;
+        }
+
+        .chart-canvas-sm {
+            width: 100%;
+            height: 200px;
+            display: block;
+        }
+
+        /* ── Donut Layout ── */
+        .donut-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .donut-canvas-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-canvas-wrap canvas {
+            width: 240px;
+            height: 240px;
+        }
+
+        .donut-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .donut-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: var(--bg-surface-2);
+            border-radius: var(--radius-sm);
+            transition: background 0.15s var(--ease);
+        }
+
+        .donut-legend-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .donut-legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .donut-legend-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            min-width: 100px;
+        }
+
+        .donut-legend-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-right: auto;
+            margin-left: 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .donut-legend-meta span {
+            white-space: nowrap;
+        }
+
+        .donut-legend-pct {
+            font-weight: 700;
+            color: var(--text);
+            min-width: 40px;
+            text-align: left;
+        }
+
+        /* ── Horizontal Bar (Flow Performance) ── */
+        .hbar-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .hbar-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .hbar-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hbar-name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .hbar-value {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .hbar-track {
+            height: 8px;
+            background: var(--bg-surface-2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .hbar-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--primary);
+            transition: width 0.8s var(--ease);
+        }
+
+        /* ── Conversion Funnel ── */
+        .funnel-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            padding: 20px 0;
+        }
+
+        .funnel-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .funnel-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 16px 24px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-dim);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            transition: all 0.2s var(--ease);
+            cursor: default;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .funnel-bar:hover {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.18);
+        }
+
+        .funnel-bar-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .funnel-bar-count {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .funnel-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 6px 0;
+            color: var(--text-dim);
+        }
+
+        .funnel-connector svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.5;
+        }
+
+        .funnel-connector-pct {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            background: var(--bg-surface-2);
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-top: 2px;
+        }
+
+        /* ── Channel Table inside Card ── */
+        .channel-table-wrap {
+            margin-top: 16px;
+        }
+
+        .channel-table-wrap .data-table {
+            font-size: 12px;
+        }
+
+        /* ── Messages Table ── */
+        .msg-preview {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12.5px;
+            color: var(--text);
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .analytics-grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .donut-layout {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .donut-canvas-wrap {
+                justify-content: center;
+            }
+            .donut-legend-meta {
+                margin-right: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .funnel-bar {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+            .funnel-bar-label {
+                font-size: 12px;
+            }
+            .funnel-bar-count {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="page-body" style="display:none">
+
+        <!-- Time Range Tabs -->
+        <div class="tabs" id="timeRangeTabs">
+            <button class="tab" data-range="7" onclick="switchRange(7)">7 أيام</button>
+            <button class="tab active" data-range="30" onclick="switchRange(30)">30 يوم</button>
+            <button class="tab" data-range="90" onclick="switchRange(90)">90 يوم</button>
+            <button class="tab" data-range="365" onclick="switchRange(365)">سنة</button>
+        </div>
+
+        <!-- KPI Stats -->
+        <div class="stats-grid stagger" id="kpiGrid">
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="wallet"></i>
+                    إجمالي الإيرادات
+                </div>
+                <div class="stat-card-value" id="kpiRevenue">٤٧,٨٥٠ ر.س</div>
+                <div class="stat-card-change up" id="kpiRevenueChange">
+                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                    +12.5%
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="percent"></i>
+                    معدل التحويل
+                </div>
+                <div class="stat-card-value" id="kpiConversion">28.5%</div>
+                <div class="stat-card-change up" id="kpiConversionChange">
+                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                    +3.2%
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="receipt"></i>
+                    متوسط قيمة الطلب
+                </div>
+                <div class="stat-card-value" id="kpiAOV">٢٠٥ ر.س</div>
+                <div class="stat-card-change up" id="kpiAOVChange">
+                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                    +5.1%
+                </div>
+            </div>
+            <div class="stat-card animate-in">
+                <div class="stat-card-label">
+                    <i data-lucide="zap"></i>
+                    العائد على الاستثمار
+                </div>
+                <div class="stat-card-value" id="kpiROI">63x</div>
+                <div class="stat-card-change up" id="kpiROIChange">
+                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                    +8x
+                </div>
+            </div>
+        </div>
+
+        <!-- Revenue Over Time -->
+        <div class="card mb-24 animate-in">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">الإيرادات حسب الوقت</div>
+                    <div class="card-subtitle">إجمالي الإيرادات اليومية بالريال السعودي</div>
+                </div>
+                <span class="badge badge-success" id="revenueTrend">
+                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
+                    اتجاه صاعد
+                </span>
+            </div>
+            <canvas id="revenueChart" class="chart-canvas"></canvas>
+        </div>
+
+        <!-- Two Column: Channel Performance + Flow Performance -->
+        <div class="analytics-grid-2">
+
+            <!-- Channel Performance -->
+            <div class="card animate-in">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">أداء القنوات</div>
+                        <div class="card-subtitle">مقارنة أداء قنوات التواصل</div>
+                    </div>
+                </div>
+                <canvas id="channelChart" class="chart-canvas-sm"></canvas>
+                <div class="channel-table-wrap">
+                    <div class="table-container">
+                        <table class="data-table" id="channelTable">
+                            <thead>
+                                <tr>
+                                    <th>القناة</th>
+                                    <th>المرسلة</th>
+                                    <th>المستلمة</th>
+                                    <th>المفتوحة</th>
+                                    <th>التحويل</th>
+                                    <th>الإيرادات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="channelTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flow Performance -->
+            <div class="card animate-in">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">أداء الأتمتة</div>
+                        <div class="card-subtitle">الإيرادات حسب تسلسل الأتمتة</div>
+                    </div>
+                </div>
+                <div class="hbar-list" id="flowBars"></div>
+            </div>
+        </div>
+
+        <!-- Segment Revenue Distribution -->
+        <div class="card mb-24 animate-in">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">توزيع الإيرادات حسب الشرائح</div>
+                    <div class="card-subtitle">مساهمة كل شريحة عملاء في إجمالي الإيرادات</div>
+                </div>
+            </div>
+            <div class="donut-layout">
+                <div class="donut-canvas-wrap">
+                    <canvas id="segmentDonut" width="240" height="240"></canvas>
+                </div>
+                <div class="donut-legend" id="segmentLegend"></div>
+            </div>
+        </div>
+
+        <!-- Conversion Funnel -->
+        <div class="card mb-24 animate-in">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">قمع التحويل</div>
+                    <div class="card-subtitle">مراحل التحويل من السلة المتروكة إلى الشراء</div>
+                </div>
+            </div>
+            <div class="funnel-wrap" id="funnelWrap"></div>
+        </div>
+
+        <!-- Best Performing Messages -->
+        <div class="card animate-in">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">أفضل الرسائل أداءً</div>
+                    <div class="card-subtitle">الرسائل الأعلى تحويلاً وإيرادات</div>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>الرسالة</th>
+                            <th>التسلسل</th>
+                            <th>المرسلة</th>
+                            <th>معدل التحويل</th>
+                            <th>الإيرادات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="messagesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="shared/shell.js"></script>
+    <script>
+        RibhShell.init('analytics');
+
+        /* ═══════════════════════════════════════
+           Demo Data Generation
+           ═══════════════════════════════════════ */
+
+        let currentRange = 30;
+
+        const arabicDayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+        const arabicMonthNames = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+
+        function generateRevenueData(days) {
+            const values = [];
+            const labels = [];
+            const now = new Date();
+            const baseValue = 1200;
+            const trendPerDay = 15;
+
+            for (let i = days - 1; i >= 0; i--) {
+                const date = new Date(now);
+                date.setDate(date.getDate() - i);
+
+                // Slight upward trend + noise
+                const trend = trendPerDay * (days - i);
+                const noise = (Math.random() - 0.4) * 800;
+                const weekendBoost = (date.getDay() === 4 || date.getDay() === 5) ? 400 : 0;
+                const val = Math.max(800, Math.round(baseValue + trend + noise + weekendBoost));
+                values.push(Math.min(val, 3500));
+
+                const dayNum = date.getDate();
+                const monthName = arabicMonthNames[date.getMonth()];
+                labels.push(dayNum + ' ' + monthName);
+            }
+            return { values, labels };
+        }
+
+        // Channel data
+        const channelData = {
+            whatsapp: {
+                name: 'واتساب',
+                badge: 'badge-whatsapp',
+                sent: 9720,
+                delivered: 9430,
+                opened: 8250,
+                converted: 3110,
+                revenue: 37300,
+                color: '#25D366'
+            },
+            email: {
+                name: 'البريد الإلكتروني',
+                badge: 'badge-info',
+                sent: 1870,
+                delivered: 1720,
+                opened: 890,
+                converted: 336,
+                revenue: 7200,
+                color: '#3B82F6'
+            },
+            sms: {
+                name: 'الرسائل القصيرة',
+                badge: 'badge-warning',
+                sent: 860,
+                delivered: 810,
+                opened: 650,
+                converted: 103,
+                revenue: 3350,
+                color: '#F59E0B'
+            }
+        };
+
+        // Funnel data
+        const funnelSteps = [
+            { label: 'السلات المتروكة', count: 1200, icon: 'shopping-cart' },
+            { label: 'الرسائل المرسلة', count: 980, icon: 'send' },
+            { label: 'الرسائل المفتوحة', count: 850, icon: 'mail-open' },
+            { label: 'النقرات', count: 420, icon: 'mouse-pointer-click' },
+            { label: 'المشتريات', count: 234, icon: 'check-circle' }
+        ];
+
+        // Best messages data
+        const topMessages = [
+            {
+                preview: 'مرحباً! لاحظنا أنك تركت منتجات في سلتك. استخدم كود RIBH15 للحصول على خصم ١٥٪',
+                flow: 'استرداد السلة المتروكة',
+                sent: 3450,
+                conversion: 28.4,
+                revenue: 18200
+            },
+            {
+                preview: 'أهلاً بك في متجرنا! كهدية ترحيبية، احصل على شحن مجاني لطلبك الأول',
+                flow: 'ترحيب العميل الجديد',
+                sent: 1200,
+                conversion: 24.1,
+                revenue: 8900
+            },
+            {
+                preview: 'شكراً لطلبك! هل تعلم أن المنتج الذي اشتريته يتناسب مع هذه المنتجات؟',
+                flow: 'ما بعد الشراء',
+                sent: 2100,
+                conversion: 20.0,
+                revenue: 7600
+            },
+            {
+                preview: 'اشتقنا لك! عد الآن واحصل على خصم ٢٠٪ على كل المنتجات. العرض ساري لمدة ٤٨ ساعة',
+                flow: 'استعادة العملاء',
+                sent: 890,
+                conversion: 17.5,
+                revenue: 5400
+            },
+            {
+                preview: 'خبر سار! المنتج الذي كنت تبحث عنه أصبح متوفراً الآن وبسعر أقل',
+                flow: 'تخفيض السعر',
+                sent: 670,
+                conversion: 30.0,
+                revenue: 6200
+            }
+        ];
+
+        // KPI multipliers per range
+        const rangeMultipliers = {
+            7: { revenue: 0.25, factor: 0.8 },
+            30: { revenue: 1, factor: 1 },
+            90: { revenue: 2.8, factor: 1.15 },
+            365: { revenue: 10.5, factor: 1.3 }
+        };
+
+        /* ═══════════════════════════════════════
+           Render Functions
+           ═══════════════════════════════════════ */
+
+        function switchRange(days) {
+            currentRange = days;
+            // Update active tab
+            document.querySelectorAll('#timeRangeTabs .tab').forEach(tab => {
+                tab.classList.toggle('active', parseInt(tab.dataset.range) === days);
+            });
+            renderAll();
+        }
+
+        function renderAll() {
+            renderKPIs();
+            renderRevenueChart();
+            renderChannelChart();
+            renderChannelTable();
+            renderFlowBars();
+            renderSegmentDonut();
+            renderFunnel();
+            renderMessagesTable();
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function toArabicNum(n) {
+            const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return String(n).replace(/\d/g, d => arabicDigits[d]);
+        }
+
+        function formatAR(n) {
+            return toArabicNum(n.toLocaleString('en-US'));
+        }
+
+        /* ── KPIs ── */
+        function renderKPIs() {
+            const m = rangeMultipliers[currentRange];
+            const rev = Math.round(47850 * m.revenue);
+            const conv = (28.5 * m.factor).toFixed(1);
+            const aov = Math.round(205 * m.factor);
+            const roi = Math.round(63 * m.factor);
+
+            document.getElementById('kpiRevenue').textContent = formatAR(rev) + ' ر.س';
+            document.getElementById('kpiConversion').textContent = toArabicNum(conv) + '%';
+            document.getElementById('kpiAOV').textContent = formatAR(aov) + ' ر.س';
+            document.getElementById('kpiROI').textContent = toArabicNum(roi) + 'x';
+        }
+
+        /* ── Revenue Chart ── */
+        function renderRevenueChart() {
+            const data = generateRevenueData(currentRange);
+            RibhCharts.drawLineChart('revenueChart', data, { color: '#10B981' });
+        }
+
+        /* ── Channel Bar Chart ── */
+        function renderChannelChart() {
+            const channels = Object.values(channelData);
+            const m = rangeMultipliers[currentRange];
+            RibhCharts.drawBarChart('channelChart', {
+                values: channels.map(c => Math.round(c.converted * m.revenue)),
+                labels: channels.map(c => c.name),
+                colors: channels.map(c => c.color)
+            });
+        }
+
+        /* ── Channel Table ── */
+        function renderChannelTable() {
+            const tbody = document.getElementById('channelTableBody');
+            const m = rangeMultipliers[currentRange];
+            let html = '';
+            Object.values(channelData).forEach(ch => {
+                const sent = Math.round(ch.sent * m.revenue);
+                const delivered = Math.round(ch.delivered * m.revenue);
+                const opened = Math.round(ch.opened * m.revenue);
+                const converted = Math.round(ch.converted * m.revenue);
+                const rev = Math.round(ch.revenue * m.revenue);
+                const convRate = ((converted / sent) * 100).toFixed(1);
+                html += `<tr>
+                    <td><span class="badge ${ch.badge}">${ch.name}</span></td>
+                    <td>${formatAR(sent)}</td>
+                    <td>${formatAR(delivered)}</td>
+                    <td>${formatAR(opened)}</td>
+                    <td><span class="font-bold" style="color:var(--primary)">${toArabicNum(convRate)}%</span></td>
+                    <td style="font-weight:700;color:var(--text)">${formatAR(rev)} ر.س</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        /* ── Flow Bars ── */
+        function renderFlowBars() {
+            const container = document.getElementById('flowBars');
+            const flows = RibhAPI.demo.flows
+                .filter(f => f.revenue > 0)
+                .sort((a, b) => b.revenue - a.revenue);
+            const maxRevenue = flows[0]?.revenue || 1;
+            const m = rangeMultipliers[currentRange];
+
+            let html = '';
+            flows.forEach(flow => {
+                const rev = Math.round(flow.revenue * m.revenue);
+                const pct = ((flow.revenue / maxRevenue) * 100).toFixed(0);
+                html += `<div class="hbar-item">
+                    <div class="hbar-top">
+                        <span class="hbar-name">${flow.name}</span>
+                        <span class="hbar-value">${formatAR(rev)} ر.س</span>
+                    </div>
+                    <div class="hbar-track">
+                        <div class="hbar-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        /* ── Segment Donut ── */
+        function renderSegmentDonut() {
+            const segments = RibhAPI.demo.segments;
+            const totalRevenue = segments.reduce((sum, s) => sum + s.revenue, 0);
+
+            RibhCharts.drawDonut('segmentDonut', {
+                values: segments.map(s => s.revenue),
+                colors: segments.map(s => s.color),
+                centerText: formatAR(totalRevenue),
+                centerSub: 'إجمالي الإيرادات'
+            });
+
+            const legend = document.getElementById('segmentLegend');
+            let html = '';
+            segments.forEach(seg => {
+                const pct = ((seg.revenue / totalRevenue) * 100).toFixed(1);
+                html += `<div class="donut-legend-item">
+                    <div class="donut-legend-dot" style="background:${seg.color}"></div>
+                    <div class="donut-legend-name">${seg.name}</div>
+                    <div class="donut-legend-meta">
+                        <span>${formatAR(seg.count)} عميل</span>
+                        <span>${formatAR(seg.revenue)} ر.س</span>
+                    </div>
+                    <div class="donut-legend-pct">${toArabicNum(pct)}%</div>
+                </div>`;
+            });
+            legend.innerHTML = html;
+        }
+
+        /* ── Funnel ── */
+        function renderFunnel() {
+            const container = document.getElementById('funnelWrap');
+            const widths = [100, 85, 74, 50, 35];
+            let html = '';
+
+            funnelSteps.forEach((step, i) => {
+                html += `<div class="funnel-step">
+                    <div class="funnel-bar" style="width:${widths[i]}%;background:rgba(16,185,129,${0.18 - i * 0.025});">
+                        <i data-lucide="${step.icon}" style="width:20px;height:20px;color:var(--primary);opacity:0.8"></i>
+                        <span class="funnel-bar-label">${step.label}</span>
+                        <span class="funnel-bar-count">${formatAR(step.count)}</span>
+                    </div>`;
+
+                if (i < funnelSteps.length - 1) {
+                    const convPct = ((funnelSteps[i + 1].count / step.count) * 100).toFixed(1);
+                    html += `<div class="funnel-connector">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        <span class="funnel-connector-pct">${toArabicNum(convPct)}%</span>
+                    </div>`;
+                }
+
+                html += `</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        /* ── Messages Table ── */
+        function renderMessagesTable() {
+            const tbody = document.getElementById('messagesTableBody');
+            const m = rangeMultipliers[currentRange];
+            let html = '';
+            topMessages.forEach(msg => {
+                const sent = Math.round(msg.sent * m.revenue);
+                const rev = Math.round(msg.revenue * m.revenue);
+                html += `<tr>
+                    <td><div class="msg-preview">${msg.preview}</div></td>
+                    <td><span class="badge badge-primary">${msg.flow}</span></td>
+                    <td>${formatAR(sent)}</td>
+                    <td><span class="font-bold" style="color:var(--primary)">${toArabicNum(msg.conversion.toFixed(1))}%</span></td>
+                    <td style="font-weight:700;color:var(--text)">${formatAR(rev)} ر.س</td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        /* ═══════════════════════════════════════
+           Init & Resize
+           ═══════════════════════════════════════ */
+
+        renderAll();
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                renderRevenueChart();
+                renderChannelChart();
+                renderSegmentDonut();
+            }, 200);
+        });
+    </script>
+</body>
+</html>

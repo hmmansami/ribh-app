@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RIBH - ملف العميل</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <link rel="stylesheet" href="shared/shell.css">
+    <style>
+        /* ── Back Link ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            transition: color 0.15s var(--ease);
+            animation: fadeIn 0.3s var(--ease) both;
+        }
+        .back-link:hover { color: var(--text); }
+        .back-link svg { width: 14px; height: 14px; }
+
+        /* ── Profile Header Card ── */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s var(--ease) 0.05s both;
+        }
+
+        .profile-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 22px;
+            flex-shrink: 0;
+            letter-spacing: -0.3px;
+        }
+        .profile-avatar.segment-champion { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+        .profile-avatar.segment-loyal { background: rgba(99, 102, 241, 0.15); color: #6366F1; }
+        .profile-avatar.segment-potential { background: rgba(59, 130, 246, 0.15); color: #3B82F6; }
+        .profile-avatar.segment-recent { background: rgba(245, 158, 11, 0.15); color: #F59E0B; }
+        .profile-avatar.segment-at_risk { background: rgba(239, 68, 68, 0.15); color: #EF4444; }
+        .profile-avatar.segment-dormant { background: rgba(113, 113, 122, 0.15); color: #71717A; }
+
+        .profile-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+            letter-spacing: -0.3px;
+        }
+
+        .profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .profile-phone {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            direction: ltr;
+            font-variant-numeric: tabular-nums;
+        }
+        .profile-phone svg { width: 15px; height: 15px; color: var(--whatsapp); }
+
+        .profile-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ── Predictive Metrics ── */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s var(--ease) 0.1s both;
+        }
+
+        .metric-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: border-color 0.2s var(--ease);
+        }
+        .metric-card:hover { border-color: var(--border-strong); }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .metric-label svg { width: 14px; height: 14px; }
+
+        .metric-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .metric-sub {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Churn risk progress */
+        .churn-progress {
+            margin-top: 12px;
+        }
+        .churn-progress-bar {
+            height: 6px;
+            background: var(--bg-surface-2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .churn-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s var(--ease);
+        }
+        .churn-progress-fill.risk-low { background: var(--success); }
+        .churn-progress-fill.risk-medium { background: var(--warning); }
+        .churn-progress-fill.risk-high { background: var(--danger); }
+
+        /* ── Two Column Layout ── */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            animation: fadeIn 0.3s var(--ease) 0.15s both;
+        }
+
+        .profile-col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ── Order History ── */
+        .order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .order-status.completed { background: var(--success-dim); color: var(--success); }
+        .order-status.shipping { background: var(--info-dim); color: var(--info); }
+        .order-status.cancelled { background: var(--danger-dim); color: var(--danger); }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .order-amount {
+            font-weight: 600;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+            white-space: nowrap;
+        }
+
+        .order-date {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .order-products {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+        }
+
+        /* ── Event Timeline ── */
+        .timeline {
+            position: relative;
+            padding-right: 28px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: var(--border);
+            border-radius: 1px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .timeline-item:last-child { padding-bottom: 0; }
+
+        .timeline-dot {
+            position: absolute;
+            right: -28px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+        .timeline-dot.green { background: var(--success-dim); border: 2px solid var(--success); }
+        .timeline-dot.blue { background: var(--info-dim); border: 2px solid var(--info); }
+        .timeline-dot.whatsapp { background: var(--whatsapp-dim); border: 2px solid var(--whatsapp); }
+        .timeline-dot.orange { background: var(--warning-dim); border: 2px solid var(--warning); }
+        .timeline-dot.purple { background: var(--secondary-dim); border: 2px solid var(--secondary); }
+
+        .timeline-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-text {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .timeline-time {
+            font-size: 11.5px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* ── Customer Info Card ── */
+        .info-rows {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .info-row:last-child { border-bottom: none; }
+
+        .info-label {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 600;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .info-value.platform-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: var(--secondary-dim);
+            color: var(--secondary);
+            font-size: 11.5px;
+            direction: rtl;
+        }
+
+        /* ── Spending Summary ── */
+        .spending-chart-wrap {
+            width: 100%;
+            height: 160px;
+            margin-bottom: 16px;
+        }
+
+        .spending-chart-wrap canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .spending-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .spending-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12.5px;
+        }
+
+        .spending-stat-label {
+            color: var(--text-muted);
+        }
+
+        .spending-stat-value {
+            font-weight: 700;
+            color: var(--text);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ── Segments & Tags ── */
+        .tags-section {
+            margin-top: 16px;
+        }
+
+        .tags-section-label {
+            font-size: 11.5px;
+            color: var(--text-dim);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 10px;
+        }
+
+        .tags-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 600;
+            background: var(--bg-surface-2);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            transition: border-color 0.15s var(--ease);
+        }
+        .tag:hover { border-color: var(--border-strong); }
+
+        /* ── Active Automations ── */
+        .automation-item {
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .automation-item:last-child { border-bottom: none; }
+
+        .automation-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .automation-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .automation-step {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .automation-progress {
+            height: 6px;
+            background: var(--bg-surface-2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .automation-progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--primary);
+            transition: width 0.8s var(--ease);
+        }
+
+        /* ── Modal textarea ── */
+        .message-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px 14px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text);
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+            outline: none;
+            direction: rtl;
+            line-height: 1.7;
+            transition: border-color 0.15s var(--ease);
+        }
+        .message-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-dim);
+        }
+        .message-textarea::placeholder { color: var(--text-dim); }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+                padding: 20px;
+            }
+            .profile-actions {
+                width: 100%;
+            }
+            .profile-actions .btn {
+                flex: 1;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+            .profile-meta {
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="page-body" style="display:none">
+
+        <!-- Back Link -->
+        <a href="customers.html" class="back-link">
+            <i data-lucide="arrow-right"></i>
+            العودة للعملاء
+        </a>
+
+        <!-- Profile Header -->
+        <div class="card profile-header" id="profileHeader">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Predictive Metrics -->
+        <div class="metrics-grid" id="metricsGrid">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="profile-grid">
+            <!-- Right Column (wider) -->
+            <div class="profile-col">
+                <!-- Order History -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">سجل الطلبات</div>
+                        <span class="badge badge-neutral" id="ordersCount">5 طلبات</span>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="ordersTable">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>التاريخ</th>
+                                    <th>المنتجات</th>
+                                    <th>المبلغ</th>
+                                    <th>الحالة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Event Timeline -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">سجل الأحداث</div>
+                    </div>
+                    <div class="timeline" id="timeline">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Left Column -->
+            <div class="profile-col">
+                <!-- Customer Info -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">معلومات العميل</div>
+                        <button class="btn btn-ghost btn-sm" onclick="editCustomer()">
+                            <i data-lucide="pencil"></i>
+                        </button>
+                    </div>
+                    <div class="info-rows" id="infoRows">
+                    </div>
+                </div>
+
+                <!-- Spending Summary -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">ملخص الإنفاق</div>
+                    </div>
+                    <div class="spending-chart-wrap">
+                        <canvas id="spendingChart"></canvas>
+                    </div>
+                    <div class="spending-stats" id="spendingStats">
+                    </div>
+                </div>
+
+                <!-- Segments & Tags -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">الشرائح والعلامات</div>
+                    </div>
+                    <div id="segmentsTags">
+                    </div>
+                </div>
+
+                <!-- Active Automations -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">الأتمتات النشطة</div>
+                        <span class="badge badge-primary" id="automationsCount">2 نشطة</span>
+                    </div>
+                    <div id="automationsList">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Message Modal -->
+        <div class="modal-overlay" id="waModal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">إرسال رسالة واتساب</div>
+                    <button class="modal-close" onclick="closeWaModal()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <label class="input-label">القالب</label>
+                        <select class="select" id="waTemplate" onchange="applyTemplate()">
+                            <option value="custom">رسالة مخصصة</option>
+                            <option value="offer">عرض خاص</option>
+                            <option value="followup">متابعة الطلب</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">الرسالة</label>
+                        <textarea class="message-textarea" id="waMessage" placeholder="اكتب رسالتك هنا..."></textarea>
+                    </div>
+                    <div style="font-size: 11.5px; color: var(--text-dim); display: flex; align-items: center; gap: 6px;">
+                        <i data-lucide="info" style="width:13px;height:13px;"></i>
+                        سيتم إرسال الرسالة عبر واتساب المربوط بالمنصة
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="sendWhatsApp()">
+                        <i data-lucide="send"></i>
+                        إرسال
+                    </button>
+                    <button class="btn btn-ghost" onclick="closeWaModal()">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="shared/shell.js"></script>
+    <script>
+        RibhShell.init('customers');
+
+        // ── Get Customer Data ──
+        const params = new URLSearchParams(window.location.search);
+        const customerId = params.get('id') || 'c1';
+        const customer = RibhAPI.demo.customers.find(c => c.id === customerId) || RibhAPI.demo.customers[0];
+        const segments = RibhAPI.demo.segments;
+
+        // ── Demo orders for this customer ──
+        const demoOrders = [
+            { id: '#1234', date: '4 فبراير 2026', products: 'عطر oud - 2 قطعة', amount: 385, status: 'completed', statusText: 'مكتمل' },
+            { id: '#1198', date: '28 يناير 2026', products: 'كريم مرطب', amount: 120, status: 'completed', statusText: 'مكتمل' },
+            { id: '#1156', date: '15 يناير 2026', products: 'مجموعة العناية', amount: 450, status: 'completed', statusText: 'مكتمل' },
+            { id: '#1089', date: '2 يناير 2026', products: 'عطر مسك', amount: 280, status: 'completed', statusText: 'مكتمل' },
+            { id: '#1045', date: '20 ديسمبر 2025', products: 'هدية عيد', amount: 520, status: 'completed', statusText: 'مكتمل' },
+        ];
+
+        // ── Demo timeline events ──
+        const demoTimeline = [
+            { dot: 'green',    text: 'اكتمل الطلب #1234',                time: 'منذ يومين' },
+            { dot: 'blue',     text: 'تم شحن الطلب #1234',              time: 'منذ 3 أيام' },
+            { dot: 'whatsapp', text: 'تم إرسال رسالة ما بعد الشراء',    time: 'منذ 3 أيام' },
+            { dot: 'orange',   text: 'أضاف منتجات للسلة',               time: 'منذ 4 أيام' },
+            { dot: 'purple',   text: 'شاهد منتج: عطر oud الفاخر',      time: 'منذ 4 أيام' },
+            { dot: 'whatsapp', text: 'تم إرسال رسالة استرداد السلة',    time: 'منذ 5 أيام' },
+            { dot: 'orange',   text: 'ترك سلة بقيمة 385 ر.س',          time: 'منذ 5 أيام' },
+            { dot: 'blue',     text: 'فتح رسالة الحملة الأسبوعية',      time: 'منذ 7 أيام' },
+        ];
+
+        // ── Initialize Page ──
+        function initPage() {
+            renderProfileHeader();
+            renderMetrics();
+            renderOrders();
+            renderTimeline();
+            renderCustomerInfo();
+            renderSpendingChart();
+            renderSegmentsTags();
+            renderAutomations();
+        }
+
+        // ── Profile Header ──
+        function renderProfileHeader() {
+            const el = document.getElementById('profileHeader');
+            const initial = customer.name.charAt(0);
+
+            el.innerHTML = `
+                <div class="profile-avatar segment-${customer.segment}">${initial}</div>
+                <div class="profile-details">
+                    <div class="profile-name">${customer.name}</div>
+                    <div class="profile-meta">
+                        <span class="profile-phone">
+                            <i data-lucide="message-circle"></i>
+                            ${customer.phone}
+                        </span>
+                        ${getSegmentBadge(customer.segment)}
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <button class="btn btn-primary" onclick="openWaModal()">
+                        <i data-lucide="message-circle"></i>
+                        إرسال رسالة واتساب
+                    </button>
+                    <button class="btn btn-secondary" onclick="editCustomer()">
+                        <i data-lucide="pencil"></i>
+                        تعديل
+                    </button>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ── Predictive Metrics ──
+        function renderMetrics() {
+            const el = document.getElementById('metricsGrid');
+            const churnPct = Math.round(customer.churnRisk * 100);
+            const riskClass = churnPct < 30 ? 'risk-low' : churnPct <= 60 ? 'risk-medium' : 'risk-high';
+            const riskColor = churnPct < 30 ? 'var(--success)' : churnPct <= 60 ? 'var(--warning)' : 'var(--danger)';
+
+            el.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-label">
+                        <i data-lucide="gem"></i>
+                        القيمة الدائمة
+                    </div>
+                    <div class="metric-value">${formatCurrency(customer.clv)}</div>
+                    <div class="metric-sub">القيمة المتوقعة على مدى عمر العميل</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">
+                        <i data-lucide="shield-alert"></i>
+                        خطر الخسارة
+                    </div>
+                    <div class="metric-value" style="color: ${riskColor}">${churnPct}%</div>
+                    <div class="churn-progress">
+                        <div class="churn-progress-bar">
+                            <div class="churn-progress-fill ${riskClass}" style="width: ${churnPct}%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">
+                        <i data-lucide="calendar-clock"></i>
+                        تاريخ الشراء المتوقع
+                    </div>
+                    <div class="metric-value">خلال 12 يوم</div>
+                    <div class="metric-sub">بناءً على نمط الشراء السابق</div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ── Order History ──
+        function renderOrders() {
+            const tbody = document.getElementById('ordersBody');
+
+            tbody.innerHTML = demoOrders.map((o, i) => `
+                <tr style="animation: fadeIn 0.3s var(--ease) ${i * 50}ms both;">
+                    <td><span class="order-id">${o.id}</span></td>
+                    <td><span class="order-date">${o.date}</span></td>
+                    <td><span class="order-products">${o.products}</span></td>
+                    <td><span class="order-amount">${o.amount.toLocaleString('ar-SA')} ر.س</span></td>
+                    <td><span class="order-status ${o.status}">${o.statusText}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // ── Event Timeline ──
+        function renderTimeline() {
+            const el = document.getElementById('timeline');
+
+            el.innerHTML = demoTimeline.map((ev, i) => `
+                <div class="timeline-item" style="animation: fadeIn 0.3s var(--ease) ${i * 60}ms both;">
+                    <div class="timeline-dot ${ev.dot}"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-text">${ev.text}</div>
+                        <div class="timeline-time">${ev.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ── Customer Info ──
+        function renderCustomerInfo() {
+            const el = document.getElementById('infoRows');
+            const info = [
+                { label: 'الاسم', value: customer.name },
+                { label: 'الهاتف', value: customer.phone },
+                { label: 'البريد', value: 'ahmed@email.com' },
+                { label: 'المدينة', value: 'الرياض' },
+                { label: 'تاريخ الانضمام', value: '15 أغسطس 2025', isDate: true },
+                { label: 'المنصة', value: 'سلة', isPlatform: true },
+            ];
+
+            el.innerHTML = info.map(row => {
+                let valueHtml;
+                if (row.isPlatform) {
+                    valueHtml = `<span class="info-value platform-badge"><i data-lucide="store" style="width:12px;height:12px;"></i> ${row.value}</span>`;
+                } else {
+                    valueHtml = `<span class="info-value">${row.value}</span>`;
+                }
+                return `
+                    <div class="info-row">
+                        <span class="info-label">${row.label}</span>
+                        ${valueHtml}
+                    </div>
+                `;
+            }).join('');
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ── Spending Summary ──
+        function renderSpendingChart() {
+            const spendingData = {
+                labels: ['سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر', 'يناير', 'فبراير'],
+                values: [280, 520, 450, 680, 850, 385]
+            };
+
+            // Small delay to ensure canvas is laid out
+            requestAnimationFrame(() => {
+                RibhCharts.drawLineChart('spendingChart', spendingData, { color: '#10B981' });
+            });
+
+            const statsEl = document.getElementById('spendingStats');
+            statsEl.innerHTML = `
+                <div class="spending-stat">
+                    <span class="spending-stat-label">إجمالي الإنفاق</span>
+                    <span class="spending-stat-value">${formatCurrency(customer.revenue)}</span>
+                </div>
+                <div class="spending-stat">
+                    <span class="spending-stat-label">متوسط الطلب</span>
+                    <span class="spending-stat-value">${formatCurrency(Math.round(customer.revenue / customer.orders))}</span>
+                </div>
+                <div class="spending-stat">
+                    <span class="spending-stat-label">عدد الطلبات</span>
+                    <span class="spending-stat-value">${customer.orders}</span>
+                </div>
+            `;
+        }
+
+        // ── Segments & Tags ──
+        function renderSegmentsTags() {
+            const el = document.getElementById('segmentsTags');
+            const customerSegment = segments.find(s => s.id === customer.segment);
+
+            // Determine which segments this customer belongs to
+            const memberSegments = [customer.segment];
+            // Champion customers also appear in loyal
+            if (customer.segment === 'champion') memberSegments.push('loyal');
+
+            const segmentBadges = memberSegments.map(segId => getSegmentBadge(segId)).join(' ');
+
+            const tags = [
+                { label: 'VIP', icon: 'crown' },
+                { label: 'عميل متكرر', icon: 'repeat' },
+                { label: 'الرياض', icon: 'map-pin' },
+            ];
+
+            el.innerHTML = `
+                <div class="tags-section">
+                    <div class="tags-section-label">الشرائح</div>
+                    <div class="tags-wrap">
+                        ${segmentBadges}
+                    </div>
+                </div>
+                <div class="tags-section">
+                    <div class="tags-section-label">العلامات</div>
+                    <div class="tags-wrap">
+                        ${tags.map(t => `
+                            <span class="tag">
+                                <i data-lucide="${t.icon}" style="width:12px;height:12px;"></i>
+                                ${t.label}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        // ── Active Automations ──
+        function renderAutomations() {
+            const el = document.getElementById('automationsList');
+            const automations = [
+                { name: 'ما بعد الشراء', currentStep: 3, totalSteps: 4 },
+                { name: 'برنامج الولاء', currentStep: 1, totalSteps: 3 },
+            ];
+
+            el.innerHTML = automations.map(a => {
+                const pct = Math.round((a.currentStep / a.totalSteps) * 100);
+                return `
+                    <div class="automation-item">
+                        <div class="automation-header">
+                            <span class="automation-name">${a.name}</span>
+                            <span class="automation-step">الخطوة ${a.currentStep} من ${a.totalSteps}</span>
+                        </div>
+                        <div class="automation-progress">
+                            <div class="automation-progress-fill" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ── WhatsApp Modal ──
+        function openWaModal() {
+            document.getElementById('waModal').classList.add('open');
+            document.getElementById('waMessage').value = '';
+            document.getElementById('waTemplate').value = 'custom';
+        }
+
+        function closeWaModal() {
+            document.getElementById('waModal').classList.remove('open');
+        }
+
+        function applyTemplate() {
+            const template = document.getElementById('waTemplate').value;
+            const textarea = document.getElementById('waMessage');
+
+            const templates = {
+                custom: '',
+                offer: `مرحبًا ${customer.name}! 🎉\n\nلدينا عرض خاص لك اليوم!\nخصم 20% على جميع المنتجات.\n\nاستخدم الكود: VIP20\n\nالعرض ساري حتى نهاية الأسبوع.`,
+                followup: `مرحبًا ${customer.name}!\n\nنتمنى أن طلبك الأخير وصل بسلام.\nنود الاطمئنان على رضاك عن المنتجات.\n\nهل يوجد أي شيء يمكننا مساعدتك فيه؟`,
+            };
+
+            textarea.value = templates[template] || '';
+            textarea.focus();
+        }
+
+        function sendWhatsApp() {
+            const message = document.getElementById('waMessage').value.trim();
+            if (!message) {
+                document.getElementById('waMessage').focus();
+                return;
+            }
+            // Simulate sending
+            closeWaModal();
+            showToast('تم إرسال الرسالة بنجاح إلى ' + customer.name + ' عبر واتساب');
+        }
+
+        function editCustomer() {
+            showToast('سيتم فتح نموذج تعديل بيانات العميل');
+        }
+
+        // ── Toast ──
+        function showToast(message) {
+            let toast = document.getElementById('customerToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'customerToast';
+                toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg-surface-2);border:1px solid var(--primary);color:var(--text);padding:12px 24px;border-radius:8px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.3);';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-50%) translateY(80px)';
+            }, 2500);
+        }
+
+        // Close modal on overlay click
+        document.getElementById('waModal').addEventListener('click', function(e) {
+            if (e.target === this) closeWaModal();
+        });
+
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeWaModal();
+        });
+
+        // ── Boot ──
+        initPage();
+    </script>
+</body>
+</html>
