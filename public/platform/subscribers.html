@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المشتركين | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+</head>
+<body>
+
+<div id="page-content">
+    <!-- Page Header -->
+    <div class="page-header flex justify-between items-center">
+        <div>
+            <h1 class="page-title">المشتركين</h1>
+            <p class="page-subtitle">كل عملائك في مكان واحد</p>
+        </div>
+        <div class="page-actions" style="margin-top: 0;">
+            <button class="btn btn-primary" id="addSubscriberBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                إضافة مشترك
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="filter-search">
+            <svg class="filter-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" class="input filter-search-input" id="searchInput" placeholder="بحث بالاسم أو الرقم">
+        </div>
+        <select class="input filter-select" id="segmentFilter">
+            <option value="">الكل</option>
+            <option value="champion">أبطال</option>
+            <option value="loyal">أوفياء</option>
+            <option value="potential">محتملين</option>
+            <option value="recent">جدد</option>
+            <option value="at_risk">معرضين للخسارة</option>
+            <option value="dormant">غائبين</option>
+        </select>
+        <select class="input filter-select" id="sourceFilter">
+            <option value="">الكل</option>
+            <option value="salla">متجر إلكتروني</option>
+            <option value="qr_physical">QR محل</option>
+            <option value="social">سوشال ميديا</option>
+            <option value="import">استيراد</option>
+        </select>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                إجمالي المشتركين
+            </div>
+            <div class="kpi-value">1,247</div>
+            <div class="kpi-change up">↑ 12% عن الشهر الماضي</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                واتساب نشط
+            </div>
+            <div class="kpi-value text-success">1,089</div>
+            <div class="kpi-change up">↑ 87% من الإجمالي</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                SMS نشط
+            </div>
+            <div class="kpi-value text-primary">856</div>
+            <div class="kpi-change up">↑ 69% من الإجمالي</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                جدد هذا الأسبوع
+            </div>
+            <div class="kpi-value">+42</div>
+            <div class="kpi-change up">↑ 8% عن الأسبوع الماضي</div>
+        </div>
+    </div>
+
+    <!-- Subscribers Table -->
+    <div class="table-wrap">
+        <table id="subscribersTable">
+            <thead>
+                <tr>
+                    <th>العميل</th>
+                    <th>الشريحة</th>
+                    <th>المصدر</th>
+                    <th>آخر نشاط</th>
+                    <th>القيمة الإجمالية</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody id="subscribersBody">
+                <tr class="subscriber-row" data-id="sub_001" data-segment="champion" data-source="salla">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--success-subtle); color: var(--success);">ن</div>
+                            <div>
+                                <div class="subscriber-name">نورة الشمري</div>
+                                <div class="subscriber-phone">+966 50 123 4567</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-success">أبطال</span></td>
+                    <td><span class="badge badge-info">متجر إلكتروني</span></td>
+                    <td class="text-dim">قبل 3 ساعات</td>
+                    <td>4,230 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_002" data-segment="loyal" data-source="salla">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--info-subtle); color: var(--info);">أ</div>
+                            <div>
+                                <div class="subscriber-name">أحمد العتيبي</div>
+                                <div class="subscriber-phone">+966 55 234 5678</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">أوفياء</span></td>
+                    <td><span class="badge badge-info">متجر إلكتروني</span></td>
+                    <td class="text-dim">قبل 5 ساعات</td>
+                    <td>2,870 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_003" data-segment="potential" data-source="qr_physical">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--primary-subtle); color: var(--primary);">س</div>
+                            <div>
+                                <div class="subscriber-name">سارة القحطاني</div>
+                                <div class="subscriber-phone">+966 54 345 6789</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-primary">محتملين</span></td>
+                    <td><span class="badge badge-primary">QR محل</span></td>
+                    <td class="text-dim">قبل يوم</td>
+                    <td>950 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_004" data-segment="champion" data-source="salla">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--success-subtle); color: var(--success);">م</div>
+                            <div>
+                                <div class="subscriber-name">محمد الدوسري</div>
+                                <div class="subscriber-phone">+966 56 456 7890</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-success">أبطال</span></td>
+                    <td><span class="badge badge-info">متجر إلكتروني</span></td>
+                    <td class="text-dim">قبل ساعتين</td>
+                    <td>6,120 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_005" data-segment="at_risk" data-source="social">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--warning-subtle); color: var(--warning);">خ</div>
+                            <div>
+                                <div class="subscriber-name">خالد المالكي</div>
+                                <div class="subscriber-phone">+966 53 567 8901</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-warning">معرضين للخسارة</span></td>
+                    <td><span class="badge badge-neutral">سوشال ميديا</span></td>
+                    <td class="text-dim">قبل 15 يوم</td>
+                    <td>1,340 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_006" data-segment="loyal" data-source="qr_physical">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--info-subtle); color: var(--info);">ف</div>
+                            <div>
+                                <div class="subscriber-name">فاطمة الحربي</div>
+                                <div class="subscriber-phone">+966 58 678 9012</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">أوفياء</span></td>
+                    <td><span class="badge badge-primary">QR محل</span></td>
+                    <td class="text-dim">قبل يومين</td>
+                    <td>3,560 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_007" data-segment="dormant" data-source="import">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--danger-subtle); color: var(--danger);">ع</div>
+                            <div>
+                                <div class="subscriber-name">عبدالله السبيعي</div>
+                                <div class="subscriber-phone">+966 59 789 0123</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-danger">غائبين</span></td>
+                    <td><span class="badge badge-neutral">استيراد</span></td>
+                    <td class="text-dim">قبل 45 يوم</td>
+                    <td>780 ر.س</td>
+                    <td><span class="badge badge-danger">غير مشترك</span></td>
+                </tr>
+                <tr class="subscriber-row" data-id="sub_008" data-segment="recent" data-source="social">
+                    <td>
+                        <div class="subscriber-cell">
+                            <div class="subscriber-avatar" style="background: var(--info-subtle); color: var(--info);">ر</div>
+                            <div>
+                                <div class="subscriber-name">ريم الغامدي</div>
+                                <div class="subscriber-phone">+966 51 890 1234</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge badge-info">جدد</span></td>
+                    <td><span class="badge badge-neutral">سوشال ميديا</span></td>
+                    <td class="text-dim">قبل ساعة</td>
+                    <td>290 ر.س</td>
+                    <td><span class="badge badge-success">مشترك</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    /* Subscribers page-specific styles */
+
+    .page-header.flex {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .filter-search {
+        position: relative;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-search-icon {
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-faint);
+        pointer-events: none;
+    }
+
+    .filter-search-input {
+        padding-right: 40px;
+    }
+
+    .filter-select {
+        width: auto;
+        min-width: 160px;
+    }
+
+    /* Subscriber row click */
+    .subscriber-row {
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+    .subscriber-row:hover td {
+        background: var(--bg-hover);
+    }
+
+    /* Subscriber cell with avatar */
+    .subscriber-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .subscriber-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .subscriber-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .subscriber-phone {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 2px;
+        direction: ltr;
+        text-align: right;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .filter-select {
+            min-width: 140px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .page-header.flex {
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+        }
+
+        .filter-search,
+        .filter-select {
+            width: 100%;
+            min-width: unset;
+        }
+
+        .table-wrap {
+            font-size: 13px;
+        }
+
+        td, th {
+            padding: 10px 12px;
+        }
+
+        /* Hide lower-priority columns on mobile */
+        th:nth-child(4),
+        td:nth-child(4),
+        th:nth-child(5),
+        td:nth-child(5) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 480px) {
+        th:nth-child(3),
+        td:nth-child(3) {
+            display: none;
+        }
+    }
+</style>
+
+<script src="/platform/shared/shell.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var searchInput = document.getElementById('searchInput');
+        var segmentFilter = document.getElementById('segmentFilter');
+        var sourceFilter = document.getElementById('sourceFilter');
+        var rows = document.querySelectorAll('.subscriber-row');
+
+        // Filter function
+        function filterTable() {
+            var searchTerm = searchInput.value.trim().toLowerCase();
+            var selectedSegment = segmentFilter.value;
+            var selectedSource = sourceFilter.value;
+
+            rows.forEach(function(row) {
+                var name = row.querySelector('.subscriber-name').textContent.toLowerCase();
+                var phone = row.querySelector('.subscriber-phone').textContent.replace(/\s/g, '');
+                var segment = row.getAttribute('data-segment');
+                var source = row.getAttribute('data-source');
+
+                var matchesSearch = !searchTerm || name.indexOf(searchTerm) !== -1 || phone.indexOf(searchTerm) !== -1;
+                var matchesSegment = !selectedSegment || segment === selectedSegment;
+                var matchesSource = !selectedSource || source === selectedSource;
+
+                if (matchesSearch && matchesSegment && matchesSource) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Bind filter events
+        searchInput.addEventListener('input', filterTable);
+        segmentFilter.addEventListener('change', filterTable);
+        sourceFilter.addEventListener('change', filterTable);
+
+        // Row click — navigate to subscriber detail
+        rows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                var id = row.getAttribute('data-id');
+                window.location.href = '/platform/subscriber.html?id=' + id;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

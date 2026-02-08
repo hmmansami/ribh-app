@@ -3,837 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RIBH - لوحة التحكم</title>
+    <title>لوحة التحكم | رِبح</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <link rel="stylesheet" href="shared/shell.css">
-    <style>
-        /* ── Dashboard Layout ── */
-        .dashboard-grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* ── Quick Actions ── */
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
-
-        .quick-actions .btn {
-            flex: 1;
-            justify-content: center;
-        }
-
-        /* ── Chart Container ── */
-        .chart-wrapper {
-            position: relative;
-            width: 100%;
-            height: 280px;
-        }
-
-        .chart-wrapper canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-
-        .chart-tabs {
-            display: flex;
-            gap: 4px;
-            padding: 3px;
-            background: var(--bg-surface-2);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-        }
-
-        .chart-tab {
-            padding: 5px 14px;
-            border-radius: 6px;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.15s var(--ease);
-        }
-
-        .chart-tab:hover {
-            color: var(--text-secondary);
-        }
-
-        .chart-tab.active {
-            background: var(--bg-surface);
-            color: var(--text);
-            box-shadow: var(--shadow-sm);
-        }
-
-        /* ── Revenue Highlight ── */
-        .chart-stat-row {
-            display: flex;
-            gap: 32px;
-            padding-bottom: 16px;
-            margin-bottom: 4px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .chart-stat {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .chart-stat-label {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .chart-stat-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text);
-            letter-spacing: -0.3px;
-        }
-
-        .chart-stat-change {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--success);
-        }
-
-        /* ── Automation List ── */
-        .flow-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .flow-row {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border);
-            transition: background 0.1s var(--ease);
-        }
-
-        .flow-row:last-child {
-            border-bottom: none;
-        }
-
-        .flow-icon-wrap {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-sm);
-            background: var(--primary-dim);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .flow-icon-wrap svg {
-            width: 16px;
-            height: 16px;
-            color: var(--primary);
-        }
-
-        .flow-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .flow-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            margin-bottom: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .flow-meta {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .flow-meta-item {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .flow-progress-track {
-            width: 60px;
-            height: 4px;
-            background: var(--bg-surface-2);
-            border-radius: 2px;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        .flow-progress-fill {
-            height: 100%;
-            border-radius: 2px;
-            background: var(--primary);
-            transition: width 0.8s var(--ease);
-        }
-
-        .flow-revenue {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--primary);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* ── Activity Feed ── */
-        .activity-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-dot-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 4px;
-            flex-shrink: 0;
-        }
-
-        .activity-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .activity-dot.recovery { background: var(--success); box-shadow: 0 0 8px rgba(34, 197, 94, 0.4); }
-        .activity-dot.message { background: var(--info); box-shadow: 0 0 8px rgba(59, 130, 246, 0.4); }
-        .activity-dot.flow { background: var(--secondary); box-shadow: 0 0 8px rgba(99, 102, 241, 0.4); }
-
-        .activity-content {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .activity-text {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text);
-            margin-bottom: 3px;
-            line-height: 1.5;
-        }
-
-        .activity-sub {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .activity-customer {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-
-        .activity-time {
-            color: var(--text-dim);
-        }
-
-        /* ── Segments Overview ── */
-        .segments-layout {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-
-        .segments-donut-wrap {
-            width: 200px;
-            height: 200px;
-            flex-shrink: 0;
-        }
-
-        .segments-donut-wrap canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-
-        .segments-list {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .segment-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            transition: background 0.1s var(--ease);
-        }
-
-        .segment-row:hover {
-            background: var(--bg-hover);
-        }
-
-        .segment-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-
-        .segment-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .segment-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .segment-desc {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 1px;
-        }
-
-        .segment-stats {
-            text-align: left;
-            flex-shrink: 0;
-        }
-
-        .segment-count {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .segment-pct {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* ── Stat Card Icon ── */
-        .stat-icon-wrap {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 14px;
-        }
-
-        .stat-icon-wrap svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .stat-icon-wrap.green {
-            background: var(--primary-dim);
-            color: var(--primary);
-        }
-
-        .stat-icon-wrap.blue {
-            background: var(--info-dim);
-            color: var(--info);
-        }
-
-        .stat-icon-wrap.purple {
-            background: var(--secondary-dim);
-            color: var(--secondary);
-        }
-
-        .stat-icon-wrap.amber {
-            background: var(--warning-dim);
-            color: var(--warning);
-        }
-
-        /* ── Card Link ── */
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--primary);
-            cursor: pointer;
-            transition: opacity 0.15s var(--ease);
-        }
-
-        .card-link:hover {
-            opacity: 0.8;
-        }
-
-        .card-link svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* ── Responsive ── */
-        @media (max-width: 1024px) {
-            .two-col {
-                grid-template-columns: 1fr;
-            }
-
-            .segments-layout {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .segments-donut-wrap {
-                width: 160px;
-                height: 160px;
-                margin: 0 auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .quick-actions {
-                flex-wrap: wrap;
-            }
-
-            .quick-actions .btn {
-                flex: 1 1 calc(50% - 5px);
-                min-width: 0;
-            }
-
-            .chart-wrapper {
-                height: 200px;
-            }
-
-            .chart-stat-row {
-                flex-wrap: wrap;
-                gap: 16px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="/platform/shared/shell.css">
 </head>
 <body>
-    <div id="app"></div>
-    <div id="page-body" style="display:none">
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a href="campaigns.html" class="btn btn-secondary btn-sm">
-                <i data-lucide="send" style="width:15px;height:15px"></i>
-                إنشاء حملة
-            </a>
-            <a href="flows.html" class="btn btn-secondary btn-sm">
-                <i data-lucide="git-branch" style="width:15px;height:15px"></i>
-                إضافة أتمتة
-            </a>
-            <a href="customers.html" class="btn btn-secondary btn-sm">
-                <i data-lucide="users" style="width:15px;height:15px"></i>
-                عرض العملاء
-            </a>
+<div id="page-content">
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card">
+            <div class="kpi-label">الإيرادات المستردة</div>
+            <div class="kpi-value text-success" id="kpiRevenue">0 ر.س</div>
+            <div class="kpi-change up">↑ هذا الشهر</div>
         </div>
-
-        <!-- Stats Row -->
-        <div class="stats-grid stagger" id="statsGrid">
-            <div class="stat-card animate-in">
-                <div class="stat-icon-wrap green">
-                    <i data-lucide="wallet"></i>
-                </div>
-                <div class="stat-card-label">إجمالي الإيرادات المستردة</div>
-                <div class="stat-card-value" id="statRevenue">-</div>
-                <div class="stat-card-change up">
-                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
-                    <span id="statRevenueChange">+٢٣.٥٪</span>
-                </div>
-            </div>
-            <div class="stat-card animate-in">
-                <div class="stat-icon-wrap blue">
-                    <i data-lucide="shopping-cart"></i>
-                </div>
-                <div class="stat-card-label">السلات المستردة</div>
-                <div class="stat-card-value" id="statCarts">-</div>
-                <div class="stat-card-change up">
-                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
-                    <span>معدل التحويل <span id="statConversion">-</span></span>
-                </div>
-            </div>
-            <div class="stat-card animate-in">
-                <div class="stat-icon-wrap purple">
-                    <i data-lucide="message-circle"></i>
-                </div>
-                <div class="stat-card-label">الرسائل المرسلة</div>
-                <div class="stat-card-value" id="statMessages">-</div>
-                <div class="stat-card-change up">
-                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
-                    <span>+١٢.٨٪ هذا الأسبوع</span>
-                </div>
-            </div>
-            <div class="stat-card animate-in">
-                <div class="stat-icon-wrap amber">
-                    <i data-lucide="repeat"></i>
-                </div>
-                <div class="stat-card-label">معدل تكرار الشراء</div>
-                <div class="stat-card-value" id="statRepeat">-</div>
-                <div class="stat-card-change up">
-                    <i data-lucide="trending-up" style="width:12px;height:12px"></i>
-                    <span>+٤.٢٪ عن الشهر الماضي</span>
-                </div>
-            </div>
+        <div class="kpi-card">
+            <div class="kpi-label">المشتركين</div>
+            <div class="kpi-value" id="kpiSubscribers">0</div>
+            <div class="kpi-change up">↑ جدد هذا الأسبوع</div>
         </div>
-
-        <!-- Revenue Chart -->
-        <div class="dashboard-grid">
-            <div class="card animate-in">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">الإيرادات المستردة</div>
-                        <div class="card-subtitle">إجمالي الإيرادات من السلات المستردة والحملات</div>
-                    </div>
-                    <div class="chart-tabs" id="chartTabs">
-                        <button class="chart-tab" data-range="7">٧ أيام</button>
-                        <button class="chart-tab active" data-range="30">٣٠ يوم</button>
-                        <button class="chart-tab" data-range="90">٩٠ يوم</button>
-                    </div>
-                </div>
-                <div class="chart-stat-row" id="chartStats">
-                    <div class="chart-stat">
-                        <span class="chart-stat-label">إجمالي الفترة</span>
-                        <span class="chart-stat-value" id="chartTotal">-</span>
-                    </div>
-                    <div class="chart-stat">
-                        <span class="chart-stat-label">متوسط يومي</span>
-                        <span class="chart-stat-value" id="chartAvg">-</span>
-                    </div>
-                    <div class="chart-stat">
-                        <span class="chart-stat-label">أعلى يوم</span>
-                        <span class="chart-stat-value" id="chartPeak">-</span>
-                    </div>
-                    <div class="chart-stat">
-                        <span class="chart-stat-label">التغير</span>
-                        <span class="chart-stat-change" id="chartChange">-</span>
-                    </div>
-                </div>
-                <div class="chart-wrapper">
-                    <canvas id="revenueChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Two Column: Automations + Activity -->
-            <div class="two-col">
-                <!-- Active Automations -->
-                <div class="card animate-in">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">الأتمتة النشطة</div>
-                            <div class="card-subtitle" id="flowCount">-</div>
-                        </div>
-                        <a href="flows.html" class="card-link">
-                            عرض الكل
-                            <i data-lucide="arrow-left"></i>
-                        </a>
-                    </div>
-                    <div class="flow-list" id="flowList">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="card animate-in">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">النشاط الأخير</div>
-                            <div class="card-subtitle">آخر التحديثات في الوقت الفعلي</div>
-                        </div>
-                        <span class="badge badge-success" style="gap:5px">
-                            <span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block"></span>
-                            مباشر
-                        </span>
-                    </div>
-                    <div class="activity-feed" id="activityFeed">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Segments Overview -->
-            <div class="card animate-in">
-                <div class="card-header">
-                    <div>
-                        <div class="card-title">شرائح العملاء</div>
-                        <div class="card-subtitle">توزيع العملاء حسب السلوك الشرائي</div>
-                    </div>
-                    <a href="segments.html" class="card-link">
-                        إدارة الشرائح
-                        <i data-lucide="arrow-left"></i>
-                    </a>
-                </div>
-                <div class="segments-layout">
-                    <div class="segments-donut-wrap">
-                        <canvas id="segmentsDonut"></canvas>
-                    </div>
-                    <div class="segments-list" id="segmentsList">
-                        <!-- Rendered by JS -->
-                    </div>
-                </div>
-            </div>
+        <div class="kpi-card">
+            <div class="kpi-label">الرسائل المرسلة</div>
+            <div class="kpi-value" id="kpiMessages">0</div>
+            <div class="kpi-change up">هذا الشهر</div>
         </div>
-
+        <div class="kpi-card">
+            <div class="kpi-label">معدل الاسترداد</div>
+            <div class="kpi-value text-primary" id="kpiRecovery">0%</div>
+            <div class="kpi-change up">↑ متوسط</div>
+        </div>
     </div>
 
-    <script src="shared/shell.js"></script>
-    <script>
-        RibhShell.init('dashboard');
+    <!-- Main Grid -->
+    <div class="grid-2">
+        <!-- Active Journeys -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">الرحلات النشطة</div>
+                    <div class="card-subtitle">الرحلات اللي تشتغل الحين</div>
+                </div>
+                <a href="/platform/journeys.html" class="btn btn-ghost btn-sm">عرض الكل</a>
+            </div>
 
-        // ── Populate Stat Cards ──
-        (function populateStats() {
-            const s = RibhAPI.demo.stats;
-            document.getElementById('statRevenue').textContent = formatCurrency(s.totalRevenue);
-            document.getElementById('statCarts').textContent = formatNumber(s.recoveredCarts);
-            document.getElementById('statConversion').textContent = formatPercent(s.conversionRate);
-            document.getElementById('statMessages').textContent = formatNumber(s.messagesSent);
-            document.getElementById('statRepeat').textContent = formatPercent(s.repeatRate);
-        })();
-
-        // ── Revenue Chart Data Generator ──
-        const arabicDays = ['أحد', 'إثن', 'ثلا', 'أربع', 'خمي', 'جمع', 'سبت'];
-        const arabicMonths = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
-
-        function generateRevenueData(days) {
-            const values = [];
-            const labels = [];
-            const today = new Date();
-            // Seed a somewhat realistic upward trend with noise
-            let base = 1200;
-            for (let i = days - 1; i >= 0; i--) {
-                const d = new Date(today);
-                d.setDate(d.getDate() - i);
-                const dayOfWeek = d.getDay();
-                // Weekend dip (Friday/Saturday in Saudi)
-                const weekendFactor = (dayOfWeek === 5 || dayOfWeek === 6) ? 0.75 : 1;
-                // Slight upward trend
-                const trend = 1 + ((days - i) / days) * 0.3;
-                const noise = 0.7 + Math.random() * 0.6;
-                const value = Math.round(base * weekendFactor * trend * noise);
-                values.push(Math.max(800, Math.min(3500, value)));
-
-                if (days <= 7) {
-                    labels.push(arabicDays[dayOfWeek]);
-                } else if (days <= 30) {
-                    labels.push(d.getDate() + ' ' + arabicMonths[d.getMonth()].substring(0, 3));
-                } else {
-                    labels.push(d.getDate() + '/' + (d.getMonth() + 1));
-                }
-            }
-            return { values, labels };
-        }
-
-        // ── Chart Rendering ──
-        let currentRange = 30;
-        let chartDataCache = {};
-
-        function getChartData(range) {
-            if (!chartDataCache[range]) {
-                chartDataCache[range] = generateRevenueData(range);
-            }
-            return chartDataCache[range];
-        }
-
-        function renderRevenueChart(range) {
-            currentRange = range;
-            const data = getChartData(range);
-
-            // Update chart summary stats
-            const total = data.values.reduce((a, b) => a + b, 0);
-            const avg = Math.round(total / data.values.length);
-            const peak = Math.max(...data.values);
-            const firstHalf = data.values.slice(0, Math.floor(data.values.length / 2));
-            const secondHalf = data.values.slice(Math.floor(data.values.length / 2));
-            const firstAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
-            const secondAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
-            const changePct = ((secondAvg - firstAvg) / firstAvg * 100).toFixed(1);
-
-            document.getElementById('chartTotal').textContent = formatCurrency(total);
-            document.getElementById('chartAvg').textContent = formatCurrency(avg);
-            document.getElementById('chartPeak').textContent = formatCurrency(peak);
-
-            const changeEl = document.getElementById('chartChange');
-            const isUp = changePct >= 0;
-            changeEl.innerHTML = `
-                <i data-lucide="${isUp ? 'trending-up' : 'trending-down'}" style="width:14px;height:14px"></i>
-                ${isUp ? '+' : ''}${changePct}٪
-            `;
-            changeEl.style.color = isUp ? 'var(--success)' : 'var(--danger)';
-
-            RibhCharts.drawLineChart('revenueChart', data, { color: '#10B981' });
-            lucide.createIcons();
-        }
-
-        // Tab click handler
-        document.getElementById('chartTabs').addEventListener('click', function(e) {
-            const tab = e.target.closest('.chart-tab');
-            if (!tab) return;
-            this.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            renderRevenueChart(parseInt(tab.dataset.range));
-        });
-
-        // Initial render
-        renderRevenueChart(30);
-
-        // Responsive redraw
-        let resizeTimer;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(function() {
-                renderRevenueChart(currentRange);
-                renderSegmentsDonut();
-            }, 200);
-        });
-
-        // ── Active Automations ──
-        (function renderFlows() {
-            const flows = RibhAPI.demo.flows.filter(f => f.status === 'active');
-            document.getElementById('flowCount').textContent = flows.length + ' أتمتة نشطة من أصل ' + RibhAPI.demo.flows.length;
-
-            const typeIcons = {
-                cart_recovery: 'shopping-cart',
-                welcome: 'user-plus',
-                post_purchase: 'package-check',
-                winback: 'rotate-ccw',
-                replenishment: 'refresh-cw',
-                birthday: 'cake',
-                price_drop: 'tag',
-                back_in_stock: 'box'
-            };
-
-            const html = flows.map(flow => {
-                const convRate = flow.sent > 0 ? ((flow.converted / flow.sent) * 100).toFixed(1) : 0;
-                const icon = typeIcons[flow.type] || 'git-branch';
-                return `
-                    <div class="flow-row">
-                        <div class="flow-icon-wrap">
-                            <i data-lucide="${icon}"></i>
-                        </div>
-                        <div class="flow-info">
-                            <div class="flow-name">${flow.name}</div>
-                            <div class="flow-meta">
-                                <span class="flow-meta-item">
-                                    <i data-lucide="send" style="width:11px;height:11px"></i>
-                                    ${formatNumber(flow.sent)} مرسلة
-                                </span>
-                                <span class="flow-meta-item">
-                                    <i data-lucide="check-circle" style="width:11px;height:11px"></i>
-                                    ${formatNumber(flow.converted)} تحويل
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flow-progress-track" title="${convRate}٪ معدل التحويل">
-                            <div class="flow-progress-fill" style="width:${convRate}%"></div>
-                        </div>
-                        <div class="flow-revenue">${formatCurrency(flow.revenue)}</div>
+            <div id="activeJourneys">
+                <div class="journey-item">
+                    <div class="journey-icon" style="background: var(--warning-subtle); color: var(--warning);">🛒</div>
+                    <div class="journey-info">
+                        <div class="journey-name">استرداد السلات</div>
+                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
                     </div>
-                `;
-            }).join('');
+                    <span class="badge badge-success">نشط</span>
+                </div>
+                <div class="journey-item">
+                    <div class="journey-icon" style="background: var(--info-subtle); color: var(--info);">👋</div>
+                    <div class="journey-info">
+                        <div class="journey-name">رحلة الترحيب</div>
+                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
+                    </div>
+                    <span class="badge badge-success">نشط</span>
+                </div>
+                <div class="journey-item">
+                    <div class="journey-icon" style="background: var(--success-subtle); color: var(--success);">📦</div>
+                    <div class="journey-info">
+                        <div class="journey-name">متابعة بعد الشراء</div>
+                        <div class="journey-stat">3 خطوات · واتساب</div>
+                    </div>
+                    <span class="badge badge-success">نشط</span>
+                </div>
+                <div class="journey-item">
+                    <div class="journey-icon" style="background: var(--danger-subtle); color: var(--danger);">💔</div>
+                    <div class="journey-info">
+                        <div class="journey-name">استرجاع الغائبين</div>
+                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
+                    </div>
+                    <span class="badge badge-warning">مسودة</span>
+                </div>
+                <div class="journey-item">
+                    <div class="journey-icon" style="background: var(--primary-subtle); color: var(--primary);">🎂</div>
+                    <div class="journey-info">
+                        <div class="journey-name">تهنئة عيد ميلاد</div>
+                        <div class="journey-stat">2 خطوات · واتساب + SMS</div>
+                    </div>
+                    <span class="badge badge-warning">مسودة</span>
+                </div>
+            </div>
+        </div>
 
-            document.getElementById('flowList').innerHTML = html;
-        })();
+        <!-- Recent Activity -->
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">النشاط الأخير</div>
+                    <div class="card-subtitle">آخر الأحداث</div>
+                </div>
+            </div>
 
-        // ── Recent Activity ──
-        (function renderActivity() {
-            const activities = RibhAPI.demo.recentActivity;
-
-            const html = activities.map(item => `
+            <div id="activityFeed">
                 <div class="activity-item">
-                    <div class="activity-dot-col">
-                        <div class="activity-dot ${item.type}"></div>
-                    </div>
+                    <div class="activity-dot" style="background: var(--success);"></div>
                     <div class="activity-content">
-                        <div class="activity-text">${item.text}</div>
-                        <div class="activity-sub">
-                            <span class="activity-customer">${item.customer}</span>
-                            <span class="activity-time">${item.time}</span>
-                        </div>
+                        <div class="activity-text">نورة استردت سلتها — <strong>350 ر.س</strong></div>
+                        <div class="activity-time">قبل 5 دقائق</div>
                     </div>
                 </div>
-            `).join('');
-
-            document.getElementById('activityFeed').innerHTML = html;
-        })();
-
-        // ── Segments Donut ──
-        function renderSegmentsDonut() {
-            const segments = RibhAPI.demo.segments;
-            const totalCustomers = segments.reduce((sum, s) => sum + s.count, 0);
-
-            RibhCharts.drawDonut('segmentsDonut', {
-                values: segments.map(s => s.count),
-                colors: segments.map(s => s.color),
-                centerText: formatNumber(totalCustomers),
-                centerSub: 'إجمالي العملاء'
-            });
-        }
-
-        (function renderSegments() {
-            const segments = RibhAPI.demo.segments;
-            const totalCustomers = segments.reduce((sum, s) => sum + s.count, 0);
-
-            const html = segments.map(seg => {
-                const pct = ((seg.count / totalCustomers) * 100).toFixed(1);
-                return `
-                    <div class="segment-row">
-                        <div class="segment-dot" style="background:${seg.color}"></div>
-                        <div class="segment-info">
-                            <div class="segment-name">${seg.name}</div>
-                            <div class="segment-desc">${seg.description}</div>
-                        </div>
-                        <div class="segment-stats">
-                            <div class="segment-count">${formatNumber(seg.count)}</div>
-                            <div class="segment-pct">${pct}٪</div>
-                        </div>
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: var(--primary);"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">مشترك جديد عبر QR — <strong>+966 50 XXX</strong></div>
+                        <div class="activity-time">قبل 12 دقيقة</div>
                     </div>
-                `;
-            }).join('');
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: var(--info);"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">رسالة ترحيب أُرسلت لـ <strong>أحمد</strong></div>
+                        <div class="activity-time">قبل 18 دقيقة</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: var(--success);"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">محمد اشترى بعد رسالة المتابعة — <strong>520 ر.س</strong></div>
+                        <div class="activity-time">قبل 35 دقيقة</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-dot" style="background: var(--warning);"></div>
+                    <div class="activity-content">
+                        <div class="activity-text">سلة متروكة جديدة — <strong>780 ر.س</strong></div>
+                        <div class="activity-time">قبل ساعة</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('segmentsList').innerHTML = html;
-            renderSegmentsDonut();
-        })();
+    <!-- Quick Actions -->
+    <div class="card mt-24">
+        <div class="card-header">
+            <div class="card-title">إجراءات سريعة</div>
+        </div>
+        <div class="quick-actions">
+            <a href="/platform/journeys.html" class="quick-action">
+                <div class="quick-action-icon">✦</div>
+                <div class="quick-action-text">
+                    <div class="quick-action-title">إنشاء رحلة</div>
+                    <div class="quick-action-desc">رحلة عملاء جديدة</div>
+                </div>
+            </a>
+            <a href="/platform/campaigns.html" class="quick-action">
+                <div class="quick-action-icon">📢</div>
+                <div class="quick-action-text">
+                    <div class="quick-action-title">حملة جديدة</div>
+                    <div class="quick-action-desc">رسالة لشريحة معينة</div>
+                </div>
+            </a>
+            <a href="/platform/signup-tools.html" class="quick-action">
+                <div class="quick-action-icon">📱</div>
+                <div class="quick-action-text">
+                    <div class="quick-action-title">إنشاء QR</div>
+                    <div class="quick-action-desc">كود QR لمحلك</div>
+                </div>
+            </a>
+            <a href="/platform/analytics.html" class="quick-action">
+                <div class="quick-action-icon">📊</div>
+                <div class="quick-action-text">
+                    <div class="quick-action-title">التقارير</div>
+                    <div class="quick-action-desc">شوف الأداء</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 
-        // Re-initialize lucide icons for dynamically added content
-        lucide.createIcons();
-    </script>
+<style>
+    /* Dashboard-specific styles */
+    .journey-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .journey-item:last-child { border-bottom: none; }
+    .journey-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .journey-info { flex: 1; }
+    .journey-name { font-size: 14px; font-weight: 600; }
+    .journey-stat { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+    .activity-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-top: 6px;
+        flex-shrink: 0;
+    }
+    .activity-content { flex: 1; }
+    .activity-text { font-size: 14px; color: var(--text-secondary); }
+    .activity-time { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        transition: all 0.2s;
+        text-decoration: none;
+        color: inherit;
+    }
+    .quick-action:hover {
+        border-color: var(--border-active);
+        transform: translateY(-2px);
+    }
+    .quick-action-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--primary-subtle);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+    .quick-action-title { font-size: 14px; font-weight: 600; }
+    .quick-action-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+    @media (max-width: 768px) {
+        .quick-actions { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+        .quick-actions { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script src="/platform/shared/shell.js"></script>
+<script>
+    // Load real data from API
+    document.addEventListener('DOMContentLoaded', function() {
+        // Try loading stats
+        RibhShell.api('/api/stats').then(function(data) {
+            if (!data) return;
+            document.getElementById('kpiRevenue').textContent = RibhShell.formatSAR(data.recoveredRevenue || 0);
+            document.getElementById('kpiSubscribers').textContent = RibhShell.formatNumber(data.totalSubscribers || 0);
+            document.getElementById('kpiMessages').textContent = RibhShell.formatNumber(data.messagesSent || 0);
+            document.getElementById('kpiRecovery').textContent = (data.recoveryRate || 0) + '%';
+        }).catch(function() {
+            // Use placeholder data if API fails
+        });
+    });
+</script>
+
 </body>
 </html>

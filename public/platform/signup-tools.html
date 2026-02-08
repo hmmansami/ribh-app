@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أدوات الاشتراك | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+</head>
+<body>
+
+<div id="page-content">
+    <div class="page-header">
+        <h1 class="page-title">أدوات الاشتراك</h1>
+        <p class="page-subtitle">اجمع مشتركين من كل مكان — متجرك، محلك، سوشال ميديا</p>
+    </div>
+
+    <!-- Tools Grid -->
+    <div class="tools-grid">
+
+        <!-- QR Code Generator -->
+        <div class="tool-card featured">
+            <div class="tool-card-badge">الأكثر استخداماً</div>
+            <div class="tool-icon-lg">📱</div>
+            <h3>كود QR للمحلات</h3>
+            <p>اطبع كود QR على الفاتورة، الطاولة، أو الكاونتر. العميل يمسحه ويشترك بالواتساب فوراً.</p>
+
+            <div class="qr-generator" id="qrGenerator">
+                <div class="input-group">
+                    <label class="input-label">رقم واتساب المتجر</label>
+                    <input type="tel" class="input" id="qrPhone" placeholder="966501234567" dir="ltr">
+                </div>
+                <button class="btn btn-primary w-full" onclick="generateQR()">إنشاء كود QR</button>
+
+                <div class="qr-result" id="qrResult" style="display: none;">
+                    <div class="qr-preview" id="qrPreview"></div>
+                    <div class="qr-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="downloadQR('png')">تحميل PNG</button>
+                        <button class="btn btn-secondary btn-sm" onclick="downloadQR('svg')">تحميل SVG</button>
+                        <button class="btn btn-ghost btn-sm" onclick="printQR()">طباعة</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-stats mt-16">
+                <div class="tool-stat">
+                    <div class="tool-stat-value" id="qrSubscribers">0</div>
+                    <div class="tool-stat-label">مشترك عبر QR</div>
+                </div>
+                <div class="tool-stat">
+                    <div class="tool-stat-value" id="qrScans">0</div>
+                    <div class="tool-stat-label">مسح هذا الشهر</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WhatsApp Widget -->
+        <div class="tool-card">
+            <div class="tool-icon-lg">💬</div>
+            <h3>ويدجت واتساب (للمتجر)</h3>
+            <p>نافذة منبثقة ذكية على متجرك الإلكتروني — تظهر عند نية الخروج وتجمع اشتراكات واتساب.</p>
+
+            <div class="widget-preview">
+                <div class="widget-mockup">
+                    <div class="widget-bubble">
+                        <div class="widget-bubble-text">اشترك واحصل على<br><strong>خصم 10%</strong> 🎁</div>
+                        <div class="widget-bubble-input">
+                            <span class="widget-phone-icon">📱</span>
+                            <span class="widget-phone-text">رقم الواتساب</span>
+                        </div>
+                        <div class="widget-bubble-btn">اشترك الحين</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group mt-16">
+                <label class="input-label">نص العرض</label>
+                <input type="text" class="input" value="اشترك واحصل على خصم 10% 🎁">
+            </div>
+            <div class="input-group">
+                <label class="input-label">وقت الظهور</label>
+                <select class="input">
+                    <option>عند نية الخروج</option>
+                    <option>بعد 10 ثوانٍ</option>
+                    <option>بعد 50% تمرير</option>
+                </select>
+            </div>
+
+            <div class="code-block mt-16">
+                <div class="code-label">كود التضمين:</div>
+                <code class="code-text">&lt;script src="https://ribh-484706.web.app/widget/optin.js" data-store="YOUR_ID"&gt;&lt;/script&gt;</code>
+                <button class="btn btn-ghost btn-sm" onclick="copyCode()">نسخ</button>
+            </div>
+        </div>
+
+        <!-- Social Media Link -->
+        <div class="tool-card">
+            <div class="tool-icon-lg">📲</div>
+            <h3>رابط سوشال ميديا</h3>
+            <p>رابط مباشر للاشتراك — ضعه في بيو انستغرام، تويتر، أو أي مكان.</p>
+
+            <div class="link-generator mt-16">
+                <div class="input-group">
+                    <label class="input-label">رابط الاشتراك</label>
+                    <div class="input-with-copy">
+                        <input type="text" class="input" id="socialLink" value="https://wa.me/966501234567?text=اشتراك" readonly dir="ltr">
+                        <button class="btn btn-ghost btn-sm" onclick="copySocialLink()">نسخ</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tool-stats mt-16">
+                <div class="tool-stat">
+                    <div class="tool-stat-value">0</div>
+                    <div class="tool-stat-label">مشترك عبر السوشال</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSV Import -->
+        <div class="tool-card">
+            <div class="tool-icon-lg">📋</div>
+            <h3>استيراد من ملف</h3>
+            <p>استورد عملائك من ملف CSV أو Excel — أرقام هواتف وأسماء.</p>
+
+            <div class="upload-zone mt-16" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">اسحب ملف CSV هنا</div>
+                <div class="upload-subtext">أو اضغط لاختيار ملف</div>
+                <input type="file" accept=".csv,.xlsx" id="fileInput" style="display: none;">
+            </div>
+
+            <div class="mt-8 text-sm text-dim">
+                يجب أن يحتوي الملف على عمود "phone" على الأقل. أعمدة اختيارية: name, email, birthday
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tools-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .tool-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        position: relative;
+    }
+    .tool-card.featured {
+        border-color: var(--border-active);
+    }
+    .tool-card-badge {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        background: var(--primary-subtle);
+        color: var(--primary);
+        font-size: 11px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 20px;
+    }
+
+    .tool-icon-lg { font-size: 36px; margin-bottom: 16px; }
+    .tool-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    .tool-card p { font-size: 14px; color: var(--text-dim); line-height: 1.6; margin-bottom: 16px; }
+
+    .tool-stats { display: flex; gap: 24px; }
+    .tool-stat { text-align: center; }
+    .tool-stat-value { font-size: 20px; font-weight: 800; color: var(--primary); }
+    .tool-stat-label { font-size: 12px; color: var(--text-faint); }
+
+    .qr-result { text-align: center; margin-top: 20px; }
+    .qr-preview {
+        width: 200px;
+        height: 200px;
+        margin: 0 auto 16px;
+        background: #fff;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .qr-preview img { width: 180px; height: 180px; }
+    .qr-actions { display: flex; gap: 8px; justify-content: center; }
+
+    .widget-preview { margin-bottom: 16px; }
+    .widget-mockup {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+    .widget-bubble {
+        background: var(--bg-card);
+        border: 1px solid var(--border-active);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        width: 240px;
+        text-align: center;
+    }
+    .widget-bubble-text { font-size: 14px; margin-bottom: 12px; line-height: 1.6; }
+    .widget-bubble-input {
+        background: var(--bg-input);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .widget-phone-text { font-size: 13px; color: var(--text-faint); }
+    .widget-bubble-btn {
+        background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        color: #0a0a0a;
+        padding: 8px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .code-block {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+    }
+    .code-label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+    .code-text {
+        display: block;
+        font-size: 12px;
+        color: var(--primary);
+        word-break: break-all;
+        margin-bottom: 8px;
+        font-family: monospace;
+        direction: ltr;
+        text-align: left;
+    }
+
+    .input-with-copy { display: flex; gap: 8px; }
+    .input-with-copy .input { flex: 1; }
+
+    .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-md);
+        padding: 32px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.2s;
+    }
+    .upload-zone:hover { border-color: var(--border-active); }
+    .upload-icon { font-size: 32px; margin-bottom: 8px; }
+    .upload-text { font-size: 14px; font-weight: 600; }
+    .upload-subtext { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+    @media (max-width: 768px) {
+        .tools-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<script src="/platform/shared/shell.js"></script>
+<script>
+    function generateQR() {
+        var phone = document.getElementById('qrPhone').value.replace(/\s/g, '');
+        if (!phone) { alert('أدخل رقم واتساب'); return; }
+
+        RibhShell.api('/api/qr/generate', {
+            method: 'POST',
+            body: { phone: phone }
+        }).then(function(data) {
+            if (data && data.qrDataUrl) {
+                document.getElementById('qrResult').style.display = '';
+                document.getElementById('qrPreview').innerHTML = '<img src="' + data.qrDataUrl + '" alt="QR Code">';
+            }
+        }).catch(function() {
+            // Generate a placeholder
+            document.getElementById('qrResult').style.display = '';
+            document.getElementById('qrPreview').innerHTML = '<div style="padding:20px;color:#0a0a0a;font-size:12px;">wa.me/' + phone + '?text=اشتراك</div>';
+        });
+    }
+
+    function downloadQR(format) { alert('تحميل ' + format + ' — قريباً'); }
+    function printQR() { window.print(); }
+
+    function copyCode() {
+        var code = document.querySelector('.code-text').textContent;
+        navigator.clipboard.writeText(code).then(function() { alert('تم النسخ!'); });
+    }
+
+    function copySocialLink() {
+        var link = document.getElementById('socialLink').value;
+        navigator.clipboard.writeText(link).then(function() { alert('تم النسخ!'); });
+    }
+
+    // Upload zone
+    var uploadZone = document.getElementById('uploadZone');
+    var fileInput = document.getElementById('fileInput');
+    if (uploadZone) {
+        uploadZone.addEventListener('click', function() { fileInput.click(); });
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files.length) {
+                alert('جاري استيراد ' + e.target.files[0].name + '...');
+            }
+        });
+    }
+
+    // Load QR stats
+    document.addEventListener('DOMContentLoaded', function() {
+        RibhShell.api('/api/subscribers/stats').then(function(data) {
+            if (data) {
+                if (data.qrSubscribers) document.getElementById('qrSubscribers').textContent = data.qrSubscribers;
+                if (data.qrScans) document.getElementById('qrScans').textContent = data.qrScans;
+            }
+        }).catch(function() {});
+    });
+</script>
+
+</body>
+</html>

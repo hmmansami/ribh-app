@@ -1,460 +1,231 @@
-/* ═══════════════════════════════════════════════════
-   RIBH Platform Shell
+/* ============================================
+   RIBH Platform Shell — Navigation & Layout
    Injects sidebar + topbar into every platform page
-   ═══════════════════════════════════════════════════ */
+   ============================================ */
 
-const RibhShell = {
+var RibhShell = {
     currentPage: '',
-    storeName: 'متجري',
+    storeName: '',
+    storeInitial: '',
 
-    nav: [
-        { section: 'الرئيسية' },
-        { id: 'autopilot', label: 'محركات الربح', icon: 'zap', href: 'autopilot.html' },
-        { id: 'inbox', label: 'المحادثات', icon: 'message-circle', href: 'inbox.html' },
-        { id: 'customers', label: 'العملاء', icon: 'users', href: 'customers.html' },
-        { section: 'الأدوات' },
-        { id: 'flows', label: 'الأتمتة', icon: 'git-branch', href: 'flows.html' },
-        { id: 'campaigns', label: 'الحملات', icon: 'send', href: 'campaigns.html' },
-        { id: 'analytics', label: 'التحليلات', icon: 'bar-chart-3', href: 'analytics.html' },
-        { section: 'النظام' },
-        { id: 'settings', label: 'الإعدادات', icon: 'settings', href: 'settings.html' },
-    ],
-
-    init(pageId) {
-        this.currentPage = pageId;
-        this.loadStoreName();
+    init: function() {
+        this.currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+        this.storeName = localStorage.getItem('ribh_store_name') || 'متجري';
+        this.storeInitial = this.storeName.charAt(0);
         this.render();
-        this.initLucide();
         this.bindEvents();
     },
 
-    loadStoreName() {
-        try {
-            const saved = localStorage.getItem('ribh_store_name');
-            if (saved) this.storeName = saved;
-        } catch(e) {}
-    },
+    render: function() {
+        var layout = document.createElement('div');
+        layout.className = 'shell-layout';
 
-    render() {
-        const layout = document.getElementById('app');
-        if (!layout) return;
-
-        layout.className = 'platform-layout';
+        // Sidebar
         layout.innerHTML = `
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
-            <aside class="sidebar" id="sidebar">
-                <div class="sidebar-brand">
-                    <div class="sidebar-brand-logo">RIBH</div>
-                    <div class="sidebar-brand-sub">منصة نمو المتاجر</div>
-                </div>
-                <nav class="sidebar-nav">
-                    ${this.renderNav()}
-                </nav>
-                <div class="sidebar-footer">
-                    <div class="sidebar-store">
-                        <div class="sidebar-store-avatar">${this.storeName.charAt(0)}</div>
-                        <div>
-                            <div class="sidebar-store-name">${this.storeName}</div>
-                            <div class="sidebar-store-plan">الخطة الاحترافية</div>
-                        </div>
+        <aside class="shell-sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">رِبح</div>
+                <div class="sidebar-store">
+                    <div class="sidebar-store-avatar">${this.storeInitial}</div>
+                    <div class="sidebar-store-info">
+                        <div class="sidebar-store-name">${this.storeName}</div>
+                        <div class="sidebar-store-plan">Growth</div>
                     </div>
                 </div>
-            </aside>
-            <div class="main-area">
-                <header class="topbar">
-                    <div class="topbar-right" style="display:flex;align-items:center;gap:12px;">
-                        <button class="sidebar-toggle" id="sidebarToggle" aria-label="القائمة">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                        </button>
-                        <h1 class="topbar-page-title">${this.getPageTitle()}</h1>
-                    </div>
-                    <div class="topbar-left">
-                        <div class="topbar-whatsapp-status connected" id="waStatus">
-                            <span class="status-dot pulse"></span>
-                            <span>واتساب متصل</span>
-                        </div>
-                        <button class="topbar-btn" title="الإشعارات" onclick="RibhShell.showNotifications()">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                        </button>
-                    </div>
-                </header>
-                <main class="page-content" id="pageContent">
-                    ${document.getElementById('page-body')?.innerHTML || ''}
-                </main>
             </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-label">الرئيسية</div>
+                    <a href="/platform/dashboard.html" class="nav-link ${this.isActive('dashboard')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="/platform/inbox.html" class="nav-link ${this.isActive('inbox')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>المحادثات</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">التسويق</div>
+                    <a href="/platform/journeys.html" class="nav-link ${this.isActive('journeys')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span>الرحلات</span>
+                        <span class="nav-badge">7</span>
+                    </a>
+                    <a href="/platform/campaigns.html" class="nav-link ${this.isActive('campaigns')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        <span>الحملات</span>
+                    </a>
+                    <a href="/platform/signup-tools.html" class="nav-link ${this.isActive('signup-tools')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10v10H7z"/></svg>
+                        <span>أدوات الاشتراك</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">العملاء</div>
+                    <a href="/platform/subscribers.html" class="nav-link ${this.isActive('subscribers')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>المشتركين</span>
+                    </a>
+                    <a href="/platform/segments.html" class="nav-link ${this.isActive('segments')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+                        <span>الشرائح</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">التحليلات</div>
+                    <a href="/platform/analytics.html" class="nav-link ${this.isActive('analytics')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        <span>التحليلات</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">النظام</div>
+                    <a href="/platform/settings.html" class="nav-link ${this.isActive('settings')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span>الإعدادات</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-status">
+                    <span class="status-dot online" id="waStatus"></span>
+                    <span>واتساب متصل</span>
+                </div>
+            </div>
+        </aside>
+
+        <div class="shell-main">
+            <header class="shell-topbar">
+                <div class="topbar-right">
+                    <button class="mobile-menu-btn" id="menuBtn" aria-label="القائمة">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    <div>
+                        <div class="topbar-title" id="pageTitle"></div>
+                    </div>
+                </div>
+                <div class="topbar-left">
+                    <button class="topbar-btn" title="الإشعارات">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    </button>
+                    <a href="/platform/settings.html" class="topbar-btn" title="الإعدادات">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68V3a2 2 0 0 1 4 0v.09c.06.83.55 1.56 1.31 1.82a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.27.76 1 1.25 1.82 1.31H21a2 2 0 0 1 0 4h-.09c-.83.06-1.56.55-1.82 1.31z"/></svg>
+                    </a>
+                </div>
+            </header>
+
+            <main class="shell-content fade-in" id="shellContent">
+            </main>
+        </div>
         `;
 
-        // Remove original page-body to prevent duplicate IDs
-        const pageBody = document.getElementById('page-body');
-        if (pageBody) pageBody.remove();
-    },
+        // Move existing body content into shellContent
+        var existingContent = document.getElementById('page-content');
+        document.body.innerHTML = '';
+        document.body.appendChild(layout);
 
-    renderNav() {
-        let html = '';
-        for (const item of this.nav) {
-            if (item.section) {
-                html += `<div class="sidebar-section"><div class="sidebar-section-title">${item.section}</div></div>`;
-            } else {
-                const isActive = item.id === this.currentPage;
-                const badge = item.badge ? `<span class="sidebar-badge">${item.badge}</span>` : '';
-                html += `<a href="${item.href}" class="sidebar-link ${isActive ? 'active' : ''}" data-page="${item.id}">
-                    <i data-lucide="${item.icon}"></i>
-                    <span>${item.label}</span>
-                    ${badge}
-                </a>`;
-            }
+        if (existingContent) {
+            document.getElementById('shellContent').appendChild(existingContent);
         }
-        return html;
-    },
 
-    getPageTitle() {
-        const page = this.nav.find(n => n.id === this.currentPage);
-        return page ? page.label : 'RIBH';
-    },
-
-    initLucide() {
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
+        // Set page title
+        var titles = {
+            'dashboard': 'لوحة التحكم',
+            'inbox': 'المحادثات',
+            'journeys': 'الرحلات',
+            'campaigns': 'الحملات',
+            'signup-tools': 'أدوات الاشتراك',
+            'subscribers': 'المشتركين',
+            'segments': 'الشرائح',
+            'analytics': 'التحليلات',
+            'settings': 'الإعدادات'
+        };
+        var titleEl = document.getElementById('pageTitle');
+        if (titleEl) {
+            titleEl.textContent = titles[this.currentPage] || '';
         }
     },
 
-    bindEvents() {
-        const toggle = document.getElementById('sidebarToggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
+    isActive: function(page) {
+        return this.currentPage === page ? 'active' : '';
+    },
 
-        if (toggle) {
-            toggle.addEventListener('click', () => {
+    bindEvents: function() {
+        var menuBtn = document.getElementById('menuBtn');
+        var sidebar = document.getElementById('sidebar');
+
+        if (menuBtn && sidebar) {
+            menuBtn.addEventListener('click', function() {
                 sidebar.classList.toggle('open');
-                overlay.classList.toggle('open');
+            });
+
+            // Close sidebar on outside click (mobile)
+            document.addEventListener('click', function(e) {
+                if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                }
             });
         }
 
-        if (overlay) {
-            overlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('open');
-            });
-        }
+        // Check WhatsApp status
+        this.checkWhatsAppStatus();
     },
 
-    showNotifications() {
-        // Placeholder for notification panel
-    },
+    checkWhatsAppStatus: function() {
+        var dot = document.getElementById('waStatus');
+        if (!dot) return;
 
-    checkWhatsAppStatus() {
-        const el = document.getElementById('waStatus');
-        if (!el) return;
         fetch('/api/whatsapp/status')
-            .then(r => r.json())
-            .then(data => {
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
                 if (data.connected) {
-                    el.className = 'topbar-whatsapp-status connected';
-                    el.innerHTML = '<span class="status-dot pulse"></span><span>واتساب متصل</span>';
+                    dot.className = 'status-dot online';
                 } else {
-                    el.className = 'topbar-whatsapp-status disconnected';
-                    el.innerHTML = '<span class="status-dot"></span><span>غير متصل</span>';
+                    dot.className = 'status-dot offline';
                 }
             })
-            .catch(() => {});
-    }
-};
-
-/* ── Shared API Client ── */
-const RibhAPI = {
-    baseURL: '/api',
-
-    async get(path) {
-        try {
-            const res = await fetch(this.baseURL + path);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
-        } catch (e) {
-            console.warn('API Error:', path, e.message);
-            return null;
-        }
-    },
-
-    async post(path, body) {
-        try {
-            const res = await fetch(this.baseURL + path, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
+            .catch(function() {
+                dot.className = 'status-dot offline';
             });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return await res.json();
-        } catch (e) {
-            console.warn('API Error:', path, e.message);
-            return null;
-        }
     },
 
-    // Demo data fallbacks for when APIs aren't connected
-    demo: {
-        stats: {
-            totalRevenue: 47850,
-            recoveredCarts: 234,
-            conversionRate: 28.5,
-            totalCustomers: 1847,
-            activeFlows: 8,
-            messagesSent: 12450,
-            avgOrderValue: 205,
-            repeatRate: 34.2
-        },
-        customers: [
-            { id: 'c1', name: 'أحمد محمد', phone: '+966501234567', orders: 12, revenue: 4520, lastOrder: '2026-02-04', segment: 'champion', clv: 8900, churnRisk: 0.12 },
-            { id: 'c2', name: 'سارة العلي', phone: '+966551234567', orders: 8, revenue: 3200, lastOrder: '2026-02-01', segment: 'loyal', clv: 6400, churnRisk: 0.18 },
-            { id: 'c3', name: 'محمد الأحمد', phone: '+966541234567', orders: 5, revenue: 1800, lastOrder: '2026-01-25', segment: 'potential', clv: 4200, churnRisk: 0.35 },
-            { id: 'c4', name: 'نورة السعيد', phone: '+966531234567', orders: 3, revenue: 950, lastOrder: '2026-01-15', segment: 'recent', clv: 2100, churnRisk: 0.45 },
-            { id: 'c5', name: 'خالد العتيبي', phone: '+966561234567', orders: 15, revenue: 6200, lastOrder: '2026-02-05', segment: 'champion', clv: 12500, churnRisk: 0.08 },
-            { id: 'c6', name: 'فاطمة الزهراني', phone: '+966571234567', orders: 2, revenue: 450, lastOrder: '2025-12-20', segment: 'at_risk', clv: 800, churnRisk: 0.72 },
-            { id: 'c7', name: 'عبدالله القحطاني', phone: '+966581234567', orders: 7, revenue: 2800, lastOrder: '2026-01-28', segment: 'loyal', clv: 5600, churnRisk: 0.22 },
-            { id: 'c8', name: 'ريم الشمري', phone: '+966591234567', orders: 1, revenue: 180, lastOrder: '2025-11-10', segment: 'dormant', clv: 300, churnRisk: 0.88 },
-            { id: 'c9', name: 'ياسر الدوسري', phone: '+966521234567', orders: 10, revenue: 3900, lastOrder: '2026-02-03', segment: 'champion', clv: 7800, churnRisk: 0.14 },
-            { id: 'c10', name: 'هند المالكي', phone: '+966511234567', orders: 4, revenue: 1200, lastOrder: '2026-01-10', segment: 'potential', clv: 2800, churnRisk: 0.40 },
-        ],
-        segments: [
-            { id: 'champion', name: 'الأبطال', nameEn: 'Champions', count: 156, revenue: 89000, color: '#10B981', icon: 'crown', description: 'اشتروا مؤخراً، يشترون كثيراً، ينفقون أكثر' },
-            { id: 'loyal', name: 'المخلصون', nameEn: 'Loyal', count: 312, revenue: 67000, color: '#6366F1', icon: 'heart', description: 'يشترون بانتظام وبقيمة جيدة' },
-            { id: 'potential', name: 'الواعدون', nameEn: 'Potential Loyalists', count: 428, revenue: 45000, color: '#3B82F6', icon: 'trending-up', description: 'عملاء حديثون بإمكانية عالية' },
-            { id: 'recent', name: 'الجدد', nameEn: 'Recent', count: 534, revenue: 28000, color: '#F59E0B', icon: 'user-plus', description: 'أول عملية شراء مؤخراً' },
-            { id: 'at_risk', name: 'معرضون للخسارة', nameEn: 'At Risk', count: 267, revenue: 34000, color: '#EF4444', icon: 'alert-triangle', description: 'كانوا نشطين لكن توقفوا عن الشراء' },
-            { id: 'dormant', name: 'خاملون', nameEn: 'Dormant', count: 150, revenue: 8000, color: '#71717A', icon: 'moon', description: 'لم يشتروا منذ فترة طويلة' },
-        ],
-        flows: [
-            { id: 'f1', name: 'استرداد السلة المتروكة', type: 'cart_recovery', status: 'active', sent: 3450, converted: 980, revenue: 28500, steps: 3, channel: 'whatsapp' },
-            { id: 'f2', name: 'ترحيب العميل الجديد', type: 'welcome', status: 'active', sent: 1200, converted: 340, revenue: 12000, steps: 5, channel: 'whatsapp' },
-            { id: 'f3', name: 'ما بعد الشراء', type: 'post_purchase', status: 'active', sent: 2100, converted: 420, revenue: 18500, steps: 4, channel: 'whatsapp' },
-            { id: 'f4', name: 'استعادة العملاء', type: 'winback', status: 'active', sent: 890, converted: 156, revenue: 8200, steps: 3, channel: 'whatsapp' },
-            { id: 'f5', name: 'تذكير إعادة الطلب', type: 'replenishment', status: 'draft', sent: 0, converted: 0, revenue: 0, steps: 2, channel: 'whatsapp' },
-            { id: 'f6', name: 'عيد ميلاد العميل', type: 'birthday', status: 'draft', sent: 0, converted: 0, revenue: 0, steps: 1, channel: 'whatsapp' },
-            { id: 'f7', name: 'تخفيض السعر', type: 'price_drop', status: 'active', sent: 670, converted: 201, revenue: 9800, steps: 1, channel: 'whatsapp' },
-            { id: 'f8', name: 'المنتج متوفر مجدداً', type: 'back_in_stock', status: 'active', sent: 340, converted: 145, revenue: 5600, steps: 1, channel: 'whatsapp' },
-        ],
-        recentActivity: [
-            { type: 'recovery', text: 'سلة مستردة بقيمة ٣٨٥ ر.س', time: 'منذ 3 دقائق', customer: 'أحمد محمد' },
-            { type: 'message', text: 'تم إرسال رسالة ترحيب', time: 'منذ 8 دقائق', customer: 'سارة العلي' },
-            { type: 'recovery', text: 'سلة مستردة بقيمة ٢١٠ ر.س', time: 'منذ 15 دقيقة', customer: 'خالد العتيبي' },
-            { type: 'flow', text: 'بدء تسلسل ما بعد الشراء', time: 'منذ 22 دقيقة', customer: 'نورة السعيد' },
-            { type: 'message', text: 'رسالة استعادة مرسلة', time: 'منذ 35 دقيقة', customer: 'فاطمة الزهراني' },
-            { type: 'recovery', text: 'سلة مستردة بقيمة ٥٤٠ ر.س', time: 'منذ 42 دقيقة', customer: 'ياسر الدوسري' },
-        ]
+    // Helper: format number in Arabic
+    formatNumber: function(n) {
+        return n.toLocaleString('ar-SA');
+    },
+
+    // Helper: format SAR currency
+    formatSAR: function(n) {
+        return n.toLocaleString('ar-SA') + ' ر.س';
+    },
+
+    // Helper: API fetch with auth
+    api: function(url, options) {
+        options = options || {};
+        options.credentials = 'include';
+        if (options.body && typeof options.body === 'object') {
+            options.headers = options.headers || {};
+            options.headers['Content-Type'] = 'application/json';
+            options.body = JSON.stringify(options.body);
+        }
+        return fetch(url, options).then(function(r) {
+            if (r.status === 401) {
+                window.location.href = '/login.html';
+                return;
+            }
+            return r.json();
+        });
     }
 };
 
-/* ── Number Formatting ── */
-function formatNumber(n) {
-    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
-    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
-    return n.toLocaleString('ar-SA');
-}
-
-function formatCurrency(n) {
-    return n.toLocaleString('ar-SA') + ' ر.س';
-}
-
-function formatPercent(n) {
-    return n.toFixed(1) + '%';
-}
-
-/* ── Segment Helpers ── */
-const segmentNames = {
-    champion: 'بطل',
-    loyal: 'مخلص',
-    potential: 'واعد',
-    recent: 'جديد',
-    at_risk: 'معرض للخسارة',
-    dormant: 'خامل'
-};
-
-const segmentColors = {
-    champion: 'success',
-    loyal: 'secondary',
-    potential: 'info',
-    recent: 'warning',
-    at_risk: 'danger',
-    dormant: 'neutral'
-};
-
-function getSegmentBadge(segment) {
-    const name = segmentNames[segment] || segment;
-    const color = segmentColors[segment] || 'neutral';
-    return `<span class="badge badge-${color}">${name}</span>`;
-}
-
-/* ── Chart Helpers (using simple canvas drawing) ── */
-const RibhCharts = {
-    drawLineChart(canvasId, data, options = {}) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
-        const w = rect.width;
-        const h = rect.height;
-
-        const padding = { top: 10, right: 10, bottom: 30, left: 50 };
-        const plotW = w - padding.left - padding.right;
-        const plotH = h - padding.top - padding.bottom;
-
-        const max = Math.max(...data.values) * 1.1 || 1;
-        const min = 0;
-
-        // Grid lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-        ctx.lineWidth = 1;
-        for (let i = 0; i <= 4; i++) {
-            const y = padding.top + (plotH / 4) * i;
-            ctx.beginPath();
-            ctx.moveTo(padding.left, y);
-            ctx.lineTo(w - padding.right, y);
-            ctx.stroke();
-
-            // Labels
-            const val = max - (max / 4) * i;
-            ctx.fillStyle = '#71717A';
-            ctx.font = '10px IBM Plex Sans Arabic';
-            ctx.textAlign = 'right';
-            ctx.fillText(Math.round(val).toLocaleString('ar-SA'), padding.left - 8, y + 4);
-        }
-
-        // Line
-        const color = options.color || '#10B981';
-        const points = data.values.map((v, i) => ({
-            x: padding.left + (plotW / (data.values.length - 1)) * i,
-            y: padding.top + plotH - ((v - min) / (max - min)) * plotH
-        }));
-
-        // Gradient fill
-        const grad = ctx.createLinearGradient(0, padding.top, 0, h - padding.bottom);
-        grad.addColorStop(0, color + '30');
-        grad.addColorStop(1, color + '00');
-
-        ctx.beginPath();
-        ctx.moveTo(points[0].x, h - padding.bottom);
-        points.forEach(p => ctx.lineTo(p.x, p.y));
-        ctx.lineTo(points[points.length - 1].x, h - padding.bottom);
-        ctx.closePath();
-        ctx.fillStyle = grad;
-        ctx.fill();
-
-        // Line stroke
-        ctx.beginPath();
-        points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.lineJoin = 'round';
-        ctx.stroke();
-
-        // Dots
-        points.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-            ctx.fillStyle = color;
-            ctx.fill();
-        });
-
-        // X labels
-        if (data.labels) {
-            ctx.fillStyle = '#71717A';
-            ctx.font = '10px IBM Plex Sans Arabic';
-            ctx.textAlign = 'center';
-            data.labels.forEach((label, i) => {
-                if (i % Math.ceil(data.labels.length / 7) === 0 || i === data.labels.length - 1) {
-                    const x = padding.left + (plotW / (data.labels.length - 1)) * i;
-                    ctx.fillText(label, x, h - 8);
-                }
-            });
-        }
-    },
-
-    drawBarChart(canvasId, data, options = {}) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
-        const w = rect.width;
-        const h = rect.height;
-
-        const padding = { top: 10, right: 10, bottom: 30, left: 50 };
-        const plotW = w - padding.left - padding.right;
-        const plotH = h - padding.top - padding.bottom;
-
-        const max = Math.max(...data.values) * 1.1 || 1;
-        const barWidth = (plotW / data.values.length) * 0.6;
-        const gap = (plotW / data.values.length) * 0.4;
-
-        data.values.forEach((v, i) => {
-            const barH = (v / max) * plotH;
-            const x = padding.left + (plotW / data.values.length) * i + gap / 2;
-            const y = padding.top + plotH - barH;
-            const color = data.colors ? data.colors[i] : (options.color || '#10B981');
-
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.roundRect(x, y, barWidth, barH, [4, 4, 0, 0]);
-            ctx.fill();
-
-            // Label
-            if (data.labels) {
-                ctx.fillStyle = '#71717A';
-                ctx.font = '10px IBM Plex Sans Arabic';
-                ctx.textAlign = 'center';
-                ctx.fillText(data.labels[i], x + barWidth / 2, h - 8);
-            }
-        });
-    },
-
-    drawDonut(canvasId, data) {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const dpr = window.devicePixelRatio || 1;
-        const rect = canvas.getBoundingClientRect();
-        canvas.width = rect.width * dpr;
-        canvas.height = rect.height * dpr;
-        ctx.scale(dpr, dpr);
-        const w = rect.width;
-        const h = rect.height;
-
-        const cx = w / 2;
-        const cy = h / 2;
-        const radius = Math.min(w, h) / 2 - 10;
-        const inner = radius * 0.6;
-        const total = data.values.reduce((a, b) => a + b, 0);
-
-        let startAngle = -Math.PI / 2;
-        data.values.forEach((v, i) => {
-            const sliceAngle = (v / total) * Math.PI * 2;
-            ctx.beginPath();
-            ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
-            ctx.arc(cx, cy, inner, startAngle + sliceAngle, startAngle, true);
-            ctx.closePath();
-            ctx.fillStyle = data.colors[i];
-            ctx.fill();
-            startAngle += sliceAngle;
-        });
-
-        // Center text
-        if (data.centerText) {
-            ctx.fillStyle = '#FAFAFA';
-            ctx.font = 'bold 20px IBM Plex Sans Arabic';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText(data.centerText, cx, cy - 8);
-            if (data.centerSub) {
-                ctx.fillStyle = '#71717A';
-                ctx.font = '11px IBM Plex Sans Arabic';
-                ctx.fillText(data.centerSub, cx, cy + 14);
-            }
-        }
-    }
-};
+// Auto-init when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    RibhShell.init();
+});
