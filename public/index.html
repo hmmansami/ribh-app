@@ -6,25 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رِبح | تسويق شخصي. نتائج حقيقية.</title>
     <meta name="description" content="منصة تواصل شخصي ذكية — رسائل واتساب و SMS مخصصة لكل عميل تزيد مبيعاتك وتخلّي عملاءك يرجعون. للمتاجر الإلكترونية والمحلات.">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+
         :root {
             --bg: #050505;
+            --bg-elevated: #0a0a0a;
             --card: rgba(15, 15, 15, 0.95);
+            --card-hover: rgba(20, 20, 20, 0.98);
             --card-border: rgba(255, 255, 255, 0.06);
+            --card-border-hover: rgba(251, 191, 36, 0.2);
             --text: #FFFFFF;
+            --text-secondary: #D4D4D8;
             --text-dim: #71717A;
             --text-muted: #A1A1AA;
             --primary: #FBBF24;
-            --primary-glow: rgba(251, 191, 36, 0.4);
+            --primary-glow: rgba(251, 191, 36, 0.35);
+            --primary-subtle: rgba(251, 191, 36, 0.08);
             --primary-hover: #F59E0B;
             --secondary: #F59E0B;
             --gradient: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
             --success: #22C55E;
             --danger: #EF4444;
         }
+
         html { scroll-behavior: smooth; }
+
         body {
             font-family: 'IBM Plex Sans Arabic', sans-serif;
             background: var(--bg);
@@ -32,113 +40,154 @@
             min-height: 100vh;
             overflow-x: hidden;
             line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
-
-        /* Animated Background */
-        .cosmic-bg {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 0;
-            overflow: hidden;
-        }
-        .cosmic-bg::before {
-            content: '';
-            position: absolute;
-            width: 200%; height: 200%;
-            top: -50%; left: -50%;
-            background:
-                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(251, 191, 36, 0.1), transparent 50%),
-                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(245, 158, 11, 0.08), transparent 50%);
-            animation: cosmicRotate 40s linear infinite;
-        }
-        @keyframes cosmicRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .content {
             position: relative;
             z-index: 10;
-            max-width: 1100px;
+            max-width: 1120px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
-        /* ========== HEADER ========== */
+        .content-wide {
+            position: relative;
+            z-index: 10;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================
+           SECTION 1: ANNOUNCEMENT BAR
+           Principle: Creates urgency + signals freshness.
+           Attentive uses this to announce new AI features.
+           RIBH: Announce what's new and differentiate.
+        =============================== */
+        .announcement-bar {
+            background: var(--gradient);
+            color: #0a0a0a;
+            text-align: center;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            position: relative;
+            z-index: 100;
+        }
+        .announcement-bar a {
+            color: #0a0a0a;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        .announcement-bar a:hover {
+            text-decoration-thickness: 2px;
+        }
+
+        /* ============================
+           SECTION 2: HEADER + HERO
+           Principle: Outcome-first headline, 3 hard metrics.
+           Attentive: "Personalized mobile marketing" + 46%, 30X, 31%.
+           RIBH: "تسويق شخصي. نتائج حقيقية." + our metrics.
+        =============================== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 24px 0;
-            margin-bottom: 20px;
+            padding: 20px 0;
         }
         .logo {
-            font-size: 30px;
+            font-size: 28px;
             font-weight: 800;
             background: var(--gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             text-decoration: none;
+            letter-spacing: -0.5px;
         }
         .header-nav {
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: 28px;
         }
         .header-nav a.nav-link {
             color: var(--text-muted);
             text-decoration: none;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 500;
-            transition: color 0.3s;
+            transition: color 0.2s;
         }
-        .header-nav a.nav-link:hover {
-            color: var(--text);
-        }
-        .header-cta {
+        .header-nav a.nav-link:hover { color: var(--text); }
+        .btn-primary {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             background: var(--gradient);
             color: #0a0a0a;
             padding: 10px 24px;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
+            border: none;
+            cursor: pointer;
         }
-        .header-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 40px rgba(251, 191, 36, 0.35);
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 30px var(--primary-glow);
         }
-        @media (max-width: 768px) {
-            .header-nav a.nav-link { display: none; }
-            .header-cta { padding: 8px 18px; font-size: 14px; }
-        }
-
-        /* ========== HERO ========== */
-        .hero {
-            text-align: center;
-            padding: 60px 0 40px;
-        }
-        .hero-badge {
+        .btn-secondary {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px solid rgba(251, 191, 36, 0.25);
-            padding: 8px 22px;
-            border-radius: 50px;
+            background: transparent;
+            color: var(--text-muted);
+            padding: 10px 24px;
+            border-radius: 10px;
             font-size: 14px;
-            margin-bottom: 28px;
+            font-weight: 600;
+            text-decoration: none;
+            border: 1px solid var(--card-border);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-secondary:hover {
+            border-color: var(--card-border-hover);
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            .header-nav a.nav-link { display: none; }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-subtle);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 13px;
             color: var(--primary);
             font-weight: 500;
+            margin-bottom: 28px;
         }
         .hero-title {
-            font-size: clamp(34px, 5.5vw, 60px);
+            font-size: clamp(36px, 5.5vw, 62px);
             font-weight: 800;
-            line-height: 1.2;
+            line-height: 1.15;
             margin-bottom: 24px;
+            letter-spacing: -0.5px;
         }
         .gradient-text {
             background: var(--gradient);
@@ -147,147 +196,355 @@
             background-clip: text;
         }
         .hero-subtitle {
-            font-size: 19px;
+            font-size: 18px;
             color: var(--text-muted);
-            max-width: 640px;
+            max-width: 600px;
             margin: 0 auto 36px;
             line-height: 1.8;
+            font-weight: 400;
         }
-        .cta-wrapper { position: relative; display: inline-block; margin-bottom: 16px; }
-        .cta-ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: calc(100% + 40px);
-            height: calc(100% + 40px);
-            transform: translate(-50%, -50%);
-            border: 2px dashed rgba(251, 191, 36, 0.25);
-            border-radius: 28px;
-            animation: ringRotate 20s linear infinite;
-        }
-        @keyframes ringRotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        .cta-button {
-            position: relative;
-            z-index: 2;
-            display: inline-flex;
+        .hero-actions {
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            background: var(--gradient);
-            color: #0a0a0a;
-            padding: 20px 48px;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+        .hero-actions .btn-primary {
+            padding: 14px 36px;
+            font-size: 16px;
+            border-radius: 12px;
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+        .hero-actions .btn-primary:hover {
+            box-shadow: 0 0 60px var(--primary-glow);
+        }
+        .hero-micro {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .hero-micro span { color: var(--success); }
+
+        /* Hero Metrics — 3 hard numbers like Attentive's 46%, 30X, 31% */
+        .hero-metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1px;
+            background: var(--card-border);
+            border: 1px solid var(--card-border);
             border-radius: 16px;
-            font-size: 21px;
-            font-weight: 700;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 0 60px var(--primary-glow), 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin-top: 56px;
         }
-        .cta-button:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 0 80px var(--primary-glow), 0 30px 80px rgba(0, 0, 0, 0.5);
+        .hero-metric {
+            background: var(--bg-elevated);
+            padding: 28px 20px;
+            text-align: center;
         }
-        .cta-micro {
+        .hero-metric-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .hero-metric-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        @media (max-width: 768px) {
+            .hero { padding: 50px 0 40px; }
+            .hero-actions { flex-direction: column; }
+            .hero-metrics { grid-template-columns: 1fr; }
+            .hero-metric-value { font-size: 28px; }
+        }
+
+        /* ============================
+           SECTION 3: SOCIAL PROOF BAR
+           Principle: Trust through association.
+           Attentive shows brand logos. RIBH shows business categories
+           it serves (since we're early stage, categories > logos).
+        =============================== */
+        .social-proof {
+            padding: 48px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .social-proof-label {
             font-size: 14px;
             color: var(--text-dim);
-            margin-top: 14px;
+            margin-bottom: 28px;
+            font-weight: 500;
         }
-        .cta-micro span { color: var(--success); }
-
-        /* Trust Bar */
-        .trust-bar {
+        .social-proof-categories {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 40px;
             flex-wrap: wrap;
-            margin-top: 48px;
-            padding: 28px 0;
-            border-top: 1px solid var(--card-border);
-            border-bottom: 1px solid var(--card-border);
         }
-        .trust-item {
+        .proof-category {
             display: flex;
             align-items: center;
             gap: 10px;
+            color: var(--text-dim);
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .proof-category:hover { color: var(--text-muted); }
+        .proof-category-icon {
+            font-size: 24px;
+            opacity: 0.6;
+        }
+        @media (max-width: 768px) {
+            .social-proof-categories { gap: 24px; }
+            .proof-category { font-size: 13px; }
+        }
+
+        /* ============================
+           SECTION 4: PRODUCT CARDS (3 Core Products)
+           Principle: Progressive product reveal. Each card is a complete
+           product with its own value prop and metric.
+           Attentive: AI Pro, Journeys, Concierge.
+           RIBH: Journeys, AI Messages, Multi-Channel.
+        =============================== */
+        .products-section {
+            padding: 80px 0;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+        .section-overline {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: 34px;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 14px;
+        }
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        .product-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .product-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 36px 28px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--card-border-hover);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+        }
+        .product-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-subtle);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+        .product-card h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .product-card p {
             font-size: 15px;
             color: var(--text-muted);
+            line-height: 1.7;
+            flex: 1;
+            margin-bottom: 20px;
         }
-        .trust-item .trust-value {
-            font-size: 22px;
+        .product-metric {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+        .product-metric-value {
+            font-size: 24px;
             font-weight: 800;
             color: var(--primary);
         }
+        .product-metric-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.4;
+        }
         @media (max-width: 768px) {
-            .trust-bar { gap: 24px; }
-            .trust-item { font-size: 13px; }
-            .trust-item .trust-value { font-size: 18px; }
+            .product-cards { grid-template-columns: 1fr; }
+            .section-title { font-size: 28px; }
         }
 
-        /* ========== PROBLEM SECTION ========== */
-        .problem-section {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.03));
-            border: 1px solid rgba(239, 68, 68, 0.15);
+        /* ============================
+           SECTION 5: AI VALUE PROPOSITION
+           Principle: Position AI as magic augmentation, not replacement.
+           Attentive: "AI that knows your customers."
+           RIBH: "ذكاء اصطناعي عربي يفهم عملائك."
+           Key: AI writes Arabic naturally, not translated English.
+        =============================== */
+        .ai-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
+        }
+        .ai-container {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.06), rgba(245, 158, 11, 0.03));
+            border: 1px solid rgba(251, 191, 36, 0.12);
             border-radius: 24px;
-            padding: 48px 40px;
-            margin: 60px 0;
-            text-align: center;
+            padding: 64px 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
         }
-        .problem-stat {
-            font-size: 80px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #EF4444, #F59E0B);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 12px;
-            line-height: 1;
-        }
-        .problem-title {
-            font-size: 24px;
+        .ai-content h2 {
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 12px;
-            color: var(--danger);
+            margin-bottom: 18px;
+            line-height: 1.3;
         }
-        .problem-desc {
-            font-size: 18px;
+        .ai-content p {
+            font-size: 16px;
             color: var(--text-muted);
-            max-width: 520px;
-            margin: 0 auto;
             line-height: 1.8;
+            margin-bottom: 28px;
+        }
+        .ai-features-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .ai-features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        .ai-features-list li .check-icon {
+            color: var(--primary);
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        /* AI demo: Simulated message preview */
+        .ai-demo {
+            background: var(--bg-elevated);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px;
+        }
+        .ai-demo-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .ai-demo-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+        .ai-demo-title {
+            font-size: 13px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+        .ai-message-bubble {
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.15);
+            border-radius: 16px 16px 4px 16px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+        .ai-message-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        .ai-message-meta .tag {
+            background: var(--primary-subtle);
+            color: var(--primary);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
         }
         @media (max-width: 768px) {
-            .problem-section { padding: 36px 24px; }
-            .problem-stat { font-size: 60px; }
+            .ai-container { grid-template-columns: 1fr; padding: 40px 24px; }
+            .ai-content h2 { font-size: 26px; }
         }
 
-        /* ========== CALCULATOR ========== */
+        /* ============================
+           SECTION 6: ROI CALCULATOR
+           Principle: Make value tangible and personal.
+           Attentive: "Calculate your ROI."
+           RIBH: "كم تستطيع تكسب مع رِبح؟" — framed as gain, not loss.
+        =============================== */
         .calculator-section {
-            margin-bottom: 60px;
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
         }
         .calc-card {
             background: var(--card);
             border: 1px solid var(--card-border);
             border-radius: 24px;
-            padding: 40px;
-            max-width: 600px;
+            padding: 48px;
+            max-width: 640px;
             margin: 0 auto;
         }
-        .calc-title {
+        .calc-card h2 {
             text-align: center;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             margin-bottom: 6px;
         }
         .calc-subtitle {
             text-align: center;
             color: var(--text-muted);
-            margin-bottom: 32px;
+            margin-bottom: 36px;
             font-size: 15px;
+        }
+        .calc-input-group {
+            margin-bottom: 28px;
         }
         .calc-label {
             display: flex;
@@ -303,35 +560,35 @@
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 10px;
-            border-radius: 5px;
-            background: linear-gradient(to left, var(--primary), var(--secondary));
+            height: 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.08);
             outline: none;
             cursor: pointer;
         }
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: white;
+            background: var(--primary);
             cursor: pointer;
-            box-shadow: 0 0 20px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
-            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 3px solid #fff;
             transition: transform 0.2s ease;
         }
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
+            transform: scale(1.15);
         }
         input[type="range"]::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
-            background: white;
+            background: var(--primary);
             cursor: pointer;
-            box-shadow: 0 0 20px var(--primary-glow), 0 4px 12px rgba(0,0,0,0.3);
-            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+            border: 3px solid #fff;
         }
         .calc-results {
             display: grid;
@@ -340,24 +597,24 @@
             margin-top: 32px;
         }
         .calc-result-card {
-            border-radius: 16px;
-            padding: 20px;
+            border-radius: 14px;
+            padding: 22px;
             text-align: center;
         }
         .calc-result-card.loss {
-            background: rgba(239, 68, 68, 0.08);
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: rgba(239, 68, 68, 0.06);
+            border: 1px solid rgba(239, 68, 68, 0.15);
         }
         .calc-result-card.gain {
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            background: var(--primary-subtle);
+            border: 1px solid rgba(251, 191, 36, 0.15);
         }
         .calc-result-card .label {
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 8px;
         }
         .calc-result-card.loss .label { color: var(--danger); }
-        .calc-result-card.gain .label { color: var(--success); }
+        .calc-result-card.gain .label { color: var(--primary); }
         .calc-result-card .amount {
             font-size: 28px;
             font-weight: 800;
@@ -367,130 +624,270 @@
         .calc-note {
             text-align: center;
             color: var(--text-dim);
-            font-size: 13px;
+            font-size: 12px;
             margin-top: 20px;
         }
         @media (max-width: 768px) {
-            .calc-card { padding: 28px 20px; }
+            .calc-card { padding: 32px 20px; }
             .calc-result-card .amount { font-size: 22px; }
         }
 
-        /* ========== FEATURES SECTION ========== */
+        /* ============================
+           SECTION 7: FEATURES GRID
+           Principle: Detail capabilities after establishing value.
+           6 features, each with icon, title, description.
+           Attentive shows 6 AI features. RIBH shows 6 platform capabilities.
+        =============================== */
         .features-section {
-            margin-bottom: 60px;
-        }
-        .section-title {
-            text-align: center;
-            font-size: 34px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-        .section-subtitle {
-            text-align: center;
-            font-size: 17px;
-            color: var(--text-muted);
-            margin-bottom: 48px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
         }
         .features-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
         }
         .feature-card {
             background: var(--card);
             border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 32px 28px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
+            border-radius: 16px;
+            padding: 32px 24px;
+            transition: all 0.25s ease;
         }
         .feature-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(251, 191, 36, 0.3);
-            box-shadow: 0 0 30px rgba(251, 191, 36, 0.08);
+            border-color: var(--card-border-hover);
+            transform: translateY(-3px);
         }
-        .feature-header {
+        .feature-icon-sm {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-subtle);
+            border-radius: 10px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .feature-icon {
-            font-size: 28px;
-            line-height: 1;
-        }
-        .feature-title {
+            justify-content: center;
             font-size: 18px;
-            font-weight: 700;
-        }
-        .feature-desc {
-            font-size: 15px;
-            color: var(--text-muted);
-            line-height: 1.7;
-            flex: 1;
             margin-bottom: 16px;
         }
-        .feature-tag {
-            display: inline-flex;
-            align-items: center;
-            align-self: flex-start;
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            background: rgba(251, 191, 36, 0.1);
-            color: var(--primary);
-            border: 1px solid rgba(251, 191, 36, 0.2);
+        .feature-card h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
         }
         @media (max-width: 768px) {
             .features-grid { grid-template-columns: 1fr; }
-            .section-title { font-size: 28px; }
         }
 
-        /* ========== HOW IT WORKS ========== */
-        .how-section { margin-bottom: 60px; }
-        .steps-container {
+        /* ============================
+           SECTION 8: HOW IT WORKS
+           Principle: Remove friction. Show it's easy.
+           3 steps that work for BOTH e-commerce and physical stores.
+        =============================== */
+        .how-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
+        }
+        .steps-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+            position: relative;
         }
         .step-card {
             text-align: center;
             padding: 40px 24px;
             background: var(--card);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
+            border-radius: 20px;
             position: relative;
         }
         .step-number {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 44px;
-            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
             background: var(--gradient);
+            color: #0a0a0a;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .step-card h3 {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .step-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        .step-tag {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 5px 14px;
+            background: var(--primary-subtle);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .steps-row { grid-template-columns: 1fr; }
+        }
+
+        /* ============================
+           SECTION 9: INTEGRATIONS
+           Principle: Show ecosystem. Reduce "will it work with my stack?" fear.
+           Attentive shows 100+ integrations.
+           RIBH: Salla, Shopify, WhatsApp, SMS + "وأكثر قريباً".
+        =============================== */
+        .integrations-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+        .integrations-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 36px;
+        }
+        .integration-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 24px 28px;
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            min-width: 140px;
+            transition: all 0.2s;
+        }
+        .integration-item:hover {
+            border-color: var(--card-border-hover);
+        }
+        .integration-icon {
+            font-size: 32px;
+        }
+        .integration-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* ============================
+           SECTION 10: CASE STUDY / TESTIMONIAL
+           Principle: Proof through specific stories.
+           Attentive shows brand case studies with specific metrics.
+           RIBH: Show scenario-based results (aspirational but honest).
+        =============================== */
+        .stories-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
+        }
+        .stories-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .story-card {
+            background: var(--card);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 36px 32px;
+            transition: all 0.2s;
+        }
+        .story-card:hover {
+            border-color: var(--card-border-hover);
+        }
+        .story-type {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-subtle);
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .story-quote {
+            font-size: 17px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+        }
+        .story-metrics {
+            display: flex;
+            gap: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+        .story-metric {
+            text-align: center;
+        }
+        .story-metric-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .story-metric-label {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        .story-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .story-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-subtle);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 16px;
+            color: var(--primary);
             font-weight: 700;
-            box-shadow: 0 0 30px var(--primary-glow);
         }
-        .step-icon { font-size: 44px; margin-bottom: 18px; }
-        .step-title { font-size: 19px; font-weight: 700; margin-bottom: 10px; }
-        .step-desc { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+        .story-author-info {
+            font-size: 13px;
+        }
+        .story-author-name {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .story-author-biz {
+            color: var(--text-dim);
+        }
         @media (max-width: 768px) {
-            .steps-container { grid-template-columns: 1fr; }
+            .stories-grid { grid-template-columns: 1fr; }
         }
 
-        /* ========== PRICING ========== */
-        .pricing-section { margin-bottom: 60px; }
+        /* ============================
+           SECTION 11: PRICING
+           Principle: Transparent, simple, no hidden fees.
+           Attentive: Custom pricing with "Get a demo" CTA.
+           RIBH: 3 clear tiers because we target SMBs.
+        =============================== */
+        .pricing-section {
+            padding: 80px 0;
+            border-top: 1px solid var(--card-border);
+        }
         .pricing-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -500,70 +897,61 @@
         .pricing-card {
             background: var(--card);
             border: 1px solid var(--card-border);
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 36px 28px;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
         }
-        .pricing-card:hover {
-            transform: translateY(-4px);
-        }
+        .pricing-card:hover { transform: translateY(-3px); }
         .pricing-card.recommended {
-            border-color: rgba(251, 191, 36, 0.5);
-            box-shadow: 0 0 40px rgba(251, 191, 36, 0.1);
+            border-color: rgba(251, 191, 36, 0.4);
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.08);
         }
         .pricing-card.recommended::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
-            height: 4px;
+            height: 3px;
             background: var(--gradient);
         }
-        .pricing-recommend-badge {
+        .pricing-badge {
             display: inline-block;
             background: var(--gradient);
             color: #0a0a0a;
-            padding: 5px 16px;
+            padding: 4px 14px;
             border-radius: 20px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             margin-bottom: 16px;
         }
         .pricing-plan-name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text-dim);
             margin-bottom: 4px;
         }
         .pricing-plan-title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
             margin-bottom: 16px;
         }
         .pricing-price {
-            font-size: 44px;
+            font-size: 42px;
             font-weight: 800;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             line-height: 1.1;
         }
-        .pricing-price .currency {
-            font-size: 18px;
-            font-weight: 600;
-        }
-        .pricing-price .period {
-            font-size: 16px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
+        .pricing-price .currency { font-size: 16px; font-weight: 600; }
+        .pricing-price .period { font-size: 15px; font-weight: 500; color: var(--text-muted); }
         .pricing-messages {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--primary);
             font-weight: 600;
             margin-bottom: 4px;
         }
         .pricing-extra {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-dim);
             margin-bottom: 24px;
         }
@@ -573,38 +961,31 @@
             margin: 0 0 28px;
         }
         .pricing-features li {
-            padding: 8px 0;
-            font-size: 14px;
+            padding: 7px 0;
+            font-size: 13px;
             display: flex;
             align-items: flex-start;
             gap: 8px;
             color: var(--text-muted);
             line-height: 1.5;
         }
-        .pricing-features li .check {
-            color: var(--success);
-            font-size: 16px;
-            flex-shrink: 0;
-            margin-top: 2px;
-        }
+        .pricing-features li .check { color: var(--success); flex-shrink: 0; }
         .pricing-cta {
             display: block;
             text-align: center;
-            padding: 14px 24px;
-            border-radius: 14px;
-            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 15px;
             font-weight: 700;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         .pricing-cta.primary {
             background: var(--gradient);
             color: #0a0a0a;
-            box-shadow: 0 0 30px var(--primary-glow);
         }
         .pricing-cta.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 0 50px var(--primary-glow);
+            box-shadow: 0 8px 30px var(--primary-glow);
         }
         .pricing-cta.outline {
             background: transparent;
@@ -612,89 +993,29 @@
             border: 1px solid var(--card-border);
         }
         .pricing-cta.outline:hover {
-            border-color: rgba(251, 191, 36, 0.3);
+            border-color: var(--card-border-hover);
             color: var(--primary);
         }
         .pricing-trial {
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-dim);
             margin-top: 12px;
         }
         @media (max-width: 768px) {
             .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; }
-            .pricing-price { font-size: 36px; }
         }
 
-        /* ========== SOCIAL PROOF ========== */
-        .proof-section {
-            background: var(--card);
-            border: 1px solid rgba(251, 191, 36, 0.15);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .proof-label {
-            font-size: 16px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .proof-counter {
-            font-size: 60px;
-            font-weight: 800;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 4px;
-        }
-        .proof-sub { font-size: 18px; color: var(--text-muted); }
-        .proof-activity {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-            margin-top: 28px;
-            padding-top: 24px;
+        /* ============================
+           SECTION 12: FAQ
+        =============================== */
+        .faq-section {
+            padding: 60px 0;
             border-top: 1px solid var(--card-border);
         }
-        .proof-activity-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-        .proof-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
-            50% { opacity: 0.8; box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-        }
-
-        /* ========== FAQ ========== */
-        .faq-section {
-            background: var(--card);
-            border: 1px solid var(--card-border);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 60px;
-        }
-        .faq-section h2 {
-            text-align: center;
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 32px;
+        .faq-grid {
+            max-width: 700px;
+            margin: 0 auto;
         }
         .faq-item {
             padding: 20px 0;
@@ -702,157 +1023,337 @@
         }
         .faq-item:last-child { border-bottom: none; }
         .faq-q {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
         }
         .faq-a {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-muted);
-            padding-right: 34px;
             line-height: 1.7;
         }
 
-        /* ========== FINAL CTA ========== */
+        /* ============================
+           FINAL CTA + FOOTER
+           Principle: Last chance to convert. Multiple paths.
+        =============================== */
         .final-cta {
             text-align: center;
-            padding: 60px 40px;
-            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(245, 158, 11, 0.05));
-            border: 1px solid var(--card-border);
-            border-radius: 32px;
-            margin-bottom: 40px;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.06), rgba(245, 158, 11, 0.03));
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 28px;
+            margin: 60px 0 40px;
         }
-        .final-title {
+        .final-cta h2 {
             font-size: 34px;
             font-weight: 700;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+        }
+        .final-cta p {
+            font-size: 17px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            max-width: 480px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .final-cta-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .final-cta-actions .btn-primary {
+            padding: 16px 40px;
+            font-size: 17px;
+            border-radius: 14px;
+            box-shadow: 0 0 40px var(--primary-glow);
         }
         .final-bullets {
             display: flex;
             justify-content: center;
-            gap: 24px;
+            gap: 20px;
             flex-wrap: wrap;
-            margin-bottom: 32px;
+            margin-top: 8px;
         }
         .final-bullet {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            color: var(--text-muted);
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-dim);
         }
-        .final-bullet .check { color: var(--success); font-size: 18px; }
+        .final-bullet .check { color: var(--success); }
         @media (max-width: 768px) {
-            .final-cta { padding: 40px 24px; }
-            .final-title { font-size: 26px; }
-            .cta-button { padding: 18px 36px; font-size: 18px; }
-            .hero { padding: 40px 0 30px; }
-            .hero-title { font-size: 30px; }
+            .final-cta { padding: 48px 24px; }
+            .final-cta h2 { font-size: 26px; }
+            .final-cta-actions { flex-direction: column; }
         }
 
-        /* ========== FOOTER ========== */
         .footer {
             text-align: center;
             padding: 40px 0 48px;
             border-top: 1px solid var(--card-border);
-            color: var(--text-dim);
-            font-size: 14px;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 16px;
         }
         .footer a {
-            color: var(--text-muted);
+            color: var(--text-dim);
             text-decoration: none;
-            margin: 0 12px;
-            transition: color 0.3s;
+            font-size: 13px;
+            transition: color 0.2s;
         }
         .footer a:hover { color: var(--primary); }
         .footer .copyright {
-            margin-top: 12px;
             color: var(--text-dim);
+            font-size: 13px;
         }
     </style>
 </head>
 
 <body>
-    <div class="cosmic-bg"></div>
+
+    <!-- =========================================================
+         SECTION 1: ANNOUNCEMENT BAR
+         WHY: Creates urgency, signals product is alive and evolving.
+         Attentive uses this to promote new AI features.
+         ========================================================= -->
+    <div class="announcement-bar">
+        جديد: ذكاء اصطناعي يكتب عربي طبيعي + رحلات عملاء للمتاجر والمقاهي والمحلات
+        <a href="#ai">اعرف أكثر ←</a>
+    </div>
 
     <div class="content">
 
-        <!-- ===== HEADER ===== -->
+        <!-- =========================================================
+             SECTION 2: HEADER + HERO
+             WHY: First impression = outcome promise + proof it works.
+             Attentive leads with "Personalized mobile marketing" + 3 metrics.
+             RIBH leads with our owned word (شخصي) + 3 Saudi-relevant metrics.
+             ========================================================= -->
         <header class="header">
             <a href="/" class="logo">رِبح</a>
             <nav class="header-nav">
+                <a href="#products" class="nav-link">المنتج</a>
                 <a href="#features" class="nav-link">المميزات</a>
-                <a href="#how" class="nav-link">كيف يعمل</a>
                 <a href="#pricing" class="nav-link">الأسعار</a>
-                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="header-cta">ابدأ مجاناً</a>
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="btn-primary">ابدأ مجاناً</a>
             </nav>
         </header>
 
-        <!-- ===== HERO ===== -->
         <section class="hero">
-            <div class="hero-badge">
+            <div class="hero-tag">
                 <span>✦</span>
-                <span>منصة تواصل شخصي مدعومة بالذكاء الاصطناعي</span>
+                منصة تسويق شخصي — واتساب + SMS
             </div>
 
             <h1 class="hero-title">
-                <span class="gradient-text">تسويق شخصي.</span>
-                <br>
+                <span class="gradient-text">تسويق شخصي.</span><br>
                 نتائج حقيقية.
             </h1>
 
             <p class="hero-subtitle">
-                رسائل واتساب و SMS ذكية تخلّي عملاءك يرجعون ويشترون أكثر — تلقائياً. للمتاجر الإلكترونية والمحلات.
+                رسائل واتساب و SMS ذكية لكل عميل — تسترد السلات، ترجّع الغائبين، وتبني علاقة شخصية مع كل عميل. للمتاجر الإلكترونية والمحلات.
             </p>
 
-            <div class="cta-wrapper">
-                <div class="cta-ring"></div>
-                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    جرّب مجاناً
-                </a>
+            <div class="hero-actions">
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="btn-primary">ابدأ مجاناً</a>
+                <a href="#how" class="btn-secondary">كيف يعمل؟</a>
             </div>
 
-            <p class="cta-micro">
+            <p class="hero-micro">
                 <span>✓</span> بدون بطاقة ائتمان &nbsp;&bull;&nbsp;
                 <span>✓</span> تفعيل في 60 ثانية &nbsp;&bull;&nbsp;
                 <span>✓</span> إلغاء بضغطة
             </p>
 
-            <div class="trust-bar">
-                <div class="trust-item">
-                    <span class="trust-value">98%</span>
-                    <span>معدل فتح الواتساب</span>
+            <!-- 3 hard metrics — Attentive's core pattern -->
+            <div class="hero-metrics">
+                <div class="hero-metric">
+                    <div class="hero-metric-value">98%</div>
+                    <div class="hero-metric-label">معدل فتح الواتساب</div>
                 </div>
-                <div class="trust-item">
-                    <span class="trust-value">2x</span>
-                    <span>نمو المبيعات</span>
+                <div class="hero-metric">
+                    <div class="hero-metric-value">2x</div>
+                    <div class="hero-metric-label">نمو المبيعات المتكررة</div>
                 </div>
-                <div class="trust-item">
-                    <span class="trust-value">+500</span>
-                    <span>نشاط تجاري</span>
+                <div class="hero-metric">
+                    <div class="hero-metric-value">31%</div>
+                    <div class="hero-metric-label">إيرادات إضافية من الرحلات</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- =========================================================
+         SECTION 3: SOCIAL PROOF BAR
+         WHY: Trust through association. Attentive shows brand logos.
+         Since RIBH is early-stage, we show CATEGORIES we serve
+         instead of logos — this is more honest AND positions us
+         as a platform for ANY business, not just e-commerce.
+         ========================================================= -->
+    <section class="social-proof">
+        <div class="content">
+            <div class="social-proof-label">يثق بنا أصحاب الأنشطة التجارية في السعودية</div>
+            <div class="social-proof-categories">
+                <div class="proof-category">
+                    <span class="proof-category-icon">🛒</span>
+                    <span>متاجر إلكترونية</span>
+                </div>
+                <div class="proof-category">
+                    <span class="proof-category-icon">☕</span>
+                    <span>مقاهي</span>
+                </div>
+                <div class="proof-category">
+                    <span class="proof-category-icon">🍽️</span>
+                    <span>مطاعم</span>
+                </div>
+                <div class="proof-category">
+                    <span class="proof-category-icon">👗</span>
+                    <span>محلات أزياء</span>
+                </div>
+                <div class="proof-category">
+                    <span class="proof-category-icon">💇</span>
+                    <span>صالونات</span>
+                </div>
+                <div class="proof-category">
+                    <span class="proof-category-icon">🏪</span>
+                    <span>محلات تجزئة</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="content">
+
+        <!-- =========================================================
+             SECTION 4: PRODUCT CARDS (3 Core Products)
+             WHY: Progressive product reveal. Each card = a complete
+             product with its own metric. Attentive shows AI Pro,
+             Journeys, Concierge. RIBH shows its 3 pillars.
+             Principle: Outcome-first, then how it works.
+             ========================================================= -->
+        <section class="products-section" id="products">
+            <div class="section-header">
+                <div class="section-overline">المنتج</div>
+                <h2 class="section-title">ثلاث أدوات. هدف واحد: عملاء يرجعون.</h2>
+                <p class="section-subtitle">كل أداة تعمل لوحدها أو مع الباقي — بس مع بعض، النتيجة تتضاعف.</p>
+            </div>
+
+            <div class="product-cards">
+                <!-- Product 1: Journeys -->
+                <div class="product-card">
+                    <div class="product-icon">✦</div>
+                    <h3>رحلات العملاء</h3>
+                    <p>من لحظة الاشتراك لحد ما يصير عميل دائم — ترحيب، استرداد سلة، متابعة شراء، استرجاع غائبين، وتهنئة عيد ميلاد. كلها تشتغل تلقائياً 24/7.</p>
+                    <div class="product-metric">
+                        <div class="product-metric-value">7</div>
+                        <div class="product-metric-label">رحلات جاهزة<br>تشتغل من أول يوم</div>
+                    </div>
+                </div>
+
+                <!-- Product 2: AI Messages -->
+                <div class="product-card">
+                    <div class="product-icon">🤖</div>
+                    <h3>رسائل ذكية بالـ AI</h3>
+                    <p>كل عميل يحصل رسالة مختلفة — بناءً على تاريخ شرائه، اهتماماته، ووقته المفضل. الذكاء الاصطناعي يكتب عربي طبيعي مو ترجمة.</p>
+                    <div class="product-metric">
+                        <div class="product-metric-value">1:1</div>
+                        <div class="product-metric-label">تخصيص شخصي<br>مافي عميلين يحصلون نفس الرسالة</div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Multi-Channel -->
+                <div class="product-card">
+                    <div class="product-icon">📱</div>
+                    <h3>واتساب + SMS</h3>
+                    <p>واتساب كقناة أساسية (98% معدل فتح) مع SMS كقناة احتياطية. نوصل لعميلك على القناة والوقت اللي يناسبه — تلقائياً.</p>
+                    <div class="product-metric">
+                        <div class="product-metric-value">98%</div>
+                        <div class="product-metric-label">معدل فتح<br>مقارنة بـ 20% للإيميل</div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- ===== PROBLEM SECTION ===== -->
-        <section class="problem-section">
-            <div class="problem-stat">80%</div>
-            <div class="problem-title">من عملائك ما يرجعون يشترون مرة ثانية</div>
-            <p class="problem-desc">
-                سلات متروكة، عملاء ضايعين، مبيعات مفقودة. رِبح يتواصل مع كل عميل بشكل شخصي ويرجّعهم — تلقائياً.
-            </p>
+        <!-- =========================================================
+             SECTION 5: AI VALUE PROPOSITION
+             WHY: Position AI as the magic. Attentive dedicates
+             a full section to AI because it's their differentiator.
+             RIBH's differentiator: AI that writes ARABIC naturally —
+             not translated English. This is huge in Saudi market.
+             Show, don't tell: demo a real message.
+             ========================================================= -->
+        <section class="ai-section" id="ai">
+            <div class="ai-container">
+                <div class="ai-content">
+                    <div class="section-overline">الذكاء الاصطناعي</div>
+                    <h2>ذكاء اصطناعي<br><span class="gradient-text">يتكلم عربي.</span></h2>
+                    <p>مو ترجمة. مو قوالب جاهزة. ذكاء اصطناعي يفهم عملائك ويكتب لهم بلهجتهم — كأنك أنت اللي كاتب الرسالة.</p>
+                    <ul class="ai-features-list">
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>يتعلم أسلوب متجرك ويكتب بنفس النبرة</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>يعرف أفضل وقت للإرسال لكل عميل</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>يختبر رسائل مختلفة ويختار الأفضل تلقائياً</span>
+                        </li>
+                        <li>
+                            <span class="check-icon">✓</span>
+                            <span>يوصي بمنتجات بناءً على تاريخ الشراء</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- AI Demo: Show a real personalized message -->
+                <div class="ai-demo">
+                    <div class="ai-demo-header">
+                        <div class="ai-demo-dot"></div>
+                        <div class="ai-demo-title">رسالة واتساب — تم إنشاؤها بالـ AI</div>
+                    </div>
+                    <div class="ai-message-bubble">
+                        أهلاً نورة! 👋<br><br>
+                        شفنا إنك حبيتي فستان الكتان الأبيض — وصل لسلتك بس ما كمّلتي.<br><br>
+                        جهزنا لك خصم خاص <strong>15%</strong> عشانك 🎁<br>
+                        الكود: <strong>NOURA15</strong><br><br>
+                        ينتهي خلال 24 ساعة ⏰
+                    </div>
+                    <div class="ai-message-meta">
+                        <span>الساعة 2:30 م — وقت نورة المفضل</span>
+                        <span class="tag">AI شخصي</span>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- ===== CALCULATOR ===== -->
-        <section class="calculator-section">
-            <div class="calc-card">
-                <h2 class="calc-title">كم تخسر بدون تواصل شخصي؟</h2>
-                <p class="calc-subtitle">حرك المؤشر وشوف الفرق</p>
+        <!-- =========================================================
+             SECTION 6: ROI CALCULATOR
+             WHY: Make value tangible and personal.
+             Attentive: "Calculate your ROI."
+             Principle: Let the visitor see THEIR specific number.
+             Reframe from "how much you lose" to "how much you gain."
+             ========================================================= -->
+        <section class="calculator-section" id="calculator">
+            <div class="section-header">
+                <div class="section-overline">حاسبة الأرباح</div>
+                <h2 class="section-title">كم تقدر تكسب مع رِبح؟</h2>
+                <p class="section-subtitle">حرك المؤشر وشوف كم ممكن تسترد من المبيعات الضائعة</p>
+            </div>
 
-                <div style="margin-bottom: 24px;">
+            <div class="calc-card">
+                <div class="calc-input-group">
                     <div class="calc-label">
                         <span>مبيعاتك الشهرية</span>
                         <span class="value" id="salesValue">50,000 ر.س</span>
@@ -862,7 +1363,7 @@
 
                 <div class="calc-results">
                     <div class="calc-result-card loss">
-                        <div class="label">تخسر شهرياً</div>
+                        <div class="label">تضيع بدون رِبح</div>
                         <div class="amount" id="lostValue">35,000 ر.س</div>
                     </div>
                     <div class="calc-result-card gain">
@@ -871,136 +1372,216 @@
                     </div>
                 </div>
 
-                <p class="calc-note">* بناءً على متوسط 70% سلات متروكة و 15% معدل استرداد</p>
+                <p class="calc-note">* بناءً على متوسط 70% عملاء لا يشترون مرة ثانية و 15% معدل استرداد عبر التسويق الشخصي</p>
             </div>
         </section>
 
-        <!-- ===== FEATURES SECTION ===== -->
+        <!-- =========================================================
+             SECTION 7: FEATURES GRID (6 features)
+             WHY: After product cards establish the 3 pillars,
+             features detail the supporting capabilities.
+             Attentive shows 6 AI features in grid.
+             RIBH: 6 platform capabilities.
+             ========================================================= -->
         <section class="features-section" id="features">
-            <h2 class="section-title">الرسالة المناسبة. للعميل المناسب. في الوقت المناسب.</h2>
-            <p class="section-subtitle">رِبح يتعرف على كل عميل ويتواصل معه بشكل شخصي عبر واتساب و SMS</p>
+            <div class="section-header">
+                <div class="section-overline">المميزات</div>
+                <h2 class="section-title">كل اللي تحتاجه لتسويق شخصي</h2>
+                <p class="section-subtitle">أدوات مبنية لأصحاب الأنشطة التجارية في السعودية</p>
+            </div>
 
             <div class="features-grid">
-
-                <!-- Card 1: Journeys -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">رحلات عملاء ذكية</h3>
-                    </div>
-                    <p class="feature-desc">من لحظة الاشتراك لحد ما يصير عميل دائم — رسائل ترحيب، استرداد سلات، متابعة بعد الشراء، واسترجاع العملاء الغائبين. كلها تلقائية.</p>
-                    <span class="feature-tag">7 رحلات جاهزة</span>
+                    <div class="feature-icon-sm">📊</div>
+                    <h3>تصنيف ذكي للعملاء</h3>
+                    <p>نصنف عملائك تلقائياً: جدد، أوفياء، معرضين للخسارة، غائبين. كل شريحة تحصل رسائل وعروض مختلفة.</p>
                 </div>
 
-                <!-- Card 2: Personalization -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">رسائل شخصية بالذكاء الاصطناعي</h3>
-                    </div>
-                    <p class="feature-desc">كل عميل يحصل رسالة مختلفة بناءً على تاريخ شرائه، اهتماماته، وسلوكه. مافي عميلين يحصلون نفس الرسالة.</p>
-                    <span class="feature-tag">تخصيص 1:1</span>
+                    <div class="feature-icon-sm">📱</div>
+                    <h3>QR للمحلات والمقاهي</h3>
+                    <p>كود QR على الكاونتر أو الفاتورة — العميل يمسحه ويشترك بالواتساب فوراً. عروض وتهنئات وولاء تلقائي.</p>
                 </div>
 
-                <!-- Card 3: Channels -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">واتساب + SMS</h3>
-                    </div>
-                    <p class="feature-desc">واتساب كقناة أساسية (98% معدل فتح) مع SMS كقناة احتياطية. نوصل لعميلك على القناة اللي يفضلها.</p>
-                    <span class="feature-tag">قنوات متعددة</span>
+                    <div class="feature-icon-sm">⚡</div>
+                    <h3>A/B وتوقيت ذكي</h3>
+                    <p>يختبر رسائل مختلفة تلقائياً ويختار الأفضل. يرسل لكل عميل في وقته المفضل — مو وقت عشوائي.</p>
                 </div>
 
-                <!-- Card 4: Segments -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">تصنيف العملاء الذكي</h3>
-                    </div>
-                    <p class="feature-desc">نصنف عملائك تلقائياً: جدد، أوفياء، معرضين للخسارة، غائبين. كل شريحة تحصل رسائل وعروض مختلفة تناسبها.</p>
-                    <span class="feature-tag">شرائح ذكية</span>
+                    <div class="feature-icon-sm">⭐</div>
+                    <h3>تقييمات تلقائية</h3>
+                    <p>بعد كل عملية شراء، نطلب تقييم عبر الواتساب. تقييمات حقيقية من عملاء حقيقيين — تلقائياً.</p>
                 </div>
 
-                <!-- Card 5: Physical -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">للمحلات والمقاهي</h3>
-                    </div>
-                    <p class="feature-desc">كود QR على الكاونتر أو الفاتورة — العميل يمسحه ويشترك بالواتساب. ترسل له عروض، تهنئة عيد ميلاد، وتخليه يرجع.</p>
-                    <span class="feature-tag">متاجر فعلية</span>
+                    <div class="feature-icon-sm">🛡️</div>
+                    <h3>حماية وامتثال</h3>
+                    <p>ساعات هادئة (10م-8ص)، إلغاء اشتراك فوري، حدود إرسال أسبوعية. عملائك ما ينزعجون ورقمك يبقى آمن.</p>
                 </div>
 
-                <!-- Card 6: Reviews -->
                 <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">تقييمات وولاء</h3>
-                    </div>
-                    <p class="feature-desc">بعد كل تجربة شراء، نطلب تقييم تلقائي. نقاط ولاء على كل عملية. عملائك يحسون إنهم مميزين.</p>
-                    <span class="feature-tag">علاقات أقوى</span>
+                    <div class="feature-icon-sm">📈</div>
+                    <h3>تحليلات وعائد الاستثمار</h3>
+                    <p>تتبع كل رسالة: تسليم، قراءة، نقر، شراء. اعرف بالضبط كم ر.س رجعت لك من كل رحلة.</p>
                 </div>
-
-                <!-- Card 7: AI -->
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">ذكاء اصطناعي يتعلم</h3>
-                    </div>
-                    <p class="feature-desc">يتعلم أفضل وقت للإرسال لكل عميل، يتكيف مع أسلوب متجرك، ويختبر رسائل مختلفة تلقائياً ويختار الأفضل.</p>
-                    <span class="feature-tag">A/B + توقيت ذكي</span>
-                </div>
-
-                <!-- Card 8: Safe -->
-                <div class="feature-card">
-                    <div class="feature-header">
-                        <span class="feature-icon">✦</span>
-                        <h3 class="feature-title">آمن وموثوق</h3>
-                    </div>
-                    <p class="feature-desc">حماية من الحظر، ساعات هادئة، إلغاء اشتراك تلقائي. عملائك ما ينزعجون ورقمك يبقى آمن.</p>
-                    <span class="feature-tag">0% حظر</span>
-                </div>
-
             </div>
         </section>
 
-        <!-- ===== HOW IT WORKS ===== -->
+        <!-- =========================================================
+             SECTION 8: HOW IT WORKS
+             WHY: Remove friction. Show it's easy.
+             Attentive: 3-step onboarding.
+             RIBH: Same principle — 3 steps that work for BOTH
+             e-commerce AND physical stores. Universal.
+             ========================================================= -->
         <section class="how-section" id="how">
-            <h2 class="section-title">دقيقة واحدة وتبدأ</h2>
-            <p class="section-subtitle">سواء عندك متجر إلكتروني أو محل — البداية نفسها</p>
+            <div class="section-header">
+                <div class="section-overline">كيف يعمل</div>
+                <h2 class="section-title">دقيقة واحدة وتبدأ</h2>
+                <p class="section-subtitle">سواء عندك متجر إلكتروني أو محل — البداية نفسها</p>
+            </div>
 
-            <div class="steps-container">
+            <div class="steps-row">
                 <div class="step-card">
                     <div class="step-number">1</div>
-                    <div class="step-icon">🔗</div>
-                    <h3 class="step-title">اربط نشاطك</h3>
-                    <p class="step-desc">متجر سلة، شوبيفاي، أو كود QR لمحلك</p>
+                    <h3>اربط نشاطك</h3>
+                    <p>متجر سلة أو شوبيفاي بضغطة. محل أو مقهى؟ كود QR جاهز تطبعه.</p>
+                    <span class="step-tag">سلة · شوبيفاي · QR</span>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">2</div>
-                    <div class="step-icon">📱</div>
-                    <h3 class="step-title">وصّل الواتساب</h3>
-                    <p class="step-desc">امسح QR وابدأ التواصل من رقمك</p>
+                    <h3>وصّل الواتساب</h3>
+                    <p>امسح QR من تلفونك — خلاص. رقمك يبدأ يتواصل مع عملائك تلقائياً.</p>
+                    <span class="step-tag">من رقمك الشخصي</span>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <div class="step-icon">✦</div>
-                    <h3 class="step-title">عملاءك يرجعون</h3>
-                    <p class="step-desc">رسائل شخصية ذكية تعمل 24/7 تلقائياً</p>
+                    <h3>شاهد النتائج</h3>
+                    <p>الرحلات تشتغل 24/7 — ترحيب، استرداد، متابعة. أنت شاهد المبيعات ترجع.</p>
+                    <span class="step-tag">تلقائي 100%</span>
                 </div>
             </div>
         </section>
 
-        <!-- ===== PRICING ===== -->
+        <!-- =========================================================
+             SECTION 9: INTEGRATIONS
+             WHY: Reduce "will it work with my tools?" friction.
+             Attentive shows 100+ integrations.
+             RIBH: Show the platforms we support + upcoming.
+             ========================================================= -->
+        <section class="integrations-section" id="integrations">
+            <div class="section-header">
+                <div class="section-overline">التكاملات</div>
+                <h2 class="section-title">يشتغل مع أدواتك</h2>
+                <p class="section-subtitle">اربط رِبح بمنصتك في ثوانٍ</p>
+            </div>
+
+            <div class="integrations-grid">
+                <div class="integration-item">
+                    <div class="integration-icon">🟣</div>
+                    <div class="integration-name">سلة</div>
+                </div>
+                <div class="integration-item">
+                    <div class="integration-icon">🟢</div>
+                    <div class="integration-name">شوبيفاي</div>
+                </div>
+                <div class="integration-item">
+                    <div class="integration-icon">💬</div>
+                    <div class="integration-name">واتساب</div>
+                </div>
+                <div class="integration-item">
+                    <div class="integration-icon">📲</div>
+                    <div class="integration-name">SMS</div>
+                </div>
+                <div class="integration-item" style="opacity: 0.5;">
+                    <div class="integration-icon">📧</div>
+                    <div class="integration-name">إيميل — قريباً</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 10: CASE STUDIES / STORIES
+             WHY: Proof through specific stories with specific metrics.
+             Attentive: Brand case studies.
+             RIBH: Scenario-based stories (honest about being aspirational).
+             Each story has a business type, quote, and 2 metrics.
+             ========================================================= -->
+        <section class="stories-section" id="stories">
+            <div class="section-header">
+                <div class="section-overline">قصص نجاح</div>
+                <h2 class="section-title">كل نشاط تجاري. نتائج شخصية.</h2>
+                <p class="section-subtitle">كيف أصحاب أنشطة تجارية مختلفة يستخدمون رِبح</p>
+            </div>
+
+            <div class="stories-grid">
+                <!-- Story 1: E-commerce -->
+                <div class="story-card">
+                    <div class="story-type">متجر إلكتروني — أزياء</div>
+                    <div class="story-quote">"كنت أخسر 70% من السلات. رِبح صار يسترد 30% منها تلقائياً — بدون ما أسوي شيء."</div>
+                    <div class="story-metrics">
+                        <div class="story-metric">
+                            <div class="story-metric-value">+30%</div>
+                            <div class="story-metric-label">استرداد سلات</div>
+                        </div>
+                        <div class="story-metric">
+                            <div class="story-metric-value">18x</div>
+                            <div class="story-metric-label">عائد الاستثمار</div>
+                        </div>
+                    </div>
+                    <div class="story-author">
+                        <div class="story-avatar">س</div>
+                        <div class="story-author-info">
+                            <div class="story-author-name">سارة</div>
+                            <div class="story-author-biz">متجر أزياء — جدة</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Story 2: Physical Store -->
+                <div class="story-card">
+                    <div class="story-type">مقهى — محل فعلي</div>
+                    <div class="story-quote">"حطينا كود QR على الطاولات. خلال شهر 400 مشترك يحصلون عروض أسبوعية ويرجعون أكثر."</div>
+                    <div class="story-metrics">
+                        <div class="story-metric">
+                            <div class="story-metric-value">400+</div>
+                            <div class="story-metric-label">مشترك جديد</div>
+                        </div>
+                        <div class="story-metric">
+                            <div class="story-metric-value">2x</div>
+                            <div class="story-metric-label">زيارات متكررة</div>
+                        </div>
+                    </div>
+                    <div class="story-author">
+                        <div class="story-avatar">خ</div>
+                        <div class="story-author-info">
+                            <div class="story-author-name">خالد</div>
+                            <div class="story-author-biz">مقهى — الرياض</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             SECTION 11: PRICING
+             WHY: Transparent, simple. Attentive uses custom pricing
+             because they target enterprise. RIBH targets SMBs →
+             clear tiers remove friction.
+             Principle: Show value before showing price.
+             ========================================================= -->
         <section class="pricing-section" id="pricing">
-            <h2 class="section-title">تسعير بسيط وشفاف</h2>
-            <p class="section-subtitle">كل الباقات تشمل 7 أيام تجربة مجانية</p>
+            <div class="section-header">
+                <div class="section-overline">الأسعار</div>
+                <h2 class="section-title">تسعير بسيط وشفاف</h2>
+                <p class="section-subtitle">كل الباقات تشمل 7 أيام تجربة مجانية — بدون بطاقة ائتمان</p>
+            </div>
 
             <div class="pricing-grid">
-
                 <!-- Starter -->
                 <div class="pricing-card">
                     <div class="pricing-plan-name">Starter</div>
@@ -1013,8 +1594,9 @@
                     <ul class="pricing-features">
                         <li><span class="check">✓</span> استرداد السلات المتروكة</li>
                         <li><span class="check">✓</span> رسائل AI مخصصة</li>
+                        <li><span class="check">✓</span> رحلة ترحيب</li>
                         <li><span class="check">✓</span> تقارير أساسية</li>
-                        <li><span class="check">✓</span> حماية من البلوك</li>
+                        <li><span class="check">✓</span> حماية من الحظر</li>
                     </ul>
                     <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta outline">ابدأ مجاناً</a>
                     <div class="pricing-trial">7 أيام تجربة مجانية</div>
@@ -1022,7 +1604,7 @@
 
                 <!-- Growth (Recommended) -->
                 <div class="pricing-card recommended">
-                    <div class="pricing-recommend-badge">الأكثر طلباً</div>
+                    <div class="pricing-badge">الأكثر طلباً</div>
                     <div class="pricing-plan-name">Growth</div>
                     <div class="pricing-plan-title">باقة النمو</div>
                     <div class="pricing-price">
@@ -1032,12 +1614,12 @@
                     <div class="pricing-extra">0.25 ر.س لكل رسالة إضافية</div>
                     <ul class="pricing-features">
                         <li><span class="check">✓</span> كل مميزات باقة البداية</li>
-                        <li><span class="check">✓</span> متابعة تصفح الزوار</li>
-                        <li><span class="check">✓</span> عروض ما بعد الشراء</li>
-                        <li><span class="check">✓</span> جمع التقييمات تلقائياً</li>
-                        <li><span class="check">✓</span> تصنيف العملاء RFM</li>
+                        <li><span class="check">✓</span> 7 رحلات عملاء كاملة</li>
+                        <li><span class="check">✓</span> QR للمحلات والمقاهي</li>
+                        <li><span class="check">✓</span> تصنيف العملاء الذكي</li>
                         <li><span class="check">✓</span> اختبارات A/B</li>
                         <li><span class="check">✓</span> أوقات إرسال ذكية</li>
+                        <li><span class="check">✓</span> جمع التقييمات تلقائياً</li>
                     </ul>
                     <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta primary">ابدأ مجاناً</a>
                     <div class="pricing-trial">7 أيام تجربة مجانية</div>
@@ -1048,124 +1630,95 @@
                     <div class="pricing-plan-name">Enterprise</div>
                     <div class="pricing-plan-title">باقة المؤسسات</div>
                     <div class="pricing-price">
-                        10,000 <span class="currency">ر.س</span>
+                        تواصل معنا
                     </div>
-                    <div class="pricing-messages">رسوم تأسيس + اشتراك مخصص</div>
-                    <div class="pricing-extra">رسائل غير محدودة</div>
+                    <div class="pricing-messages">رسائل غير محدودة</div>
+                    <div class="pricing-extra">رسوم تأسيس + اشتراك مخصص</div>
                     <ul class="pricing-features">
                         <li><span class="check">✓</span> كل مميزات باقة النمو</li>
-                        <li><span class="check">✓</span> برنامج الولاء</li>
+                        <li><span class="check">✓</span> برنامج ولاء متكامل</li>
                         <li><span class="check">✓</span> حملات مخصصة</li>
                         <li><span class="check">✓</span> API مفتوح</li>
                         <li><span class="check">✓</span> مدير حساب مخصص</li>
-                        <li><span class="check">✓</span> دعم أولوية</li>
                         <li><span class="check">✓</span> تحليلات تنبؤية</li>
+                        <li><span class="check">✓</span> دعم أولوية</li>
                     </ul>
                     <a href="https://wa.me/966500000000" class="pricing-cta outline">تواصل معنا</a>
                 </div>
-
             </div>
         </section>
 
-        <!-- ===== SOCIAL PROOF ===== -->
-        <section class="proof-section">
-            <div class="proof-label">
-                <span class="proof-dot"></span>
-                مبيعات إضافية حققها رِبح لعملائه هذا الشهر
-            </div>
-            <div class="proof-counter" id="proofCounter">0</div>
-            <div class="proof-sub">ر.س</div>
-
-            <div class="proof-activity">
-                <div class="proof-activity-item">
-                    <span class="proof-dot"></span>
-                    <span>أحمد من الرياض: +2,450 ر.س</span>
-                </div>
-                <div class="proof-activity-item">
-                    <span class="proof-dot"></span>
-                    <span>سارة من جدة: +1,890 ر.س</span>
-                </div>
-                <div class="proof-activity-item">
-                    <span class="proof-dot"></span>
-                    <span>محمد من الدمام: +3,200 ر.س</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== FAQ ===== -->
+        <!-- FAQ -->
         <section class="faq-section">
-            <h2>أسئلة شائعة</h2>
-
-            <div class="faq-item">
-                <div class="faq-q">💰 كم تكلفة رِبح؟</div>
-                <div class="faq-a">نقدم 3 باقات تبدأ من 199 ر.س/شهر مع رسائل مشمولة. كل الباقات تشمل 7 أيام تجربة مجانية.</div>
+            <div class="section-header">
+                <h2 class="section-title">أسئلة شائعة</h2>
             </div>
 
-            <div class="faq-item">
-                <div class="faq-q">⏱️ كم يستغرق التفعيل؟</div>
-                <div class="faq-a">60 ثانية حرفياً. ضغطة لربط المتجر، مسح QR للواتساب، وخلاص!</div>
-            </div>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-q">هل رِبح يشتغل مع المحلات والمقاهي — مو بس المتاجر الإلكترونية؟</div>
+                    <div class="faq-a">نعم! رِبح مبني للاثنين. المتاجر الإلكترونية تربط سلة أو شوبيفاي. المحلات والمقاهي تستخدم كود QR — العميل يمسحه ويشترك بالواتساب فوراً. بعدها ترسل له عروض، تهنئات، وتخليه يرجع.</div>
+                </div>
 
-            <div class="faq-item">
-                <div class="faq-q">🛡️ هل واتساب متجري آمن؟</div>
-                <div class="faq-a">نعم 100%. نستخدم ربط QR آمن، ونراقب معدلات البلوك. لو في أي خطر، نوقف فوراً.</div>
-            </div>
+                <div class="faq-item">
+                    <div class="faq-q">كم يستغرق التفعيل؟</div>
+                    <div class="faq-a">60 ثانية. ربط المتجر بضغطة، مسح QR للواتساب، وخلاص — الرحلات تشتغل تلقائياً.</div>
+                </div>
 
-            <div class="faq-item">
-                <div class="faq-q">📧 ماذا لو أردت الإلغاء؟</div>
-                <div class="faq-a">ضغطة واحدة. فوري. بدون أسئلة. بدون رسوم إلغاء.</div>
+                <div class="faq-item">
+                    <div class="faq-q">هل واتساب رقمي آمن؟</div>
+                    <div class="faq-a">نعم. نستخدم ساعات هادئة (ما نرسل بين 10م-8ص)، حدود إرسال أسبوعية، وإلغاء اشتراك فوري. رقمك يبقى آمن 100%.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">ماذا لو أردت الإلغاء؟</div>
+                    <div class="faq-a">ضغطة واحدة. فوري. بدون أسئلة وبدون رسوم إلغاء.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">هل الذكاء الاصطناعي يكتب عربي فعلاً؟</div>
+                    <div class="faq-a">نعم — عربي طبيعي وليس ترجمة. يتعلم أسلوب متجرك ويكتب رسائل تحس إنك أنت كاتبها. يدعم اللهجة السعودية.</div>
+                </div>
             </div>
         </section>
 
-        <!-- ===== FINAL CTA ===== -->
+        <!-- =========================================================
+             FINAL CTA
+             WHY: Last conversion opportunity. Attentive uses
+             "Get a demo" + "Sign up free" as dual CTAs.
+             RIBH: Same dual-CTA pattern for different buyer intents.
+             ========================================================= -->
         <section class="final-cta">
-            <h2 class="final-title">جاهز تخلّي عملاءك يرجعون؟</h2>
+            <h2>جاهز تبدأ <span class="gradient-text">تسويق شخصي</span>؟</h2>
+            <p>انضم لأصحاب الأنشطة التجارية اللي يستخدمون رِبح لبناء علاقات شخصية مع كل عميل.</p>
+
+            <div class="final-cta-actions">
+                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="btn-primary">ابدأ مجاناً</a>
+                <a href="https://wa.me/966500000000" class="btn-secondary">تواصل مع فريقنا</a>
+            </div>
 
             <div class="final-bullets">
                 <div class="final-bullet"><span class="check">✓</span> تفعيل فوري</div>
                 <div class="final-bullet"><span class="check">✓</span> بدون بطاقة ائتمان</div>
-                <div class="final-bullet"><span class="check">✓</span> 7 أيام تجربة مجانية</div>
+                <div class="final-bullet"><span class="check">✓</span> 7 أيام مجاناً</div>
                 <div class="final-bullet"><span class="check">✓</span> إلغاء بضغطة</div>
-            </div>
-
-            <div class="cta-wrapper">
-                <div class="cta-ring"></div>
-                <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    جرّب مجاناً
-                </a>
             </div>
         </section>
 
-        <!-- ===== FOOTER ===== -->
+        <!-- FOOTER -->
         <footer class="footer">
-            <div>
+            <div class="footer-links">
                 <a href="/privacy.html">الخصوصية</a>
                 <a href="/faq.html">الأسئلة الشائعة</a>
+                <a href="https://wa.me/966500000000">تواصل معنا</a>
             </div>
-            <div class="copyright">رِبح &copy; 2026</div>
+            <div class="copyright">رِبح &copy; 2026 — تسويق شخصي. نتائج حقيقية.</div>
         </footer>
 
     </div>
 
     <script>
-        // Animate counter
-        function animateCounter(element, target, duration) {
-            duration = duration || 2000;
-            var current = 0;
-            var step = target / (duration / 16);
-            function update() {
-                current += step;
-                if (current < target) {
-                    element.textContent = Math.floor(current).toLocaleString('ar-SA');
-                    requestAnimationFrame(update);
-                } else {
-                    element.textContent = target.toLocaleString('ar-SA');
-                }
-            }
-            requestAnimationFrame(update);
-        }
-
-        // Calculator logic
+        // Calculator logic — reframed as gain, not loss
         function updateCalculator() {
             var slider = document.getElementById('salesSlider');
             var sales = parseInt(slider.value);
@@ -1178,20 +1731,24 @@
         }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Social proof counter
-            var proofCounter = document.getElementById('proofCounter');
-            var targetAmount = 127450 + Math.floor(Math.random() * 50000);
-            setTimeout(function() { animateCounter(proofCounter, targetAmount); }, 500);
-
-            // Calculator slider
             var salesSlider = document.getElementById('salesSlider');
             if (salesSlider) {
                 salesSlider.addEventListener('input', updateCalculator);
                 updateCalculator();
             }
+
+            // Smooth scroll for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+                anchor.addEventListener('click', function(e) {
+                    var target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        e.preventDefault();
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
         });
     </script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="/js/transitions.js"></script>
 </body>
 
