@@ -1,16 +1,21 @@
 /**
- * LIFECYCLE ENGINE V2 - Fully Integrated
- * 
+ * LIFECYCLE ENGINE V2 - Personal Marketing Orchestrator
+ *
  * WIRES EVERYTHING TOGETHER:
- * - SequenceEngine for multi-step flows (not setTimeout!)
+ * - SequenceEngine for multi-step journeys (welcome, cart, winback, birthday)
  * - WhatsApp via whatsappClient (HTTP to Render bridge)
+ * - SMS via smsSender
  * - AI offers via offerGenerator
- * - AntiBan integrated in the flow
- * 
- * FLOW:
- * Cart Abandoned → SequenceEngine.startSequence() + Immediate WhatsApp
- * Order Created → SequenceEngine.cancelSequence() + Start post-purchase
- * Every 5min → processPendingSteps() via keep-alive
+ * - AntiBan + OptOut compliance
+ *
+ * EVENTS:
+ * customer.created   → Welcome journey
+ * subscriber.optin   → Welcome journey (QR, widget, social)
+ * cart.abandoned      → Cart recovery journey + Immediate WhatsApp
+ * order.created       → Cancel cart sequence + Start post-purchase journey
+ * customer.dormant    → Winback journey (triggered by daily check)
+ * customer.birthday   → Birthday journey (triggered by daily check)
+ * Every 5min          → processPendingSteps() via keep-alive
  */
 
 const fs = require('fs');
@@ -63,6 +68,22 @@ try {
     console.log('✅ [LifecycleV2] Referral System loaded');
 } catch (e) {
     referralSystem = null;
+}
+
+let optOutManager;
+try {
+    optOutManager = require('./optOutManager');
+    console.log('✅ [LifecycleV2] Opt-Out Manager loaded');
+} catch (e) {
+    optOutManager = null;
+}
+
+let qrOptin;
+try {
+    qrOptin = require('./qrOptin');
+    console.log('✅ [LifecycleV2] QR Opt-In loaded');
+} catch (e) {
+    qrOptin = null;
 }
 
 // ==========================================
@@ -128,6 +149,9 @@ async function processEvent(eventType, merchantId, data) {
             case 'app.installed':
                 return await handleNewCustomer(store, data);
 
+            case 'subscriber.optin':
+                return await handleSubscriberOptin(store, data);
+
             case 'cart.abandoned':
             case 'abandoned_cart.created':
                 return await handleAbandonedCart(store, data);
@@ -135,6 +159,12 @@ async function processEvent(eventType, merchantId, data) {
             case 'order.created':
             case 'order.completed':
                 return await handleOrderCreated(store, data);
+
+            case 'customer.dormant':
+                return await handleDormantCustomer(store, data);
+
+            case 'customer.birthday':
+                return await handleBirthday(store, data);
 
             default:
                 console.log(`⚠️ [LifecycleV2] Unknown event type: ${eventType}`);
@@ -579,6 +609,196 @@ async function checkInactiveCustomers() {
 }
 
 // ==========================================
+// SUBSCRIBER OPT-IN (from QR, widget, social)
+// ==========================================
+
+async function handleSubscriberOptin(store, data) {
+    const phone = data.phone;
+    const name = data.name || '';
+    const source = data.source || 'widget';
+
+    if (!phone) {
+        return { success: false, error: 'no_phone' };
+    }
+
+    console.log(`📱 [Optin] New subscriber: ${phone} from ${source}`);
+
+    // Register via QR opt-in module
+    let result = { isNew: true };
+    if (qrOptin) {
+        result = qrOptin.processOptin(store.merchant, phone, name, source);
+    } else {
+        // Fallback: add to customers directly
+        const customers = readJSON(CUSTOMERS_FILE);
+        const existing = customers.find(c =>
+            c.storeId === String(store.merchant) && c.phone === phone
+        );
+        if (!existing) {
+            customers.push({
+                storeId: String(store.merchant),
+                phone, name, source,
+                firstSeen: new Date().toISOString(),
+                lastActivity: new Date().toISOString(),
+                totalOrders: 0,
+                optInStatus: { whatsapp: true, sms: true }
+            });
+            writeJSON(CUSTOMERS_FILE, customers);
+        } else {
+            result.isNew = false;
+        }
+    }
+
+    // Start welcome journey for new subscribers
+    if (result.isNew && sequenceEngine) {
+        const storeUrl = store.storeUrl || `https://${store.merchant}.salla.sa`;
+        sequenceEngine.startSequence('welcome', String(store.merchant), phone, {
+            storeName: store.merchantName || 'متجرنا',
+            customerName: name || 'عميلنا',
+            phone,
+            storeUrl,
+            topProducts: store.topProducts || ''
+        });
+        console.log(`🎉 [Optin] Welcome journey started for ${phone}`);
+    }
+
+    return { success: true, isNew: result.isNew, source };
+}
+
+// ==========================================
+// DORMANT CUSTOMER WINBACK (new sequence-based)
+// ==========================================
+
+async function handleDormantCustomer(store, data) {
+    const phone = data.phone;
+    const name = data.name || 'عميلنا';
+    const email = data.email;
+
+    if (!phone && !email) {
+        return { success: false, error: 'no_contact_info' };
+    }
+
+    // Check opt-out status before sending
+    if (optOutManager && phone) {
+        const check = optOutManager.canSendMessage(store.merchant, phone, 'whatsapp');
+        if (!check.canSend) {
+            console.log(`🚫 [Winback] Skipped ${phone}: ${check.reason}`);
+            return { success: false, error: check.reason };
+        }
+    }
+
+    console.log(`💚 [Winback] Starting winback journey for ${phone || email}`);
+
+    if (sequenceEngine) {
+        const storeUrl = store.storeUrl || `https://${store.merchant}.salla.sa`;
+        sequenceEngine.startSequence('winback', String(store.merchant), email || phone, {
+            storeName: store.merchantName || 'متجرنا',
+            customerName: name,
+            phone,
+            storeUrl
+        });
+    }
+
+    return { success: true, type: 'winback' };
+}
+
+// ==========================================
+// BIRTHDAY JOURNEY
+// ==========================================
+
+async function handleBirthday(store, data) {
+    const phone = data.phone;
+    const name = data.name || 'عميلنا';
+
+    if (!phone) {
+        return { success: false, error: 'no_phone' };
+    }
+
+    // Check opt-out status
+    if (optOutManager) {
+        const check = optOutManager.canSendMessage(store.merchant, phone, 'whatsapp');
+        if (!check.canSend) {
+            console.log(`🚫 [Birthday] Skipped ${phone}: ${check.reason}`);
+            return { success: false, error: check.reason };
+        }
+    }
+
+    console.log(`🎂 [Birthday] Starting birthday journey for ${phone}`);
+
+    if (sequenceEngine) {
+        const storeUrl = store.storeUrl || `https://${store.merchant}.salla.sa`;
+        sequenceEngine.startSequence('birthday', String(store.merchant), phone, {
+            storeName: store.merchantName || 'متجرنا',
+            customerName: name,
+            phone,
+            storeUrl
+        });
+    }
+
+    return { success: true, type: 'birthday' };
+}
+
+// ==========================================
+// DAILY CHECKS (run via keep-alive)
+// ==========================================
+
+/**
+ * Check for dormant customers and birthdays — run daily
+ */
+async function runDailyChecks() {
+    const stores = readJSON(STORES_FILE);
+    const customers = readJSON(CUSTOMERS_FILE);
+    const now = new Date();
+    let winbackStarted = 0;
+    let birthdaySent = 0;
+
+    for (const store of stores) {
+        const storeCustomers = customers.filter(c =>
+            String(c.storeId) === String(store.merchant)
+        );
+
+        for (const customer of storeCustomers) {
+            // --- Winback check: 30+ days inactive ---
+            if (customer.lastPurchase || customer.lastActivity) {
+                const lastActive = new Date(customer.lastPurchase || customer.lastActivity);
+                const daysSince = Math.floor((now - lastActive) / (1000 * 60 * 60 * 24));
+
+                if (daysSince >= 30 && daysSince < 31 && !customer.lastWinbackSent) {
+                    if (customer.phone) {
+                        await processEvent('customer.dormant', store.merchant, {
+                            phone: customer.phone,
+                            name: customer.name,
+                            email: customer.email
+                        });
+                        winbackStarted++;
+                    }
+                }
+            }
+
+            // --- Birthday check ---
+            if (customer.metadata?.birthday && customer.phone) {
+                const birthday = customer.metadata.birthday; // "MM-DD" or "YYYY-MM-DD"
+                const monthDay = birthday.length > 5 ? birthday.substring(5) : birthday;
+                const todayMonthDay = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+                if (monthDay === todayMonthDay) {
+                    await processEvent('customer.birthday', store.merchant, {
+                        phone: customer.phone,
+                        name: customer.name
+                    });
+                    birthdaySent++;
+                }
+            }
+        }
+    }
+
+    if (winbackStarted > 0 || birthdaySent > 0) {
+        console.log(`📊 [Daily] Winback: ${winbackStarted}, Birthday: ${birthdaySent}`);
+    }
+
+    return { winbackStarted, birthdaySent };
+}
+
+// ==========================================
 // HELPER FUNCTIONS
 // ==========================================
 
@@ -637,17 +857,21 @@ function getStats(storeId) {
 module.exports = {
     // Event processing
     processEvent,
-    
+
     // Individual handlers (for direct calls)
     handleNewCustomer,
+    handleSubscriberOptin,
     handleAbandonedCart,
     handleOrderCreated,
-    
+    handleDormantCustomer,
+    handleBirthday,
+
     // Background processing (call from keep-alive)
     processPendingSequenceSteps,
     processPendingStepsWithWhatsApp,
     checkInactiveCustomers,
-    
+    runDailyChecks,
+
     // Stats
     getStats
 };

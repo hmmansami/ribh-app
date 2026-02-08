@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح | استرجع السلات المتروكة وحوّل الزوار إلى مشترين</title>
-    <meta name="description" content="منصة ذكية تسترد سلاتك المتروكة، تتابع الزوار، تجمع التقييمات، وتبني ولاء عملائك — كلها بالواتساب وبدون مجهود.">
+    <title>رِبح | تسويق شخصي. نتائج حقيقية.</title>
+    <meta name="description" content="منصة تواصل شخصي ذكية — رسائل واتساب و SMS مخصصة لكل عميل تزيد مبيعاتك وتخلّي عملاءك يرجعون. للمتاجر الإلكترونية والمحلات.">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,11 +16,11 @@
             --text: #FFFFFF;
             --text-dim: #71717A;
             --text-muted: #A1A1AA;
-            --primary: #10B981;
-            --primary-glow: rgba(16, 185, 129, 0.5);
-            --secondary: #6366F1;
-            --gradient: linear-gradient(135deg, #10B981 0%, #6366F1 100%);
-            --gold: #F59E0B;
+            --primary: #FBBF24;
+            --primary-glow: rgba(251, 191, 36, 0.4);
+            --primary-hover: #F59E0B;
+            --secondary: #F59E0B;
+            --gradient: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%);
             --success: #22C55E;
             --danger: #EF4444;
         }
@@ -47,8 +47,8 @@
             width: 200%; height: 200%;
             top: -50%; left: -50%;
             background:
-                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(16, 185, 129, 0.15), transparent 50%),
-                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(99, 102, 241, 0.12), transparent 50%);
+                radial-gradient(ellipse 600px 600px at 20% 30%, rgba(251, 191, 36, 0.1), transparent 50%),
+                radial-gradient(ellipse 500px 500px at 80% 70%, rgba(245, 158, 11, 0.08), transparent 50%);
             animation: cosmicRotate 40s linear infinite;
         }
         @keyframes cosmicRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -98,18 +98,18 @@
             align-items: center;
             gap: 8px;
             background: var(--gradient);
-            color: white;
+            color: #0a0a0a;
             padding: 10px 24px;
             border-radius: 12px;
             font-size: 15px;
             font-weight: 700;
             text-decoration: none;
             transition: all 0.3s;
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.2);
         }
         .header-cta:hover {
             transform: translateY(-2px);
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.35);
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.35);
         }
         @media (max-width: 768px) {
             .header-nav a.nav-link { display: none; }
@@ -125,8 +125,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.25);
             padding: 8px 22px;
             border-radius: 50px;
             font-size: 14px;
@@ -160,7 +160,7 @@
             width: calc(100% + 40px);
             height: calc(100% + 40px);
             transform: translate(-50%, -50%);
-            border: 2px dashed rgba(16, 185, 129, 0.25);
+            border: 2px dashed rgba(251, 191, 36, 0.25);
             border-radius: 28px;
             animation: ringRotate 20s linear infinite;
         }
@@ -176,7 +176,7 @@
             justify-content: center;
             gap: 10px;
             background: var(--gradient);
-            color: white;
+            color: #0a0a0a;
             padding: 20px 48px;
             border-radius: 16px;
             font-size: 21px;
@@ -349,8 +349,8 @@
             border: 1px solid rgba(239, 68, 68, 0.2);
         }
         .calc-result-card.gain {
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
         .calc-result-card .label {
             font-size: 14px;
@@ -410,8 +410,8 @@
         }
         .feature-card:hover {
             transform: translateY(-6px);
-            border-color: rgba(16, 185, 129, 0.3);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.08);
+            border-color: rgba(251, 191, 36, 0.3);
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.08);
         }
         .feature-header {
             display: flex;
@@ -442,9 +442,9 @@
             border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(251, 191, 36, 0.1);
             color: var(--primary);
-            border: 1px solid rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
         @media (max-width: 768px) {
             .features-grid { grid-template-columns: 1fr; }
@@ -510,8 +510,8 @@
             transform: translateY(-4px);
         }
         .pricing-card.recommended {
-            border-color: rgba(16, 185, 129, 0.5);
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.1);
+            border-color: rgba(251, 191, 36, 0.5);
+            box-shadow: 0 0 40px rgba(251, 191, 36, 0.1);
         }
         .pricing-card.recommended::before {
             content: '';
@@ -523,7 +523,7 @@
         .pricing-recommend-badge {
             display: inline-block;
             background: var(--gradient);
-            color: white;
+            color: #0a0a0a;
             padding: 5px 16px;
             border-radius: 20px;
             font-size: 13px;
@@ -599,7 +599,7 @@
         }
         .pricing-cta.primary {
             background: var(--gradient);
-            color: white;
+            color: #0a0a0a;
             box-shadow: 0 0 30px var(--primary-glow);
         }
         .pricing-cta.primary:hover {
@@ -612,7 +612,7 @@
             border: 1px solid var(--card-border);
         }
         .pricing-cta.outline:hover {
-            border-color: rgba(16, 185, 129, 0.3);
+            border-color: rgba(251, 191, 36, 0.3);
             color: var(--primary);
         }
         .pricing-trial {
@@ -629,7 +629,7 @@
         /* ========== SOCIAL PROOF ========== */
         .proof-section {
             background: var(--card);
-            border: 1px solid rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(251, 191, 36, 0.15);
             border-radius: 24px;
             padding: 40px;
             text-align: center;
@@ -720,7 +720,7 @@
         .final-cta {
             text-align: center;
             padding: 60px 40px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.08));
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.08), rgba(245, 158, 11, 0.05));
             border: 1px solid var(--card-border);
             border-radius: 32px;
             margin-bottom: 40px;
@@ -794,24 +794,24 @@
         <!-- ===== HERO ===== -->
         <section class="hero">
             <div class="hero-badge">
-                <span>🤖</span>
-                <span>مدعوم بالذكاء الاصطناعي</span>
+                <span>✦</span>
+                <span>منصة تواصل شخصي مدعومة بالذكاء الاصطناعي</span>
             </div>
 
             <h1 class="hero-title">
-                <span class="gradient-text">استرجع السلات المتروكة</span>
+                <span class="gradient-text">تسويق شخصي.</span>
                 <br>
-                وحوّل الزوار إلى مشترين
+                نتائج حقيقية.
             </h1>
 
             <p class="hero-subtitle">
-                منصة ذكية تسترد سلاتك، تتابع الزوار، تجمع التقييمات، وتبني ولاء عملائك — كلها بالواتساب وبدون مجهود
+                رسائل واتساب و SMS ذكية تخلّي عملاءك يرجعون ويشترون أكثر — تلقائياً. للمتاجر الإلكترونية والمحلات.
             </p>
 
             <div class="cta-wrapper">
                 <div class="cta-ring"></div>
                 <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    ابدأ مجاناً — 7 أيام تجربة
+                    جرّب مجاناً
                 </a>
             </div>
 
@@ -827,30 +827,30 @@
                     <span>معدل فتح الواتساب</span>
                 </div>
                 <div class="trust-item">
-                    <span class="trust-value">25%</span>
-                    <span>معدل استرداد</span>
+                    <span class="trust-value">2x</span>
+                    <span>نمو المبيعات</span>
                 </div>
                 <div class="trust-item">
                     <span class="trust-value">+500</span>
-                    <span>متجر</span>
+                    <span>نشاط تجاري</span>
                 </div>
             </div>
         </section>
 
         <!-- ===== PROBLEM SECTION ===== -->
         <section class="problem-section">
-            <div class="problem-stat">70%</div>
-            <div class="problem-title">من زوار متجرك يتركون سلاتهم قبل الشراء</div>
+            <div class="problem-stat">80%</div>
+            <div class="problem-title">من عملائك ما يرجعون يشترون مرة ثانية</div>
             <p class="problem-desc">
-                كل يوم تخسر آلاف الريالات بدون ما تدري. رِبح يسترد هالأرباح لك تلقائياً.
+                سلات متروكة، عملاء ضايعين، مبيعات مفقودة. رِبح يتواصل مع كل عميل بشكل شخصي ويرجّعهم — تلقائياً.
             </p>
         </section>
 
         <!-- ===== CALCULATOR ===== -->
         <section class="calculator-section">
             <div class="calc-card">
-                <h2 class="calc-title">احسب أرباحك المفقودة</h2>
-                <p class="calc-subtitle">حرك المؤشر لمعرفة كم تخسر شهرياً</p>
+                <h2 class="calc-title">كم تخسر بدون تواصل شخصي؟</h2>
+                <p class="calc-subtitle">حرك المؤشر وشوف الفرق</p>
 
                 <div style="margin-bottom: 24px;">
                     <div class="calc-label">
@@ -877,89 +877,89 @@
 
         <!-- ===== FEATURES SECTION ===== -->
         <section class="features-section" id="features">
-            <h2 class="section-title">كل ما يحتاجه متجرك في مكان واحد</h2>
-            <p class="section-subtitle">بينما المنافسين يقدمون ميزة واحدة، رِبح يعطيك المنصة الكاملة</p>
+            <h2 class="section-title">الرسالة المناسبة. للعميل المناسب. في الوقت المناسب.</h2>
+            <p class="section-subtitle">رِبح يتعرف على كل عميل ويتواصل معه بشكل شخصي عبر واتساب و SMS</p>
 
             <div class="features-grid">
 
-                <!-- Card 1 -->
+                <!-- Card 1: Journeys -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">🛒</span>
-                        <h3 class="feature-title">استرداد السلات المتروكة</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">رحلات عملاء ذكية</h3>
                     </div>
-                    <p class="feature-desc">ذكاء اصطناعي يكتب رسائل مخصصة لكل عميل بناءً على نوع متجرك وقيمة السلة. عروض ذكية تتغير حسب العميل.</p>
-                    <span class="feature-tag">25% معدل استرداد</span>
+                    <p class="feature-desc">من لحظة الاشتراك لحد ما يصير عميل دائم — رسائل ترحيب، استرداد سلات، متابعة بعد الشراء، واسترجاع العملاء الغائبين. كلها تلقائية.</p>
+                    <span class="feature-tag">7 رحلات جاهزة</span>
                 </div>
 
-                <!-- Card 2 -->
+                <!-- Card 2: Personalization -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">👁️</span>
-                        <h3 class="feature-title">متابعة تصفح الزوار</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">رسائل شخصية بالذكاء الاصطناعي</h3>
                     </div>
-                    <p class="feature-desc">اذا عميلك تصفح منتجاتك بدون ما يضيف للسلة، نرسل له رسالة بالمنتجات اللي شافها مع خصم حصري.</p>
-                    <span class="feature-tag">استرداد المتصفحين</span>
+                    <p class="feature-desc">كل عميل يحصل رسالة مختلفة بناءً على تاريخ شرائه، اهتماماته، وسلوكه. مافي عميلين يحصلون نفس الرسالة.</p>
+                    <span class="feature-tag">تخصيص 1:1</span>
                 </div>
 
-                <!-- Card 3 -->
+                <!-- Card 3: Channels -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">🎁</span>
-                        <h3 class="feature-title">عروض ما بعد الشراء</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">واتساب + SMS</h3>
                     </div>
-                    <p class="feature-desc">بعد كل عملية شراء، نقترح منتجات مكملة بخصم 10-15%. تزيد متوسط قيمة الطلب بدون مجهود.</p>
-                    <span class="feature-tag">زيادة قيمة الطلب</span>
+                    <p class="feature-desc">واتساب كقناة أساسية (98% معدل فتح) مع SMS كقناة احتياطية. نوصل لعميلك على القناة اللي يفضلها.</p>
+                    <span class="feature-tag">قنوات متعددة</span>
                 </div>
 
-                <!-- Card 4 -->
+                <!-- Card 4: Segments -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">⭐</span>
-                        <h3 class="feature-title">جمع التقييمات تلقائياً</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">تصنيف العملاء الذكي</h3>
                     </div>
-                    <p class="feature-desc">نرسل طلب تقييم بعد التوصيل. العميل السعيد يروح للتقييم العام. الغير سعيد يروح للدعم مع كود خصم اعتذار.</p>
-                    <span class="feature-tag">حماية السمعة</span>
+                    <p class="feature-desc">نصنف عملائك تلقائياً: جدد، أوفياء، معرضين للخسارة، غائبين. كل شريحة تحصل رسائل وعروض مختلفة تناسبها.</p>
+                    <span class="feature-tag">شرائح ذكية</span>
                 </div>
 
-                <!-- Card 5 -->
+                <!-- Card 5: Physical -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">📊</span>
-                        <h3 class="feature-title">تصنيف العملاء الذكي (RFM)</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">للمحلات والمقاهي</h3>
                     </div>
-                    <p class="feature-desc">نصنف عملائك تلقائياً: أبطال، أوفياء، جدد، معرضين للخسارة. كل شريحة تحصل رسائل مختلفة.</p>
-                    <span class="feature-tag">8 شرائح تلقائية</span>
+                    <p class="feature-desc">كود QR على الكاونتر أو الفاتورة — العميل يمسحه ويشترك بالواتساب. ترسل له عروض، تهنئة عيد ميلاد، وتخليه يرجع.</p>
+                    <span class="feature-tag">متاجر فعلية</span>
                 </div>
 
-                <!-- Card 6 -->
+                <!-- Card 6: Reviews -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">🏆</span>
-                        <h3 class="feature-title">برنامج الولاء</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">تقييمات وولاء</h3>
                     </div>
-                    <p class="feature-desc">نقاط على كل عملية شراء. 4 مستويات (برونز، فضي، ذهبي، بلاتيني). خصومات حصرية للعملاء المميزين.</p>
-                    <span class="feature-tag">احتفظ بعملائك</span>
+                    <p class="feature-desc">بعد كل تجربة شراء، نطلب تقييم تلقائي. نقاط ولاء على كل عملية. عملائك يحسون إنهم مميزين.</p>
+                    <span class="feature-tag">علاقات أقوى</span>
                 </div>
 
-                <!-- Card 7 -->
+                <!-- Card 7: AI -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">🧪</span>
-                        <h3 class="feature-title">اختبارات A/B ذكية</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">ذكاء اصطناعي يتعلم</h3>
                     </div>
-                    <p class="feature-desc">نختبر رسائل مختلفة تلقائياً — العنوان، نسبة الخصم، درجة الإلحاح — ونختار الأفضل أداءً.</p>
-                    <span class="feature-tag">تحسين مستمر</span>
+                    <p class="feature-desc">يتعلم أفضل وقت للإرسال لكل عميل، يتكيف مع أسلوب متجرك، ويختبر رسائل مختلفة تلقائياً ويختار الأفضل.</p>
+                    <span class="feature-tag">A/B + توقيت ذكي</span>
                 </div>
 
-                <!-- Card 8 -->
+                <!-- Card 8: Safe -->
                 <div class="feature-card">
                     <div class="feature-header">
-                        <span class="feature-icon">🔐</span>
-                        <h3 class="feature-title">حماية من البلوك</h3>
+                        <span class="feature-icon">✦</span>
+                        <h3 class="feature-title">آمن وموثوق</h3>
                     </div>
-                    <p class="feature-desc">نظام مضاد للحظر: إرسال تدريجي، تأخيرات بشرية، ساعات نشطة فقط. واتسابك آمن 100%.</p>
-                    <span class="feature-tag">0% معدل حظر</span>
+                    <p class="feature-desc">حماية من الحظر، ساعات هادئة، إلغاء اشتراك تلقائي. عملائك ما ينزعجون ورقمك يبقى آمن.</p>
+                    <span class="feature-tag">0% حظر</span>
                 </div>
 
             </div>
@@ -967,29 +967,29 @@
 
         <!-- ===== HOW IT WORKS ===== -->
         <section class="how-section" id="how">
-            <h2 class="section-title">كيف يعمل؟</h2>
-            <p class="section-subtitle">3 خطوات بسيطة وتبدأ تسترد أرباحك</p>
+            <h2 class="section-title">دقيقة واحدة وتبدأ</h2>
+            <p class="section-subtitle">سواء عندك متجر إلكتروني أو محل — البداية نفسها</p>
 
             <div class="steps-container">
                 <div class="step-card">
                     <div class="step-number">1</div>
                     <div class="step-icon">🔗</div>
-                    <h3 class="step-title">اربط متجرك</h3>
-                    <p class="step-desc">ضغطة واحدة لربط سلة أو شوبيفاي</p>
+                    <h3 class="step-title">اربط نشاطك</h3>
+                    <p class="step-desc">متجر سلة، شوبيفاي، أو كود QR لمحلك</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">2</div>
                     <div class="step-icon">📱</div>
-                    <h3 class="step-title">امسح QR الواتساب</h3>
-                    <p class="step-desc">ربط فوري لواتساب متجرك</p>
+                    <h3 class="step-title">وصّل الواتساب</h3>
+                    <p class="step-desc">امسح QR وابدأ التواصل من رقمك</p>
                 </div>
 
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <div class="step-icon">💰</div>
-                    <h3 class="step-title">شاهد الأرباح</h3>
-                    <p class="step-desc">الذكاء الاصطناعي يعمل 24/7</p>
+                    <div class="step-icon">✦</div>
+                    <h3 class="step-title">عملاءك يرجعون</h3>
+                    <p class="step-desc">رسائل شخصية ذكية تعمل 24/7 تلقائياً</p>
                 </div>
             </div>
         </section>
@@ -1071,7 +1071,7 @@
         <section class="proof-section">
             <div class="proof-label">
                 <span class="proof-dot"></span>
-                تم استردادها لمتاجر مثلك هذا الشهر
+                مبيعات إضافية حققها رِبح لعملائه هذا الشهر
             </div>
             <div class="proof-counter" id="proofCounter">0</div>
             <div class="proof-sub">ر.س</div>
@@ -1119,7 +1119,7 @@
 
         <!-- ===== FINAL CTA ===== -->
         <section class="final-cta">
-            <h2 class="final-title">جاهز تسترد أرباحك المفقودة؟</h2>
+            <h2 class="final-title">جاهز تخلّي عملاءك يرجعون؟</h2>
 
             <div class="final-bullets">
                 <div class="final-bullet"><span class="check">✓</span> تفعيل فوري</div>
@@ -1131,7 +1131,7 @@
             <div class="cta-wrapper">
                 <div class="cta-ring"></div>
                 <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="cta-button">
-                    ابدأ مجاناً — 7 أيام تجربة
+                    جرّب مجاناً
                 </a>
             </div>
         </section>
