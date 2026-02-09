@@ -1,2048 +1,1082 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رِبح | منصة التسويق الذكي للعلامات التجارية الرائدة</title>
-    <meta name="description" content="رسائل واتساب وSMS مخصصة بالذكاء الاصطناعي لكل عميل — استرداد سلات، نمو مبيعات، وعلاقات حقيقية مع كل عميل. للمتاجر الإلكترونية والمحلات.">
-    <meta name="theme-color" content="#1A1E22">
-    <meta property="og:title" content="رِبح | منصة التسويق الذكي للعلامات التجارية الرائدة">
-    <meta property="og:description" content="رسائل واتساب وSMS مخصصة بالذكاء الاصطناعي — استرداد سلات، نمو مبيعات، ونتائج حقيقية.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://ribh-484706.web.app">
-    <link rel="canonical" href="https://ribh-484706.web.app">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        /* ================================================================
-           DESIGN SYSTEM — Inspired by Attentive
-           Black + Bright Yellow brand palette
-           Light backgrounds for content, dark for hero/CTA
-           Confident, spacious typography
-           ================================================================ */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رِبح — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-        :root {
-            /* Attentive's exact palette */
-            --dark: #1A1E22;
-            --dark-soft: #2A2E33;
-            --yellow: #FFE600;
-            --yellow-hover: #FFD000;
-            --yellow-subtle: rgba(255, 230, 0, 0.08);
-            --yellow-border: rgba(255, 230, 0, 0.2);
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --surface-2: #1a1a1a;
+  --surface-3: #222222;
+  --border: #2a2a2a;
+  --text: #f5f5f5;
+  --text-2: #a0a0a0;
+  --text-3: #666666;
+  --green: #10B981;
+  --green-dim: rgba(16, 185, 129, 0.15);
+  --green-glow: rgba(16, 185, 129, 0.3);
+  --red: #EF4444;
+  --red-dim: rgba(239, 68, 68, 0.12);
+  --orange: #F59E0B;
+  --orange-dim: rgba(245, 158, 11, 0.12);
+  --blue: #3B82F6;
+  --blue-dim: rgba(59, 130, 246, 0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
 
-            /* Light theme colors */
-            --bg: #FFFFFF;
-            --bg-soft: #F8F8F8;
-            --bg-section: #FAFAFA;
-            --border: #E5E5E5;
-            --border-light: #F0F0F0;
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
 
-            /* Text on light bg */
-            --text: #1A1E22;
-            --text-secondary: #4A4A4A;
-            --text-muted: #71717A;
-            --text-dim: #A1A1AA;
+/* ─── TOPBAR ─── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 56px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -0.5px;
+}
+.topbar-store {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.topbar-store:hover { background: var(--surface-3); }
+.topbar-store .dot {
+  width: 7px; height: 7px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--green-glow);
+}
 
-            /* Text on dark bg */
-            --text-on-dark: #FFFFFF;
-            --text-on-dark-secondary: #C6C7C8;
-            --text-on-dark-muted: #8C8E90;
+/* ─── MAIN LAYOUT ─── */
+.main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 80px;
+}
 
-            /* Functional */
-            --success: #22C55E;
-            --danger: #EF4444;
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 16px;
-            --radius-xl: 24px;
-        }
+/* ─── SECTION SPACING ─── */
+.section {
+  margin-bottom: 28px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-2);
+}
+.section-header svg { opacity: 0.6; }
 
-        html { scroll-behavior: smooth; }
+/* ─── REVENUE CARD ─── */
+.revenue-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.revenue-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, var(--green-dim) 0%, transparent 70%);
+  pointer-events: none;
+}
+.revenue-label {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+.revenue-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.revenue-amount {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -1px;
+  direction: ltr;
+}
+.revenue-currency {
+  font-size: 18px;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.revenue-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.revenue-period {
+  display: flex;
+  gap: 0;
+  margin-top: 18px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  width: fit-content;
+}
+.period-btn {
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+.period-btn.active {
+  color: var(--text);
+  background: var(--surface-3);
+}
+.period-btn:hover:not(.active) { color: var(--text-2); }
 
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-            line-height: 1.7;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+/* Chart area */
+.chart-area {
+  margin-top: 20px;
+  height: 100px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding-bottom: 2px;
+}
+.chart-bar {
+  flex: 1;
+  background: var(--green);
+  border-radius: 3px 3px 0 0;
+  min-height: 4px;
+  opacity: 0.7;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+.chart-bar:hover {
+  opacity: 1;
+  transform: scaleY(1.05);
+  transform-origin: bottom;
+}
+.chart-bar.today {
+  opacity: 1;
+  box-shadow: 0 0 10px var(--green-glow);
+}
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  color: var(--text-3);
+}
 
-        /* ================================================================
-           LAYOUT
-           ================================================================ */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 32px;
-        }
+/* Revenue breakdown */
+.revenue-breakdown {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.breakdown-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
 
-        /* ================================================================
-           SHARED COMPONENTS
-           ================================================================ */
-        .section-header {
-            text-align: center;
-            margin-bottom: 64px;
-        }
+/* ─── ACTION CARDS ─── */
+.action-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .action-cards { grid-template-columns: 1fr; }
+}
+.action-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+.action-card:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+.action-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 60%, var(--green-dim));
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.action-card:hover::after { opacity: 1; }
 
-        .section-overline {
-            display: inline-block;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--dark);
-            letter-spacing: 0.5px;
-            margin-bottom: 16px;
-            background: var(--yellow);
-            padding: 4px 16px;
-            border-radius: 4px;
-        }
+.action-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+.action-icon.red { background: var(--red-dim); }
+.action-icon.orange { background: var(--orange-dim); }
+.action-icon.blue { background: var(--blue-dim); }
 
-        .section-title {
-            font-size: 40px;
-            font-weight: 900;
-            line-height: 1.25;
-            margin-bottom: 16px;
-            color: var(--text);
-        }
+.action-count {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 2px;
+  direction: ltr;
+  display: inline-block;
+}
+.action-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  margin-bottom: 4px;
+}
+.action-subtitle {
+  font-size: 12px;
+  color: var(--text-3);
+  direction: ltr;
+  display: inline-block;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 7px 16px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  z-index: 1;
+}
+.action-btn:hover {
+  background: #0fd992;
+  transform: scale(1.03);
+}
+.action-btn.secondary {
+  background: var(--surface-3);
+  color: var(--text);
+}
+.action-btn.secondary:hover { background: var(--border); }
 
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-muted);
-            max-width: 580px;
-            margin: 0 auto;
-            line-height: 1.7;
-        }
+/* ─── FLOWS TABLE ─── */
+.flows-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.flow-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 16px;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.flow-row:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+.flow-row:hover { background: var(--surface-2); }
 
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--dark);
-            color: var(--text-on-dark);
-            padding: 14px 32px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            font-family: inherit;
-        }
-        .btn-primary:hover {
-            background: var(--dark-soft);
-            transform: translateY(-1px);
-        }
+.flow-icon {
+  font-size: 20px;
+  width: 40px; height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.flow-info { flex: 1; min-width: 0; }
+.flow-name {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+.flow-desc {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.flow-stats {
+  display: flex;
+  gap: 24px;
+  flex-shrink: 0;
+}
+.flow-stat {
+  text-align: center;
+}
+.flow-stat-value {
+  font-size: 15px;
+  font-weight: 700;
+  direction: ltr;
+  display: block;
+}
+.flow-stat-label {
+  font-size: 11px;
+  color: var(--text-3);
+}
 
-        .btn-primary-yellow {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--yellow);
-            color: var(--dark);
-            padding: 14px 32px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.15s;
-            font-family: inherit;
-        }
-        .btn-primary-yellow:hover {
-            background: var(--yellow-hover);
-            transform: translateY(-1px);
-        }
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 44px; height: 24px;
+  flex-shrink: 0;
+}
+.toggle input { display: none; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--surface-3);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.toggle input:checked + .toggle-track {
+  background: var(--green);
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.toggle input:checked ~ .toggle-thumb {
+  transform: translateX(-20px);
+}
 
-        .btn-secondary {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            color: var(--text-on-dark-secondary);
-            padding: 14px 32px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            border: 1px solid rgba(255,255,255,0.2);
-            cursor: pointer;
-            transition: border-color 0.2s, color 0.2s;
-            font-family: inherit;
-        }
-        .btn-secondary:hover {
-            border-color: rgba(255,255,255,0.5);
-            color: var(--text-on-dark);
-        }
+/* ─── CAMPAIGNS ─── */
+.campaign-empty {
+  text-align: center;
+  padding: 32px 20px;
+}
+.campaign-empty-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+  opacity: 0.4;
+}
+.campaign-empty-text {
+  font-size: 14px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+.campaign-list {
+  display: flex;
+  flex-direction: column;
+}
+.campaign-row {
+  display: flex;
+  align-items: center;
+  padding: 14px 20px;
+  gap: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.campaign-row:not(:last-child) {
+  border-bottom: 1px solid var(--border);
+}
+.campaign-row:hover { background: var(--surface-2); }
+.campaign-status {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.campaign-status.sent { background: var(--green); }
+.campaign-status.scheduled { background: var(--orange); }
+.campaign-status.draft { background: var(--text-3); }
+.campaign-info { flex: 1; }
+.campaign-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+.campaign-meta {
+  font-size: 11px;
+  color: var(--text-3);
+}
+.campaign-metric {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--green);
+  direction: ltr;
+  flex-shrink: 0;
+  min-width: 70px;
+}
 
-        .btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: transparent;
-            color: var(--text);
-            padding: 14px 32px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 600;
-            text-decoration: none;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: border-color 0.2s, color 0.2s;
-            font-family: inherit;
-        }
-        .btn-outline:hover {
-            border-color: var(--dark);
-            color: var(--dark);
-        }
+/* New Campaign Button */
+.new-campaign-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-3);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.new-campaign-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-dim);
+}
 
-        /* ================================================================
-           ANNOUNCEMENT BAR
-           Attentive pattern: thin yellow bar at the top
-           ================================================================ */
-        .announcement-bar {
-            background: var(--yellow);
-            color: var(--dark);
-            text-align: center;
-            padding: 10px 24px;
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .announcement-bar a {
-            color: var(--dark);
-            text-decoration: underline;
-            text-underline-offset: 3px;
-            font-weight: 800;
-            margin-right: 8px;
-        }
-        .announcement-bar a:hover {
-            text-decoration-thickness: 2px;
-        }
+/* ─── QUICK STATS ROW ─── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr; }
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  text-align: center;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  direction: ltr;
+  display: inline-block;
+}
+.stat-label {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 2px;
+}
 
-        /* ================================================================
-           HEADER — Dark, clean, confident
-           Attentive pattern: dark header with yellow CTA
-           ================================================================ */
-        .site-header {
-            background: var(--dark);
-            padding: 0 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 18px 0;
-        }
-        .logo {
-            font-size: 30px;
-            font-weight: 900;
-            color: var(--yellow);
-            text-decoration: none;
-            letter-spacing: -0.5px;
-        }
-        .header-nav {
-            display: flex;
-            align-items: center;
-            gap: 32px;
-        }
-        .header-nav .nav-link {
-            color: var(--text-on-dark-muted);
-            text-decoration: none;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .header-nav .nav-link:hover { color: var(--text-on-dark); }
-        .header-cta {
-            background: var(--yellow);
-            color: var(--dark);
-            padding: 10px 24px;
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-        .header-cta:hover { background: var(--yellow-hover); }
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  width: 90%;
+  max-width: 440px;
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-overlay.open .modal {
+  transform: scale(1) translateY(0);
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.modal-desc {
+  font-size: 13px;
+  color: var(--text-3);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.modal-flow-preview {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.modal-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.modal-step:not(:last-child) {
+  border-bottom: 1px dashed var(--border);
+}
+.modal-step-icon {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  background: var(--surface-3);
+  flex-shrink: 0;
+}
+.modal-step-text {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+.modal-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.modal-btn.primary {
+  background: var(--green);
+  color: #000;
+}
+.modal-btn.primary:hover { background: #0fd992; }
+.modal-btn.ghost {
+  background: transparent;
+  color: var(--text-3);
+}
+.modal-btn.ghost:hover { color: var(--text); }
 
-        /* ================================================================
-           HERO — Dark background, large confident headline
-           Attentive pattern: dark hero, outcome-first headline,
-           3 proof metrics below, yellow accents
-           ================================================================ */
-        .hero-section {
-            background: var(--dark);
-            padding: 80px 0 0;
-        }
-        .hero-content {
-            text-align: center;
-            max-width: 820px;
-            margin: 0 auto;
-            padding-bottom: 72px;
-        }
-        .hero-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 230, 0, 0.1);
-            border: 1px solid rgba(255, 230, 0, 0.25);
-            padding: 6px 20px;
-            border-radius: 4px;
-            font-size: 13px;
-            color: var(--yellow);
-            font-weight: 700;
-            margin-bottom: 32px;
-        }
-        .hero-content h1 {
-            font-size: clamp(38px, 5.5vw, 64px);
-            font-weight: 900;
-            line-height: 1.15;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-            color: var(--text-on-dark);
-        }
-        .hero-content h1 .yellow { color: var(--yellow); }
-        .hero-subtitle {
-            font-size: 19px;
-            color: var(--text-on-dark-muted);
-            max-width: 620px;
-            margin: 0 auto 40px;
-            line-height: 1.8;
-            font-weight: 400;
-        }
-        .hero-actions {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        .hero-micro {
-            font-size: 13px;
-            color: var(--text-on-dark-muted);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        .hero-micro .check { color: var(--success); margin-left: 4px; }
+/* ─── TOAST ─── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--green);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 300;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
 
-        /* Hero metrics bar — sits at the bottom of hero section */
-        .hero-metrics-bar {
-            background: rgba(255,255,255,0.04);
-            border-top: 1px solid rgba(255,255,255,0.08);
-        }
-        .hero-metrics {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .hero-metric {
-            padding: 36px 24px;
-            text-align: center;
-            border-left: 1px solid rgba(255,255,255,0.06);
-        }
-        .hero-metric:last-child { border-left: none; }
-        .hero-metric-value {
-            font-size: 48px;
-            font-weight: 900;
-            color: var(--yellow);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .hero-metric-label {
-            font-size: 15px;
-            color: var(--text-on-dark-muted);
-            line-height: 1.5;
-        }
+/* ─── LIVE PULSE ─── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+  display: inline-block;
+}
 
-        /* ================================================================
-           SOCIAL PROOF — Light background, brand categories
-           Attentive pattern: logo strip on white
-           ================================================================ */
-        .social-proof {
-            padding: 48px 0;
-            border-bottom: 1px solid var(--border-light);
-        }
-        .social-proof-label {
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-dim);
-            margin-bottom: 28px;
-            font-weight: 500;
-        }
-        .social-proof-categories {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 48px;
-            flex-wrap: wrap;
-        }
-        .proof-category {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-muted);
-            font-size: 15px;
-            font-weight: 700;
-            transition: color 0.2s;
-        }
-        .proof-category:hover { color: var(--text); }
-        .proof-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--bg-soft);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
+/* ─── COUNTER ANIMATION ─── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation: slideUp 0.5s ease forwards;
+}
+.animate-in:nth-child(1) { animation-delay: 0.05s; }
+.animate-in:nth-child(2) { animation-delay: 0.1s; }
+.animate-in:nth-child(3) { animation-delay: 0.15s; }
+.animate-in:nth-child(4) { animation-delay: 0.2s; }
+.animate-in:nth-child(5) { animation-delay: 0.25s; }
+.animate-in:nth-child(6) { animation-delay: 0.3s; }
 
-        /* ================================================================
-           PRODUCT CARDS — White background, clean cards
-           Attentive pattern: 3 product tiers with metrics
-           ================================================================ */
-        .products-section {
-            padding: 100px 0;
-        }
-        .product-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        .product-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 40px 32px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-        }
-        .product-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--yellow);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 24px;
-        }
-        .product-card h3 {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            color: var(--text);
-        }
-        .product-card p {
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            flex: 1;
-            margin-bottom: 24px;
-        }
-        .product-metric {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-light);
-        }
-        .product-metric-value {
-            font-size: 32px;
-            font-weight: 900;
-            color: var(--dark);
-        }
-        .product-metric-label {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.5;
-        }
-
-        /* ================================================================
-           AI SECTION — Subtle yellow-tinted background
-           Attentive pattern: dedicated AI section with demo
-           ================================================================ */
-        .ai-section {
-            padding: 100px 0;
-            background: var(--bg-soft);
-        }
-        .ai-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 64px;
-            align-items: center;
-        }
-        .ai-content .section-overline {
-            margin-bottom: 20px;
-        }
-        .ai-content h2 {
-            font-size: 40px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.25;
-            color: var(--text);
-        }
-        .ai-content h2 .yellow {
-            color: var(--dark);
-            background: var(--yellow);
-            padding: 0 8px;
-            display: inline;
-        }
-        .ai-content > p {
-            font-size: 17px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            margin-bottom: 32px;
-        }
-        .ai-features-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .ai-features-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            font-size: 16px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-        .ai-features-list .check-icon {
-            color: var(--dark);
-            font-size: 18px;
-            font-weight: 900;
-            flex-shrink: 0;
-            margin-top: 3px;
-            background: var(--yellow);
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-
-        /* WhatsApp Demo */
-        .wa-demo {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-        }
-        .wa-demo-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 18px 24px;
-            border-bottom: 1px solid var(--border-light);
-            background: var(--bg-soft);
-        }
-        .wa-demo-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--yellow);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--dark);
-            font-weight: 800;
-        }
-        .wa-demo-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .wa-demo-status {
-            font-size: 12px;
-            color: var(--success);
-            font-weight: 500;
-        }
-        .wa-demo-body {
-            padding: 24px;
-        }
-        .wa-bubble {
-            background: var(--bg-soft);
-            border: 1px solid var(--border-light);
-            border-radius: 16px 16px 4px 16px;
-            padding: 18px 20px;
-            font-size: 15px;
-            line-height: 1.9;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
-            max-width: 95%;
-        }
-        .wa-bubble strong {
-            color: var(--text);
-            font-weight: 800;
-        }
-        .wa-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 4px;
-        }
-        .wa-time {
-            font-size: 12px;
-            color: var(--text-dim);
-        }
-        .wa-tag {
-            background: var(--yellow);
-            color: var(--dark);
-            padding: 4px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        /* ================================================================
-           METRICS BANNER — Big numbers like Attentive
-           ================================================================ */
-        .metrics-banner {
-            padding: 80px 0;
-            background: var(--bg);
-            border-bottom: 1px solid var(--border-light);
-        }
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
-            text-align: center;
-        }
-        .metric-item {}
-        .metric-value {
-            font-size: 64px;
-            font-weight: 900;
-            color: var(--dark);
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .metric-value .yellow-highlight {
-            color: var(--dark);
-            background: var(--yellow);
-            padding: 0 6px;
-        }
-        .metric-label {
-            font-size: 16px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        /* ================================================================
-           ROI CALCULATOR — Clean on white
-           ================================================================ */
-        .calculator-section {
-            padding: 100px 0;
-        }
-        .calc-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 56px 48px;
-            max-width: 640px;
-            margin: 0 auto;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        }
-        .calc-input-group {
-            margin-bottom: 32px;
-        }
-        .calc-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .calc-label .value {
-            font-weight: 900;
-            color: var(--dark);
-            font-size: 18px;
-            background: var(--yellow);
-            padding: 0 8px;
-            border-radius: var(--radius-sm);
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: var(--border);
-            outline: none;
-            cursor: pointer;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--dark);
-            cursor: pointer;
-            border: 3px solid var(--yellow);
-            transition: transform 0.15s;
-        }
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.15);
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--dark);
-            cursor: pointer;
-            border: 3px solid var(--yellow);
-        }
-
-        .calc-results {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-top: 36px;
-        }
-        .calc-result-card {
-            border-radius: var(--radius-md);
-            padding: 28px 24px;
-            text-align: center;
-        }
-        .calc-result-card.loss {
-            background: #FFF5F5;
-            border: 1px solid #FED7D7;
-        }
-        .calc-result-card.gain {
-            background: #F0FFF4;
-            border: 1px solid #C6F6D5;
-        }
-        .calc-result-card .label {
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-        .calc-result-card.loss .label { color: var(--danger); }
-        .calc-result-card.gain .label { color: var(--success); }
-        .calc-result-card .amount {
-            font-size: 32px;
-            font-weight: 900;
-        }
-        .calc-result-card.loss .amount { color: var(--danger); }
-        .calc-result-card.gain .amount { color: var(--success); }
-        .calc-note {
-            text-align: center;
-            color: var(--text-dim);
-            font-size: 13px;
-            margin-top: 24px;
-            line-height: 1.6;
-        }
-
-        /* ================================================================
-           FEATURES GRID — Clean cards on white
-           ================================================================ */
-        .features-section {
-            padding: 100px 0;
-            background: var(--bg-soft);
-        }
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-        }
-        .feature-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 36px 28px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .feature-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-        }
-        .feature-icon {
-            width: 44px;
-            height: 44px;
-            background: var(--yellow);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 20px;
-        }
-        .feature-card h3 {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-        .feature-card p {
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-
-        /* ================================================================
-           HOW IT WORKS — 3 steps, clean
-           ================================================================ */
-        .how-section {
-            padding: 100px 0;
-        }
-        .steps-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
-        }
-        .step-card {
-            text-align: center;
-            padding: 48px 28px;
-        }
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            background: var(--yellow);
-            color: var(--dark);
-            border-radius: 50%;
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 24px;
-        }
-        .step-card h3 {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            color: var(--text);
-        }
-        .step-card p {
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-        }
-        .step-tag {
-            display: inline-block;
-            margin-top: 16px;
-            padding: 6px 16px;
-            background: var(--bg-soft);
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-sm);
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        /* ================================================================
-           INTEGRATIONS
-           ================================================================ */
-        .integrations-section {
-            padding: 80px 0;
-            text-align: center;
-            background: var(--bg-soft);
-            border-top: 1px solid var(--border-light);
-            border-bottom: 1px solid var(--border-light);
-        }
-        .integrations-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-        .integration-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 28px 32px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            min-width: 140px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .integration-item:hover {
-            border-color: var(--dark);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-        }
-        .integration-icon { font-size: 32px; }
-        .integration-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .integration-item.coming-soon {
-            opacity: 0.45;
-        }
-
-        /* ================================================================
-           CASE STUDIES — Attentive pattern: quote + metrics + author
-           ================================================================ */
-        .stories-section {
-            padding: 100px 0;
-        }
-        .stories-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-        }
-        .story-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 40px 36px;
-            transition: box-shadow 0.2s;
-        }
-        .story-card:hover {
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-        }
-        .story-type {
-            display: inline-block;
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--dark);
-            background: var(--yellow);
-            padding: 4px 14px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 20px;
-        }
-        .story-quote {
-            font-size: 18px;
-            font-weight: 600;
-            line-height: 1.7;
-            margin-bottom: 24px;
-            color: var(--text);
-        }
-        .story-metrics {
-            display: flex;
-            gap: 40px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-light);
-        }
-        .story-metric-value {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--dark);
-        }
-        .story-metric-label {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-        .story-author {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-top: 24px;
-        }
-        .story-avatar {
-            width: 40px;
-            height: 40px;
-            background: var(--yellow);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--dark);
-            font-weight: 900;
-        }
-        .story-author-name {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .story-author-biz {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        /* ================================================================
-           PRICING — Clean on white
-           ================================================================ */
-        .pricing-section {
-            padding: 100px 0;
-            background: var(--bg-soft);
-        }
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            align-items: start;
-        }
-        .pricing-card {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-md);
-            padding: 40px 32px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .pricing-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
-        }
-        .pricing-card.recommended {
-            border-color: var(--dark);
-            border-width: 2px;
-        }
-        .pricing-card.recommended::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 4px;
-            background: var(--yellow);
-        }
-        .pricing-badge {
-            display: inline-block;
-            background: var(--yellow);
-            color: var(--dark);
-            padding: 4px 14px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
-            font-weight: 800;
-            margin-bottom: 16px;
-        }
-        .pricing-plan-label {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-        .pricing-plan-title {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: var(--text);
-        }
-        .pricing-price {
-            font-size: 48px;
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 4px;
-            color: var(--dark);
-        }
-        .pricing-price .currency { font-size: 18px; font-weight: 700; }
-        .pricing-price .period { font-size: 16px; font-weight: 500; color: var(--text-muted); }
-        .pricing-messages {
-            font-size: 14px;
-            color: var(--text);
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-        .pricing-extra {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 28px;
-        }
-        .pricing-features {
-            list-style: none;
-            margin: 0 0 32px;
-        }
-        .pricing-features li {
-            padding: 8px 0;
-            font-size: 14px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-        .pricing-features .check {
-            color: var(--dark);
-            flex-shrink: 0;
-            font-weight: 900;
-            background: var(--yellow);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            margin-top: 1px;
-        }
-        .pricing-cta {
-            display: block;
-            text-align: center;
-            padding: 14px 24px;
-            border-radius: var(--radius-sm);
-            font-size: 16px;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
-        .pricing-cta.primary {
-            background: var(--dark);
-            color: var(--text-on-dark);
-        }
-        .pricing-cta.primary:hover {
-            background: var(--dark-soft);
-        }
-        .pricing-cta.outline {
-            background: transparent;
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-        .pricing-cta.outline:hover {
-            border-color: var(--dark);
-            color: var(--dark);
-        }
-        .pricing-trial {
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 12px;
-        }
-
-        /* ================================================================
-           FAQ
-           ================================================================ */
-        .faq-section {
-            padding: 80px 0;
-        }
-        .faq-grid {
-            max-width: 720px;
-            margin: 0 auto;
-        }
-        .faq-item {
-            border-bottom: 1px solid var(--border);
-        }
-        .faq-item:last-child { border-bottom: none; }
-        .faq-question {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 24px 0;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: var(--text);
-            text-align: right;
-            font-family: inherit;
-            line-height: 1.5;
-        }
-        .faq-question:hover { color: var(--text-muted); }
-        .faq-arrow {
-            flex-shrink: 0;
-            font-size: 14px;
-            color: var(--text-dim);
-            transition: transform 0.2s;
-            margin-right: 16px;
-        }
-        .faq-item.open .faq-arrow {
-            transform: rotate(180deg);
-        }
-        .faq-answer {
-            font-size: 15px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            padding-bottom: 24px;
-            display: none;
-        }
-        .faq-item.open .faq-answer {
-            display: block;
-        }
-
-        /* ================================================================
-           FINAL CTA — Dark background, matching hero
-           Attentive pattern: dark CTA section with yellow button
-           ================================================================ */
-        .final-cta-section {
-            background: var(--dark);
-            padding: 100px 0;
-        }
-        .final-cta-inner {
-            text-align: center;
-            max-width: 640px;
-            margin: 0 auto;
-        }
-        .final-cta-inner h2 {
-            font-size: 40px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            color: var(--text-on-dark);
-            line-height: 1.25;
-        }
-        .final-cta-inner h2 .yellow { color: var(--yellow); }
-        .final-cta-inner p {
-            font-size: 18px;
-            color: var(--text-on-dark-muted);
-            margin-bottom: 40px;
-            line-height: 1.7;
-        }
-        .final-cta-actions {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-        .final-bullets {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        .final-bullet {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 14px;
-            color: var(--text-on-dark-muted);
-        }
-        .final-bullet .check { color: var(--yellow); }
-
-        /* ================================================================
-           FOOTER — Clean on white
-           ================================================================ */
-        .site-footer {
-            background: var(--bg);
-            border-top: 1px solid var(--border-light);
-            padding: 40px 0 48px;
-        }
-        .footer-inner {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .footer-links {
-            display: flex;
-            gap: 28px;
-        }
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .footer-links a:hover { color: var(--text); }
-        .footer-copyright {
-            color: var(--text-dim);
-            font-size: 14px;
-        }
-
-        /* ================================================================
-           RESPONSIVE: TABLET (768px)
-           ================================================================ */
-        @media (max-width: 768px) {
-            .container { padding: 0 20px; }
-            .header-nav .nav-link { display: none; }
-
-            .hero-content { padding-bottom: 48px; }
-            .hero-actions { flex-direction: column; }
-            .hero-metrics { grid-template-columns: 1fr; }
-            .hero-metric { border-left: none; border-bottom: 1px solid rgba(255,255,255,0.06); }
-            .hero-metric:last-child { border-bottom: none; }
-            .hero-metric-value { font-size: 36px; }
-
-            .social-proof-categories { gap: 24px; }
-
-            .section-title { font-size: 30px; }
-
-            .product-cards { grid-template-columns: 1fr; }
-
-            .ai-grid {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            .ai-content h2 { font-size: 30px; }
-
-            .metrics-grid { grid-template-columns: 1fr; gap: 32px; }
-            .metric-value { font-size: 48px; }
-
-            .calc-card { padding: 36px 24px; }
-
-            .features-grid { grid-template-columns: 1fr; }
-
-            .steps-row { grid-template-columns: 1fr; gap: 16px; }
-
-            .integrations-row { gap: 12px; }
-            .integration-item { min-width: 110px; padding: 20px 16px; }
-
-            .stories-grid { grid-template-columns: 1fr; }
-
-            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin-left: auto; margin-right: auto; }
-
-            .final-cta-inner h2 { font-size: 30px; }
-            .final-cta-actions { flex-direction: column; }
-
-            .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
-        }
-
-        /* ================================================================
-           RESPONSIVE: PHONE (480px)
-           ================================================================ */
-        @media (max-width: 480px) {
-            .container { padding: 0 16px; }
-
-            .hero-section { padding: 48px 0 0; }
-            .hero-content h1 { font-size: 32px; }
-            .hero-subtitle { font-size: 16px; }
-            .hero-micro { font-size: 12px; gap: 8px; }
-            .hero-metric { padding: 24px 16px; }
-
-            .announcement-bar { font-size: 13px; padding: 8px 16px; }
-
-            .product-card { padding: 32px 24px; }
-            .feature-card { padding: 28px 24px; }
-            .step-card { padding: 36px 20px; }
-            .story-card { padding: 32px 24px; }
-
-            .ai-content h2 { font-size: 28px; }
-
-            .calc-card { padding: 28px 20px; }
-            .calc-results { grid-template-columns: 1fr; }
-            .calc-result-card .amount { font-size: 28px; }
-
-            .pricing-card { padding: 32px 24px; }
-            .pricing-price { font-size: 40px; }
-
-            .final-cta-section { padding: 64px 0; }
-            .final-cta-inner h2 { font-size: 28px; }
-            .final-bullets { flex-direction: column; align-items: center; gap: 10px; }
-
-            .story-metrics { gap: 24px; }
-            .metric-value { font-size: 40px; }
-        }
-    </style>
+/* ─── MOBILE ─── */
+@media (max-width: 600px) {
+  .main { padding: 16px 14px 60px; }
+  .revenue-amount { font-size: 34px; }
+  .flow-stats { gap: 16px; }
+  .flow-stat-value { font-size: 13px; }
+  .revenue-breakdown { flex-direction: column; gap: 10px; }
+}
+</style>
 </head>
-
 <body>
 
-    <!-- ================================================================
-         ANNOUNCEMENT BAR — Yellow bar, Attentive signature
-         ================================================================ -->
-    <div class="announcement-bar">
-        جديد: ذكاء اصطناعي يكتب رسائل عربية مخصصة لكل عميل
-        <a href="#ai">اكتشف الذكاء الاصطناعي &#8592;</a>
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-logo">رِبح</div>
+  <div class="topbar-store" onclick="showToast('تبديل المتجر قريباً')">
+    <span class="dot"></span>
+    <span>متجر أحمد</span>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+</div>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<div class="main">
+
+  <!-- ── REVENUE ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="revenue-card">
+      <div class="revenue-label">الإيرادات من رِبح</div>
+      <div class="revenue-row">
+        <span class="revenue-amount" id="revenueNum">0</span>
+        <span class="revenue-currency">ر.س</span>
+        <span class="revenue-change">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          +34%
+        </span>
+      </div>
+      <div class="revenue-period">
+        <button class="period-btn" onclick="setPeriod(this, 7)">٧ أيام</button>
+        <button class="period-btn active" onclick="setPeriod(this, 30)">٣٠ يوم</button>
+        <button class="period-btn" onclick="setPeriod(this, 90)">٩٠ يوم</button>
+      </div>
+      <div class="chart-area" id="chart"></div>
+      <div class="chart-labels">
+        <span>١ فبراير</span>
+        <span>اليوم</span>
+      </div>
+      <div class="revenue-breakdown">
+        <div class="breakdown-item">
+          <span class="breakdown-dot" style="background: var(--green)"></span>
+          سلات متروكة: <strong style="margin-right:4px; direction:ltr">٣,٢٤٠ ر.س</strong>
+        </div>
+        <div class="breakdown-item">
+          <span class="breakdown-dot" style="background: var(--blue)"></span>
+          استرجاع عملاء: <strong style="margin-right:4px; direction:ltr">١,٠٤٧ ر.س</strong>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- ================================================================
-         HEADER — Dark sticky header with yellow CTA
-         ================================================================ -->
-    <header class="site-header">
-        <div class="container">
-            <div class="header-inner">
-                <a href="/" class="logo">رِبح</a>
-                <nav class="header-nav">
-                    <a href="#products" class="nav-link">المنتج</a>
-                    <a href="#features" class="nav-link">المميزات</a>
-                    <a href="#pricing" class="nav-link">الأسعار</a>
-                    <a href="#faq" class="nav-link">الأسئلة</a>
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="header-cta">احجز عرض توضيحي</a>
-                </nav>
-            </div>
+  <!-- ── ACTION NEEDED ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="section-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      يحتاج تدخلك
+    </div>
+    <div class="action-cards">
+      <div class="action-card" onclick="showToast('استرجاع السلات المتروكة')">
+        <div class="action-icon red">🛒</div>
+        <div class="action-count">٢٣</div>
+        <div class="action-title">سلة متروكة</div>
+        <div class="action-subtitle">١,٨٤٠ ر.س إيرادات محتملة</div>
+        <button class="action-btn" onclick="event.stopPropagation(); showToast('جاري الاسترجاع...')">
+          استرجع الآن
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+      </div>
+      <div class="action-card" onclick="showToast('عرض العملاء غير النشطين')">
+        <div class="action-icon orange">😴</div>
+        <div class="action-count">١٥٦</div>
+        <div class="action-title">عميل غير نشط</div>
+        <div class="action-subtitle">لم يشتروا منذ ٦٠+ يوم</div>
+        <button class="action-btn secondary" onclick="event.stopPropagation(); showToast('جاري الإرسال...')">
+          أعدهم
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUICK STATS ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" style="color: var(--green)">٨٩٢</div>
+        <div class="stat-label">إجمالي العملاء</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">%٣٨</div>
+        <div class="stat-label">معدل الاسترجاع</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="direction:ltr">٨٧ <small style="font-size:12px;color:var(--text-3)">ر.س</small></div>
+        <div class="stat-label">متوسط قيمة الطلب</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AUTO-PILOT FLOWS ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="section-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      الطيار الآلي
+      <span class="live-dot" style="margin-right: 4px;"></span>
+    </div>
+    <div class="flows-card">
+      <!-- Abandoned Cart Flow -->
+      <div class="flow-row" onclick="openFlowModal('cart')">
+        <div class="flow-icon">🛒</div>
+        <div class="flow-info">
+          <div class="flow-name">استرجاع السلات المتروكة</div>
+          <div class="flow-desc">رسالة واتساب بعد ساعة + خصم ١٠٪</div>
         </div>
-    </header>
-
-    <!-- ================================================================
-         HERO — Dark background, bold headline, metrics bar
-         Attentive: "Your data. Their journey. Real results."
-         RIBH: "بياناتك. رحلتهم. نتائج حقيقية."
-         ================================================================ -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-tag">منصة التسويق الذكي للعلامات التجارية الرائدة</div>
-
-                <h1>
-                    بياناتك. رحلتهم.<br>
-                    <span class="yellow">نتائج حقيقية.</span>
-                </h1>
-
-                <p class="hero-subtitle">
-                    وصّل رسائل مخصصة 1:1 عبر واتساب وSMS لكل عميل — بذكاء اصطناعي متقدم يجمع بياناتك، يحللها، ويحولها لمبيعات.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="btn-primary-yellow">ابدأ مجانا</a>
-                    <a href="#how" class="btn-secondary">كيف يعمل؟</a>
-                </div>
-
-                <p class="hero-micro">
-                    <span><span class="check">&#10003;</span> بدون بطاقة ائتمان</span>
-                    <span><span class="check">&#10003;</span> تفعيل في 60 ثانية</span>
-                    <span><span class="check">&#10003;</span> إلغاء بأي وقت</span>
-                </p>
-            </div>
+        <div class="flow-stats">
+          <div class="flow-stat">
+            <span class="flow-stat-value">٢٣</span>
+            <span class="flow-stat-label">أُرسلت</span>
+          </div>
+          <div class="flow-stat">
+            <span class="flow-stat-value" style="color: var(--green)">٨٤٧</span>
+            <span class="flow-stat-label">ر.س</span>
+          </div>
         </div>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" checked onchange="toggleFlow(this, 'السلات المتروكة')">
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
 
-        <div class="hero-metrics-bar">
-            <div class="hero-metrics">
-                <div class="hero-metric">
-                    <div class="hero-metric-value">98%</div>
-                    <div class="hero-metric-label">معدل فتح رسائل الواتساب</div>
-                </div>
-                <div class="hero-metric">
-                    <div class="hero-metric-value">30x</div>
-                    <div class="hero-metric-label">عائد الاستثمار من الرحلات</div>
-                </div>
-                <div class="hero-metric">
-                    <div class="hero-metric-value">+31%</div>
-                    <div class="hero-metric-label">إيرادات إضافية مستردة</div>
-                </div>
-            </div>
+      <!-- Welcome Flow -->
+      <div class="flow-row" onclick="openFlowModal('welcome')">
+        <div class="flow-icon">👋</div>
+        <div class="flow-info">
+          <div class="flow-name">ترحيب بالعملاء الجدد</div>
+          <div class="flow-desc">رسالة ترحيب + كود خصم للطلب الأول</div>
         </div>
-    </section>
-
-    <!-- ================================================================
-         SOCIAL PROOF — Clean white strip with categories
-         ================================================================ -->
-    <section class="social-proof">
-        <div class="container">
-            <div class="social-proof-label">تثق بنا العلامات التجارية الرائدة في السعودية</div>
-            <div class="social-proof-categories">
-                <div class="proof-category">
-                    <div class="proof-icon">&#128722;</div>
-                    <span>متاجر إلكترونية</span>
-                </div>
-                <div class="proof-category">
-                    <div class="proof-icon">&#128087;</div>
-                    <span>أزياء وجمال</span>
-                </div>
-                <div class="proof-category">
-                    <div class="proof-icon">&#9749;</div>
-                    <span>مقاهي ومطاعم</span>
-                </div>
-                <div class="proof-category">
-                    <div class="proof-icon">&#127978;</div>
-                    <span>تجزئة</span>
-                </div>
-                <div class="proof-category">
-                    <div class="proof-icon">&#128135;</div>
-                    <span>صالونات</span>
-                </div>
-                <div class="proof-category">
-                    <div class="proof-icon">&#127919;</div>
-                    <span>خدمات</span>
-                </div>
-            </div>
+        <div class="flow-stats">
+          <div class="flow-stat">
+            <span class="flow-stat-value">٤٥</span>
+            <span class="flow-stat-label">أُرسلت</span>
+          </div>
+          <div class="flow-stat">
+            <span class="flow-stat-value" style="color: var(--green)">١,٢٤٠</span>
+            <span class="flow-stat-label">ر.س</span>
+          </div>
         </div>
-    </section>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" checked onchange="toggleFlow(this, 'الترحيب')">
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
 
-    <!-- ================================================================
-         PRODUCT CARDS — 3 pillars, clean white cards
-         ================================================================ -->
-    <section class="products-section" id="products">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">المنتج</div>
-                <h2 class="section-title">كل ما تحتاجه لبناء علاقات تدوم</h2>
-                <p class="section-subtitle">ثلاث أدوات تعمل معا لتحويل كل تفاعل إلى فرصة نمو حقيقية</p>
-            </div>
-
-            <div class="product-cards">
-                <div class="product-card">
-                    <div class="product-icon">&#10022;</div>
-                    <h3>رحلات العملاء</h3>
-                    <p>من لحظة الاشتراك حتى يصبح عميل دائم — ترحيب، استرداد سلة، متابعة شراء، استرجاع غائبين. تعمل تلقائيا على مدار الساعة.</p>
-                    <div class="product-metric">
-                        <div class="product-metric-value">7</div>
-                        <div class="product-metric-label">رحلات جاهزة<br>تعمل من اليوم الأول</div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-icon">&#129302;</div>
-                    <h3>ذكاء اصطناعي مخصص</h3>
-                    <p>كل عميل يتلقى رسالة مختلفة — بناء على سلوكه الشرائي واهتماماته ووقته المفضل. عربي طبيعي، ليس ترجمة.</p>
-                    <div class="product-metric">
-                        <div class="product-metric-value">1:1</div>
-                        <div class="product-metric-label">تخصيص فردي<br>كل رسالة فريدة لعميلها</div>
-                    </div>
-                </div>
-
-                <div class="product-card">
-                    <div class="product-icon">&#128241;</div>
-                    <h3>واتساب + SMS</h3>
-                    <p>واتساب كقناة أساسية مع SMS كقناة احتياطية. نوصل لعميلك على القناة والوقت الأنسب — تلقائيا.</p>
-                    <div class="product-metric">
-                        <div class="product-metric-value">98%</div>
-                        <div class="product-metric-label">معدل فتح<br>مقابل 20% للإيميل التقليدي</div>
-                    </div>
-                </div>
-            </div>
+      <!-- Post-Purchase Flow -->
+      <div class="flow-row" onclick="openFlowModal('postpurchase')">
+        <div class="flow-icon">📦</div>
+        <div class="flow-info">
+          <div class="flow-name">متابعة بعد الشراء</div>
+          <div class="flow-desc">شكراً + توصيات منتجات مشابهة</div>
         </div>
-    </section>
-
-    <!-- ================================================================
-         AI SECTION — Subtle background, 2-column with demo
-         ================================================================ -->
-    <section class="ai-section" id="ai">
-        <div class="container">
-            <div class="ai-grid">
-                <div class="ai-content">
-                    <div class="section-overline">الذكاء الاصطناعي</div>
-                    <h2>ذكاء اصطناعي<br>يفهم <span class="yellow">كل عميل.</span></h2>
-                    <p>يحلل كل تفاعل وسلوك وبيانات تلقائيا. ينشئ رسائل عربية طبيعية مخصصة لكل عميل — كأنك أنت من كتبها.</p>
-                    <ul class="ai-features-list">
-                        <li>
-                            <span class="check-icon">&#10003;</span>
-                            <span>يتعلم أسلوب علامتك التجارية ويكتب بنفس النبرة</span>
-                        </li>
-                        <li>
-                            <span class="check-icon">&#10003;</span>
-                            <span>يحدد أفضل وقت للإرسال لكل عميل تلقائيا</span>
-                        </li>
-                        <li>
-                            <span class="check-icon">&#10003;</span>
-                            <span>يختبر رسائل مختلفة ويختار الأعلى أداء</span>
-                        </li>
-                        <li>
-                            <span class="check-icon">&#10003;</span>
-                            <span>يوصي بمنتجات بناء على تاريخ الشراء والسلوك</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="wa-demo">
-                    <div class="wa-demo-header">
-                        <div class="wa-demo-avatar">ن</div>
-                        <div>
-                            <div class="wa-demo-name">نورة</div>
-                            <div class="wa-demo-status">متصلة الآن</div>
-                        </div>
-                    </div>
-                    <div class="wa-demo-body">
-                        <div class="wa-bubble">
-                            أهلا نورة!<br><br>
-                            لاحظنا أنك أضفتي فستان الكتان الأبيض لسلتك — اختيار رائع.<br><br>
-                            جهزنا لك خصم خاص <strong>15%</strong> لإكمال الطلب<br>
-                            الكود: <strong>NOURA15</strong><br><br>
-                            صالح لمدة 24 ساعة فقط
-                        </div>
-                        <div class="wa-meta">
-                            <span class="wa-time">2:30 م — الوقت المفضل لنورة</span>
-                            <span class="wa-tag">AI مخصص</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="flow-stats">
+          <div class="flow-stat">
+            <span class="flow-stat-value">٦٧</span>
+            <span class="flow-stat-label">أُرسلت</span>
+          </div>
+          <div class="flow-stat">
+            <span class="flow-stat-value" style="color: var(--green)">٢,٢٠٠</span>
+            <span class="flow-stat-label">ر.س</span>
+          </div>
         </div>
-    </section>
+        <label class="toggle" onclick="event.stopPropagation()">
+          <input type="checkbox" checked onchange="toggleFlow(this, 'ما بعد الشراء')">
+          <span class="toggle-track"></span>
+          <span class="toggle-thumb"></span>
+        </label>
+      </div>
+    </div>
+  </div>
 
-    <!-- ================================================================
-         METRICS BANNER — Big prominent numbers (Attentive signature)
-         ================================================================ -->
-    <section class="metrics-banner">
-        <div class="container">
-            <div class="metrics-grid">
-                <div class="metric-item">
-                    <div class="metric-value"><span class="yellow-highlight">+200%</span></div>
-                    <div class="metric-label">زيادة في المبيعات من رحلات العملاء</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-value">15%</div>
-                    <div class="metric-label">استرداد من السلات المتروكة</div>
-                </div>
-                <div class="metric-item">
-                    <div class="metric-value">2x</div>
-                    <div class="metric-label">نمو في المبيعات المتكررة</div>
-                </div>
-            </div>
+  <!-- ── CAMPAIGNS ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="section-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      الحملات
+    </div>
+    <div class="flows-card">
+      <div class="campaign-list">
+        <div class="campaign-row">
+          <span class="campaign-status sent"></span>
+          <div class="campaign-info">
+            <div class="campaign-name">تخفيضات نهاية الأسبوع</div>
+            <div class="campaign-meta">أُرسلت ٥ فبراير · ٤٣٠ مستلم</div>
+          </div>
+          <div class="campaign-metric">+٣,٤٢٠ ر.س</div>
         </div>
-    </section>
-
-    <!-- ================================================================
-         ROI CALCULATOR
-         ================================================================ -->
-    <section class="calculator-section" id="calculator">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">حاسبة العائد</div>
-                <h2 class="section-title">احسب نمو إيراداتك المتوقع</h2>
-                <p class="section-subtitle">حرّك المؤشر لمعرفة كم يمكنك استرداد من المبيعات الضائعة</p>
-            </div>
-
-            <div class="calc-card">
-                <div class="calc-input-group">
-                    <div class="calc-label">
-                        <span>المبيعات الشهرية</span>
-                        <span class="value" id="salesValue">50,000 ر.س</span>
-                    </div>
-                    <input type="range" id="salesSlider" min="10000" max="500000" value="50000" step="5000" aria-label="المبيعات الشهرية">
-                </div>
-
-                <div class="calc-results">
-                    <div class="calc-result-card loss">
-                        <div class="label">تخسر بدون رِبح</div>
-                        <div class="amount" id="lostValue">35,000 ر.س</div>
-                    </div>
-                    <div class="calc-result-card gain">
-                        <div class="label">رِبح يسترد لك</div>
-                        <div class="amount" id="recoveredValue">5,250 ر.س</div>
-                    </div>
-                </div>
-
-                <p class="calc-note">* بناء على متوسط 70% عملاء لا يعودون و15% معدل استرداد عبر التسويق المخصص</p>
-            </div>
+        <div class="campaign-row">
+          <span class="campaign-status scheduled"></span>
+          <div class="campaign-info">
+            <div class="campaign-name">عيد الحب ❤️</div>
+            <div class="campaign-meta">مجدولة ١٤ فبراير · ٨٩٢ مستلم</div>
+          </div>
+          <div class="campaign-metric" style="color: var(--orange)">مجدولة</div>
         </div>
-    </section>
+      </div>
+    </div>
+    <div style="margin-top: 12px;">
+      <button class="new-campaign-btn" onclick="showToast('إنشاء حملة جديدة')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        حملة جديدة
+      </button>
+    </div>
+  </div>
 
-    <!-- ================================================================
-         FEATURES GRID
-         ================================================================ -->
-    <section class="features-section" id="features">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">المميزات</div>
-                <h2 class="section-title">منصة متكاملة لكل احتياجاتك</h2>
-                <p class="section-subtitle">أدوات مصممة للعلامات التجارية في السعودية</p>
-            </div>
+  <!-- ── RECENT ACTIVITY ── -->
+  <div class="section animate-in" style="opacity:0">
+    <div class="section-header">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      آخر النشاطات
+    </div>
+    <div class="flows-card" id="activity-feed">
+      <!-- Filled by JS -->
+    </div>
+  </div>
 
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">&#128202;</div>
-                    <h3>تصنيف ذكي للعملاء</h3>
-                    <p>تصنيف تلقائي: عملاء جدد، أوفياء، معرضون للخسارة، غائبون. كل شريحة تحصل على رسائل وعروض مختلفة.</p>
-                </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">&#128241;</div>
-                    <h3>QR للمحلات والمقاهي</h3>
-                    <p>كود QR على الكاونتر أو الفاتورة — العميل يمسحه ويشترك بالواتساب فورا. عروض وولاء تلقائي.</p>
-                </div>
+<!-- ═══ FLOW MODAL ═══ -->
+<div class="modal-overlay" id="flowModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-flow-preview" id="modalSteps"></div>
+    <div class="modal-actions">
+      <button class="modal-btn primary" onclick="closeModal(); showToast('تم الحفظ ✓')">حفظ التغييرات</button>
+      <button class="modal-btn ghost" onclick="closeModal()">إلغاء</button>
+    </div>
+  </div>
+</div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">&#9889;</div>
-                    <h3>اختبارات A/B وتوقيت ذكي</h3>
-                    <p>يختبر رسائل مختلفة تلقائيا ويختار الأفضل. يرسل لكل عميل في وقته المفضل — ليس وقتا عشوائيا.</p>
-                </div>
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
 
-                <div class="feature-card">
-                    <div class="feature-icon">&#11088;</div>
-                    <h3>جمع التقييمات تلقائيا</h3>
-                    <p>بعد كل عملية شراء، نطلب تقييم عبر الواتساب. تقييمات حقيقية من عملاء حقيقيين.</p>
-                </div>
+<script>
+// ─── MOCK DATA ───
+const chartData30 = [12,18,8,22,35,28,15,42,38,25,30,18,45,52,35,28,60,48,55,38,42,68,72,58,45,50,78,82,70,90];
+const chartData7 = [55,38,42,68,72,58,90];
+const chartData90 = [5,8,12,10,15,18,12,22,20,15,25,28,18,30,35,28,22,38,42,35,30,45,48,38,42,50,55,48,42,58,60,52,48,65,68,58,55,70,72,65,60,75,78,70,68,80,82,75,72,85,88,80,78,90,92,85,82,95,98,90,12,18,8,22,35,28,15,42,38,25,30,18,45,52,35,28,60,48,55,38,42,68,72,58,45,50,78,82,70,90];
 
-                <div class="feature-card">
-                    <div class="feature-icon">&#128737;</div>
-                    <h3>حماية وامتثال</h3>
-                    <p>ساعات هادئة، إلغاء اشتراك فوري، حدود إرسال أسبوعية. عملاؤك لا ينزعجون ورقمك يبقى آمنا.</p>
-                </div>
+const activities = [
+  { icon: '💰', text: 'سارة اشترت بعد رسالة السلة المتروكة', time: 'قبل ٣ دقائق', amount: '+٢٤٠ ر.س' },
+  { icon: '📱', text: 'رسالة واتساب أُرسلت لـ محمد العلي', time: 'قبل ١٢ دقيقة', amount: '' },
+  { icon: '🛒', text: 'سلة متروكة جديدة — فيصل (٣٢٠ ر.س)', time: 'قبل ١٨ دقيقة', amount: '' },
+  { icon: '💰', text: 'نورة أكملت الطلب بخصم ١٠٪', time: 'قبل ٣٥ دقيقة', amount: '+١٨٧ ر.س' },
+  { icon: '👋', text: 'عميل جديد سجّل من النافذة المنبثقة', time: 'قبل ساعة', amount: '' },
+];
 
-                <div class="feature-card">
-                    <div class="feature-icon">&#128200;</div>
-                    <h3>تحليلات وعائد الاستثمار</h3>
-                    <p>تتبع كل رسالة: تسليم، قراءة، نقر، شراء. اعرف بالضبط كم ريال رجعت لك كل رحلة.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+const flowDetails = {
+  cart: {
+    title: 'استرجاع السلات المتروكة',
+    desc: 'يتم إرسال رسالة واتساب تلقائية عندما يترك العميل سلة التسوق. الرسالة تتضمن المنتجات + كود خصم.',
+    steps: [
+      { icon: '⚡', text: 'المحفز: عميل يترك سلة التسوق' },
+      { icon: '⏱️', text: 'انتظر ساعة واحدة' },
+      { icon: '📱', text: 'أرسل رسالة واتساب: "تركت منتجات في سلتك"' },
+      { icon: '🎁', text: 'أرفق كود خصم ١٠٪' },
+      { icon: '⏱️', text: 'إذا لم يشترِ: انتظر ٢٤ ساعة' },
+      { icon: '📱', text: 'رسالة تذكير أخيرة + شحن مجاني' },
+    ]
+  },
+  welcome: {
+    title: 'ترحيب بالعملاء الجدد',
+    desc: 'عندما يسجل عميل جديد أو يشتري لأول مرة، يتم إرسال رسالة ترحيب مع كود خصم للطلب القادم.',
+    steps: [
+      { icon: '⚡', text: 'المحفز: عميل جديد يسجل أو يشتري' },
+      { icon: '📱', text: 'أرسل فوراً: "أهلاً بك في متجرنا!"' },
+      { icon: '🎁', text: 'أرفق كود خصم ١٥٪ للطلب القادم' },
+      { icon: '⏱️', text: 'انتظر ٣ أيام' },
+      { icon: '📱', text: 'تذكير بالكود: "خصمك ينتظرك"' },
+    ]
+  },
+  postpurchase: {
+    title: 'متابعة بعد الشراء',
+    desc: 'بعد تأكيد التوصيل، يتم إرسال شكر + توصيات لمنتجات مشابهة لزيادة عمليات الشراء المتكررة.',
+    steps: [
+      { icon: '⚡', text: 'المحفز: تم توصيل الطلب' },
+      { icon: '⏱️', text: 'انتظر يوم واحد' },
+      { icon: '📱', text: 'أرسل: "شكراً لطلبك! كيف كانت تجربتك؟"' },
+      { icon: '⏱️', text: 'انتظر ٧ أيام' },
+      { icon: '🛍️', text: 'أرسل توصيات منتجات مشابهة' },
+    ]
+  }
+};
 
-    <!-- ================================================================
-         HOW IT WORKS
-         ================================================================ -->
-    <section class="how-section" id="how">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">البداية</div>
-                <h2 class="section-title">ابدأ خلال دقيقة واحدة</h2>
-                <p class="section-subtitle">سواء كان لديك متجر إلكتروني أو محل — الخطوات نفسها</p>
-            </div>
+// ─── RENDER CHART ───
+function renderChart(data) {
+  const chart = document.getElementById('chart');
+  const max = Math.max(...data);
+  chart.innerHTML = data.map((v, i) => {
+    const h = Math.max(4, (v / max) * 100);
+    const isToday = i === data.length - 1;
+    return `<div class="chart-bar${isToday ? ' today' : ''}" style="height:${h}%" title="${v}"></div>`;
+  }).join('');
+}
 
-            <div class="steps-row">
-                <div class="step-card">
-                    <div class="step-number">1</div>
-                    <h3>اربط متجرك</h3>
-                    <p>سلة أو شوبيفاي بضغطة واحدة. محل أو مقهى؟ كود QR جاهز تطبعه وتضعه على الكاونتر.</p>
-                    <span class="step-tag">سلة / شوبيفاي / QR</span>
-                </div>
+// ─── ANIMATE REVENUE NUMBER ───
+function animateRevenue(target) {
+  const el = document.getElementById('revenueNum');
+  const duration = 1200;
+  const start = performance.now();
+  const formatter = new Intl.NumberFormat('ar-SA');
 
-                <div class="step-card">
-                    <div class="step-number">2</div>
-                    <h3>وصّل الواتساب</h3>
-                    <p>امسح QR من جوالك — انتهى. رقمك يبدأ بالتواصل مع عملائك تلقائيا من نفس رقمك.</p>
-                    <span class="step-tag">من رقمك الشخصي</span>
-                </div>
+  function tick(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = Math.round(target * eased);
+    el.textContent = formatter.format(current);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
 
-                <div class="step-card">
-                    <div class="step-number">3</div>
-                    <h3>شاهد النتائج</h3>
-                    <p>الرحلات تعمل على مدار الساعة — ترحيب، استرداد، متابعة. أنت فقط تابع المبيعات وهي ترجع لك.</p>
-                    <span class="step-tag">تلقائي 100%</span>
-                </div>
-            </div>
-        </div>
-    </section>
+// ─── RENDER ACTIVITY FEED ───
+function renderActivities() {
+  const feed = document.getElementById('activity-feed');
+  feed.innerHTML = activities.map(a => `
+    <div class="flow-row" style="cursor:default">
+      <div class="flow-icon">${a.icon}</div>
+      <div class="flow-info">
+        <div class="flow-name" style="font-size:13px;font-weight:500">${a.text}</div>
+        <div class="flow-desc">${a.time}</div>
+      </div>
+      ${a.amount ? `<div style="font-size:14px;font-weight:700;color:var(--green);direction:ltr;flex-shrink:0">${a.amount}</div>` : ''}
+    </div>
+  `).join('');
+}
 
-    <!-- ================================================================
-         INTEGRATIONS
-         ================================================================ -->
-    <section class="integrations-section" id="integrations">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">التكاملات</div>
-                <h2 class="section-title">يتكامل مع أدواتك الحالية</h2>
-                <p class="section-subtitle">اربط رِبح بمنصتك في ثوان</p>
-            </div>
+// ─── PERIOD SWITCH ───
+function setPeriod(btn, days) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const dataMap = { 7: chartData7, 30: chartData30, 90: chartData90 };
+  const revMap = { 7: 1840, 30: 4287, 90: 12430 };
+  renderChart(dataMap[days]);
+  animateRevenue(revMap[days]);
+}
 
-            <div class="integrations-row">
-                <div class="integration-item">
-                    <div class="integration-icon">&#128308;</div>
-                    <div class="integration-name">سلة</div>
-                </div>
-                <div class="integration-item">
-                    <div class="integration-icon">&#128994;</div>
-                    <div class="integration-name">شوبيفاي</div>
-                </div>
-                <div class="integration-item">
-                    <div class="integration-icon">&#128172;</div>
-                    <div class="integration-name">واتساب</div>
-                </div>
-                <div class="integration-item">
-                    <div class="integration-icon">&#128242;</div>
-                    <div class="integration-name">SMS</div>
-                </div>
-                <div class="integration-item coming-soon">
-                    <div class="integration-icon">&#9993;</div>
-                    <div class="integration-name">إيميل — قريبا</div>
-                </div>
-            </div>
-        </div>
-    </section>
+// ─── TOGGLE FLOW ───
+function toggleFlow(input, name) {
+  const state = input.checked ? 'مفعّل' : 'متوقف';
+  showToast(`${name}: ${state}`);
+}
 
-    <!-- ================================================================
-         CASE STUDIES
-         ================================================================ -->
-    <section class="stories-section" id="stories">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">قصص نجاح</div>
-                <h2 class="section-title">نتائج حقيقية من علامات تجارية حقيقية</h2>
-                <p class="section-subtitle">كيف تستخدم العلامات التجارية المختلفة رِبح لتحقيق نمو ملموس</p>
-            </div>
+// ─── FLOW MODAL ───
+function openFlowModal(type) {
+  const flow = flowDetails[type];
+  document.getElementById('modalTitle').textContent = flow.title;
+  document.getElementById('modalDesc').textContent = flow.desc;
+  document.getElementById('modalSteps').innerHTML = flow.steps.map(s => `
+    <div class="modal-step">
+      <div class="modal-step-icon">${s.icon}</div>
+      <div class="modal-step-text">${s.text}</div>
+    </div>
+  `).join('');
+  document.getElementById('flowModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('flowModal').classList.remove('open');
+}
 
-            <div class="stories-grid">
-                <div class="story-card">
-                    <div class="story-type">متجر إلكتروني — أزياء</div>
-                    <div class="story-quote">"كنت أخسر 70% من السلات المتروكة. الآن رِبح يسترد 30% منها تلقائيا — بدون أي تدخل مني."</div>
-                    <div class="story-metrics">
-                        <div>
-                            <div class="story-metric-value">+30%</div>
-                            <div class="story-metric-label">استرداد سلات</div>
-                        </div>
-                        <div>
-                            <div class="story-metric-value">18x</div>
-                            <div class="story-metric-label">عائد الاستثمار</div>
-                        </div>
-                    </div>
-                    <div class="story-author">
-                        <div class="story-avatar">س</div>
-                        <div>
-                            <div class="story-author-name">سارة</div>
-                            <div class="story-author-biz">متجر أزياء — جدة</div>
-                        </div>
-                    </div>
-                </div>
+// ─── TOAST ───
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
 
-                <div class="story-card">
-                    <div class="story-type">مقهى — محل فعلي</div>
-                    <div class="story-quote">"وضعنا كود QR على الطاولات. خلال شهر واحد 400 مشترك يتلقون عروض أسبوعية ويعودون باستمرار."</div>
-                    <div class="story-metrics">
-                        <div>
-                            <div class="story-metric-value">400+</div>
-                            <div class="story-metric-label">مشترك جديد</div>
-                        </div>
-                        <div>
-                            <div class="story-metric-value">2x</div>
-                            <div class="story-metric-label">زيارات متكررة</div>
-                        </div>
-                    </div>
-                    <div class="story-author">
-                        <div class="story-avatar">خ</div>
-                        <div>
-                            <div class="story-author-name">خالد</div>
-                            <div class="story-author-biz">مقهى — الرياض</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+// ─── KEYBOARD ───
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
 
-    <!-- ================================================================
-         PRICING
-         ================================================================ -->
-    <section class="pricing-section" id="pricing">
-        <div class="container">
-            <div class="section-header">
-                <div class="section-overline">الأسعار</div>
-                <h2 class="section-title">تسعير بسيط وشفاف</h2>
-                <p class="section-subtitle">جميع الباقات تشمل 7 أيام تجربة مجانية — بدون بطاقة ائتمان</p>
-            </div>
-
-            <div class="pricing-grid">
-                <div class="pricing-card">
-                    <div class="pricing-plan-label">STARTER</div>
-                    <div class="pricing-plan-title">باقة البداية</div>
-                    <div class="pricing-price">
-                        199 <span class="currency">ر.س</span><span class="period"> /شهر</span>
-                    </div>
-                    <div class="pricing-messages">500 رسالة مشمولة</div>
-                    <div class="pricing-extra">0.40 ر.س لكل رسالة إضافية</div>
-                    <ul class="pricing-features">
-                        <li><span class="check">&#10003;</span> استرداد السلات المتروكة</li>
-                        <li><span class="check">&#10003;</span> رسائل AI مخصصة</li>
-                        <li><span class="check">&#10003;</span> رحلة ترحيب</li>
-                        <li><span class="check">&#10003;</span> تقارير أساسية</li>
-                        <li><span class="check">&#10003;</span> حماية من الحظر</li>
-                    </ul>
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta outline">ابدأ مجانا</a>
-                    <div class="pricing-trial">7 أيام تجربة مجانية</div>
-                </div>
-
-                <div class="pricing-card recommended">
-                    <div class="pricing-badge">الأكثر طلبا</div>
-                    <div class="pricing-plan-label">GROWTH</div>
-                    <div class="pricing-plan-title">باقة النمو</div>
-                    <div class="pricing-price">
-                        399 <span class="currency">ر.س</span><span class="period"> /شهر</span>
-                    </div>
-                    <div class="pricing-messages">2,000 رسالة مشمولة</div>
-                    <div class="pricing-extra">0.25 ر.س لكل رسالة إضافية</div>
-                    <ul class="pricing-features">
-                        <li><span class="check">&#10003;</span> كل مميزات باقة البداية</li>
-                        <li><span class="check">&#10003;</span> 7 رحلات عملاء كاملة</li>
-                        <li><span class="check">&#10003;</span> QR للمحلات والمقاهي</li>
-                        <li><span class="check">&#10003;</span> تصنيف العملاء الذكي</li>
-                        <li><span class="check">&#10003;</span> اختبارات A/B</li>
-                        <li><span class="check">&#10003;</span> أوقات إرسال ذكية</li>
-                        <li><span class="check">&#10003;</span> جمع التقييمات تلقائيا</li>
-                    </ul>
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="pricing-cta primary">ابدأ مجانا</a>
-                    <div class="pricing-trial">7 أيام تجربة مجانية</div>
-                </div>
-
-                <div class="pricing-card">
-                    <div class="pricing-plan-label">ENTERPRISE</div>
-                    <div class="pricing-plan-title">باقة المؤسسات</div>
-                    <div class="pricing-price" style="font-size: 32px;">تواصل معنا</div>
-                    <div class="pricing-messages">رسائل غير محدودة</div>
-                    <div class="pricing-extra">اشتراك مخصص حسب احتياجاتك</div>
-                    <ul class="pricing-features">
-                        <li><span class="check">&#10003;</span> كل مميزات باقة النمو</li>
-                        <li><span class="check">&#10003;</span> برنامج ولاء متكامل</li>
-                        <li><span class="check">&#10003;</span> حملات مخصصة</li>
-                        <li><span class="check">&#10003;</span> API مفتوح</li>
-                        <li><span class="check">&#10003;</span> مدير حساب مخصص</li>
-                        <li><span class="check">&#10003;</span> تحليلات تنبؤية</li>
-                        <li><span class="check">&#10003;</span> دعم أولوية</li>
-                    </ul>
-                    <a href="https://wa.me/966500000000" class="pricing-cta outline">تواصل معنا</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================================================================
-         FAQ
-         ================================================================ -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">أسئلة شائعة</h2>
-            </div>
-
-            <div class="faq-grid">
-                <div class="faq-item open">
-                    <button class="faq-question">
-                        <span>هل رِبح يعمل مع المحلات والمقاهي — وليس فقط المتاجر الإلكترونية؟</span>
-                        <span class="faq-arrow">&#9660;</span>
-                    </button>
-                    <div class="faq-answer">نعم. المتاجر الإلكترونية تربط سلة أو شوبيفاي. المحلات والمقاهي تستخدم كود QR — العميل يمسحه ويشترك بالواتساب فورا. بعدها ترسل له عروض وتهنئات وبرنامج ولاء تلقائي.</div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>كم يستغرق التفعيل؟</span>
-                        <span class="faq-arrow">&#9660;</span>
-                    </button>
-                    <div class="faq-answer">60 ثانية. ربط المتجر بضغطة، مسح QR للواتساب، وانتهى — الرحلات تعمل تلقائيا.</div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>هل رقم الواتساب آمن؟</span>
-                        <span class="faq-arrow">&#9660;</span>
-                    </button>
-                    <div class="faq-answer">نعم. نستخدم ساعات هادئة (لا نرسل بين 10 مساء و8 صباحا)، حدود إرسال أسبوعية، وإلغاء اشتراك فوري. رقمك يبقى آمنا بالكامل.</div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>ماذا لو أردت الإلغاء؟</span>
-                        <span class="faq-arrow">&#9660;</span>
-                    </button>
-                    <div class="faq-answer">ضغطة واحدة. فوري. بدون أسئلة وبدون رسوم إلغاء.</div>
-                </div>
-
-                <div class="faq-item">
-                    <button class="faq-question">
-                        <span>هل الذكاء الاصطناعي يكتب بالعربية فعلا؟</span>
-                        <span class="faq-arrow">&#9660;</span>
-                    </button>
-                    <div class="faq-answer">نعم — عربي طبيعي وليس ترجمة. يتعلم أسلوب علامتك التجارية ويكتب رسائل تشعر أنك من كتبها. يدعم اللهجة السعودية.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================================================================
-         FINAL CTA — Dark, matching hero
-         ================================================================ -->
-    <section class="final-cta-section">
-        <div class="container">
-            <div class="final-cta-inner">
-                <h2>كن العلامة التجارية<br>التي <span class="yellow">يحبها عملاؤك.</span></h2>
-                <p>انضم للعلامات التجارية الرائدة التي تستخدم رِبح لبناء علاقات شخصية مع كل عميل وتحقيق نتائج حقيقية.</p>
-
-                <div class="final-cta-actions">
-                    <a href="https://s.salla.sa/apps/install/476e7ed1-796c-4731-b145-73a13d0019de" class="btn-primary-yellow">ابدأ مجانا</a>
-                    <a href="https://wa.me/966500000000" class="btn-secondary">تواصل مع فريقنا</a>
-                </div>
-
-                <div class="final-bullets">
-                    <div class="final-bullet"><span class="check">&#10003;</span> تفعيل فوري</div>
-                    <div class="final-bullet"><span class="check">&#10003;</span> بدون بطاقة ائتمان</div>
-                    <div class="final-bullet"><span class="check">&#10003;</span> 7 أيام مجانا</div>
-                    <div class="final-bullet"><span class="check">&#10003;</span> إلغاء بأي وقت</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ================================================================
-         FOOTER
-         ================================================================ -->
-    <footer class="site-footer">
-        <div class="container">
-            <div class="footer-inner">
-                <div class="footer-links">
-                    <a href="/privacy.html">الخصوصية</a>
-                    <a href="#faq">الأسئلة الشائعة</a>
-                    <a href="https://wa.me/966500000000">تواصل معنا</a>
-                </div>
-                <div class="footer-copyright">&copy; 2026 رِبح — منصة التسويق الذكي</div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- ================================================================
-         JAVASCRIPT
-         ================================================================ -->
-    <script>
-        (function() {
-            'use strict';
-
-            function formatNumber(num) {
-                return num.toLocaleString('ar-SA');
-            }
-
-            function updateCalculator() {
-                var slider = document.getElementById('salesSlider');
-                if (!slider) return;
-
-                var sales = parseInt(slider.value, 10);
-                var lossRate = 0.70;
-                var recoveryRate = 0.15;
-                var lost = Math.round(sales * lossRate);
-                var recovered = Math.round(lost * recoveryRate);
-
-                document.getElementById('salesValue').textContent = formatNumber(sales) + ' ر.س';
-                document.getElementById('lostValue').textContent = formatNumber(lost) + ' ر.س';
-                document.getElementById('recoveredValue').textContent = formatNumber(recovered) + ' ر.س';
-            }
-
-            function initFAQ() {
-                var questions = document.querySelectorAll('.faq-question');
-                questions.forEach(function(btn) {
-                    btn.addEventListener('click', function() {
-                        var item = this.closest('.faq-item');
-                        var isOpen = item.classList.contains('open');
-
-                        document.querySelectorAll('.faq-item.open').forEach(function(openItem) {
-                            if (openItem !== item) {
-                                openItem.classList.remove('open');
-                            }
-                        });
-
-                        if (isOpen) {
-                            item.classList.remove('open');
-                        } else {
-                            item.classList.add('open');
-                        }
-                    });
-                });
-            }
-
-            function initSmoothScroll() {
-                document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
-                    anchor.addEventListener('click', function(e) {
-                        var href = this.getAttribute('href');
-                        if (href === '#') return;
-
-                        var target = document.querySelector(href);
-                        if (target) {
-                            e.preventDefault();
-                            var headerOffset = 80;
-                            var elementPosition = target.getBoundingClientRect().top;
-                            var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                            window.scrollTo({
-                                top: offsetPosition,
-                                behavior: 'smooth'
-                            });
-                        }
-                    });
-                });
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                var salesSlider = document.getElementById('salesSlider');
-                if (salesSlider) {
-                    salesSlider.addEventListener('input', updateCalculator);
-                    updateCalculator();
-                }
-
-                initFAQ();
-                initSmoothScroll();
-            });
-        })();
-    </script>
-    <script src="/js/transitions.js"></script>
+// ─── INIT ───
+renderChart(chartData30);
+renderActivities();
+setTimeout(() => animateRevenue(4287), 300);
+</script>
 </body>
-
 </html>
