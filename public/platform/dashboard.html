@@ -285,47 +285,47 @@
             </div>
         </div>
     </div>
-</div>
 
-<!-- QR Modal (slide panel) -->
-<div class="modal-overlay" id="qrModal">
-    <div class="modal">
-        <div class="modal-header">
-            <div class="modal-title">كود QR واتساب</div>
-            <button class="modal-close" onclick="closeModal('qrModal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p class="text-sm text-dim mb-16">اطبع كود QR على الفاتورة أو الكاونتر — العميل يمسحه ويشترك فوراً</p>
-            <div class="input-group">
-                <label class="input-label">رقم واتساب المتجر</label>
-                <input type="tel" class="input" id="qrPhone" placeholder="966501234567" dir="ltr">
+    <!-- QR Modal (MUST be inside #page-content or shell.js destroys it) -->
+    <div class="modal-overlay" id="qrModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">كود QR واتساب</div>
+                <button class="modal-close" onclick="closeModal('qrModal')">&times;</button>
             </div>
-            <button class="btn btn-primary w-full" onclick="generateQR()">إنشاء كود QR</button>
-            <div class="qr-result" id="qrResult" style="display: none;">
-                <div class="qr-preview" id="qrPreview"></div>
-                <div class="qr-actions">
-                    <button class="btn btn-secondary btn-sm" onclick="downloadQR('png')">تحميل PNG</button>
-                    <button class="btn btn-ghost btn-sm" onclick="printQR()">طباعة</button>
+            <div class="modal-body">
+                <p class="text-sm text-dim mb-16">اطبع كود QR على الفاتورة أو الكاونتر — العميل يمسحه ويشترك فوراً</p>
+                <div class="input-group">
+                    <label class="input-label">رقم واتساب المتجر</label>
+                    <input type="tel" class="input" id="qrPhone" placeholder="966501234567" dir="ltr">
+                </div>
+                <button class="btn btn-primary w-full" onclick="generateQR()">إنشاء كود QR</button>
+                <div class="qr-result" id="qrResult" style="display: none;">
+                    <div class="qr-preview" id="qrPreview"></div>
+                    <div class="qr-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="downloadQR('png')">تحميل PNG</button>
+                        <button class="btn btn-ghost btn-sm" onclick="printQR()">طباعة</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Widget Info Modal -->
-<div class="modal-overlay" id="widgetModal">
-    <div class="modal">
-        <div class="modal-header">
-            <div class="modal-title">ويدجت واتساب للمتجر</div>
-            <button class="modal-close" onclick="closeModal('widgetModal')">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p class="text-sm text-dim mb-16">نافذة منبثقة ذكية على متجرك — تظهر عند نية الخروج وتجمع اشتراكات</p>
-            <div class="code-block">
-                <div class="code-label">كود التضمين — انسخه وألصقه في متجرك:</div>
-                <code class="code-text" id="widgetCode">&lt;script src="https://ribh-484706.web.app/widget/optin.js" data-store="YOUR_ID"&gt;&lt;/script&gt;</code>
+    <!-- Widget Info Modal -->
+    <div class="modal-overlay" id="widgetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">ويدجت واتساب للمتجر</div>
+                <button class="modal-close" onclick="closeModal('widgetModal')">&times;</button>
             </div>
-            <button class="btn btn-secondary w-full mt-16" onclick="copyWidgetCode()">نسخ الكود</button>
+            <div class="modal-body">
+                <p class="text-sm text-dim mb-16">نافذة منبثقة ذكية على متجرك — تظهر عند نية الخروج وتجمع اشتراكات</p>
+                <div class="code-block">
+                    <div class="code-label">كود التضمين — انسخه وألصقه في متجرك:</div>
+                    <code class="code-text" id="widgetCode">&lt;script src="https://ribh-484706.web.app/widget/optin.js" data-store="YOUR_ID"&gt;&lt;/script&gt;</code>
+                </div>
+                <button class="btn btn-secondary w-full mt-16" onclick="copyWidgetCode()">نسخ الكود</button>
+            </div>
         </div>
     </div>
 </div>
@@ -459,11 +459,14 @@
     .auto-icon {
         width: 36px;
         height: 36px;
+        min-width: 36px;
+        max-width: 36px;
         border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 16px;
+        flex-shrink: 0;
     }
     .auto-name {
         font-size: 13px;
@@ -715,27 +718,59 @@
     }
 
     /* ============================================
-       RESPONSIVE
+       RESPONSIVE — mobile-first, then expand for desktop
+       Root cause fix: constrain ALL flex items, use rows on mobile
        ============================================ */
     @media (max-width: 1024px) {
         .automation-grid { grid-template-columns: repeat(2, 1fr); }
         .perf-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
     @media (max-width: 768px) {
+        .hero-metric { padding: 20px 16px 16px; margin-bottom: 12px; }
         .hero-value { font-size: 40px; }
         .hero-currency { font-size: 20px; }
         .hero-sub-metrics { gap: 16px; }
-        .automation-grid { grid-template-columns: 1fr 1fr; }
-        .perf-grid { grid-template-columns: 1fr 1fr; }
+        .hero-sub-value { font-size: 16px; }
+
+        .section-card { padding: 16px; margin-bottom: 12px; }
+
+        .grid-2 { grid-template-columns: 1fr; }
+
+        .perf-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+
         .segment-badges { grid-template-columns: 1fr 1fr; }
         .growth-actions { flex-wrap: wrap; }
-        .grid-2 { grid-template-columns: 1fr; }
+
+        /* Channel rows: stack val below label on narrow screens */
+        .channel-row { flex-wrap: wrap; }
+        .channel-bar-sm { width: 100%; }
     }
+
     @media (max-width: 480px) {
-        .hero-value { font-size: 32px; }
-        .automation-grid { grid-template-columns: 1fr; }
-        .perf-grid { grid-template-columns: 1fr 1fr; }
-        .segment-badges { grid-template-columns: 1fr; }
+        .hero-metric { padding: 16px 12px 12px; margin-bottom: 8px; }
+        .hero-value { font-size: 36px; }
+        .hero-currency { font-size: 18px; }
+        .hero-sub-metrics { gap: 12px; }
+        .hero-sub-value { font-size: 14px; }
+        .hero-sub-divider { height: 24px; }
+
+        /* Keep 2-col grid on mobile — cards are compact enough */
+        .automation-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+        .auto-card { padding: 10px; }
+        .auto-icon { width: 28px; height: 28px; min-width: 28px; max-width: 28px; font-size: 14px; }
+        .auto-name { font-size: 12px; }
+        .auto-stat { font-size: 11px; }
+
+        .perf-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+        .perf-value { font-size: 18px; }
+
+        .segment-badges { grid-template-columns: 1fr 1fr; gap: 6px; }
+        .seg-badge { padding: 8px 10px; gap: 6px; }
+        .seg-badge-count { font-size: 15px; }
+        .seg-badge-name { font-size: 11px; }
+
+        .growth-btn { padding: 6px 10px; font-size: 12px; }
     }
 </style>
 
