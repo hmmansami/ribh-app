@@ -14,9 +14,13 @@
     <div class="page-header flex justify-between items-center">
         <div>
             <h1 class="page-title">المشتركين</h1>
-            <p class="page-subtitle">كل عملائك في مكان واحد</p>
+            <p class="page-subtitle">إدارة قاعدة عملائك وتتبع تفاعلهم مع متجرك</p>
         </div>
         <div class="page-actions" style="margin-top: 0;">
+            <button class="btn btn-secondary btn-sm" id="exportBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                تصدير
+            </button>
             <button class="btn btn-primary" id="addSubscriberBtn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 إضافة مشترك
@@ -28,10 +32,10 @@
     <div class="filter-bar">
         <div class="filter-search">
             <svg class="filter-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" class="input filter-search-input" id="searchInput" placeholder="بحث بالاسم أو الرقم">
+            <input type="text" class="input filter-search-input" id="searchInput" placeholder="بحث بالاسم أو الرقم...">
         </div>
         <select class="input filter-select" id="segmentFilter">
-            <option value="">الكل</option>
+            <option value="">كل الشرائح</option>
             <option value="champion">أبطال</option>
             <option value="loyal">أوفياء</option>
             <option value="potential">محتملين</option>
@@ -40,12 +44,15 @@
             <option value="dormant">غائبين</option>
         </select>
         <select class="input filter-select" id="sourceFilter">
-            <option value="">الكل</option>
+            <option value="">كل المصادر</option>
             <option value="salla">متجر إلكتروني</option>
             <option value="qr_physical">QR محل</option>
             <option value="social">سوشال ميديا</option>
             <option value="import">استيراد</option>
         </select>
+        <div class="filter-count" id="filterCount">
+            <span id="visibleCount">8</span> من <span id="totalCount">8</span>
+        </div>
     </div>
 
     <!-- Summary Stats -->
@@ -63,16 +70,16 @@
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 واتساب نشط
             </div>
-            <div class="kpi-value text-success">1,089</div>
-            <div class="kpi-change up">↑ 87% من الإجمالي</div>
+            <div class="kpi-value" style="color: var(--success);">1,089</div>
+            <div class="kpi-change up">87% من الإجمالي</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-label">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
                 SMS نشط
             </div>
-            <div class="kpi-value text-primary">856</div>
-            <div class="kpi-change up">↑ 69% من الإجمالي</div>
+            <div class="kpi-value" style="color: var(--primary);">856</div>
+            <div class="kpi-change up">69% من الإجمالي</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-label">
@@ -111,7 +118,7 @@
                     <td><span class="badge badge-success">أبطال</span></td>
                     <td><span class="badge badge-info">متجر إلكتروني</span></td>
                     <td class="text-dim">قبل 3 ساعات</td>
-                    <td>4,230 ر.س</td>
+                    <td class="subscriber-value">4,230 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_002" data-segment="loyal" data-source="salla">
@@ -127,7 +134,7 @@
                     <td><span class="badge badge-info">أوفياء</span></td>
                     <td><span class="badge badge-info">متجر إلكتروني</span></td>
                     <td class="text-dim">قبل 5 ساعات</td>
-                    <td>2,870 ر.س</td>
+                    <td class="subscriber-value">2,870 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_003" data-segment="potential" data-source="qr_physical">
@@ -143,7 +150,7 @@
                     <td><span class="badge badge-primary">محتملين</span></td>
                     <td><span class="badge badge-primary">QR محل</span></td>
                     <td class="text-dim">قبل يوم</td>
-                    <td>950 ر.س</td>
+                    <td class="subscriber-value">950 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_004" data-segment="champion" data-source="salla">
@@ -159,7 +166,7 @@
                     <td><span class="badge badge-success">أبطال</span></td>
                     <td><span class="badge badge-info">متجر إلكتروني</span></td>
                     <td class="text-dim">قبل ساعتين</td>
-                    <td>6,120 ر.س</td>
+                    <td class="subscriber-value">6,120 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_005" data-segment="at_risk" data-source="social">
@@ -175,8 +182,8 @@
                     <td><span class="badge badge-warning">معرضين للخسارة</span></td>
                     <td><span class="badge badge-neutral">سوشال ميديا</span></td>
                     <td class="text-dim">قبل 15 يوم</td>
-                    <td>1,340 ر.س</td>
-                    <td><span class="badge badge-success">مشترك</span></td>
+                    <td class="subscriber-value">1,340 ر.س</td>
+                    <td><span class="badge badge-warning">غير نشط</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_006" data-segment="loyal" data-source="qr_physical">
                     <td>
@@ -191,7 +198,7 @@
                     <td><span class="badge badge-info">أوفياء</span></td>
                     <td><span class="badge badge-primary">QR محل</span></td>
                     <td class="text-dim">قبل يومين</td>
-                    <td>3,560 ر.س</td>
+                    <td class="subscriber-value">3,560 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_007" data-segment="dormant" data-source="import">
@@ -207,7 +214,7 @@
                     <td><span class="badge badge-danger">غائبين</span></td>
                     <td><span class="badge badge-neutral">استيراد</span></td>
                     <td class="text-dim">قبل 45 يوم</td>
-                    <td>780 ر.س</td>
+                    <td class="subscriber-value">780 ر.س</td>
                     <td><span class="badge badge-danger">غير مشترك</span></td>
                 </tr>
                 <tr class="subscriber-row" data-id="sub_008" data-segment="recent" data-source="social">
@@ -223,16 +230,75 @@
                     <td><span class="badge badge-info">جدد</span></td>
                     <td><span class="badge badge-neutral">سوشال ميديا</span></td>
                     <td class="text-dim">قبل ساعة</td>
-                    <td>290 ر.س</td>
+                    <td class="subscriber-value">290 ر.س</td>
                     <td><span class="badge badge-success">مشترك</span></td>
                 </tr>
             </tbody>
         </table>
     </div>
+
+    <!-- Table Footer -->
+    <div class="table-footer">
+        <div class="table-footer-info text-dim text-sm">عرض 8 مشتركين من أصل 1,247</div>
+        <div class="table-footer-actions">
+            <button class="btn btn-ghost btn-sm" disabled>السابق</button>
+            <span class="table-page-indicator">صفحة 1 من 156</span>
+            <button class="btn btn-ghost btn-sm">التالي</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Subscriber Modal -->
+<div class="modal-overlay" id="addModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">إضافة مشترك جديد</h3>
+            <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <label class="input-label">الاسم الكامل</label>
+                <input type="text" class="input" id="modalName" placeholder="مثال: أحمد محمد">
+            </div>
+            <div class="input-group">
+                <label class="input-label">رقم الجوال</label>
+                <input type="tel" class="input" id="modalPhone" placeholder="05XXXXXXXX" dir="ltr" style="text-align: right;">
+            </div>
+            <div class="input-group">
+                <label class="input-label">الشريحة</label>
+                <select class="input" id="modalSegment">
+                    <option value="recent">جدد</option>
+                    <option value="potential">محتملين</option>
+                    <option value="loyal">أوفياء</option>
+                    <option value="champion">أبطال</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">المصدر</label>
+                <select class="input" id="modalSource">
+                    <option value="salla">متجر إلكتروني</option>
+                    <option value="qr_physical">QR محل</option>
+                    <option value="social">سوشال ميديا</option>
+                    <option value="import">استيراد</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">ملاحظات (اختياري)</label>
+                <textarea class="input" id="modalNotes" placeholder="أي ملاحظات إضافية عن العميل..."></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="modalSubmit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                إضافة المشترك
+            </button>
+            <button class="btn btn-ghost" id="modalCancel">إلغاء</button>
+        </div>
+    </div>
 </div>
 
 <style>
-    /* Subscribers page-specific styles */
+    /* Subscribers page styles */
 
     .page-header.flex {
         display: flex;
@@ -252,7 +318,7 @@
     .filter-search {
         position: relative;
         flex: 1;
-        min-width: 200px;
+        min-width: 220px;
     }
 
     .filter-search-icon {
@@ -273,6 +339,16 @@
         min-width: 160px;
     }
 
+    .filter-count {
+        font-size: 13px;
+        color: var(--text-dim);
+        padding: 10px 14px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        white-space: nowrap;
+    }
+
     /* Subscriber row click */
     .subscriber-row {
         cursor: pointer;
@@ -291,13 +367,13 @@
     }
 
     .subscriber-avatar {
-        width: 36px;
-        height: 36px;
+        width: 38px;
+        height: 38px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 700;
         flex-shrink: 0;
     }
@@ -316,6 +392,48 @@
         text-align: right;
     }
 
+    .subscriber-value {
+        font-weight: 600;
+        color: var(--text);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Table Footer */
+    .table-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        margin-top: 4px;
+    }
+
+    .table-footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .table-page-indicator {
+        font-size: 13px;
+        color: var(--text-dim);
+        padding: 0 8px;
+    }
+
+    /* Row hover arrow indicator */
+    .subscriber-row td:last-child {
+        position: relative;
+    }
+
+    .subscriber-row:hover td:last-child::after {
+        content: '\2190';
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-dim);
+        font-size: 16px;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .filter-select {
@@ -329,6 +447,14 @@
             gap: 12px;
         }
 
+        .page-actions {
+            width: 100%;
+        }
+
+        .page-actions .btn {
+            flex: 1;
+        }
+
         .filter-bar {
             flex-direction: column;
         }
@@ -337,6 +463,11 @@
         .filter-select {
             width: 100%;
             min-width: unset;
+        }
+
+        .filter-count {
+            width: 100%;
+            text-align: center;
         }
 
         .table-wrap {
@@ -352,6 +483,16 @@
         td:nth-child(4),
         th:nth-child(5),
         td:nth-child(5) {
+            display: none;
+        }
+
+        .table-footer {
+            flex-direction: column;
+            gap: 12px;
+            text-align: center;
+        }
+
+        .subscriber-row:hover td:last-child::after {
             display: none;
         }
     }
@@ -371,12 +512,18 @@
         var segmentFilter = document.getElementById('segmentFilter');
         var sourceFilter = document.getElementById('sourceFilter');
         var rows = document.querySelectorAll('.subscriber-row');
+        var visibleCountEl = document.getElementById('visibleCount');
+        var totalCountEl = document.getElementById('totalCount');
+
+        // Set total count
+        if (totalCountEl) totalCountEl.textContent = rows.length;
 
         // Filter function
         function filterTable() {
             var searchTerm = searchInput.value.trim().toLowerCase();
             var selectedSegment = segmentFilter.value;
             var selectedSource = sourceFilter.value;
+            var visibleCount = 0;
 
             rows.forEach(function(row) {
                 var name = row.querySelector('.subscriber-name').textContent.toLowerCase();
@@ -390,10 +537,13 @@
 
                 if (matchesSearch && matchesSegment && matchesSource) {
                     row.style.display = '';
+                    visibleCount++;
                 } else {
                     row.style.display = 'none';
                 }
             });
+
+            if (visibleCountEl) visibleCountEl.textContent = visibleCount;
         }
 
         // Bind filter events
@@ -401,13 +551,84 @@
         segmentFilter.addEventListener('change', filterTable);
         sourceFilter.addEventListener('change', filterTable);
 
-        // Row click — navigate to subscriber detail
+        // Row click -- navigate to subscriber detail
         rows.forEach(function(row) {
             row.addEventListener('click', function() {
                 var id = row.getAttribute('data-id');
                 window.location.href = '/platform/subscriber.html?id=' + id;
             });
         });
+
+        // Modal logic
+        var modal = document.getElementById('addModal');
+        var addBtn = document.getElementById('addSubscriberBtn');
+        var closeBtn = document.getElementById('modalClose');
+        var cancelBtn = document.getElementById('modalCancel');
+        var submitBtn = document.getElementById('modalSubmit');
+
+        function openModal() {
+            if (modal) modal.classList.add('open');
+        }
+
+        function closeModal() {
+            if (modal) modal.classList.remove('open');
+            // Reset fields
+            var nameField = document.getElementById('modalName');
+            var phoneField = document.getElementById('modalPhone');
+            var notesField = document.getElementById('modalNotes');
+            if (nameField) nameField.value = '';
+            if (phoneField) phoneField.value = '';
+            if (notesField) notesField.value = '';
+        }
+
+        if (addBtn) addBtn.addEventListener('click', openModal);
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+        // Close modal on overlay click
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Submit handler (demo)
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function() {
+                var name = document.getElementById('modalName').value.trim();
+                var phone = document.getElementById('modalPhone').value.trim();
+
+                if (!name || !phone) {
+                    alert('يرجى إدخال الاسم ورقم الجوال');
+                    return;
+                }
+
+                // Demo: show success feedback
+                submitBtn.textContent = 'تم الإضافة بنجاح';
+                submitBtn.style.background = 'var(--success)';
+                setTimeout(function() {
+                    closeModal();
+                    submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> إضافة المشترك';
+                    submitBtn.style.background = '';
+                }, 1500);
+            });
+        }
+
+        // Export button (demo)
+        var exportBtn = document.getElementById('exportBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                exportBtn.textContent = 'جاري التصدير...';
+                setTimeout(function() {
+                    exportBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> تصدير';
+                }, 1500);
+            });
+        }
     });
 </script>
 

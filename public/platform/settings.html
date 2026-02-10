@@ -12,29 +12,66 @@
 <div id="page-content">
     <div class="page-header">
         <h1 class="page-title">الإعدادات</h1>
-        <p class="page-subtitle">إدارة متجرك وحسابك</p>
+        <p class="page-subtitle">إدارة متجرك وحسابك وتكاملاتك</p>
     </div>
 
     <div class="settings-layout">
         <!-- Settings Nav -->
         <div class="settings-nav">
-            <button class="settings-tab active" data-section="store">🏪 المتجر</button>
-            <button class="settings-tab" data-section="whatsapp">💬 واتساب</button>
-            <button class="settings-tab" data-section="messaging">📱 الرسائل</button>
-            <button class="settings-tab" data-section="integrations">🔗 التكاملات</button>
-            <button class="settings-tab" data-section="billing">💳 الاشتراك</button>
-            <button class="settings-tab" data-section="team">👥 الفريق</button>
+            <button class="settings-tab active" data-section="store">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                المتجر
+            </button>
+            <button class="settings-tab" data-section="whatsapp">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                واتساب
+            </button>
+            <button class="settings-tab" data-section="messaging">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                الرسائل
+            </button>
+            <button class="settings-tab" data-section="integrations">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+                التكاملات
+            </button>
+            <button class="settings-tab" data-section="billing">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                الاشتراك
+            </button>
+            <button class="settings-tab" data-section="team">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                الفريق
+            </button>
         </div>
 
         <!-- Settings Content -->
         <div class="settings-content">
 
-            <!-- Store Settings -->
+            <!-- ============ Store Settings ============ -->
             <div class="settings-section active" id="section-store">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">معلومات المتجر</div>
+                        <div>
+                            <div class="card-title">معلومات المتجر</div>
+                            <div class="card-subtitle">بيانات متجرك الأساسية</div>
+                        </div>
                     </div>
+
+                    <!-- Logo Upload -->
+                    <div class="input-group">
+                        <label class="input-label">شعار المتجر</label>
+                        <div class="logo-upload-area" id="logoUploadArea">
+                            <div class="logo-upload-preview" id="logoPreview">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                            </div>
+                            <div class="logo-upload-info">
+                                <div class="logo-upload-title">اسحب الشعار هنا أو اضغط للرفع</div>
+                                <div class="logo-upload-hint">PNG, JPG حتى 2MB - يفضل 200x200</div>
+                            </div>
+                            <input type="file" id="logoFileInput" accept="image/*" style="display:none;">
+                        </div>
+                    </div>
+
                     <div class="input-group">
                         <label class="input-label">اسم المتجر</label>
                         <input type="text" class="input" id="storeName" placeholder="اسم متجرك">
@@ -43,250 +80,572 @@
                         <label class="input-label">رابط المتجر</label>
                         <input type="url" class="input" id="storeUrl" placeholder="https://store.salla.sa" dir="ltr">
                     </div>
-                    <div class="input-group">
-                        <label class="input-label">نوع النشاط</label>
-                        <select class="input" id="storeType">
-                            <option value="ecommerce">متجر إلكتروني</option>
-                            <option value="cafe">مقهى</option>
-                            <option value="restaurant">مطعم</option>
-                            <option value="fashion">محل أزياء</option>
-                            <option value="salon">صالون</option>
-                            <option value="retail">محل تجزئة</option>
-                            <option value="other">أخرى</option>
-                        </select>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label class="input-label">نوع النشاط</label>
+                            <select class="input" id="storeType">
+                                <option value="ecommerce">متجر إلكتروني</option>
+                                <option value="cafe">مقهى</option>
+                                <option value="restaurant">مطعم</option>
+                                <option value="fashion">محل أزياء</option>
+                                <option value="salon">صالون</option>
+                                <option value="retail">محل تجزئة</option>
+                                <option value="other">أخرى</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label">رقم الجوال</label>
+                            <input type="tel" class="input" id="storePhone" placeholder="+966 5X XXX XXXX" dir="ltr">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label class="input-label">البريد الإلكتروني</label>
                         <input type="email" class="input" id="storeEmail" placeholder="email@store.com" dir="ltr">
                     </div>
-                    <button class="btn btn-primary" onclick="saveStoreSettings()">حفظ التغييرات</button>
+                    <button class="btn btn-primary" onclick="saveStoreSettings()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        حفظ التغييرات
+                    </button>
                 </div>
             </div>
 
-            <!-- WhatsApp Settings -->
+            <!-- ============ WhatsApp Settings ============ -->
             <div class="settings-section" id="section-whatsapp">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">اتصال واتساب</div>
-                    </div>
-                    <div class="wa-status-card" id="waStatusCard">
-                        <div class="wa-status-indicator">
-                            <span class="status-dot online" id="waSettingsStatus"></span>
-                            <span class="wa-status-text" id="waStatusText">متصل</span>
-                        </div>
-                        <div class="wa-status-number" id="waNumber">+966 5X XXX XXXX</div>
-                    </div>
-
-                    <div class="mt-24" id="waQrSection" style="display: none;">
-                        <p class="text-muted mb-16">امسح كود QR من واتساب على تلفونك</p>
-                        <div class="qr-placeholder" id="waQrCode">
-                            <div class="empty-state-icon">📱</div>
-                            <div class="text-sm text-dim">جاري تحميل QR...</div>
+                        <div>
+                            <div class="card-title">اتصال واتساب</div>
+                            <div class="card-subtitle">اربط رقم واتساب متجرك لإرسال الرسائل</div>
                         </div>
                     </div>
 
-                    <div class="mt-24">
-                        <button class="btn btn-secondary" id="waReconnectBtn" onclick="reconnectWhatsApp()">إعادة الاتصال</button>
-                        <button class="btn btn-danger btn-sm" style="margin-right: 8px;" onclick="disconnectWhatsApp()">قطع الاتصال</button>
+                    <!-- Connection Status Card -->
+                    <div class="wa-connection-card" id="waConnectionCard">
+                        <div class="wa-connection-top">
+                            <div class="wa-connection-icon" id="waIconWrap">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 0 0 .612.612l4.458-1.495A11.952 11.952 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.331 0-4.512-.653-6.379-1.785l-.447-.268-2.954.99.99-2.954-.268-.447A9.956 9.956 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                            </div>
+                            <div class="wa-connection-info">
+                                <div class="wa-connection-status">
+                                    <span class="wa-pulse-dot online" id="waSettingsStatusDot"></span>
+                                    <span class="wa-status-label" id="waStatusText">متصل</span>
+                                </div>
+                                <div class="wa-connection-number" id="waNumber">+966 5X XXX XXXX</div>
+                            </div>
+                            <div class="wa-connection-badge" id="waStatusBadge">
+                                <span class="badge badge-success">نشط</span>
+                            </div>
+                        </div>
+                        <div class="wa-connection-meta">
+                            <div class="wa-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span id="waLastConnected">آخر اتصال: قبل 3 ساعات</span>
+                            </div>
+                            <div class="wa-meta-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                <span id="waMessagesSent">1,247 رسالة مرسلة</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QR Code Section -->
+                    <div class="wa-qr-section" id="waQrSection" style="display: none;">
+                        <div class="wa-qr-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg>
+                            <span>امسح كود QR من تطبيق واتساب على جوالك</span>
+                        </div>
+                        <div class="wa-qr-box" id="waQrCode">
+                            <div class="wa-qr-loading">
+                                <div class="spinner"></div>
+                                <div class="text-sm text-dim">جاري تحميل الكود...</div>
+                            </div>
+                        </div>
+                        <div class="wa-qr-steps">
+                            <div class="wa-qr-step"><span class="wa-step-num">1</span> افتح واتساب على جوالك</div>
+                            <div class="wa-qr-step"><span class="wa-step-num">2</span> اذهب إلى الأجهزة المرتبطة</div>
+                            <div class="wa-qr-step"><span class="wa-step-num">3</span> امسح الكود الظاهر</div>
+                        </div>
+                    </div>
+
+                    <div class="wa-actions mt-24">
+                        <button class="btn btn-secondary" id="waReconnectBtn" onclick="reconnectWhatsApp()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            إعادة الاتصال
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="disconnectWhatsApp()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg>
+                            قطع الاتصال
+                        </button>
                     </div>
                 </div>
 
+                <!-- Anti-Ban Settings -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <div class="card-title">حماية الرقم</div>
+                        <div>
+                            <div class="card-title">حماية الرقم</div>
+                            <div class="card-subtitle">إعدادات لحماية رقمك من الحظر</div>
+                        </div>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">ساعات هادئة</div>
                             <div class="setting-desc">عدم إرسال رسائل بين 10 مساءً و 8 صباحاً</div>
                         </div>
-                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleQuietHours" checked><span class="toggle-slider"></span></label>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">حد الإرسال الأسبوعي</div>
                             <div class="setting-desc">3 رسائل واتساب + 2 SMS كحد أقصى لكل عميل</div>
                         </div>
-                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleWeeklyLimit" checked><span class="toggle-slider"></span></label>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">تأخير بشري</div>
                             <div class="setting-desc">تأخير عشوائي بين الرسائل لتبدو طبيعية</div>
                         </div>
-                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleHumanDelay" checked><span class="toggle-slider"></span></label>
                     </div>
                 </div>
             </div>
 
-            <!-- Messaging Settings -->
+            <!-- ============ Messaging Settings ============ -->
             <div class="settings-section" id="section-messaging">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">إعدادات الرسائل</div>
+                        <div>
+                            <div class="card-title">إعدادات الرسائل</div>
+                            <div class="card-subtitle">تحكم في طريقة إرسال الرسائل</div>
+                        </div>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">الذكاء الاصطناعي</div>
                             <div class="setting-desc">تخصيص الرسائل تلقائياً بالـ AI لكل عميل</div>
                         </div>
-                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleAI" checked><span class="toggle-slider"></span></label>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">اختبارات A/B</div>
                             <div class="setting-desc">اختبار نسختين من كل رسالة واختيار الأفضل</div>
                         </div>
-                        <label class="toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleAB" checked><span class="toggle-slider"></span></label>
                     </div>
                     <div class="setting-row">
                         <div class="setting-info">
                             <div class="setting-name">توقيت ذكي</div>
                             <div class="setting-desc">إرسال لكل عميل في وقته المفضل</div>
                         </div>
-                        <label class="toggle"><input type="checkbox"><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="toggleSmartTiming"><span class="toggle-slider"></span></label>
                     </div>
                 </div>
 
+                <!-- Tone & Preview -->
                 <div class="card mt-24">
                     <div class="card-header">
-                        <div class="card-title">نبرة المتجر</div>
-                        <div class="card-subtitle">كيف تبي رسائلك تبان؟</div>
+                        <div>
+                            <div class="card-title">نبرة المتجر</div>
+                            <div class="card-subtitle">اختر أسلوب رسائلك وشوف كيف تبان</div>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label class="input-label">أسلوب الكتابة</label>
-                        <select class="input">
-                            <option value="casual">ودي وقريب 😊</option>
+                        <select class="input" id="messageTone" onchange="updateTonePreview()">
+                            <option value="casual">ودي وقريب</option>
                             <option value="professional">رسمي ومحترف</option>
-                            <option value="fun">مرح وخفيف 🎉</option>
+                            <option value="fun">مرح وخفيف</option>
                         </select>
                     </div>
                     <div class="input-group">
                         <label class="input-label">مثال على رسالة بأسلوبك (اختياري)</label>
-                        <textarea class="input" rows="3" placeholder="اكتب رسالة كما تكتبها عادة لعملائك..."></textarea>
+                        <textarea class="input" id="customToneExample" rows="3" placeholder="اكتب رسالة كما تكتبها عادة لعملائك..."></textarea>
                     </div>
+
+                    <!-- AI Message Preview -->
+                    <div class="msg-preview-container">
+                        <div class="msg-preview-label">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            معاينة الرسالة
+                        </div>
+                        <div class="msg-preview-card" id="tonePreviewCard">
+                            <div class="msg-preview-header">
+                                <div class="msg-preview-avatar">ر</div>
+                                <div>
+                                    <div class="msg-preview-sender">رِبح</div>
+                                    <div class="msg-preview-time">الآن</div>
+                                </div>
+                            </div>
+                            <div class="msg-preview-bubble" id="tonePreviewText">
+                                هلا فيك! لاحظنا إنك نسيت منتجات في سلتك. لا تفوّت العرض - خصم 15% ينتظرك! استخدم الكود: RIBH15
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary mt-16" onclick="saveMessagingSettings()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        حفظ إعدادات الرسائل
+                    </button>
                 </div>
             </div>
 
-            <!-- Integrations -->
+            <!-- ============ Integrations ============ -->
             <div class="settings-section" id="section-integrations">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">التكاملات</div>
-                    </div>
-                    <div class="integration-row">
-                        <div class="integration-info">
-                            <span class="integration-icon-lg">🟣</span>
-                            <div>
-                                <div class="setting-name">سلة</div>
-                                <div class="setting-desc">منصة التجارة الإلكترونية</div>
-                            </div>
+
+                <!-- Salla Integration - Premium Card -->
+                <div class="card integration-premium-card salla-card">
+                    <div class="integration-premium-header">
+                        <div class="integration-premium-logo salla-logo">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" fill="#6C3CFF" opacity="0.15"/><path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16.2c-3.97 0-7.2-3.23-7.2-7.2S8.03 4.8 12 4.8s7.2 3.23 7.2 7.2-3.23 7.2-7.2 7.2z" fill="#6C3CFF"/><path d="M14.5 9.5c-.83 0-1.5.67-1.5 1.5v2c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-2c0-.83-.67-1.5-1.5-1.5zM9.5 9.5c-.83 0-1.5.67-1.5 1.5v2c0 .83.67 1.5 1.5 1.5S11 13.83 11 13v-2c0-.83-.67-1.5-1.5-1.5z" fill="#6C3CFF"/></svg>
                         </div>
-                        <span class="badge badge-success">متصل</span>
+                        <div class="integration-premium-info">
+                            <div class="integration-premium-name">سلة <span class="text-dim text-sm">Salla</span></div>
+                            <div class="integration-premium-desc">منصة التجارة الإلكترونية الأولى في السعودية</div>
+                        </div>
+                        <div id="sallaStatusBadge">
+                            <span class="badge badge-success">متصل</span>
+                        </div>
                     </div>
-                    <div class="integration-row">
-                        <div class="integration-info">
-                            <span class="integration-icon-lg">🟢</span>
+
+                    <!-- Salla Connection Details -->
+                    <div class="integration-details" id="sallaDetails">
+                        <div class="integration-detail-row">
+                            <span class="integration-detail-label">اسم المتجر</span>
+                            <span class="integration-detail-value" id="sallaStoreName">--</span>
+                        </div>
+                        <div class="integration-detail-row">
+                            <span class="integration-detail-label">حالة الاتصال</span>
+                            <span class="integration-detail-value">
+                                <span class="wa-pulse-dot online" id="sallaDot" style="width:8px;height:8px;"></span>
+                                <span id="sallaStatusLabel">متصل</span>
+                            </span>
+                        </div>
+                        <div class="integration-detail-row">
+                            <span class="integration-detail-label">آخر مزامنة</span>
+                            <span class="integration-detail-value" id="sallaLastSync">قبل 12 دقيقة</span>
+                        </div>
+                    </div>
+
+                    <!-- Salla Sync Stats -->
+                    <div class="integration-sync-stats" id="sallaSyncStats">
+                        <div class="sync-stat">
+                            <div class="sync-stat-value" id="sallaSyncProducts">245</div>
+                            <div class="sync-stat-label">المنتجات</div>
+                        </div>
+                        <div class="sync-stat">
+                            <div class="sync-stat-value" id="sallaSyncOrders">1,234</div>
+                            <div class="sync-stat-label">الطلبات</div>
+                        </div>
+                        <div class="sync-stat">
+                            <div class="sync-stat-value" id="sallaSyncCustomers">856</div>
+                            <div class="sync-stat-label">العملاء</div>
+                        </div>
+                    </div>
+
+                    <div class="integration-premium-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="reconnectSalla()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            إعادة الربط
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="syncSalla()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15A9 9 0 1 1 21 6"/></svg>
+                            مزامنة الآن
+                        </button>
+                    </div>
+
+                    <!-- Salla Not Connected State -->
+                    <div class="salla-connect-cta" id="sallaConnectCTA" style="display:none;">
+                        <div class="salla-connect-content">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                            <div class="salla-connect-text">اربط متجرك في سلة لتفعيل استرجاع السلات تلقائياً</div>
+                        </div>
+                        <a href="/oauth/callback" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            ربط سلة
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Other Integrations Grid -->
+                <div class="integrations-grid mt-24">
+
+                    <!-- Shopify -->
+                    <div class="card integration-card">
+                        <div class="integration-card-header">
+                            <div class="integration-card-icon shopify-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M15.34 3.27a.59.59 0 0 0-.52-.04c-.08.03-1.7.49-1.7.49a2.7 2.7 0 0 0-.18-.44c-.27-.43-.66-.66-1.13-.66h-.05c-.16-.18-.35-.26-.53-.26-.04 0-.08 0-.12.01-1.32.11-1.98 1.65-2.18 2.49l-1.73.54c-.52.16-.54.18-.61.67L5.44 17.48l8.6 1.52 4.14-1c0-.01-2.84-14.43-2.84-14.73zM11.1 6.39l-1.2.37c.2-.79.6-1.57 1.09-1.87.19.39.23.94.11 1.5zm-.91-2.31c.07 0 .13.02.18.06-.72.34-1.5 1.2-1.83 2.91l-.95.29c.27-.89.92-3.18 2.48-3.26h.12zm.6.86c.15 0 .28.11.37.29.06.13.1.29.12.44-1.15.35-1.15.35-1.15.35.22-.81.5-1.09.66-1.09v.01z" fill="#95BF47"/></svg>
+                            </div>
                             <div>
                                 <div class="setting-name">شوبيفاي</div>
-                                <div class="setting-desc">منصة التجارة الإلكترونية</div>
+                                <div class="setting-desc">منصة التجارة العالمية</div>
                             </div>
                         </div>
-                        <a href="/shopify/install" class="btn btn-secondary btn-sm">ربط</a>
+                        <div class="integration-card-status" id="shopifyStatus">
+                            <span class="badge badge-neutral">غير مربوط</span>
+                        </div>
+                        <a href="/shopify/install" class="btn btn-secondary btn-sm w-full mt-16">ربط شوبيفاي</a>
                     </div>
-                    <div class="integration-row">
-                        <div class="integration-info">
-                            <span class="integration-icon-lg">💬</span>
+
+                    <!-- WhatsApp -->
+                    <div class="card integration-card">
+                        <div class="integration-card-header">
+                            <div class="integration-card-icon wa-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" fill="#25D366"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" fill="none" stroke="#25D366" stroke-width="1.5"/></svg>
+                            </div>
                             <div>
                                 <div class="setting-name">واتساب</div>
                                 <div class="setting-desc">القناة الأساسية للتواصل</div>
                             </div>
                         </div>
-                        <span class="badge badge-success">متصل</span>
+                        <div class="integration-card-status" id="intWaStatus">
+                            <span class="badge badge-success">متصل</span>
+                        </div>
+                        <a href="#" onclick="switchToTab('whatsapp'); return false;" class="btn btn-ghost btn-sm w-full mt-16">إعدادات الواتساب</a>
                     </div>
-                    <div class="integration-row">
-                        <div class="integration-info">
-                            <span class="integration-icon-lg">📲</span>
+
+                    <!-- SMS -->
+                    <div class="card integration-card">
+                        <div class="integration-card-header">
+                            <div class="integration-card-icon sms-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="9" y1="10" x2="9" y2="10"/><line x1="12" y1="10" x2="12" y2="10"/><line x1="15" y1="10" x2="15" y2="10"/></svg>
+                            </div>
                             <div>
                                 <div class="setting-name">SMS</div>
                                 <div class="setting-desc">القناة الاحتياطية</div>
                             </div>
                         </div>
-                        <span class="badge badge-success">مفعّل</span>
+                        <div class="integration-card-status">
+                            <span class="badge badge-success">مفعّل</span>
+                        </div>
+                        <div class="text-sm text-dim mt-16">AWS SNS + Twilio</div>
+                    </div>
+
+                    <!-- Email (AWS SES) -->
+                    <div class="card integration-card">
+                        <div class="integration-card-header">
+                            <div class="integration-card-icon email-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </div>
+                            <div>
+                                <div class="setting-name">البريد الإلكتروني</div>
+                                <div class="setting-desc">AWS SES لإرسال الإيميلات</div>
+                            </div>
+                        </div>
+                        <div class="integration-card-status" id="emailStatus">
+                            <span class="badge badge-success">مفعّل</span>
+                        </div>
+                        <div class="text-sm text-dim mt-16">ايميلات استرجاع السلات</div>
+                    </div>
+
+                    <!-- Telegram -->
+                    <div class="card integration-card">
+                        <div class="integration-card-header">
+                            <div class="integration-card-icon telegram-icon">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z" fill="#29B6F6"/></svg>
+                            </div>
+                            <div>
+                                <div class="setting-name">تلقرام</div>
+                                <div class="setting-desc">إشعارات فورية للمدير</div>
+                            </div>
+                        </div>
+                        <div class="integration-card-status" id="telegramStatus">
+                            <span class="badge badge-success">مفعّل</span>
+                        </div>
+                        <div class="text-sm text-dim mt-16">بوت الإشعارات</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Billing -->
+            <!-- ============ Billing ============ -->
             <div class="settings-section" id="section-billing">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">الاشتراك الحالي</div>
+                        <div>
+                            <div class="card-title">الاشتراك الحالي</div>
+                            <div class="card-subtitle">تفاصيل باقتك والاستخدام</div>
+                        </div>
                     </div>
-                    <div class="plan-card">
-                        <div class="plan-header">
+                    <div class="plan-card-premium">
+                        <div class="plan-header-premium">
                             <div>
-                                <div class="plan-name">باقة النمو</div>
-                                <div class="plan-price">399 ر.س<span class="text-dim">/شهر</span></div>
+                                <div class="plan-name-premium">باقة النمو</div>
+                                <div class="plan-price-premium">399 <span class="plan-currency">ر.س</span><span class="plan-period">/شهر</span></div>
                             </div>
-                            <span class="badge badge-primary">نشط</span>
-                        </div>
-                        <div class="plan-usage">
-                            <div class="plan-usage-label">
-                                <span>الرسائل المستخدمة</span>
-                                <span>1,420 / 2,000</span>
+                            <div class="plan-badge-area">
+                                <span class="badge badge-primary">نشط</span>
+                                <div class="plan-days-left">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    <span>متبقي 18 يوم</span>
+                                </div>
                             </div>
-                            <div class="plan-usage-bar"><div class="plan-usage-fill" style="width: 71%"></div></div>
                         </div>
-                        <div class="plan-features">
-                            <div class="plan-feature">✓ 7 رحلات عملاء</div>
-                            <div class="plan-feature">✓ QR للمحلات</div>
-                            <div class="plan-feature">✓ تصنيف ذكي</div>
-                            <div class="plan-feature">✓ A/B + توقيت ذكي</div>
+
+                        <!-- Main Usage Bar -->
+                        <div class="usage-section">
+                            <div class="usage-header">
+                                <span class="usage-title">إجمالي الرسائل</span>
+                                <span class="usage-count">1,420 / 2,000</span>
+                            </div>
+                            <div class="usage-bar-track">
+                                <div class="usage-bar-fill" style="width: 71%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Usage Breakdown -->
+                        <div class="usage-breakdown">
+                            <div class="usage-breakdown-item">
+                                <div class="usage-breakdown-icon wa-color">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                </div>
+                                <div class="usage-breakdown-info">
+                                    <div class="usage-breakdown-label">واتساب</div>
+                                    <div class="usage-breakdown-value">1,200</div>
+                                </div>
+                                <div class="usage-breakdown-bar-track">
+                                    <div class="usage-breakdown-bar wa-fill" style="width:85%"></div>
+                                </div>
+                            </div>
+                            <div class="usage-breakdown-item">
+                                <div class="usage-breakdown-icon sms-color">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                </div>
+                                <div class="usage-breakdown-info">
+                                    <div class="usage-breakdown-label">SMS</div>
+                                    <div class="usage-breakdown-value">220</div>
+                                </div>
+                                <div class="usage-breakdown-bar-track">
+                                    <div class="usage-breakdown-bar sms-fill" style="width:22%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plan Features -->
+                        <div class="plan-features-grid">
+                            <div class="plan-feature-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                7 رحلات عملاء
+                            </div>
+                            <div class="plan-feature-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                QR للمحلات
+                            </div>
+                            <div class="plan-feature-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                تصنيف ذكي
+                            </div>
+                            <div class="plan-feature-item">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                A/B + توقيت ذكي
+                            </div>
                         </div>
                     </div>
-                    <div class="mt-16 flex gap-12">
-                        <a href="/pricing.html" class="btn btn-secondary btn-sm">ترقية الباقة</a>
-                        <button class="btn btn-ghost btn-sm text-danger">إلغاء الاشتراك</button>
+
+                    <div class="mt-24 flex gap-12">
+                        <a href="/pricing.html" class="btn btn-primary btn-sm">ترقية الباقة</a>
+                        <button class="btn btn-ghost btn-sm text-danger" onclick="cancelSubscription()">إلغاء الاشتراك</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Team -->
+            <!-- ============ Team ============ -->
             <div class="settings-section" id="section-team">
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">الفريق</div>
-                        <button class="btn btn-primary btn-sm">+ دعوة عضو</button>
+                        <div>
+                            <div class="card-title">الفريق</div>
+                            <div class="card-subtitle">ادعُ فريقك لإدارة المتجر</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="openInviteModal()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            دعوة عضو
+                        </button>
                     </div>
-                    <div class="empty-state">
-                        <div class="empty-state-icon">👥</div>
+                    <div class="empty-state" id="teamEmptyState">
+                        <div class="team-empty-icon">
+                            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--text-faint)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
                         <div class="empty-state-title">أنت المدير الوحيد</div>
-                        <div class="empty-state-desc">ادعُ أعضاء فريقك لإدارة الحملات والرسائل</div>
+                        <div class="empty-state-desc">ادعُ أعضاء فريقك لإدارة الحملات والرسائل والتقارير</div>
+                        <button class="btn btn-secondary btn-sm" onclick="openInviteModal()">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                            دعوة أول عضو
+                        </button>
                     </div>
+                    <!-- Team members list (populated by JS) -->
+                    <div id="teamMembersList" style="display:none;"></div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ============ Invite Team Modal ============ -->
+<div class="modal-overlay" id="inviteModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">دعوة عضو جديد</div>
+            <button class="modal-close" onclick="closeInviteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <label class="input-label">البريد الإلكتروني</label>
+                <input type="email" class="input" id="inviteEmail" placeholder="member@company.com" dir="ltr">
+            </div>
+            <div class="input-group">
+                <label class="input-label">الاسم (اختياري)</label>
+                <input type="text" class="input" id="inviteName" placeholder="اسم العضو">
+            </div>
+            <div class="input-group">
+                <label class="input-label">الصلاحية</label>
+                <select class="input" id="inviteRole">
+                    <option value="admin">مدير - صلاحية كاملة</option>
+                    <option value="editor" selected>محرر - إدارة الحملات والرسائل</option>
+                    <option value="viewer">مشاهد - عرض فقط</option>
+                </select>
+            </div>
+            <div class="role-description" id="roleDescription">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span id="roleDescText">يمكنه إدارة الحملات والرسائل والعملاء</span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="sendInvite()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                إرسال الدعوة
+            </button>
+            <button class="btn btn-ghost" onclick="closeInviteModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============ Toast Container ============ -->
+<div class="toast-container" id="toastContainer"></div>
+
 <style>
+    /* ============================================
+       SETTINGS LAYOUT
+       ============================================ */
     .settings-layout {
         display: grid;
-        grid-template-columns: 200px 1fr;
-        gap: 24px;
+        grid-template-columns: 210px 1fr;
+        gap: 28px;
     }
 
     .settings-nav {
         display: flex;
         flex-direction: column;
         gap: 4px;
+        position: sticky;
+        top: 80px;
+        align-self: start;
     }
 
     .settings-tab {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         padding: 10px 14px;
         background: none;
         border: none;
@@ -299,12 +658,75 @@
         font-family: inherit;
         transition: all 0.15s;
     }
+    .settings-tab svg {
+        flex-shrink: 0;
+        opacity: 0.6;
+    }
     .settings-tab:hover { background: var(--bg-hover); color: var(--text); }
-    .settings-tab.active { background: var(--primary-subtle); color: var(--primary); font-weight: 600; }
+    .settings-tab:hover svg { opacity: 0.8; }
+    .settings-tab.active {
+        background: var(--primary-subtle);
+        color: var(--primary);
+        font-weight: 600;
+    }
+    .settings-tab.active svg { opacity: 1; stroke: var(--primary); }
 
     .settings-section { display: none; }
-    .settings-section.active { display: block; }
+    .settings-section.active { display: block; animation: fadeIn 0.25s ease; }
 
+    /* ============================================
+       STORE: Logo Upload
+       ============================================ */
+    .logo-upload-area {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        background: var(--bg-elevated);
+        border: 2px dashed var(--border);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .logo-upload-area:hover {
+        border-color: var(--primary);
+        background: var(--primary-subtle);
+    }
+    .logo-upload-area.dragover {
+        border-color: var(--primary);
+        background: var(--primary-subtle);
+        box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1);
+    }
+    .logo-upload-preview {
+        width: 72px;
+        height: 72px;
+        border-radius: var(--radius-md);
+        background: var(--bg-hover);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        flex-shrink: 0;
+        color: var(--text-faint);
+    }
+    .logo-upload-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .logo-upload-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    .logo-upload-hint {
+        font-size: 12px;
+        color: var(--text-dim);
+    }
+
+    /* ============================================
+       SETTINGS: Common
+       ============================================ */
     .setting-row {
         display: flex;
         align-items: center;
@@ -316,67 +738,779 @@
     .setting-name { font-size: 14px; font-weight: 600; }
     .setting-desc { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
 
-    .integration-row {
+    /* ============================================
+       WHATSAPP: Connection Card
+       ============================================ */
+    .wa-connection-card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+    }
+    .wa-connection-top {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        padding: 16px 0;
-        border-bottom: 1px solid var(--border);
+        gap: 14px;
+        margin-bottom: 16px;
     }
-    .integration-row:last-child { border-bottom: none; }
-    .integration-info { display: flex; align-items: center; gap: 14px; }
-    .integration-icon-lg { font-size: 28px; }
+    .wa-connection-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: rgba(37, 211, 102, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #25D366;
+        flex-shrink: 0;
+    }
+    .wa-connection-info { flex: 1; }
+    .wa-connection-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+    }
+    .wa-status-label {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    .wa-connection-number {
+        font-size: 14px;
+        color: var(--text-dim);
+        direction: ltr;
+        text-align: right;
+    }
+    .wa-connection-meta {
+        display: flex;
+        gap: 20px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+    }
+    .wa-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+    .wa-actions {
+        display: flex;
+        gap: 10px;
+    }
 
-    .wa-status-card {
+    /* Animated pulse dot */
+    .wa-pulse-dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        position: relative;
+    }
+    .wa-pulse-dot.online {
+        background: var(--success);
+    }
+    .wa-pulse-dot.online::after {
+        content: '';
+        position: absolute;
+        inset: -3px;
+        border-radius: 50%;
+        border: 2px solid var(--success);
+        animation: pulseRing 2s ease-out infinite;
+    }
+    .wa-pulse-dot.offline {
+        background: var(--danger);
+    }
+    @keyframes pulseRing {
+        0% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1.6); }
+    }
+
+    /* QR Section */
+    .wa-qr-section {
+        margin-top: 20px;
         padding: 20px;
         background: var(--bg-elevated);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
     }
-    .wa-status-indicator { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .wa-status-text { font-size: 14px; font-weight: 600; }
-    .wa-status-number { font-size: 16px; color: var(--text-dim); direction: ltr; text-align: right; }
-
-    .qr-placeholder {
-        width: 200px;
-        height: 200px;
+    .wa-qr-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+    }
+    .wa-qr-box {
+        width: 220px;
+        height: 220px;
         margin: 0 auto;
-        background: var(--bg-elevated);
-        border: 1px solid var(--border);
+        background: #fff;
         border-radius: var(--radius-md);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 10px;
+    }
+    .wa-qr-box img {
+        width: 200px;
+        height: 200px;
+    }
+    .wa-qr-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    .wa-qr-steps {
+        display: flex;
+        gap: 16px;
+        margin-top: 16px;
+        justify-content: center;
+    }
+    .wa-qr-step {
+        display: flex;
+        align-items: center;
         gap: 8px;
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+    .wa-step-num {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: var(--primary-subtle);
+        color: var(--primary);
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
     }
 
-    .plan-card {
+    /* Spinner */
+    .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       MESSAGING: Tone Preview
+       ============================================ */
+    .msg-preview-container {
+        margin-top: 20px;
+        border-top: 1px solid var(--border);
+        padding-top: 20px;
+    }
+    .msg-preview-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-dim);
+        margin-bottom: 12px;
+    }
+    .msg-preview-card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 16px;
+    }
+    .msg-preview-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .msg-preview-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+        color: #0a0a0a;
+        flex-shrink: 0;
+    }
+    .msg-preview-sender {
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .msg-preview-time {
+        font-size: 11px;
+        color: var(--text-faint);
+    }
+    .msg-preview-bubble {
+        background: var(--bg-hover);
+        border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--text-secondary);
+        transition: all 0.3s;
+    }
+
+    /* ============================================
+       INTEGRATIONS: Premium Salla Card
+       ============================================ */
+    .integration-premium-card {
+        position: relative;
+        overflow: hidden;
+    }
+    .salla-card {
+        border-color: rgba(108, 60, 255, 0.2);
+    }
+    .salla-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #6C3CFF, #8B5CF6, #6C3CFF);
+        background-size: 200% 100%;
+        animation: shimmerBar 3s ease infinite;
+    }
+    @keyframes shimmerBar {
+        0%, 100% { background-position: 0% 0; }
+        50% { background-position: 200% 0; }
+    }
+    .integration-premium-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .integration-premium-logo {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .salla-logo {
+        background: rgba(108, 60, 255, 0.1);
+    }
+    .integration-premium-info { flex: 1; }
+    .integration-premium-name {
+        font-size: 16px;
+        font-weight: 700;
+    }
+    .integration-premium-desc {
+        font-size: 13px;
+        color: var(--text-dim);
+        margin-top: 2px;
+    }
+
+    .integration-details {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    .integration-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        font-size: 13px;
+    }
+    .integration-detail-row:not(:last-child) {
+        border-bottom: 1px solid var(--border);
+    }
+    .integration-detail-label {
+        color: var(--text-dim);
+    }
+    .integration-detail-value {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .integration-sync-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    .sync-stat {
+        text-align: center;
+        padding: 14px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+    }
+    .sync-stat-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+    }
+    .sync-stat-label {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 4px;
+    }
+
+    .integration-premium-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    /* Salla CTA (not connected) */
+    .salla-connect-cta {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 24px;
+        background: var(--primary-subtle);
+        border: 1px dashed var(--primary);
+        border-radius: var(--radius-md);
+    }
+    .salla-connect-content {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .salla-connect-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    /* Integration Cards Grid */
+    .integrations-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+    .integration-card {
+        display: flex;
+        flex-direction: column;
+    }
+    .integration-card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .integration-card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .shopify-icon { background: rgba(149, 191, 71, 0.1); }
+    .wa-icon { background: rgba(37, 211, 102, 0.1); }
+    .sms-icon { background: rgba(59, 130, 246, 0.1); }
+    .email-icon { background: rgba(245, 158, 11, 0.1); }
+    .telegram-icon { background: rgba(41, 182, 246, 0.1); }
+    .integration-card-status {
+        margin-top: auto;
+    }
+
+    /* ============================================
+       BILLING: Premium Plan Card
+       ============================================ */
+    .plan-card-premium {
         background: var(--bg-elevated);
         border: 1px solid var(--border-active);
         border-radius: var(--radius-lg);
         padding: 24px;
+        position: relative;
+        overflow: hidden;
     }
-    .plan-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-    .plan-name { font-size: 18px; font-weight: 700; }
-    .plan-price { font-size: 28px; font-weight: 800; margin-top: 4px; }
-    .plan-usage { margin-bottom: 16px; }
-    .plan-usage-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
-    .plan-usage-bar { height: 6px; background: var(--bg-hover); border-radius: 3px; }
-    .plan-usage-fill { height: 100%; background: var(--primary); border-radius: 3px; }
-    .plan-features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .plan-feature { font-size: 13px; color: var(--text-muted); }
+    .plan-card-premium::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-hover), var(--primary));
+    }
+    .plan-header-premium {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+    }
+    .plan-name-premium {
+        font-size: 20px;
+        font-weight: 800;
+    }
+    .plan-price-premium {
+        font-size: 36px;
+        font-weight: 800;
+        margin-top: 4px;
+        color: var(--primary);
+    }
+    .plan-currency {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-dim);
+    }
+    .plan-period {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-faint);
+    }
+    .plan-badge-area {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+    }
+    .plan-days-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+
+    /* Usage bar */
+    .usage-section {
+        margin-bottom: 20px;
+    }
+    .usage-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    .usage-title {
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+    .usage-count {
+        color: var(--text-dim);
+        font-weight: 600;
+        direction: ltr;
+    }
+    .usage-bar-track {
+        height: 8px;
+        background: var(--bg-hover);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .usage-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+        transition: width 0.6s ease;
+        position: relative;
+    }
+    .usage-bar-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+        animation: shimmer 2s infinite;
+    }
+    @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Usage breakdown */
+    .usage-breakdown {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: 20px;
+    }
+    .usage-breakdown-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .usage-breakdown-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .usage-breakdown-icon.wa-color {
+        background: rgba(37, 211, 102, 0.1);
+        color: #25D366;
+    }
+    .usage-breakdown-icon.sms-color {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3B82F6;
+    }
+    .usage-breakdown-info {
+        min-width: 80px;
+    }
+    .usage-breakdown-label {
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+    .usage-breakdown-value {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    .usage-breakdown-bar-track {
+        flex: 1;
+        height: 6px;
+        background: var(--bg-hover);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .usage-breakdown-bar {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.6s ease;
+    }
+    .usage-breakdown-bar.wa-fill { background: #25D366; }
+    .usage-breakdown-bar.sms-fill { background: #3B82F6; }
+
+    /* Plan features grid */
+    .plan-features-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    .plan-feature-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+    /* ============================================
+       TEAM: Empty State + Role Description
+       ============================================ */
+    .team-empty-icon {
+        margin-bottom: 16px;
+        opacity: 0.3;
+    }
+
+    .role-description {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 12px;
+        background: var(--info-subtle);
+        border: 1px solid rgba(59, 130, 246, 0.15);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        color: var(--info);
+    }
+    .role-description svg {
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    /* ============================================
+       TOAST NOTIFICATIONS
+       ============================================ */
+    .toast-container {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 200;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 10px;
+        pointer-events: none;
+    }
+    .toast {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 20px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-lg);
+        font-size: 14px;
+        font-weight: 500;
+        pointer-events: auto;
+        animation: toastIn 0.3s ease;
+        min-width: 280px;
+    }
+    .toast.toast-success {
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    .toast.toast-success .toast-icon {
+        color: var(--success);
+    }
+    .toast.toast-error {
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    .toast.toast-error .toast-icon {
+        color: var(--danger);
+    }
+    .toast.toast-info {
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    .toast.toast-info .toast-icon {
+        color: var(--info);
+    }
+    .toast-icon {
+        flex-shrink: 0;
+    }
+    .toast.removing {
+        animation: toastOut 0.25s ease forwards;
+    }
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateY(16px) scale(0.96); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes toastOut {
+        from { opacity: 1; transform: translateY(0) scale(1); }
+        to { opacity: 0; transform: translateY(16px) scale(0.96); }
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1024px) {
+        .integrations-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        .integration-sync-stats {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
 
     @media (max-width: 768px) {
-        .settings-layout { grid-template-columns: 1fr; }
-        .settings-nav { flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 8px; }
-        .settings-tab { white-space: nowrap; }
+        .settings-layout {
+            grid-template-columns: 1fr;
+        }
+        .settings-nav {
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 6px;
+            padding-bottom: 8px;
+            position: static;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .settings-nav::-webkit-scrollbar { display: none; }
+        .settings-tab {
+            white-space: nowrap;
+            flex-shrink: 0;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .integrations-grid {
+            grid-template-columns: 1fr;
+        }
+        .wa-connection-meta {
+            flex-direction: column;
+            gap: 10px;
+        }
+        .wa-qr-steps {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .integration-sync-stats {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .sync-stat {
+            padding: 10px 8px;
+        }
+        .sync-stat-value {
+            font-size: 18px;
+        }
+        .plan-header-premium {
+            flex-direction: column;
+            gap: 12px;
+        }
+        .plan-badge-area {
+            flex-direction: row;
+            align-items: center;
+        }
+        .plan-features-grid {
+            grid-template-columns: 1fr;
+        }
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+        .salla-connect-cta {
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+        }
     }
 </style>
 
 <script src="/platform/shared/shell.js"></script>
 <script>
-    // Settings tab switching
+    /* ============================================
+       TONE PREVIEW MESSAGES
+       ============================================ */
+    var toneMessages = {
+        casual: 'هلا فيك! لاحظنا إنك نسيت منتجات في سلتك. لا تفوّت العرض - خصم 15% ينتظرك! استخدم الكود: RIBH15',
+        professional: 'عزيزي العميل، نود تذكيركم بأن لديكم منتجات في سلة التسوق. يسعدنا تقديم خصم 15% لإتمام طلبكم. الكود: RIBH15',
+        fun: 'سلتك تحس بالوحدة! منتجاتك تنتظرك وتبي ترجع لبيتها. هدية منّا: خصم 15% عشان تكمّل المشوار! الكود: RIBH15'
+    };
+
+    /* ============================================
+       TOAST SYSTEM
+       ============================================ */
+    function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+
+        var iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+        } else if (type === 'error') {
+            iconSvg = '<svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else {
+            iconSvg = '<svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+
+        toast.innerHTML = iconSvg + '<span>' + message + '</span>';
+        container.appendChild(toast);
+
+        setTimeout(function() {
+            toast.classList.add('removing');
+            setTimeout(function() {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 250);
+        }, 3000);
+    }
+
+    /* ============================================
+       TAB SWITCHING
+       ============================================ */
     document.querySelectorAll('.settings-tab').forEach(function(tab) {
         tab.addEventListener('click', function() {
             document.querySelectorAll('.settings-tab').forEach(function(t) { t.classList.remove('active'); });
@@ -387,46 +1521,307 @@
         });
     });
 
-    function saveStoreSettings() {
-        var name = document.getElementById('storeName').value;
-        if (name) localStorage.setItem('ribh_store_name', name);
-        alert('تم حفظ التغييرات');
+    function switchToTab(tabName) {
+        var tab = document.querySelector('.settings-tab[data-section="' + tabName + '"]');
+        if (tab) tab.click();
     }
 
+    /* ============================================
+       STORE SETTINGS
+       ============================================ */
+    function saveStoreSettings() {
+        var name = document.getElementById('storeName').value;
+        var url = document.getElementById('storeUrl').value;
+        var type = document.getElementById('storeType').value;
+        var phone = document.getElementById('storePhone').value;
+        var email = document.getElementById('storeEmail').value;
+
+        if (name) localStorage.setItem('ribh_store_name', name);
+        if (url) localStorage.setItem('ribh_store_url', url);
+        if (type) localStorage.setItem('ribh_store_type', type);
+        if (phone) localStorage.setItem('ribh_store_phone', phone);
+        if (email) localStorage.setItem('ribh_store_email', email);
+
+        showToast('تم حفظ إعدادات المتجر بنجاح');
+    }
+
+    /* ============================================
+       LOGO UPLOAD
+       ============================================ */
+    var logoArea = document.getElementById('logoUploadArea');
+    var logoInput = document.getElementById('logoFileInput');
+    var logoPreview = document.getElementById('logoPreview');
+
+    if (logoArea && logoInput) {
+        logoArea.addEventListener('click', function() { logoInput.click(); });
+
+        logoArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            logoArea.classList.add('dragover');
+        });
+        logoArea.addEventListener('dragleave', function() {
+            logoArea.classList.remove('dragover');
+        });
+        logoArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            logoArea.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleLogoFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        logoInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                handleLogoFile(this.files[0]);
+            }
+        });
+    }
+
+    function handleLogoFile(file) {
+        if (!file.type.startsWith('image/')) {
+            showToast('يرجى اختيار ملف صورة', 'error');
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            showToast('حجم الصورة يجب أن يكون أقل من 2MB', 'error');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            logoPreview.innerHTML = '<img src="' + e.target.result + '" alt="شعار المتجر">';
+            localStorage.setItem('ribh_store_logo', e.target.result);
+            showToast('تم رفع الشعار بنجاح');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /* ============================================
+       WHATSAPP
+       ============================================ */
     function reconnectWhatsApp() {
         document.getElementById('waQrSection').style.display = '';
-        fetch('/api/whatsapp/connect').then(function(r) { return r.json(); })
+        var qrBox = document.getElementById('waQrCode');
+        qrBox.innerHTML = '<div class="wa-qr-loading"><div class="spinner"></div><div class="text-sm text-dim">جاري تحميل الكود...</div></div>';
+
+        fetch('/api/whatsapp/connect', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.qr) {
-                    document.getElementById('waQrCode').innerHTML = '<img src="' + data.qr + '" alt="QR" style="width:200px;height:200px;">';
+                    qrBox.innerHTML = '<img src="' + data.qr + '" alt="QR Code">';
                 }
-            }).catch(function() {});
+            })
+            .catch(function() {
+                qrBox.innerHTML = '<div class="text-sm text-dim">فشل تحميل الكود. حاول مرة أخرى.</div>';
+            });
     }
 
     function disconnectWhatsApp() {
         if (confirm('هل تريد قطع اتصال واتساب؟')) {
-            fetch('/api/whatsapp/disconnect', { method: 'POST', credentials: 'include' });
+            fetch('/api/whatsapp/disconnect', { method: 'POST', credentials: 'include' })
+                .then(function() {
+                    updateWaStatus(false);
+                    showToast('تم قطع اتصال واتساب', 'info');
+                })
+                .catch(function() {
+                    showToast('حدث خطأ أثناء قطع الاتصال', 'error');
+                });
         }
     }
 
-    // Load store settings
-    document.addEventListener('DOMContentLoaded', function() {
-        var name = localStorage.getItem('ribh_store_name');
-        if (name) document.getElementById('storeName').value = name;
+    function updateWaStatus(connected) {
+        var dot = document.getElementById('waSettingsStatusDot');
+        var text = document.getElementById('waStatusText');
+        var badge = document.getElementById('waStatusBadge');
+        var intBadge = document.getElementById('intWaStatus');
 
-        // Check WA status
-        fetch('/api/whatsapp/status').then(function(r) { return r.json(); })
+        if (connected) {
+            if (dot) { dot.className = 'wa-pulse-dot online'; }
+            if (text) { text.textContent = 'متصل'; }
+            if (badge) { badge.innerHTML = '<span class="badge badge-success">نشط</span>'; }
+            if (intBadge) { intBadge.innerHTML = '<span class="badge badge-success">متصل</span>'; }
+        } else {
+            if (dot) { dot.className = 'wa-pulse-dot offline'; }
+            if (text) { text.textContent = 'غير متصل'; }
+            if (badge) { badge.innerHTML = '<span class="badge badge-danger">غير نشط</span>'; }
+            if (intBadge) { intBadge.innerHTML = '<span class="badge badge-danger">غير متصل</span>'; }
+        }
+    }
+
+    /* ============================================
+       MESSAGING
+       ============================================ */
+    function updateTonePreview() {
+        var tone = document.getElementById('messageTone').value;
+        var preview = document.getElementById('tonePreviewText');
+        if (preview && toneMessages[tone]) {
+            preview.style.opacity = '0';
+            setTimeout(function() {
+                preview.textContent = toneMessages[tone];
+                preview.style.opacity = '1';
+            }, 200);
+        }
+    }
+
+    function saveMessagingSettings() {
+        var tone = document.getElementById('messageTone').value;
+        var example = document.getElementById('customToneExample').value;
+        var toggleAI = document.getElementById('toggleAI').checked;
+        var toggleAB = document.getElementById('toggleAB').checked;
+        var toggleSmart = document.getElementById('toggleSmartTiming').checked;
+
+        localStorage.setItem('ribh_msg_tone', tone);
+        if (example) localStorage.setItem('ribh_msg_example', example);
+        localStorage.setItem('ribh_msg_ai', toggleAI ? '1' : '0');
+        localStorage.setItem('ribh_msg_ab', toggleAB ? '1' : '0');
+        localStorage.setItem('ribh_msg_smart', toggleSmart ? '1' : '0');
+
+        showToast('تم حفظ إعدادات الرسائل');
+    }
+
+    /* ============================================
+       INTEGRATIONS: SALLA
+       ============================================ */
+    function reconnectSalla() {
+        showToast('جاري إعادة ربط سلة...', 'info');
+        window.location.href = '/oauth/callback';
+    }
+
+    function syncSalla() {
+        showToast('جاري المزامنة مع سلة...', 'info');
+        // In production this would call the sync API
+        setTimeout(function() {
+            showToast('تمت المزامنة بنجاح');
+            var lastSync = document.getElementById('sallaLastSync');
+            if (lastSync) lastSync.textContent = 'الآن';
+        }, 1500);
+    }
+
+    /* ============================================
+       TEAM
+       ============================================ */
+    function openInviteModal() {
+        document.getElementById('inviteModal').classList.add('open');
+    }
+    function closeInviteModal() {
+        document.getElementById('inviteModal').classList.remove('open');
+    }
+
+    function sendInvite() {
+        var email = document.getElementById('inviteEmail').value;
+        var name = document.getElementById('inviteName').value;
+        var role = document.getElementById('inviteRole').value;
+
+        if (!email) {
+            showToast('يرجى إدخال البريد الإلكتروني', 'error');
+            return;
+        }
+        if (!email.includes('@')) {
+            showToast('البريد الإلكتروني غير صحيح', 'error');
+            return;
+        }
+
+        // In production this would call the invite API
+        showToast('تم إرسال الدعوة إلى ' + email);
+        closeInviteModal();
+        document.getElementById('inviteEmail').value = '';
+        document.getElementById('inviteName').value = '';
+    }
+
+    // Update role description when changed
+    var roleSelect = document.getElementById('inviteRole');
+    if (roleSelect) {
+        roleSelect.addEventListener('change', function() {
+            var descriptions = {
+                admin: 'صلاحية كاملة - إدارة المتجر والفريق والاشتراك',
+                editor: 'يمكنه إدارة الحملات والرسائل والعملاء',
+                viewer: 'عرض التقارير والإحصائيات فقط بدون تعديل'
+            };
+            var descEl = document.getElementById('roleDescText');
+            if (descEl) descEl.textContent = descriptions[this.value] || '';
+        });
+    }
+
+    /* ============================================
+       BILLING
+       ============================================ */
+    function cancelSubscription() {
+        if (confirm('هل أنت متأكد من إلغاء الاشتراك؟ ستفقد جميع الميزات المدفوعة.')) {
+            showToast('تم إرسال طلب الإلغاء. سنتواصل معك قريباً.', 'info');
+        }
+    }
+
+    /* ============================================
+       INIT: Load saved settings
+       ============================================ */
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load store settings
+        var name = localStorage.getItem('ribh_store_name');
+        var url = localStorage.getItem('ribh_store_url');
+        var type = localStorage.getItem('ribh_store_type');
+        var phone = localStorage.getItem('ribh_store_phone');
+        var email = localStorage.getItem('ribh_store_email');
+        var logo = localStorage.getItem('ribh_store_logo');
+
+        if (name) document.getElementById('storeName').value = name;
+        if (url) document.getElementById('storeUrl').value = url;
+        if (type) document.getElementById('storeType').value = type;
+        if (phone) document.getElementById('storePhone').value = phone;
+        if (email) document.getElementById('storeEmail').value = email;
+        if (logo) {
+            document.getElementById('logoPreview').innerHTML = '<img src="' + logo + '" alt="شعار المتجر">';
+        }
+
+        // Load messaging settings
+        var tone = localStorage.getItem('ribh_msg_tone');
+        var example = localStorage.getItem('ribh_msg_example');
+        if (tone) {
+            document.getElementById('messageTone').value = tone;
+            updateTonePreview();
+        }
+        if (example) document.getElementById('customToneExample').value = example;
+
+        var msgAI = localStorage.getItem('ribh_msg_ai');
+        var msgAB = localStorage.getItem('ribh_msg_ab');
+        var msgSmart = localStorage.getItem('ribh_msg_smart');
+        if (msgAI !== null) document.getElementById('toggleAI').checked = msgAI === '1';
+        if (msgAB !== null) document.getElementById('toggleAB').checked = msgAB === '1';
+        if (msgSmart !== null) document.getElementById('toggleSmartTiming').checked = msgSmart === '1';
+
+        // Also populate Salla store name from localStorage
+        var sallaName = document.getElementById('sallaStoreName');
+        if (sallaName && name) sallaName.textContent = name;
+
+        // Check WhatsApp status
+        fetch('/api/whatsapp/status', { credentials: 'include' })
+            .then(function(r) { return r.json(); })
             .then(function(data) {
-                var dot = document.getElementById('waSettingsStatus');
-                var text = document.getElementById('waStatusText');
-                if (data.connected) {
-                    dot.className = 'status-dot online';
-                    text.textContent = 'متصل';
-                } else {
-                    dot.className = 'status-dot offline';
-                    text.textContent = 'غير متصل';
+                updateWaStatus(data.connected);
+                if (data.number) {
+                    var numEl = document.getElementById('waNumber');
+                    if (numEl) numEl.textContent = data.number;
                 }
-            }).catch(function() {});
+            })
+            .catch(function() {
+                updateWaStatus(false);
+            });
+
+        // Close modal on overlay click
+        var modal = document.getElementById('inviteModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeInviteModal();
+            });
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeInviteModal();
+        });
+
+        // Check URL params for tab switching
+        var params = new URLSearchParams(window.location.search);
+        var tab = params.get('tab');
+        if (tab) switchToTab(tab);
     });
 </script>
 

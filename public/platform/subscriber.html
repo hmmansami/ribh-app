@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل المشترك | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/shared/shell.css">
+</head>
+<body>
+
+<div id="page-content">
+    <!-- Back Link -->
+    <a href="/platform/subscribers.html" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        العودة للمشتركين
+    </a>
+
+    <!-- Customer Header -->
+    <div class="card customer-header-card">
+        <div class="customer-header">
+            <div class="customer-header-right">
+                <div class="customer-avatar-lg" id="customerAvatar">ن</div>
+                <div class="customer-info">
+                    <h1 class="customer-name" id="customerName">نورة الشمري</h1>
+                    <div class="customer-phone" id="customerPhone">+966 50 123 4567</div>
+                    <div class="customer-badges">
+                        <span class="badge badge-success" id="customerSegment">أبطال</span>
+                        <span class="badge badge-info" id="customerSource">متجر إلكتروني</span>
+                        <span class="badge badge-neutral" id="customerSince">مشترك منذ 8 أشهر</span>
+                    </div>
+                </div>
+            </div>
+            <div class="customer-header-actions">
+                <button class="btn btn-primary btn-sm" id="sendMessageBtn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    إرسال رسالة
+                </button>
+                <button class="btn btn-secondary btn-sm" id="editBtn">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    تعديل
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI Row -->
+    <div class="kpi-grid" id="customerKpis">
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                القيمة الإجمالية
+            </div>
+            <div class="kpi-value" id="kpiTotalValue">4,230 ر.س</div>
+            <div class="kpi-change up">↑ 15% عن الشهر الماضي</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                عدد الطلبات
+            </div>
+            <div class="kpi-value" id="kpiOrderCount">8</div>
+            <div class="kpi-change up">+2 هذا الشهر</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                متوسط الطلب
+            </div>
+            <div class="kpi-value" id="kpiAvgOrder">529 ر.س</div>
+            <div class="kpi-change up">أعلى من المتوسط</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                آخر طلب
+            </div>
+            <div class="kpi-value kpi-value-sm" id="kpiLastOrder">قبل 3 أيام</div>
+            <div class="kpi-change" style="color: var(--text-dim);">15 يناير 2026</div>
+        </div>
+    </div>
+
+    <!-- Two Column Layout -->
+    <div class="detail-grid">
+        <!-- LEFT COLUMN -->
+        <div class="detail-col">
+            <!-- RFM Score Card -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">تحليل RFM</h3>
+                        <div class="card-subtitle">تقييم الحداثة والتكرار والقيمة</div>
+                    </div>
+                    <span class="badge badge-success" id="rfmSegmentBadge">أبطال</span>
+                </div>
+                <div class="rfm-scores" id="rfmScores">
+                    <div class="rfm-row">
+                        <div class="rfm-label">
+                            <span class="rfm-label-text">الحداثة (Recency)</span>
+                            <span class="rfm-score-value" id="rfmR">5</span>
+                        </div>
+                        <div class="rfm-bar-wrap">
+                            <div class="rfm-bar rfm-bar-r" id="rfmBarR" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                    <div class="rfm-row">
+                        <div class="rfm-label">
+                            <span class="rfm-label-text">التكرار (Frequency)</span>
+                            <span class="rfm-score-value" id="rfmF">4</span>
+                        </div>
+                        <div class="rfm-bar-wrap">
+                            <div class="rfm-bar rfm-bar-f" id="rfmBarF" style="width: 80%;"></div>
+                        </div>
+                    </div>
+                    <div class="rfm-row">
+                        <div class="rfm-label">
+                            <span class="rfm-label-text">القيمة (Monetary)</span>
+                            <span class="rfm-score-value" id="rfmM">5</span>
+                        </div>
+                        <div class="rfm-bar-wrap">
+                            <div class="rfm-bar rfm-bar-m" id="rfmBarM" style="width: 100%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rfm-summary">
+                    <div class="rfm-total">
+                        <span class="text-dim">النتيجة الإجمالية:</span>
+                        <span class="rfm-total-score" id="rfmTotal">14 / 15</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Predictions Card -->
+            <div class="card ai-card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px; vertical-align: -2px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            تنبؤات الذكاء الاصطناعي
+                        </h3>
+                        <div class="card-subtitle">تحليلات تنبؤية مبنية على سلوك العميل</div>
+                    </div>
+                </div>
+                <div class="ai-predictions" id="aiPredictions">
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-label">القيمة المتوقعة مدى الحياة (CLV)</span>
+                        </div>
+                        <div class="prediction-value" id="predCLV">12,500 ر.س</div>
+                        <div class="prediction-bar-wrap">
+                            <div class="prediction-bar prediction-bar-clv" style="width: 83%;"></div>
+                        </div>
+                    </div>
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-label">احتمال الشراء القادم</span>
+                            <span class="prediction-pct badge badge-success" id="predPurchase">78%</span>
+                        </div>
+                        <div class="prediction-bar-wrap">
+                            <div class="prediction-bar prediction-bar-purchase" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-label">احتمال المغادرة</span>
+                            <span class="prediction-pct badge badge-success" id="predChurn">8%</span>
+                        </div>
+                        <div class="prediction-bar-wrap">
+                            <div class="prediction-bar prediction-bar-churn" style="width: 8%;"></div>
+                        </div>
+                    </div>
+                    <div class="prediction-item">
+                        <div class="prediction-header">
+                            <span class="prediction-label">الطلب القادم المتوقع</span>
+                        </div>
+                        <div class="prediction-value prediction-value-sm" id="predNextOrder">بعد 12 يوم</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags Section -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">العلامات</h3>
+                    <button class="btn btn-ghost btn-sm" id="addTagBtn">+ إضافة</button>
+                </div>
+                <div class="tags-container" id="tagsContainer">
+                    <span class="tag">عميل VIP</span>
+                    <span class="tag">يحب الخصومات</span>
+                    <span class="tag">نشط صباحاً</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="detail-col">
+            <!-- Communication History -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">سجل التواصل</h3>
+                        <div class="card-subtitle">آخر الرسائل المرسلة والمستلمة</div>
+                    </div>
+                </div>
+                <div class="timeline" id="commTimeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-whatsapp">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-channel badge badge-success">واتساب</span>
+                                <span class="timeline-date">قبل 3 ساعات</span>
+                            </div>
+                            <div class="timeline-message">مرحبا نورة! لاحظنا انك تركتي سلة مشترياتك. عندنا عرض خاص 15% خصم اذا أكملتي الطلب اليوم</div>
+                            <div class="timeline-status">
+                                <span class="status-indicator status-read"></span>
+                                مقروءة
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-whatsapp">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-channel badge badge-success">واتساب</span>
+                                <span class="timeline-date">قبل يومين</span>
+                            </div>
+                            <div class="timeline-message">شكراً لطلبك! تم شحن طلبك رقم #1847 وسيصلك خلال 2-3 أيام عمل</div>
+                            <div class="timeline-status">
+                                <span class="status-indicator status-read"></span>
+                                مقروءة
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-sms">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-channel badge badge-info">SMS</span>
+                                <span class="timeline-date">قبل 5 أيام</span>
+                            </div>
+                            <div class="timeline-message">نورة، وصلتنا تشكيلة جديدة! استخدمي كود NOURA10 واحصلي على خصم 10%</div>
+                            <div class="timeline-status">
+                                <span class="status-indicator status-delivered"></span>
+                                تم التوصيل
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-whatsapp">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-channel badge badge-success">واتساب</span>
+                                <span class="timeline-date">قبل أسبوع</span>
+                            </div>
+                            <div class="timeline-message">أهلاً نورة! كيف كانت تجربتك مع آخر طلب؟ نحب نسمع رأيك</div>
+                            <div class="timeline-status">
+                                <span class="status-indicator status-clicked"></span>
+                                تم النقر
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon timeline-email">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <span class="timeline-channel badge badge-neutral">بريد إلكتروني</span>
+                                <span class="timeline-date">قبل أسبوعين</span>
+                            </div>
+                            <div class="timeline-message">عروض نهاية الموسم - خصومات تصل إلى 40% على جميع المنتجات</div>
+                            <div class="timeline-status">
+                                <span class="status-indicator status-delivered"></span>
+                                تم التوصيل
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order History -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">سجل الطلبات</h3>
+                        <div class="card-subtitle">آخر المشتريات</div>
+                    </div>
+                </div>
+                <div class="orders-list" id="ordersList">
+                    <div class="order-item">
+                        <div class="order-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-header">
+                                <span class="order-number">#1847</span>
+                                <span class="order-date">15 يناير 2026</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-amount">780 ر.س</span>
+                                <span class="badge badge-success">تم التوصيل</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-header">
+                                <span class="order-number">#1792</span>
+                                <span class="order-date">28 ديسمبر 2025</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-amount">1,200 ر.س</span>
+                                <span class="badge badge-success">تم التوصيل</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-header">
+                                <span class="order-number">#1685</span>
+                                <span class="order-date">10 ديسمبر 2025</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-amount">450 ر.س</span>
+                                <span class="badge badge-success">تم التوصيل</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-header">
+                                <span class="order-number">#1543</span>
+                                <span class="order-date">15 نوفمبر 2025</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-amount">890 ر.س</span>
+                                <span class="badge badge-success">تم التوصيل</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                        </div>
+                        <div class="order-content">
+                            <div class="order-header">
+                                <span class="order-number">#1401</span>
+                                <span class="order-date">20 أكتوبر 2025</span>
+                            </div>
+                            <div class="order-details">
+                                <span class="order-amount">910 ر.س</span>
+                                <span class="badge badge-success">تم التوصيل</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Message Modal -->
+<div class="modal-overlay" id="messageModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">إرسال رسالة</h3>
+            <button class="modal-close" id="msgModalClose">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <label class="input-label">القناة</label>
+                <select class="input" id="msgChannel">
+                    <option value="whatsapp">واتساب</option>
+                    <option value="sms">SMS</option>
+                    <option value="email">بريد إلكتروني</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="input-label">الرسالة</label>
+                <textarea class="input" id="msgContent" placeholder="اكتب رسالتك هنا..." style="min-height: 120px;"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" id="msgSendBtn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                إرسال
+            </button>
+            <button class="btn btn-ghost" id="msgCancelBtn">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Subscriber Detail Page Styles */
+
+    /* Back Link */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 20px;
+        transition: color 0.15s;
+    }
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    /* Customer Header Card */
+    .customer-header-card {
+        margin-bottom: 24px;
+    }
+
+    .customer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .customer-header-right {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .customer-avatar-lg {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--success-subtle);
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        flex-shrink: 0;
+        border: 2px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .customer-name {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+
+    .customer-phone {
+        font-size: 14px;
+        color: var(--text-dim);
+        direction: ltr;
+        text-align: right;
+        margin-bottom: 10px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .customer-badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .customer-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* KPI small text variant */
+    .kpi-value-sm {
+        font-size: 20px;
+    }
+
+    /* Detail Grid (two columns) */
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 4px;
+    }
+
+    .detail-col {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* RFM Scores */
+    .rfm-scores {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .rfm-row {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .rfm-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .rfm-label-text {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .rfm-score-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        background: var(--bg-elevated);
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-sm);
+    }
+
+    .rfm-bar-wrap {
+        height: 8px;
+        background: var(--bg-elevated);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .rfm-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.6s ease;
+    }
+
+    .rfm-bar-r {
+        background: linear-gradient(90deg, #22C55E, #16A34A);
+    }
+
+    .rfm-bar-f {
+        background: linear-gradient(90deg, #3B82F6, #2563EB);
+    }
+
+    .rfm-bar-m {
+        background: linear-gradient(90deg, #FBBF24, #F59E0B);
+    }
+
+    .rfm-summary {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--border);
+    }
+
+    .rfm-total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+    }
+
+    .rfm-total-score {
+        font-weight: 700;
+        font-size: 16px;
+        color: var(--success);
+    }
+
+    /* AI Predictions Card */
+    .ai-card {
+        border-color: rgba(251, 191, 36, 0.2);
+        position: relative;
+    }
+
+    .ai-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .ai-predictions {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .prediction-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .prediction-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .prediction-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .prediction-pct {
+        font-size: 12px;
+    }
+
+    .prediction-value {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .prediction-value-sm {
+        font-size: 18px;
+    }
+
+    .prediction-bar-wrap {
+        height: 6px;
+        background: var(--bg-elevated);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .prediction-bar {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.6s ease;
+    }
+
+    .prediction-bar-clv {
+        background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    }
+
+    .prediction-bar-purchase {
+        background: linear-gradient(90deg, #22C55E, #16A34A);
+    }
+
+    .prediction-bar-churn {
+        background: linear-gradient(90deg, #EF4444, #DC2626);
+    }
+
+    /* Tags */
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 14px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-secondary);
+        cursor: default;
+        transition: border-color 0.15s;
+    }
+
+    .tag:hover {
+        border-color: var(--border-hover);
+    }
+
+    /* Timeline (Communication History) */
+    .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .timeline-item {
+        display: flex;
+        gap: 14px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .timeline-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .timeline-item:first-child {
+        padding-top: 0;
+    }
+
+    .timeline-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .timeline-whatsapp {
+        background: var(--success-subtle);
+        color: var(--success);
+    }
+
+    .timeline-sms {
+        background: var(--info-subtle);
+        color: var(--info);
+    }
+
+    .timeline-email {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text-dim);
+    }
+
+    .timeline-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .timeline-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+    .timeline-date {
+        font-size: 12px;
+        color: var(--text-faint);
+    }
+
+    .timeline-message {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        margin-bottom: 6px;
+    }
+
+    .timeline-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: var(--text-dim);
+    }
+
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .status-read {
+        background: var(--info);
+    }
+
+    .status-delivered {
+        background: var(--success);
+    }
+
+    .status-clicked {
+        background: var(--primary);
+    }
+
+    .status-failed {
+        background: var(--danger);
+    }
+
+    /* Orders List */
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .order-item {
+        display: flex;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        align-items: flex-start;
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .order-item:first-child {
+        padding-top: 0;
+    }
+
+    .order-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-elevated);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: var(--text-dim);
+    }
+
+    .order-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .order-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+    }
+
+    .order-number {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+        direction: ltr;
+    }
+
+    .order-date {
+        font-size: 12px;
+        color: var(--text-faint);
+    }
+
+    .order-details {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .order-amount {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--primary);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .customer-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .customer-header-right {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .customer-phone {
+            text-align: center;
+        }
+
+        .customer-badges {
+            justify-content: center;
+        }
+
+        .customer-header-actions {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .customer-avatar-lg {
+            width: 64px;
+            height: 64px;
+            font-size: 24px;
+        }
+
+        .customer-name {
+            font-size: 20px;
+        }
+
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script src="/platform/shared/shell.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Sample customer data matching subscribers table
+        var customers = {
+            'sub_001': {
+                name: 'نورة الشمري',
+                initial: 'ن',
+                phone: '+966 50 123 4567',
+                segment: 'champion',
+                segmentLabel: 'أبطال',
+                segmentBadge: 'badge-success',
+                source: 'salla',
+                sourceLabel: 'متجر إلكتروني',
+                sourceBadge: 'badge-info',
+                since: 'مشترك منذ 8 أشهر',
+                avatarBg: 'var(--success-subtle)',
+                avatarColor: 'var(--success)',
+                totalValue: '4,230 ر.س',
+                orderCount: '8',
+                avgOrder: '529 ر.س',
+                lastOrder: 'قبل 3 أيام',
+                lastOrderDate: '15 يناير 2026',
+                rfm: { r: 5, f: 4, m: 5 },
+                clv: '12,500 ر.س',
+                purchaseProb: 78,
+                churnProb: 8,
+                nextOrder: 'بعد 12 يوم',
+                tags: ['عميل VIP', 'يحب الخصومات', 'نشط صباحاً'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل 3 ساعات', text: 'مرحبا نورة! لاحظنا انك تركتي سلة مشترياتك. عندنا عرض خاص 15% خصم اذا أكملتي الطلب اليوم', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'whatsapp', date: 'قبل يومين', text: 'شكراً لطلبك! تم شحن طلبك رقم #1847 وسيصلك خلال 2-3 أيام عمل', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'sms', date: 'قبل 5 أيام', text: 'نورة، وصلتنا تشكيلة جديدة! استخدمي كود NOURA10 واحصلي على خصم 10%', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوع', text: 'أهلاً نورة! كيف كانت تجربتك مع آخر طلب؟ نحب نسمع رأيك', status: 'clicked', statusLabel: 'تم النقر' },
+                    { channel: 'email', date: 'قبل أسبوعين', text: 'عروض نهاية الموسم - خصومات تصل إلى 40% على جميع المنتجات', status: 'delivered', statusLabel: 'تم التوصيل' }
+                ],
+                orders: [
+                    { number: '#1847', date: '15 يناير 2026', amount: '780 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1792', date: '28 ديسمبر 2025', amount: '1,200 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1685', date: '10 ديسمبر 2025', amount: '450 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1543', date: '15 نوفمبر 2025', amount: '890 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1401', date: '20 أكتوبر 2025', amount: '910 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_002': {
+                name: 'أحمد العتيبي',
+                initial: 'أ',
+                phone: '+966 55 234 5678',
+                segment: 'loyal',
+                segmentLabel: 'أوفياء',
+                segmentBadge: 'badge-info',
+                source: 'salla',
+                sourceLabel: 'متجر إلكتروني',
+                sourceBadge: 'badge-info',
+                since: 'مشترك منذ 6 أشهر',
+                avatarBg: 'var(--info-subtle)',
+                avatarColor: 'var(--info)',
+                totalValue: '2,870 ر.س',
+                orderCount: '5',
+                avgOrder: '574 ر.س',
+                lastOrder: 'قبل 5 ساعات',
+                lastOrderDate: '18 يناير 2026',
+                rfm: { r: 5, f: 3, m: 4 },
+                clv: '8,200 ر.س',
+                purchaseProb: 65,
+                churnProb: 12,
+                nextOrder: 'بعد 8 أيام',
+                tags: ['عميل وفي', 'يفضل الدفع عند الاستلام'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل 5 ساعات', text: 'أحمد، طلبك #1850 تم تأكيده! شكراً لاختيارك متجرنا', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'sms', date: 'قبل 3 أيام', text: 'خصم 20% على جميع الإلكترونيات. الكود: TECH20', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوع', text: 'مرحبا أحمد! وصلت منتجات جديدة نحسبها تعجبك', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'whatsapp', date: 'قبل 10 أيام', text: 'تم توصيل طلبك #1802. نتمنى يعجبك!', status: 'clicked', statusLabel: 'تم النقر' },
+                    { channel: 'email', date: 'قبل أسبوعين', text: 'ملخص مشترياتك الشهري - شكراً لثقتك بنا', status: 'delivered', statusLabel: 'تم التوصيل' }
+                ],
+                orders: [
+                    { number: '#1850', date: '18 يناير 2026', amount: '620 ر.س', status: 'قيد التوصيل', statusBadge: 'badge-warning' },
+                    { number: '#1802', date: '5 يناير 2026', amount: '450 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1690', date: '12 ديسمبر 2025', amount: '780 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1550', date: '18 نوفمبر 2025', amount: '520 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1420', date: '25 أكتوبر 2025', amount: '500 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_003': {
+                name: 'سارة القحطاني',
+                initial: 'س',
+                phone: '+966 54 345 6789',
+                segment: 'potential',
+                segmentLabel: 'محتملين',
+                segmentBadge: 'badge-primary',
+                source: 'qr_physical',
+                sourceLabel: 'QR محل',
+                sourceBadge: 'badge-primary',
+                since: 'مشترك منذ 3 أشهر',
+                avatarBg: 'var(--primary-subtle)',
+                avatarColor: 'var(--primary)',
+                totalValue: '950 ر.س',
+                orderCount: '2',
+                avgOrder: '475 ر.س',
+                lastOrder: 'قبل يوم',
+                lastOrderDate: '17 يناير 2026',
+                rfm: { r: 4, f: 2, m: 3 },
+                clv: '5,800 ر.س',
+                purchaseProb: 52,
+                churnProb: 22,
+                nextOrder: 'بعد 20 يوم',
+                tags: ['عميل جديد', 'من المحل'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل يوم', text: 'سارة، شكراً لزيارتك! عندنا عرض حصري لعملاء المحل', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'sms', date: 'قبل 4 أيام', text: 'مرحبا سارة! خصم 10% على طلبك القادم. الكود: SARA10', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوع', text: 'أهلاً سارة! كيف كانت تجربة الشراء من محلنا؟', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوعين', text: 'مرحبا! شكراً لتسجيلك عبر QR المحل. تابعي عروضنا الحصرية', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'email', date: 'قبل 3 أسابيع', text: 'مرحبا بك في متجرنا - اكتشفي أحدث المنتجات', status: 'delivered', statusLabel: 'تم التوصيل' }
+                ],
+                orders: [
+                    { number: '#1840', date: '17 يناير 2026', amount: '550 ر.س', status: 'قيد التوصيل', statusBadge: 'badge-warning' },
+                    { number: '#1720', date: '20 ديسمبر 2025', amount: '400 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_004': {
+                name: 'محمد الدوسري',
+                initial: 'م',
+                phone: '+966 56 456 7890',
+                segment: 'champion',
+                segmentLabel: 'أبطال',
+                segmentBadge: 'badge-success',
+                source: 'salla',
+                sourceLabel: 'متجر إلكتروني',
+                sourceBadge: 'badge-info',
+                since: 'مشترك منذ سنة',
+                avatarBg: 'var(--success-subtle)',
+                avatarColor: 'var(--success)',
+                totalValue: '6,120 ر.س',
+                orderCount: '12',
+                avgOrder: '510 ر.س',
+                lastOrder: 'قبل ساعتين',
+                lastOrderDate: '18 يناير 2026',
+                rfm: { r: 5, f: 5, m: 5 },
+                clv: '18,000 ر.س',
+                purchaseProb: 92,
+                churnProb: 3,
+                nextOrder: 'بعد 5 أيام',
+                tags: ['عميل VIP', 'مشتري متكرر', 'يحب العروض الحصرية'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل ساعتين', text: 'محمد، طلبك #1855 جاهز للشحن! متوقع يوصلك بكرة', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'whatsapp', date: 'قبل يوم', text: 'شكراً محمد! أنت من أفضل عملائنا. عندك خصم VIP دائم 15%', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'sms', date: 'قبل 3 أيام', text: 'محمد، تشكيلة حصرية لعملاء VIP متاحة الآن!', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل 5 أيام', text: 'تم توصيل طلبك #1830. نتمنى يعجبك!', status: 'clicked', statusLabel: 'تم النقر' },
+                    { channel: 'email', date: 'قبل أسبوع', text: 'تقرير مشترياتك - أنت ضمن أفضل 5% من عملائنا!', status: 'read', statusLabel: 'مقروءة' }
+                ],
+                orders: [
+                    { number: '#1855', date: '18 يناير 2026', amount: '750 ر.س', status: 'قيد التوصيل', statusBadge: 'badge-warning' },
+                    { number: '#1830', date: '12 يناير 2026', amount: '520 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1780', date: '1 يناير 2026', amount: '680 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1700', date: '15 ديسمبر 2025', amount: '430 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1620', date: '28 نوفمبر 2025', amount: '590 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_005': {
+                name: 'خالد المالكي',
+                initial: 'خ',
+                phone: '+966 53 567 8901',
+                segment: 'at_risk',
+                segmentLabel: 'معرضين للخسارة',
+                segmentBadge: 'badge-warning',
+                source: 'social',
+                sourceLabel: 'سوشال ميديا',
+                sourceBadge: 'badge-neutral',
+                since: 'مشترك منذ 10 أشهر',
+                avatarBg: 'var(--warning-subtle)',
+                avatarColor: 'var(--warning)',
+                totalValue: '1,340 ر.س',
+                orderCount: '3',
+                avgOrder: '447 ر.س',
+                lastOrder: 'قبل 15 يوم',
+                lastOrderDate: '3 يناير 2026',
+                rfm: { r: 2, f: 2, m: 2 },
+                clv: '3,500 ر.س',
+                purchaseProb: 28,
+                churnProb: 58,
+                nextOrder: 'بعد 30 يوم',
+                tags: ['معرض للمغادرة', 'يحتاج تنشيط'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل 3 أيام', text: 'خالد، وحشتنا! عندنا عرض خاص 25% لأنك من عملائنا المميزين', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'sms', date: 'قبل أسبوع', text: 'خالد، خصم 20% ينتظرك! الكود: KHALID20', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوعين', text: 'وصلتنا منتجات جديدة نحسبها تعجبك يا خالد', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'email', date: 'قبل 3 أسابيع', text: 'عروض حصرية لك - لا تفوتها!', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل شهر', text: 'شكراً لطلبك خالد! نتمنى تعجبك المنتجات', status: 'read', statusLabel: 'مقروءة' }
+                ],
+                orders: [
+                    { number: '#1750', date: '3 يناير 2026', amount: '380 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1580', date: '20 نوفمبر 2025', amount: '520 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1350', date: '15 سبتمبر 2025', amount: '440 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_006': {
+                name: 'فاطمة الحربي',
+                initial: 'ف',
+                phone: '+966 58 678 9012',
+                segment: 'loyal',
+                segmentLabel: 'أوفياء',
+                segmentBadge: 'badge-info',
+                source: 'qr_physical',
+                sourceLabel: 'QR محل',
+                sourceBadge: 'badge-primary',
+                since: 'مشترك منذ 5 أشهر',
+                avatarBg: 'var(--info-subtle)',
+                avatarColor: 'var(--info)',
+                totalValue: '3,560 ر.س',
+                orderCount: '6',
+                avgOrder: '593 ر.س',
+                lastOrder: 'قبل يومين',
+                lastOrderDate: '16 يناير 2026',
+                rfm: { r: 4, f: 4, m: 4 },
+                clv: '10,200 ر.س',
+                purchaseProb: 70,
+                churnProb: 10,
+                nextOrder: 'بعد 10 أيام',
+                tags: ['عميلة وفية', 'من المحل', 'تحب الجودة'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل يومين', text: 'فاطمة، طلبك #1842 وصل المستودع وجاهز للشحن', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'whatsapp', date: 'قبل 4 أيام', text: 'وصلتنا تشكيلة راقية تناسب ذوقك! تعالي شوفيها', status: 'clicked', statusLabel: 'تم النقر' },
+                    { channel: 'sms', date: 'قبل أسبوع', text: 'فاطمة، عميلاتنا المميزات يحصلون على خصم 15%', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل أسبوعين', text: 'شكراً فاطمة على تقييمك الرائع! يسعدنا رضاك', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'email', date: 'قبل 3 أسابيع', text: 'منتجاتنا الأكثر مبيعاً هذا الشهر', status: 'delivered', statusLabel: 'تم التوصيل' }
+                ],
+                orders: [
+                    { number: '#1842', date: '16 يناير 2026', amount: '680 ر.س', status: 'قيد التوصيل', statusBadge: 'badge-warning' },
+                    { number: '#1775', date: '28 ديسمبر 2025', amount: '520 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1660', date: '8 ديسمبر 2025', amount: '750 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1520', date: '12 نوفمبر 2025', amount: '480 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1390', date: '10 أكتوبر 2025', amount: '630 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_007': {
+                name: 'عبدالله السبيعي',
+                initial: 'ع',
+                phone: '+966 59 789 0123',
+                segment: 'dormant',
+                segmentLabel: 'غائبين',
+                segmentBadge: 'badge-danger',
+                source: 'import',
+                sourceLabel: 'استيراد',
+                sourceBadge: 'badge-neutral',
+                since: 'مشترك منذ سنة',
+                avatarBg: 'var(--danger-subtle)',
+                avatarColor: 'var(--danger)',
+                totalValue: '780 ر.س',
+                orderCount: '2',
+                avgOrder: '390 ر.س',
+                lastOrder: 'قبل 45 يوم',
+                lastOrderDate: '3 ديسمبر 2025',
+                rfm: { r: 1, f: 1, m: 2 },
+                clv: '1,500 ر.س',
+                purchaseProb: 12,
+                churnProb: 82,
+                nextOrder: 'غير متوقع',
+                tags: ['غائب', 'يحتاج إعادة تنشيط'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل أسبوع', text: 'عبدالله، وحشتنا! عندنا عرض استثنائي 30% على كل شيء', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'sms', date: 'قبل أسبوعين', text: 'عبدالله، خصم 25% ينتظرك! لا تفوت الفرصة', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل 3 أسابيع', text: 'فاتتك عروض كثيرة يا عبدالله! تعال شوف الجديد', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'email', date: 'قبل شهر', text: 'نشتاقلك! عروض حصرية بانتظارك', status: 'delivered', statusLabel: 'تم التوصيل' },
+                    { channel: 'whatsapp', date: 'قبل 40 يوم', text: 'شكراً عبدالله على طلبك! نتمنى يعجبك', status: 'read', statusLabel: 'مقروءة' }
+                ],
+                orders: [
+                    { number: '#1610', date: '3 ديسمبر 2025', amount: '430 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' },
+                    { number: '#1300', date: '15 أغسطس 2025', amount: '350 ر.س', status: 'تم التوصيل', statusBadge: 'badge-success' }
+                ]
+            },
+            'sub_008': {
+                name: 'ريم الغامدي',
+                initial: 'ر',
+                phone: '+966 51 890 1234',
+                segment: 'recent',
+                segmentLabel: 'جدد',
+                segmentBadge: 'badge-info',
+                source: 'social',
+                sourceLabel: 'سوشال ميديا',
+                sourceBadge: 'badge-neutral',
+                since: 'مشترك منذ أسبوع',
+                avatarBg: 'var(--info-subtle)',
+                avatarColor: 'var(--info)',
+                totalValue: '290 ر.س',
+                orderCount: '1',
+                avgOrder: '290 ر.س',
+                lastOrder: 'قبل ساعة',
+                lastOrderDate: '18 يناير 2026',
+                rfm: { r: 5, f: 1, m: 1 },
+                clv: '4,200 ر.س',
+                purchaseProb: 45,
+                churnProb: 30,
+                nextOrder: 'بعد 25 يوم',
+                tags: ['عميل جديد', 'من انستقرام'],
+                messages: [
+                    { channel: 'whatsapp', date: 'قبل ساعة', text: 'مرحبا ريم! شكراً لأول طلب عندنا. نتمنى يعجبك!', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'whatsapp', date: 'قبل 3 ساعات', text: 'أهلاً ريم! مرحبا بك في متجرنا. عندك خصم 10% على طلبك القادم', status: 'read', statusLabel: 'مقروءة' },
+                    { channel: 'sms', date: 'قبل يوم', text: 'مرحبا ريم! شكراً لتسجيلك. تابعينا للحصول على عروض حصرية', status: 'delivered', statusLabel: 'تم التوصيل' }
+                ],
+                orders: [
+                    { number: '#1860', date: '18 يناير 2026', amount: '290 ر.س', status: 'قيد التجهيز', statusBadge: 'badge-warning' }
+                ]
+            }
+        };
+
+        // Read ID from URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var customerId = urlParams.get('id') || 'sub_001';
+        var customer = customers[customerId] || customers['sub_001'];
+
+        // Update page title
+        document.title = customer.name + ' | رِبح';
+
+        // Update customer header
+        var avatarEl = document.getElementById('customerAvatar');
+        if (avatarEl) {
+            avatarEl.textContent = customer.initial;
+            avatarEl.style.background = customer.avatarBg;
+            avatarEl.style.color = customer.avatarColor;
+            avatarEl.style.borderColor = customer.avatarColor.replace(')', ', 0.2)').replace('var(', 'rgba(').replace('--success', '34, 197, 94').replace('--info', '59, 130, 246').replace('--primary', '251, 191, 36').replace('--warning', '245, 158, 11').replace('--danger', '239, 68, 68');
+        }
+
+        var nameEl = document.getElementById('customerName');
+        if (nameEl) nameEl.textContent = customer.name;
+
+        var phoneEl = document.getElementById('customerPhone');
+        if (phoneEl) phoneEl.textContent = customer.phone;
+
+        var segmentEl = document.getElementById('customerSegment');
+        if (segmentEl) {
+            segmentEl.textContent = customer.segmentLabel;
+            segmentEl.className = 'badge ' + customer.segmentBadge;
+        }
+
+        var sourceEl = document.getElementById('customerSource');
+        if (sourceEl) {
+            sourceEl.textContent = customer.sourceLabel;
+            sourceEl.className = 'badge ' + customer.sourceBadge;
+        }
+
+        var sinceEl = document.getElementById('customerSince');
+        if (sinceEl) sinceEl.textContent = customer.since;
+
+        // Update KPIs
+        var totalValueEl = document.getElementById('kpiTotalValue');
+        if (totalValueEl) totalValueEl.textContent = customer.totalValue;
+
+        var orderCountEl = document.getElementById('kpiOrderCount');
+        if (orderCountEl) orderCountEl.textContent = customer.orderCount;
+
+        var avgOrderEl = document.getElementById('kpiAvgOrder');
+        if (avgOrderEl) avgOrderEl.textContent = customer.avgOrder;
+
+        var lastOrderEl = document.getElementById('kpiLastOrder');
+        if (lastOrderEl) lastOrderEl.textContent = customer.lastOrder;
+
+        // Update RFM scores
+        var rfm = customer.rfm;
+        var rfmREl = document.getElementById('rfmR');
+        var rfmFEl = document.getElementById('rfmF');
+        var rfmMEl = document.getElementById('rfmM');
+        if (rfmREl) rfmREl.textContent = rfm.r;
+        if (rfmFEl) rfmFEl.textContent = rfm.f;
+        if (rfmMEl) rfmMEl.textContent = rfm.m;
+
+        var rfmBarR = document.getElementById('rfmBarR');
+        var rfmBarF = document.getElementById('rfmBarF');
+        var rfmBarM = document.getElementById('rfmBarM');
+        if (rfmBarR) rfmBarR.style.width = (rfm.r * 20) + '%';
+        if (rfmBarF) rfmBarF.style.width = (rfm.f * 20) + '%';
+        if (rfmBarM) rfmBarM.style.width = (rfm.m * 20) + '%';
+
+        var rfmTotalEl = document.getElementById('rfmTotal');
+        if (rfmTotalEl) rfmTotalEl.textContent = (rfm.r + rfm.f + rfm.m) + ' / 15';
+
+        var rfmSegBadge = document.getElementById('rfmSegmentBadge');
+        if (rfmSegBadge) {
+            rfmSegBadge.textContent = customer.segmentLabel;
+            rfmSegBadge.className = 'badge ' + customer.segmentBadge;
+        }
+
+        // Determine RFM total color
+        var rfmTotalScore = rfm.r + rfm.f + rfm.m;
+        if (rfmTotalEl) {
+            if (rfmTotalScore >= 12) rfmTotalEl.style.color = 'var(--success)';
+            else if (rfmTotalScore >= 8) rfmTotalEl.style.color = 'var(--info)';
+            else if (rfmTotalScore >= 5) rfmTotalEl.style.color = 'var(--warning)';
+            else rfmTotalEl.style.color = 'var(--danger)';
+        }
+
+        // Update AI predictions
+        var predCLVEl = document.getElementById('predCLV');
+        if (predCLVEl) predCLVEl.textContent = customer.clv;
+
+        var predPurchaseEl = document.getElementById('predPurchase');
+        if (predPurchaseEl) {
+            predPurchaseEl.textContent = customer.purchaseProb + '%';
+            if (customer.purchaseProb >= 60) predPurchaseEl.className = 'prediction-pct badge badge-success';
+            else if (customer.purchaseProb >= 30) predPurchaseEl.className = 'prediction-pct badge badge-warning';
+            else predPurchaseEl.className = 'prediction-pct badge badge-danger';
+        }
+
+        var predChurnEl = document.getElementById('predChurn');
+        if (predChurnEl) {
+            predChurnEl.textContent = customer.churnProb + '%';
+            if (customer.churnProb <= 15) predChurnEl.className = 'prediction-pct badge badge-success';
+            else if (customer.churnProb <= 40) predChurnEl.className = 'prediction-pct badge badge-warning';
+            else predChurnEl.className = 'prediction-pct badge badge-danger';
+        }
+
+        var predNextEl = document.getElementById('predNextOrder');
+        if (predNextEl) predNextEl.textContent = customer.nextOrder;
+
+        // Update prediction bars
+        var purchaseBar = document.querySelector('.prediction-bar-purchase');
+        if (purchaseBar) purchaseBar.style.width = customer.purchaseProb + '%';
+
+        var churnBar = document.querySelector('.prediction-bar-churn');
+        if (churnBar) churnBar.style.width = customer.churnProb + '%';
+
+        // CLV bar (relative to 20,000 max)
+        var clvBar = document.querySelector('.prediction-bar-clv');
+        if (clvBar) {
+            var clvNum = parseInt(customer.clv.replace(/[^\d]/g, ''));
+            clvBar.style.width = Math.min(100, (clvNum / 20000) * 100) + '%';
+        }
+
+        // Update tags
+        var tagsContainer = document.getElementById('tagsContainer');
+        if (tagsContainer && customer.tags) {
+            tagsContainer.innerHTML = '';
+            customer.tags.forEach(function(tag) {
+                var tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.textContent = tag;
+                tagsContainer.appendChild(tagEl);
+            });
+        }
+
+        // Update communication timeline
+        var commTimeline = document.getElementById('commTimeline');
+        if (commTimeline && customer.messages) {
+            commTimeline.innerHTML = '';
+            customer.messages.forEach(function(msg) {
+                var channelClass = 'timeline-whatsapp';
+                var channelLabel = 'واتساب';
+                var channelBadge = 'badge-success';
+                var channelIcon = '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>';
+
+                if (msg.channel === 'sms') {
+                    channelClass = 'timeline-sms';
+                    channelLabel = 'SMS';
+                    channelBadge = 'badge-info';
+                    channelIcon = '<path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>';
+                } else if (msg.channel === 'email') {
+                    channelClass = 'timeline-email';
+                    channelLabel = 'بريد إلكتروني';
+                    channelBadge = 'badge-neutral';
+                    channelIcon = '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>';
+                }
+
+                var item = document.createElement('div');
+                item.className = 'timeline-item';
+                item.innerHTML = '<div class="timeline-icon ' + channelClass + '"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + channelIcon + '</svg></div>' +
+                    '<div class="timeline-content">' +
+                        '<div class="timeline-header">' +
+                            '<span class="timeline-channel badge ' + channelBadge + '">' + channelLabel + '</span>' +
+                            '<span class="timeline-date">' + msg.date + '</span>' +
+                        '</div>' +
+                        '<div class="timeline-message">' + msg.text + '</div>' +
+                        '<div class="timeline-status">' +
+                            '<span class="status-indicator status-' + msg.status + '"></span>' +
+                            msg.statusLabel +
+                        '</div>' +
+                    '</div>';
+                commTimeline.appendChild(item);
+            });
+        }
+
+        // Update orders list
+        var ordersList = document.getElementById('ordersList');
+        if (ordersList && customer.orders) {
+            ordersList.innerHTML = '';
+            customer.orders.forEach(function(order) {
+                var item = document.createElement('div');
+                item.className = 'order-item';
+                item.innerHTML = '<div class="order-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>' +
+                    '<div class="order-content">' +
+                        '<div class="order-header">' +
+                            '<span class="order-number">' + order.number + '</span>' +
+                            '<span class="order-date">' + order.date + '</span>' +
+                        '</div>' +
+                        '<div class="order-details">' +
+                            '<span class="order-amount">' + order.amount + '</span>' +
+                            '<span class="badge ' + order.statusBadge + '">' + order.status + '</span>' +
+                        '</div>' +
+                    '</div>';
+                ordersList.appendChild(item);
+            });
+        }
+
+        // Send Message Modal
+        var messageModal = document.getElementById('messageModal');
+        var sendMsgBtn = document.getElementById('sendMessageBtn');
+        var msgCloseBtn = document.getElementById('msgModalClose');
+        var msgCancelBtn = document.getElementById('msgCancelBtn');
+        var msgSendBtn = document.getElementById('msgSendBtn');
+
+        function openMsgModal() {
+            if (messageModal) messageModal.classList.add('open');
+        }
+
+        function closeMsgModal() {
+            if (messageModal) messageModal.classList.remove('open');
+            var contentField = document.getElementById('msgContent');
+            if (contentField) contentField.value = '';
+        }
+
+        if (sendMsgBtn) sendMsgBtn.addEventListener('click', openMsgModal);
+        if (msgCloseBtn) msgCloseBtn.addEventListener('click', closeMsgModal);
+        if (msgCancelBtn) msgCancelBtn.addEventListener('click', closeMsgModal);
+
+        if (messageModal) {
+            messageModal.addEventListener('click', function(e) {
+                if (e.target === messageModal) closeMsgModal();
+            });
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeMsgModal();
+        });
+
+        if (msgSendBtn) {
+            msgSendBtn.addEventListener('click', function() {
+                var content = document.getElementById('msgContent').value.trim();
+                if (!content) {
+                    alert('يرجى كتابة الرسالة');
+                    return;
+                }
+                msgSendBtn.textContent = 'تم الإرسال بنجاح';
+                msgSendBtn.style.background = 'var(--success)';
+                setTimeout(function() {
+                    closeMsgModal();
+                    msgSendBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg> إرسال';
+                    msgSendBtn.style.background = '';
+                }, 1500);
+            });
+        }
+
+        // Add Tag (demo)
+        var addTagBtn = document.getElementById('addTagBtn');
+        if (addTagBtn) {
+            addTagBtn.addEventListener('click', function() {
+                var tagName = prompt('أدخل اسم العلامة الجديدة:');
+                if (tagName && tagName.trim()) {
+                    var tagEl = document.createElement('span');
+                    tagEl.className = 'tag';
+                    tagEl.textContent = tagName.trim();
+                    var container = document.getElementById('tagsContainer');
+                    if (container) container.appendChild(tagEl);
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

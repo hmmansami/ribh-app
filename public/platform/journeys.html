@@ -16,31 +16,73 @@
             <h1 class="page-title">الرحلات</h1>
             <p class="page-subtitle">رحلات عملاء تلقائية — من الاشتراك للولاء</p>
         </div>
-        <button class="btn btn-primary" onclick="showCreateModal()">+ رحلة جديدة</button>
+        <button class="btn btn-primary" onclick="openCreateModal()">+ رحلة جديدة</button>
+    </div>
+
+    <!-- KPI Summary Row -->
+    <div class="kpi-row">
+        <div class="kpi-item">
+            <div class="kpi-item-icon" style="background: var(--success-subtle); color: var(--success);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="kpi-item-data">
+                <span class="kpi-item-value" id="kpiActive">3</span>
+                <span class="kpi-item-label">رحلات نشطة</span>
+            </div>
+        </div>
+        <div class="kpi-divider"></div>
+        <div class="kpi-item">
+            <div class="kpi-item-icon" style="background: var(--info-subtle); color: var(--info);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div class="kpi-item-data">
+                <span class="kpi-item-value">24</span>
+                <span class="kpi-item-label">رسائل مرسلة اليوم</span>
+            </div>
+        </div>
+        <div class="kpi-divider"></div>
+        <div class="kpi-item">
+            <div class="kpi-item-icon" style="background: var(--primary-subtle); color: var(--primary);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </div>
+            <div class="kpi-item-data">
+                <span class="kpi-item-value">26%</span>
+                <span class="kpi-item-label">معدل الاسترداد الإجمالي</span>
+            </div>
+        </div>
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" data-filter="all">الكل <span class="text-dim">(7)</span></button>
-        <button class="tab" data-filter="active">نشط <span class="text-dim">(3)</span></button>
-        <button class="tab" data-filter="draft">مسودة <span class="text-dim">(4)</span></button>
+        <button class="tab active" data-filter="all">الكل <span class="tab-count" id="countAll">(7)</span></button>
+        <button class="tab" data-filter="active">نشط <span class="tab-count" id="countActive">(3)</span></button>
+        <button class="tab" data-filter="draft">مسودة <span class="tab-count" id="countDraft">(4)</span></button>
     </div>
 
     <!-- Journeys Grid -->
     <div class="journeys-grid" id="journeysGrid">
+
         <!-- Cart Recovery -->
-        <div class="journey-card" data-status="active" data-type="cart_recovery">
+        <div class="journey-card" data-status="active" data-type="cart_recovery" data-name="استرداد السلات المتروكة">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--warning-subtle); color: var(--warning);">🛒</div>
-                <span class="badge badge-success">نشط</span>
+                <div class="journey-card-icon" style="background: var(--warning-subtle); color: var(--warning);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="handleToggle(this, 'cart_recovery')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-success toggle-badge">نشط</span>
+                </div>
             </div>
             <h3 class="journey-card-title">استرداد السلات المتروكة</h3>
             <p class="journey-card-desc">رسائل تلقائية للعملاء اللي تركوا سلاتهم — خصومات تدريجية عبر واتساب + SMS</p>
             <div class="journey-card-steps">
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
                 <span class="text-sm text-dim">3 خطوات</span>
             </div>
@@ -59,24 +101,38 @@
                 </div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('cart_recovery')">تعديل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                    <span class="channel-tag">SMS</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('cart_recovery')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('cart_recovery')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Welcome -->
-        <div class="journey-card" data-status="active" data-type="welcome">
+        <div class="journey-card" data-status="active" data-type="welcome" data-name="رحلة الترحيب">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--info-subtle); color: var(--info);">👋</div>
-                <span class="badge badge-success">نشط</span>
+                <div class="journey-card-icon" style="background: var(--info-subtle); color: var(--info);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="handleToggle(this, 'welcome')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-success toggle-badge">نشط</span>
+                </div>
             </div>
             <h3 class="journey-card-title">رحلة الترحيب</h3>
             <p class="journey-card-desc">ترحيب بالمشتركين الجدد — هدية ترحيبية وتعريف بالمتجر</p>
             <div class="journey-card-steps">
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
                 <span class="text-sm text-dim">3 خطوات</span>
             </div>
@@ -95,24 +151,38 @@
                 </div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('welcome')">تعديل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                    <span class="channel-tag">SMS</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('welcome')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('welcome')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Post Purchase -->
-        <div class="journey-card" data-status="active" data-type="post_purchase">
+        <div class="journey-card" data-status="active" data-type="post_purchase" data-name="متابعة بعد الشراء">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--success-subtle); color: var(--success);">📦</div>
-                <span class="badge badge-success">نشط</span>
+                <div class="journey-card-icon" style="background: var(--success-subtle); color: var(--success);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" checked onchange="handleToggle(this, 'post_purchase')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-success toggle-badge">نشط</span>
+                </div>
             </div>
             <h3 class="journey-card-title">متابعة بعد الشراء</h3>
             <p class="journey-card-desc">شكر العميل + طلب تقييم + توصية منتجات مشابهة</p>
             <div class="journey-card-steps">
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
-                <div class="step-line"></div>
+                <div class="step-line active"></div>
                 <div class="step-dot active"></div>
                 <span class="text-sm text-dim">3 خطوات</span>
             </div>
@@ -131,16 +201,29 @@
                 </div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('post_purchase')">تعديل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('post_purchase')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('post_purchase')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Winback -->
-        <div class="journey-card" data-status="draft" data-type="winback">
+        <div class="journey-card" data-status="draft" data-type="winback" data-name="استرجاع الغائبين">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--danger-subtle); color: var(--danger);">💔</div>
-                <span class="badge badge-warning">مسودة</span>
+                <div class="journey-card-icon" style="background: var(--danger-subtle); color: var(--danger);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" onchange="handleToggle(this, 'winback')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-neutral toggle-badge">متوقف</span>
+                </div>
             </div>
             <h3 class="journey-card-title">استرجاع الغائبين</h3>
             <p class="journey-card-desc">عملاء ما اشتروا من 30+ يوم — عروض متدرجة لإرجاعهم</p>
@@ -153,24 +236,38 @@
                 <span class="text-sm text-dim">3 خطوات</span>
             </div>
             <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">استرداد</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">استرداد</div></div>
                 <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">تحويل</div></div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('winback')">تفعيل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                    <span class="channel-tag">SMS</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('winback')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('winback')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Birthday -->
-        <div class="journey-card" data-status="draft" data-type="birthday">
+        <div class="journey-card" data-status="draft" data-type="birthday" data-name="تهنئة عيد ميلاد">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--primary-subtle); color: var(--primary);">🎂</div>
-                <span class="badge badge-warning">مسودة</span>
+                <div class="journey-card-icon" style="background: var(--primary-subtle); color: var(--primary);">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" onchange="handleToggle(this, 'birthday')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-neutral toggle-badge">متوقف</span>
+                </div>
             </div>
             <h3 class="journey-card-title">تهنئة عيد ميلاد</h3>
-            <p class="journey-card-desc">هدية خصم لعيد ميلاد العميل — تُرسل تلقائياً</p>
+            <p class="journey-card-desc">هدية خصم لعيد ميلاد العميل — تُرسل تلقائيا</p>
             <div class="journey-card-steps">
                 <div class="step-dot"></div>
                 <div class="step-line"></div>
@@ -178,21 +275,35 @@
                 <span class="text-sm text-dim">2 خطوات</span>
             </div>
             <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">استرداد</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">استرداد</div></div>
                 <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">تحويل</div></div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('birthday')">تفعيل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                    <span class="channel-tag">SMS</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('birthday')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('birthday')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Browse Abandonment -->
-        <div class="journey-card" data-status="draft" data-type="browse_abandonment">
+        <div class="journey-card" data-status="draft" data-type="browse_abandonment" data-name="متابعة التصفح">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">👁️</div>
-                <span class="badge badge-warning">مسودة</span>
+                <div class="journey-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle">
+                        <input type="checkbox" onchange="handleToggle(this, 'browse_abandonment')">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-neutral toggle-badge">متوقف</span>
+                </div>
             </div>
             <h3 class="journey-card-title">متابعة التصفح</h3>
             <p class="journey-card-desc">عميل تصفح منتج بدون ما يضيفه للسلة — تذكير ذكي</p>
@@ -203,21 +314,34 @@
                 <span class="text-sm text-dim">2 خطوات</span>
             </div>
             <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">تحويل</div></div>
                 <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">نقر</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">نقر</div></div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('browse_abandonment')">تفعيل</button>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                </div>
+                <div class="footer-actions">
+                    <a href="javascript:void(0)" class="footer-link" onclick="viewReport('browse_abandonment')">عرض التقرير</a>
+                    <button class="btn btn-ghost btn-sm" onclick="editJourney('browse_abandonment')">تعديل الخطوات</button>
+                </div>
             </div>
         </div>
 
         <!-- Back in Stock -->
-        <div class="journey-card" data-status="draft" data-type="back_in_stock">
+        <div class="journey-card" data-status="draft" data-type="back_in_stock" data-name="تنبيه عودة المنتج">
             <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: rgba(34, 211, 238, 0.1); color: #22D3EE;">📢</div>
-                <span class="badge badge-neutral">قريباً</span>
+                <div class="journey-card-icon" style="background: rgba(34, 211, 238, 0.1); color: #22D3EE;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </div>
+                <div class="toggle-group">
+                    <label class="toggle toggle-disabled">
+                        <input type="checkbox" disabled>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="badge badge-neutral toggle-badge">قريبا</span>
+                </div>
             </div>
             <h3 class="journey-card-title">تنبيه عودة المنتج</h3>
             <p class="journey-card-desc">منتج رجع بالمخزون — إشعار فوري للعملاء المهتمين</p>
@@ -226,19 +350,148 @@
                 <span class="text-sm text-dim">خطوة واحدة</span>
             </div>
             <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">--</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">--</div></div>
+                <div class="metric"><div class="metric-value">--</div><div class="metric-label">--</div></div>
             </div>
             <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <span class="text-sm text-dim">قريباً</span>
+                <div class="footer-channels">
+                    <span class="channel-tag">واتساب</span>
+                </div>
+                <div class="footer-actions">
+                    <span class="text-sm text-dim">قريبا</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Create Journey Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal" style="max-width: 620px;">
+        <div class="modal-header">
+            <h2 class="modal-title">رحلة جديدة</h2>
+            <button class="modal-close" onclick="closeCreateModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="text-sm text-dim mb-16">اختر نوع الرحلة اللي تبي تنشئها</p>
+            <div class="create-types-grid">
+                <div class="create-type-card" onclick="selectJourneyType('cart_recovery')">
+                    <div class="create-type-icon" style="background: var(--warning-subtle); color: var(--warning);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    </div>
+                    <h4 class="create-type-name">استرداد سلات</h4>
+                    <p class="create-type-desc">استرداد السلات المتروكة بخصومات تدريجية</p>
+                </div>
+                <div class="create-type-card" onclick="selectJourneyType('welcome')">
+                    <div class="create-type-icon" style="background: var(--info-subtle); color: var(--info);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
+                    <h4 class="create-type-name">ترحيب</h4>
+                    <p class="create-type-desc">رسائل ترحيبية للمشتركين الجدد</p>
+                </div>
+                <div class="create-type-card" onclick="selectJourneyType('post_purchase')">
+                    <div class="create-type-icon" style="background: var(--success-subtle); color: var(--success);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                    </div>
+                    <h4 class="create-type-name">متابعة شراء</h4>
+                    <p class="create-type-desc">شكر العميل وطلب تقييم بعد الشراء</p>
+                </div>
+                <div class="create-type-card" onclick="selectJourneyType('winback')">
+                    <div class="create-type-icon" style="background: var(--danger-subtle); color: var(--danger);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <h4 class="create-type-name">استرجاع غائبين</h4>
+                    <p class="create-type-desc">إرجاع العملاء اللي ما اشتروا من فترة</p>
+                </div>
+                <div class="create-type-card" onclick="selectJourneyType('birthday')">
+                    <div class="create-type-icon" style="background: var(--primary-subtle); color: var(--primary);">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/></svg>
+                    </div>
+                    <h4 class="create-type-name">عيد ميلاد</h4>
+                    <p class="create-type-desc">هدية خصم تلقائية لعيد ميلاد العميل</p>
+                </div>
+                <div class="create-type-card" onclick="selectJourneyType('browse_abandonment')">
+                    <div class="create-type-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </div>
+                    <h4 class="create-type-name">متابعة تصفح</h4>
+                    <p class="create-type-desc">تذكير ذكي للعملاء اللي تصفحوا بدون شراء</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
 <style>
+    /* ============================================
+       KPI Summary Row
+       ============================================ */
+    .kpi-row {
+        display: flex;
+        align-items: center;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px 28px;
+        margin-bottom: 24px;
+        gap: 0;
+    }
+    .kpi-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        flex: 1;
+    }
+    .kpi-item-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+    .kpi-item-data {
+        display: flex;
+        flex-direction: column;
+    }
+    .kpi-item-value {
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.2;
+    }
+    .kpi-item-label {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin-top: 2px;
+    }
+    .kpi-divider {
+        width: 1px;
+        height: 40px;
+        background: var(--border);
+        margin: 0 24px;
+        flex-shrink: 0;
+    }
+
+    /* ============================================
+       Tab Counts
+       ============================================ */
+    .tab-count {
+        color: var(--text-faint);
+        font-weight: 500;
+    }
+    .tab.active .tab-count {
+        color: var(--primary);
+        opacity: 0.7;
+    }
+
+    /* ============================================
+       Journeys Grid
+       ============================================ */
     .journeys-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -250,13 +503,15 @@
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
         padding: 24px;
-        transition: all 0.2s;
+        transition: all 0.25s ease;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
     .journey-card:hover {
         border-color: var(--border-hover);
         transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
 
     .journey-card-header {
@@ -274,6 +529,28 @@
         justify-content: center;
         font-size: 20px;
     }
+
+    /* Toggle Group: toggle switch + badge side by side */
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .toggle-badge {
+        transition: all 0.3s ease;
+        min-width: 48px;
+        text-align: center;
+    }
+    .toggle-badge.loading {
+        opacity: 0.5;
+    }
+
+    /* Disabled toggle for "coming soon" */
+    .toggle-disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
     .journey-card-title {
         font-size: 16px;
         font-weight: 700;
@@ -287,6 +564,7 @@
         flex: 1;
     }
 
+    /* Steps visualization */
     .journey-card-steps {
         display: flex;
         align-items: center;
@@ -299,17 +577,24 @@
         border-radius: 50%;
         background: var(--bg-hover);
         border: 2px solid var(--border);
+        transition: all 0.3s;
     }
     .step-dot.active {
         background: var(--primary);
         border-color: var(--primary);
+        box-shadow: 0 0 6px var(--primary-glow);
     }
     .step-line {
         width: 20px;
         height: 2px;
         background: var(--border);
+        transition: background 0.3s;
+    }
+    .step-line.active {
+        background: var(--primary);
     }
 
+    /* Metrics */
     .journey-card-metrics {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -323,55 +608,382 @@
     .metric-value { font-size: 16px; font-weight: 700; }
     .metric-label { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
 
+    /* Card Footer */
     .journey-card-footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        min-height: 36px;
+    }
+    .footer-channels {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+    .channel-tag {
+        font-size: 11px;
+        color: var(--text-faint);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 3px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+    }
+    .footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .footer-link {
+        font-size: 13px;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: color 0.15s;
+        text-decoration: none;
+    }
+    .footer-link:hover {
+        color: var(--primary);
     }
 
-    @media (max-width: 1024px) { .journeys-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 640px) { .journeys-grid { grid-template-columns: 1fr; } }
+    /* ============================================
+       Toggle Loading Spinner
+       ============================================ */
+    .toggle-spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spinToggle 0.6s linear infinite;
+        display: inline-block;
+    }
+
+    @keyframes spinToggle {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       Create Journey Modal
+       ============================================ */
+    .create-types-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .create-type-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+    }
+    .create-type-card:hover {
+        border-color: var(--primary);
+        background: var(--primary-subtle);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(251, 191, 36, 0.1);
+    }
+    .create-type-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+    }
+    .create-type-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+    .create-type-desc {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.5;
+    }
+
+    /* ============================================
+       Toast Notification
+       ============================================ */
+    .toast-container {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+    }
+    .toast {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: auto;
+        min-width: 260px;
+        max-width: 400px;
+        animation: toastSlideIn 0.35s ease forwards;
+    }
+    .toast.removing {
+        animation: toastFadeOut 0.35s ease forwards;
+    }
+    .toast-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .toast.toast-success { border-color: rgba(34, 197, 94, 0.3); }
+    .toast.toast-success .toast-icon { color: var(--success); }
+    .toast.toast-error { border-color: rgba(239, 68, 68, 0.3); }
+    .toast.toast-error .toast-icon { color: var(--danger); }
+    .toast.toast-info { border-color: rgba(59, 130, 246, 0.3); }
+    .toast.toast-info .toast-icon { color: var(--info); }
+
+    @keyframes toastSlideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-40px) translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0) translateY(0);
+        }
+    }
+    @keyframes toastFadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0) translateY(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(-40px) translateY(10px);
+        }
+    }
+
+    /* ============================================
+       Responsive
+       ============================================ */
+    @media (max-width: 1024px) {
+        .journeys-grid { grid-template-columns: 1fr 1fr; }
+        .create-types-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+        .kpi-row {
+            flex-direction: column;
+            gap: 16px;
+            padding: 16px 20px;
+        }
+        .kpi-divider {
+            width: 100%;
+            height: 1px;
+            margin: 0;
+        }
+    }
+    @media (max-width: 640px) {
+        .journeys-grid { grid-template-columns: 1fr; }
+        .create-types-grid { grid-template-columns: 1fr; }
+        .journey-card-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .footer-actions {
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
 </style>
 
 <script src="/platform/shared/shell.js"></script>
 <script>
-    // Tab filtering
+    /* ============================================
+       Toast Notification System
+       ============================================ */
+    function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+
+        var iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+        } else if (type === 'error') {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+        } else {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+
+        toast.innerHTML = '<span class="toast-icon">' + iconSvg + '</span><span>' + message + '</span>';
+        container.appendChild(toast);
+
+        setTimeout(function() {
+            toast.classList.add('removing');
+            setTimeout(function() {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 350);
+        }, 3000);
+    }
+
+    /* ============================================
+       Toggle Switch Handler
+       ============================================ */
+    function handleToggle(checkbox, journeyType) {
+        var card = checkbox.closest('.journey-card');
+        var badge = card.querySelector('.toggle-badge');
+        var journeyName = card.getAttribute('data-name');
+        var isChecked = checkbox.checked;
+
+        // Disable checkbox during loading
+        checkbox.disabled = true;
+
+        // Show loading state on badge
+        var originalText = badge.textContent;
+        badge.classList.add('loading');
+        badge.innerHTML = '<span class="toggle-spinner"></span>';
+
+        // Simulate async toggle with 1 second delay
+        setTimeout(function() {
+            checkbox.disabled = false;
+            badge.classList.remove('loading');
+
+            if (isChecked) {
+                card.setAttribute('data-status', 'active');
+                badge.textContent = '\u0646\u0634\u0637';
+                badge.className = 'badge badge-success toggle-badge';
+
+                // Activate step dots
+                card.querySelectorAll('.step-dot').forEach(function(dot) { dot.classList.add('active'); });
+                card.querySelectorAll('.step-line').forEach(function(line) { line.classList.add('active'); });
+
+                showToast('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 \u0631\u062D\u0644\u0629 ' + journeyName, 'success');
+            } else {
+                card.setAttribute('data-status', 'draft');
+                badge.textContent = '\u0645\u062A\u0648\u0642\u0641';
+                badge.className = 'badge badge-neutral toggle-badge';
+
+                // Deactivate step dots
+                card.querySelectorAll('.step-dot').forEach(function(dot) { dot.classList.remove('active'); });
+                card.querySelectorAll('.step-line').forEach(function(line) { line.classList.remove('active'); });
+
+                showToast('\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u0631\u062D\u0644\u0629 ' + journeyName, 'info');
+            }
+
+            updateTabCounts();
+            applyCurrentFilter();
+        }, 1000);
+    }
+
+    /* ============================================
+       Tab Filtering
+       ============================================ */
+    var currentFilter = 'all';
+
     document.querySelectorAll('.tab').forEach(function(tab) {
         tab.addEventListener('click', function() {
             document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
             this.classList.add('active');
-            var filter = this.dataset.filter;
-            document.querySelectorAll('.journey-card').forEach(function(card) {
-                if (filter === 'all' || card.dataset.status === filter) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            currentFilter = this.dataset.filter;
+            applyCurrentFilter();
         });
     });
 
+    function applyCurrentFilter() {
+        var cards = document.querySelectorAll('.journey-card');
+        cards.forEach(function(card) {
+            if (currentFilter === 'all' || card.dataset.status === currentFilter) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    /* ============================================
+       Dynamic Tab Counts
+       ============================================ */
+    function updateTabCounts() {
+        var cards = document.querySelectorAll('.journey-card');
+        var total = cards.length;
+        var activeCount = 0;
+        var draftCount = 0;
+
+        cards.forEach(function(card) {
+            if (card.dataset.status === 'active') {
+                activeCount++;
+            } else {
+                draftCount++;
+            }
+        });
+
+        document.getElementById('countAll').textContent = '(' + total + ')';
+        document.getElementById('countActive').textContent = '(' + activeCount + ')';
+        document.getElementById('countDraft').textContent = '(' + draftCount + ')';
+
+        // Update KPI active count
+        document.getElementById('kpiActive').textContent = activeCount;
+    }
+
+    /* ============================================
+       Create Journey Modal
+       ============================================ */
+    function openCreateModal() {
+        document.getElementById('createModal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCreateModal() {
+        document.getElementById('createModal').classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // Close modal on overlay click
+    document.getElementById('createModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCreateModal();
+        }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeCreateModal();
+        }
+    });
+
+    function selectJourneyType(type) {
+        closeCreateModal();
+        showToast('\u0642\u0631\u064A\u0628\u0627: \u0645\u0646\u0634\u0626 \u0627\u0644\u0631\u062D\u0644\u0627\u062A', 'info');
+    }
+
+    /* ============================================
+       Journey Actions
+       ============================================ */
     function editJourney(type) {
         window.location.href = '/platform/journey-editor.html?type=' + type;
     }
 
-    function activateJourney(type) {
-        if (confirm('تفعيل رحلة ' + type + '؟')) {
-            RibhShell.api('/api/sequences/activate', {
-                method: 'POST',
-                body: { type: type }
-            }).then(function() {
-                location.reload();
-            }).catch(function() {
-                alert('تم التفعيل');
-                location.reload();
-            });
-        }
+    function viewReport(type) {
+        showToast('\u0642\u0631\u064A\u0628\u0627: \u062A\u0642\u0627\u0631\u064A\u0631 \u0627\u0644\u0631\u062D\u0644\u0627\u062A', 'info');
     }
 
-    function showCreateModal() {
-        alert('قريباً: منشئ الرحلات المرئي');
-    }
+    // Initialize counts on load
+    updateTabCounts();
 </script>
 
 </body>

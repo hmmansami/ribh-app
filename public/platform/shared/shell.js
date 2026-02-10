@@ -145,7 +145,8 @@ var RibhShell = {
             'subscribers': 'المشتركين',
             'segments': 'الشرائح',
             'analytics': 'التحليلات',
-            'settings': 'الإعدادات'
+            'settings': 'الإعدادات',
+            'subscriber': 'تفاصيل المشترك'
         };
         var titleEl = document.getElementById('pageTitle');
         if (titleEl) {
