@@ -126,14 +126,25 @@ var RibhShell = {
         </div>
         `;
 
-        // Move existing body content into shellContent
+        // Preserve page-specific <style> blocks before clearing body
         var existingContent = document.getElementById('page-content');
+        var pageStyles = Array.prototype.slice.call(document.body.querySelectorAll('style'));
+
+        // Clear body and rebuild with shell layout
         document.body.innerHTML = '';
         document.body.appendChild(layout);
+
+        // Re-append preserved page styles to head so they survive
+        pageStyles.forEach(function(style) {
+            document.head.appendChild(style);
+        });
 
         if (existingContent) {
             document.getElementById('shellContent').appendChild(existingContent);
         }
+
+        // Show body now that shell is ready (prevents FOUC)
+        document.body.classList.add('shell-ready');
 
         // Set page title
         var titles = {
