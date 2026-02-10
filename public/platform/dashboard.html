@@ -10,95 +10,186 @@
 <body>
 
 <div id="page-content">
-    <!-- KPI Cards -->
-    <div class="kpi-grid" id="kpiGrid">
-        <div class="kpi-card">
-            <div class="kpi-label">الإيرادات المستردة</div>
-            <div class="kpi-value text-success" id="kpiRevenue">0 ر.س</div>
-            <div class="kpi-change up">↑ هذا الشهر</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">المشتركين</div>
-            <div class="kpi-value" id="kpiSubscribers">0</div>
-            <div class="kpi-change up">↑ جدد هذا الأسبوع</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">الرسائل المرسلة</div>
-            <div class="kpi-value" id="kpiMessages">0</div>
-            <div class="kpi-change up">هذا الشهر</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">معدل الاسترداد</div>
-            <div class="kpi-value text-primary" id="kpiRecovery">0%</div>
-            <div class="kpi-change up">↑ متوسط</div>
+
+    <!-- ============================================
+         SECTION 1: THE ONE NUMBER (Superhuman: single attribute)
+         Revenue recovered = the only metric that matters
+         ============================================ -->
+    <div class="hero-metric">
+        <div class="hero-label">الإيرادات المستردة</div>
+        <div class="hero-value" id="heroRevenue">0 <span class="hero-currency">ر.س</span></div>
+        <div class="hero-change up" id="heroChange">هذا الشهر</div>
+        <div class="hero-sub-metrics">
+            <div class="hero-sub">
+                <span class="hero-sub-value" id="kpiMessages">0</span>
+                <span class="hero-sub-label">رسالة</span>
+            </div>
+            <div class="hero-sub-divider"></div>
+            <div class="hero-sub">
+                <span class="hero-sub-value" id="kpiRecovery">0%</span>
+                <span class="hero-sub-label">معدل استرداد</span>
+            </div>
+            <div class="hero-sub-divider"></div>
+            <div class="hero-sub">
+                <span class="hero-sub-value" id="kpiSubscribers">0</span>
+                <span class="hero-sub-label">مشترك</span>
+            </div>
         </div>
     </div>
 
-    <!-- Main Grid -->
-    <div class="grid-2">
-        <!-- Active Journeys -->
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <div class="card-title">الرحلات النشطة</div>
-                    <div class="card-subtitle">الرحلات اللي تشتغل الحين</div>
+    <!-- ============================================
+         SECTION 2: AUTOMATIONS (Lindy: toggles, not pages)
+         All journeys visible as compact cards with on/off toggles
+         Duolingo: zero decisions, everything is ON by default
+         ============================================ -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">
+                <span class="section-dot online"></span>
+                الأتمتة تعمل
+            </div>
+            <span class="text-sm text-dim" id="automationStatus">3 رحلات نشطة</span>
+        </div>
+
+        <div class="automation-grid" id="automationGrid">
+            <!-- Active automations -->
+            <div class="auto-card active">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: var(--warning-subtle); color: var(--warning);">🛒</div>
+                    <label class="toggle"><input type="checkbox" checked onchange="toggleJourney('cart_recovery', this)"><span class="toggle-slider"></span></label>
                 </div>
-                <a href="/platform/journeys.html" class="btn btn-ghost btn-sm">عرض الكل</a>
+                <div class="auto-name">استرداد السلات</div>
+                <div class="auto-stats">
+                    <span class="auto-stat text-success">30% استرداد</span>
+                    <span class="auto-stat">142 رسالة</span>
+                </div>
             </div>
 
-            <div id="activeJourneys">
-                <div class="journey-item">
-                    <div class="journey-icon" style="background: var(--warning-subtle); color: var(--warning);">🛒</div>
-                    <div class="journey-info">
-                        <div class="journey-name">استرداد السلات</div>
-                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
-                    </div>
-                    <span class="badge badge-success">نشط</span>
+            <div class="auto-card active">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: var(--info-subtle); color: var(--info);">👋</div>
+                    <label class="toggle"><input type="checkbox" checked onchange="toggleJourney('welcome', this)"><span class="toggle-slider"></span></label>
                 </div>
-                <div class="journey-item">
-                    <div class="journey-icon" style="background: var(--info-subtle); color: var(--info);">👋</div>
-                    <div class="journey-info">
-                        <div class="journey-name">رحلة الترحيب</div>
-                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
-                    </div>
-                    <span class="badge badge-success">نشط</span>
+                <div class="auto-name">رحلة الترحيب</div>
+                <div class="auto-stats">
+                    <span class="auto-stat">85% قراءة</span>
+                    <span class="auto-stat">67 رسالة</span>
                 </div>
-                <div class="journey-item">
-                    <div class="journey-icon" style="background: var(--success-subtle); color: var(--success);">📦</div>
-                    <div class="journey-info">
-                        <div class="journey-name">متابعة بعد الشراء</div>
-                        <div class="journey-stat">3 خطوات · واتساب</div>
-                    </div>
-                    <span class="badge badge-success">نشط</span>
+            </div>
+
+            <div class="auto-card active">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: var(--success-subtle); color: var(--success);">📦</div>
+                    <label class="toggle"><input type="checkbox" checked onchange="toggleJourney('post_purchase', this)"><span class="toggle-slider"></span></label>
                 </div>
-                <div class="journey-item">
-                    <div class="journey-icon" style="background: var(--danger-subtle); color: var(--danger);">💔</div>
-                    <div class="journey-info">
-                        <div class="journey-name">استرجاع الغائبين</div>
-                        <div class="journey-stat">3 خطوات · واتساب + SMS</div>
-                    </div>
-                    <span class="badge badge-warning">مسودة</span>
+                <div class="auto-name">متابعة بعد الشراء</div>
+                <div class="auto-stats">
+                    <span class="auto-stat">92% قراءة</span>
+                    <span class="auto-stat">23% تقييم</span>
                 </div>
-                <div class="journey-item">
-                    <div class="journey-icon" style="background: var(--primary-subtle); color: var(--primary);">🎂</div>
-                    <div class="journey-info">
-                        <div class="journey-name">تهنئة عيد ميلاد</div>
-                        <div class="journey-stat">2 خطوات · واتساب + SMS</div>
-                    </div>
-                    <span class="badge badge-warning">مسودة</span>
+            </div>
+
+            <!-- Draft automations (one-tap activate) -->
+            <div class="auto-card draft">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: var(--danger-subtle); color: var(--danger);">💔</div>
+                    <label class="toggle"><input type="checkbox" onchange="toggleJourney('winback', this)"><span class="toggle-slider"></span></label>
+                </div>
+                <div class="auto-name">استرجاع الغائبين</div>
+                <div class="auto-stats">
+                    <span class="auto-stat text-dim">جاهز للتفعيل</span>
+                </div>
+            </div>
+
+            <div class="auto-card draft">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: var(--primary-subtle); color: var(--primary);">🎂</div>
+                    <label class="toggle"><input type="checkbox" onchange="toggleJourney('birthday', this)"><span class="toggle-slider"></span></label>
+                </div>
+                <div class="auto-name">تهنئة عيد ميلاد</div>
+                <div class="auto-stats">
+                    <span class="auto-stat text-dim">جاهز للتفعيل</span>
+                </div>
+            </div>
+
+            <div class="auto-card draft">
+                <div class="auto-top">
+                    <div class="auto-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">👁️</div>
+                    <label class="toggle"><input type="checkbox" onchange="toggleJourney('browse_abandonment', this)"><span class="toggle-slider"></span></label>
+                </div>
+                <div class="auto-name">متابعة التصفح</div>
+                <div class="auto-stats">
+                    <span class="auto-stat text-dim">جاهز للتفعيل</span>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Recent Activity -->
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <div class="card-title">النشاط الأخير</div>
-                    <div class="card-subtitle">آخر الأحداث</div>
-                </div>
+    <!-- ============================================
+         SECTION 3: PERFORMANCE (Superhuman: inline, not separate page)
+         Analytics merged into dashboard — period tabs + channel bars
+         ============================================ -->
+    <div class="section-card">
+        <div class="section-header">
+            <div class="section-title">الأداء</div>
+            <div class="period-tabs">
+                <button class="period-tab active" data-period="7d">7 أيام</button>
+                <button class="period-tab" data-period="30d">30 يوم</button>
+                <button class="period-tab" data-period="90d">90 يوم</button>
             </div>
+        </div>
 
+        <div class="perf-grid">
+            <div class="perf-item">
+                <div class="perf-value">1,847</div>
+                <div class="perf-label">رسالة مرسلة</div>
+                <div class="perf-bar"><div class="perf-bar-fill" style="width: 100%;"></div></div>
+            </div>
+            <div class="perf-item">
+                <div class="perf-value text-success">91%</div>
+                <div class="perf-label">معدل القراءة</div>
+                <div class="perf-bar"><div class="perf-bar-fill success" style="width: 91%;"></div></div>
+            </div>
+            <div class="perf-item">
+                <div class="perf-value">24%</div>
+                <div class="perf-label">معدل النقر</div>
+                <div class="perf-bar"><div class="perf-bar-fill" style="width: 24%;"></div></div>
+            </div>
+            <div class="perf-item">
+                <div class="perf-value text-success">30%</div>
+                <div class="perf-label">معدل التحويل</div>
+                <div class="perf-bar"><div class="perf-bar-fill success" style="width: 30%;"></div></div>
+            </div>
+        </div>
+
+        <!-- Channel breakdown inline -->
+        <div class="channels-inline">
+            <div class="channel-row">
+                <span class="channel-dot-sm" style="background: var(--success);"></span>
+                <span class="channel-label">واتساب</span>
+                <span class="channel-val">1,420 رسالة · 98% تسليم · 91% قراءة</span>
+                <div class="channel-bar-sm"><div style="width: 77%; background: var(--success);"></div></div>
+            </div>
+            <div class="channel-row">
+                <span class="channel-dot-sm" style="background: var(--info);"></span>
+                <span class="channel-label">SMS</span>
+                <span class="channel-val">427 رسالة · 96% تسليم</span>
+                <div class="channel-bar-sm"><div style="width: 23%; background: var(--info);"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         SECTION 4: ACTIVITY + CUSTOMERS (merged view)
+         Duolingo: make progress visible
+         Recent activity + customer segments as inline badges
+         ============================================ -->
+    <div class="grid-2">
+        <!-- Activity Feed -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">آخر النشاطات</div>
+            </div>
             <div id="activityFeed">
                 <div class="activity-item">
                     <div class="activity-dot" style="background: var(--success);"></div>
@@ -137,75 +228,368 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="card mt-24">
-        <div class="card-header">
-            <div class="card-title">إجراءات سريعة</div>
+        <!-- Customers (segments as compact badges, not a separate page) -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-title">العملاء</div>
+                <div class="section-total" id="totalCustomers">1,247 مشترك</div>
+            </div>
+            <div class="segment-badges">
+                <a href="/platform/subscribers.html?segment=champions" class="seg-badge" style="border-color: var(--success);">
+                    <span class="seg-badge-icon">🏆</span>
+                    <span class="seg-badge-count" style="color: var(--success);">156</span>
+                    <span class="seg-badge-name">أبطال</span>
+                </a>
+                <a href="/platform/subscribers.html?segment=loyal" class="seg-badge" style="border-color: var(--info);">
+                    <span class="seg-badge-icon">💎</span>
+                    <span class="seg-badge-count" style="color: var(--info);">312</span>
+                    <span class="seg-badge-name">أوفياء</span>
+                </a>
+                <a href="/platform/subscribers.html?segment=potential" class="seg-badge" style="border-color: var(--primary);">
+                    <span class="seg-badge-icon">⭐</span>
+                    <span class="seg-badge-count" style="color: var(--primary);">245</span>
+                    <span class="seg-badge-name">محتملين</span>
+                </a>
+                <a href="/platform/subscribers.html?segment=recent" class="seg-badge" style="border-color: var(--info);">
+                    <span class="seg-badge-icon">🆕</span>
+                    <span class="seg-badge-count" style="color: var(--info);">189</span>
+                    <span class="seg-badge-name">جدد</span>
+                </a>
+                <a href="/platform/subscribers.html?segment=at-risk" class="seg-badge" style="border-color: var(--warning);">
+                    <span class="seg-badge-icon">⚠️</span>
+                    <span class="seg-badge-count" style="color: var(--warning);">134</span>
+                    <span class="seg-badge-name">معرضين</span>
+                </a>
+                <a href="/platform/subscribers.html?segment=dormant" class="seg-badge" style="border-color: var(--danger);">
+                    <span class="seg-badge-icon">💤</span>
+                    <span class="seg-badge-count" style="color: var(--danger);">211</span>
+                    <span class="seg-badge-name">غائبين</span>
+                </a>
+            </div>
+
+            <!-- Growth tools inline (not a separate page) -->
+            <div class="growth-tools">
+                <div class="growth-label">أدوات النمو</div>
+                <div class="growth-actions">
+                    <button class="growth-btn" onclick="showQRModal()">
+                        <span>📱</span> كود QR
+                    </button>
+                    <button class="growth-btn" onclick="copySocialLink()">
+                        <span>🔗</span> رابط اشتراك
+                    </button>
+                    <button class="growth-btn" onclick="showWidgetModal()">
+                        <span>💬</span> ويدجت متجر
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="quick-actions">
-            <a href="/platform/journeys.html" class="quick-action">
-                <div class="quick-action-icon">✦</div>
-                <div class="quick-action-text">
-                    <div class="quick-action-title">إنشاء رحلة</div>
-                    <div class="quick-action-desc">رحلة عملاء جديدة</div>
+    </div>
+</div>
+
+<!-- QR Modal (slide panel) -->
+<div class="modal-overlay" id="qrModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">كود QR واتساب</div>
+            <button class="modal-close" onclick="closeModal('qrModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="text-sm text-dim mb-16">اطبع كود QR على الفاتورة أو الكاونتر — العميل يمسحه ويشترك فوراً</p>
+            <div class="input-group">
+                <label class="input-label">رقم واتساب المتجر</label>
+                <input type="tel" class="input" id="qrPhone" placeholder="966501234567" dir="ltr">
+            </div>
+            <button class="btn btn-primary w-full" onclick="generateQR()">إنشاء كود QR</button>
+            <div class="qr-result" id="qrResult" style="display: none;">
+                <div class="qr-preview" id="qrPreview"></div>
+                <div class="qr-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="downloadQR('png')">تحميل PNG</button>
+                    <button class="btn btn-ghost btn-sm" onclick="printQR()">طباعة</button>
                 </div>
-            </a>
-            <a href="/platform/campaigns.html" class="quick-action">
-                <div class="quick-action-icon">📢</div>
-                <div class="quick-action-text">
-                    <div class="quick-action-title">حملة جديدة</div>
-                    <div class="quick-action-desc">رسالة لشريحة معينة</div>
-                </div>
-            </a>
-            <a href="/platform/signup-tools.html" class="quick-action">
-                <div class="quick-action-icon">📱</div>
-                <div class="quick-action-text">
-                    <div class="quick-action-title">إنشاء QR</div>
-                    <div class="quick-action-desc">كود QR لمحلك</div>
-                </div>
-            </a>
-            <a href="/platform/analytics.html" class="quick-action">
-                <div class="quick-action-icon">📊</div>
-                <div class="quick-action-text">
-                    <div class="quick-action-title">التقارير</div>
-                    <div class="quick-action-desc">شوف الأداء</div>
-                </div>
-            </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Widget Info Modal -->
+<div class="modal-overlay" id="widgetModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">ويدجت واتساب للمتجر</div>
+            <button class="modal-close" onclick="closeModal('widgetModal')">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p class="text-sm text-dim mb-16">نافذة منبثقة ذكية على متجرك — تظهر عند نية الخروج وتجمع اشتراكات</p>
+            <div class="code-block">
+                <div class="code-label">كود التضمين — انسخه وألصقه في متجرك:</div>
+                <code class="code-text" id="widgetCode">&lt;script src="https://ribh-484706.web.app/widget/optin.js" data-store="YOUR_ID"&gt;&lt;/script&gt;</code>
+            </div>
+            <button class="btn btn-secondary w-full mt-16" onclick="copyWidgetCode()">نسخ الكود</button>
         </div>
     </div>
 </div>
 
 <style>
-    /* Dashboard-specific styles */
-    .journey-item {
+    /* ============================================
+       HERO METRIC — The ONE number (Superhuman positioning)
+       ============================================ */
+    .hero-metric {
+        text-align: center;
+        padding: 32px 24px 24px;
+        margin-bottom: 20px;
+    }
+    .hero-label {
+        font-size: 14px;
+        color: var(--text-dim);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    .hero-value {
+        font-size: 56px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1.1;
+        margin-bottom: 6px;
+    }
+    .hero-currency {
+        font-size: 28px;
+        font-weight: 600;
+    }
+    .hero-change {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+    .hero-change.up { color: var(--success); }
+    .hero-sub-metrics {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 24px;
+    }
+    .hero-sub {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+    .hero-sub-value {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--text);
+    }
+    .hero-sub-label {
+        font-size: 12px;
+        color: var(--text-faint);
+    }
+    .hero-sub-divider {
+        width: 1px;
+        height: 32px;
+        background: var(--border);
+    }
+
+    /* ============================================
+       SECTION CARDS — Unified card style
+       ============================================ */
+    .section-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+    .section-header {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 0;
-        border-bottom: 1px solid var(--border);
+        justify-content: space-between;
+        margin-bottom: 16px;
     }
-    .journey-item:last-child { border-bottom: none; }
-    .journey-icon {
-        width: 40px;
-        height: 40px;
+    .section-title {
+        font-size: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .section-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+    .section-dot.online {
+        background: var(--success);
+        box-shadow: 0 0 6px var(--success);
+    }
+    .section-total {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-muted);
+    }
+
+    /* ============================================
+       AUTOMATION GRID — Compact journey cards with toggles
+       (Lindy: template one-click deploy)
+       ============================================ */
+    .automation-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .auto-card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px;
+        transition: border-color 0.2s;
+    }
+    .auto-card:hover { border-color: var(--border-hover); }
+    .auto-card.active { border-color: rgba(34, 197, 94, 0.2); }
+    .auto-card.draft { opacity: 0.7; }
+    .auto-card.draft:hover { opacity: 1; }
+    .auto-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    .auto-icon {
+        width: 36px;
+        height: 36px;
         border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 16px;
+    }
+    .auto-name {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+    .auto-stats {
+        display: flex;
+        gap: 10px;
+    }
+    .auto-stat {
+        font-size: 12px;
+        color: var(--text-dim);
+    }
+
+    /* ============================================
+       PERFORMANCE — Inline metrics (Superhuman: no separate page)
+       ============================================ */
+    .period-tabs {
+        display: flex;
+        gap: 4px;
+    }
+    .period-tab {
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-faint);
+        background: none;
+        border: 1px solid transparent;
+        border-radius: 20px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+    .period-tab:hover { color: var(--text-muted); }
+    .period-tab.active {
+        color: var(--primary);
+        border-color: var(--primary);
+        background: var(--primary-subtle);
+    }
+
+    .perf-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+    .perf-item {
+        text-align: center;
+    }
+    .perf-value {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 4px;
+    }
+    .perf-label {
+        font-size: 12px;
+        color: var(--text-faint);
+        margin-bottom: 8px;
+    }
+    .perf-bar {
+        height: 4px;
+        background: var(--bg-hover);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .perf-bar-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #FBBF24, #F59E0B);
+        border-radius: 2px;
+    }
+    .perf-bar-fill.success {
+        background: var(--success);
+    }
+
+    /* Channel rows inline */
+    .channels-inline {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    .channel-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .channel-dot-sm {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
         flex-shrink: 0;
     }
-    .journey-info { flex: 1; }
-    .journey-name { font-size: 14px; font-weight: 600; }
-    .journey-stat { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .channel-label {
+        font-size: 13px;
+        font-weight: 600;
+        width: 60px;
+        flex-shrink: 0;
+    }
+    .channel-val {
+        font-size: 12px;
+        color: var(--text-dim);
+        flex: 1;
+    }
+    .channel-bar-sm {
+        width: 80px;
+        height: 4px;
+        background: var(--bg-hover);
+        border-radius: 2px;
+        overflow: hidden;
+        flex-shrink: 0;
+    }
+    .channel-bar-sm > div {
+        height: 100%;
+        border-radius: 2px;
+    }
 
+    /* ============================================
+       ACTIVITY FEED — Same as before but in section-card
+       ============================================ */
     .activity-item {
         display: flex;
         align-items: flex-start;
         gap: 12px;
-        padding: 12px 0;
+        padding: 10px 0;
         border-bottom: 1px solid var(--border);
     }
     .activity-item:last-child { border-bottom: none; }
@@ -217,49 +601,141 @@
         flex-shrink: 0;
     }
     .activity-content { flex: 1; }
-    .activity-text { font-size: 14px; color: var(--text-secondary); }
-    .activity-time { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+    .activity-text { font-size: 13px; color: var(--text-secondary); }
+    .activity-time { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
 
-    .quick-actions {
+    /* ============================================
+       SEGMENT BADGES — Compact inline view
+       (Duolingo: make progress visible without separate page)
+       ============================================ */
+    .segment-badges {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 20px;
     }
-    .quick-action {
+    .seg-badge {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 16px;
+        gap: 8px;
+        padding: 10px 12px;
         background: var(--bg-elevated);
         border: 1px solid var(--border);
-        border-radius: var(--radius-md);
-        transition: all 0.2s;
+        border-radius: var(--radius-sm);
         text-decoration: none;
         color: inherit;
+        transition: all 0.15s;
+        border-right: 3px solid;
     }
-    .quick-action:hover {
-        border-color: var(--border-active);
-        transform: translateY(-2px);
+    .seg-badge:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
     }
-    .quick-action-icon {
-        width: 40px;
-        height: 40px;
-        background: var(--primary-subtle);
+    .seg-badge-icon { font-size: 16px; }
+    .seg-badge-count {
+        font-size: 18px;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .seg-badge-name {
+        font-size: 12px;
+        color: var(--text-dim);
+    }
+
+    /* ============================================
+       GROWTH TOOLS — Inline buttons (not a separate page)
+       ============================================ */
+    .growth-tools {
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    .growth-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-faint);
+        margin-bottom: 10px;
+    }
+    .growth-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .growth-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
         border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-muted);
+        cursor: pointer;
+        font-family: inherit;
+        transition: all 0.15s;
+    }
+    .growth-btn:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+        background: var(--bg-hover);
+    }
+
+    /* ============================================
+       MODALS — QR and Widget (slide panels)
+       ============================================ */
+    .qr-result { text-align: center; margin-top: 20px; }
+    .qr-preview {
+        width: 180px;
+        height: 180px;
+        margin: 0 auto 16px;
+        background: #fff;
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
-        flex-shrink: 0;
     }
-    .quick-action-title { font-size: 14px; font-weight: 600; }
-    .quick-action-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .qr-preview img { width: 160px; height: 160px; }
+    .qr-actions { display: flex; gap: 8px; justify-content: center; }
 
+    .code-block {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+    }
+    .code-label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+    .code-text {
+        display: block;
+        font-size: 12px;
+        color: var(--primary);
+        word-break: break-all;
+        font-family: monospace;
+        direction: ltr;
+        text-align: left;
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1024px) {
+        .automation-grid { grid-template-columns: repeat(2, 1fr); }
+        .perf-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 768px) {
-        .quick-actions { grid-template-columns: 1fr 1fr; }
+        .hero-value { font-size: 40px; }
+        .hero-currency { font-size: 20px; }
+        .hero-sub-metrics { gap: 16px; }
+        .automation-grid { grid-template-columns: 1fr 1fr; }
+        .perf-grid { grid-template-columns: 1fr 1fr; }
+        .segment-badges { grid-template-columns: 1fr 1fr; }
+        .growth-actions { flex-wrap: wrap; }
+        .grid-2 { grid-template-columns: 1fr; }
     }
     @media (max-width: 480px) {
-        .quick-actions { grid-template-columns: 1fr; }
+        .hero-value { font-size: 32px; }
+        .automation-grid { grid-template-columns: 1fr; }
+        .perf-grid { grid-template-columns: 1fr 1fr; }
+        .segment-badges { grid-template-columns: 1fr; }
     }
 </style>
 
@@ -267,17 +743,98 @@
 <script>
     // Load real data from API
     document.addEventListener('DOMContentLoaded', function() {
-        // Try loading stats
         RibhShell.api('/api/stats').then(function(data) {
             if (!data) return;
-            document.getElementById('kpiRevenue').textContent = RibhShell.formatSAR(data.recoveredRevenue || 0);
+            document.getElementById('heroRevenue').innerHTML =
+                RibhShell.formatNumber(data.recoveredRevenue || 0) + ' <span class="hero-currency">ر.س</span>';
             document.getElementById('kpiSubscribers').textContent = RibhShell.formatNumber(data.totalSubscribers || 0);
             document.getElementById('kpiMessages').textContent = RibhShell.formatNumber(data.messagesSent || 0);
             document.getElementById('kpiRecovery').textContent = (data.recoveryRate || 0) + '%';
-        }).catch(function() {
-            // Use placeholder data if API fails
+        }).catch(function() {});
+    });
+
+    // Period tab switching
+    document.querySelectorAll('.period-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.period-tab').forEach(function(t) { t.classList.remove('active'); });
+            this.classList.add('active');
         });
     });
+
+    // Toggle journey activation
+    function toggleJourney(type, el) {
+        var card = el.closest('.auto-card');
+        if (el.checked) {
+            card.classList.remove('draft');
+            card.classList.add('active');
+            RibhShell.api('/api/sequences/activate', {
+                method: 'POST',
+                body: { type: type }
+            }).catch(function() {});
+        } else {
+            card.classList.remove('active');
+            card.classList.add('draft');
+            RibhShell.api('/api/sequences/deactivate', {
+                method: 'POST',
+                body: { type: type }
+            }).catch(function() {});
+        }
+        updateAutomationStatus();
+    }
+
+    function updateAutomationStatus() {
+        var active = document.querySelectorAll('.auto-card.active').length;
+        document.getElementById('automationStatus').textContent = active + ' رحلات نشطة';
+    }
+
+    // Modal helpers
+    function showQRModal() {
+        document.getElementById('qrModal').classList.add('open');
+    }
+    function showWidgetModal() {
+        document.getElementById('widgetModal').classList.add('open');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('open');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay) {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) overlay.classList.remove('open');
+        });
+    });
+
+    // QR generation
+    function generateQR() {
+        var phone = document.getElementById('qrPhone').value.replace(/\s/g, '');
+        if (!phone) return;
+        RibhShell.api('/api/qr/generate', {
+            method: 'POST',
+            body: { phone: phone }
+        }).then(function(data) {
+            if (data && data.qrDataUrl) {
+                document.getElementById('qrResult').style.display = '';
+                document.getElementById('qrPreview').innerHTML = '<img src="' + data.qrDataUrl + '" alt="QR">';
+            }
+        }).catch(function() {
+            document.getElementById('qrResult').style.display = '';
+            document.getElementById('qrPreview').innerHTML = '<div style="padding:20px;color:#0a0a0a;font-size:11px;">wa.me/' + phone + '</div>';
+        });
+    }
+
+    function downloadQR(f) { alert('تحميل ' + f); }
+    function printQR() { window.print(); }
+
+    function copySocialLink() {
+        var link = 'https://wa.me/966501234567?text=اشتراك';
+        navigator.clipboard.writeText(link).then(function() { alert('تم نسخ الرابط!'); });
+    }
+
+    function copyWidgetCode() {
+        var code = document.getElementById('widgetCode').textContent;
+        navigator.clipboard.writeText(code).then(function() { alert('تم نسخ الكود!'); });
+    }
 </script>
 
 </body>
