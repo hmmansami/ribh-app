@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التجربة — المخطط الاستراتيجي | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #050505;
+            --bg-surface: #0a0a0a;
+            --bg-card: #0f0f0f;
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);
+            --text: #f5f5f5;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666;
+            --primary: #FBBF24;
+            --primary-subtle: rgba(251,191,36,0.1);
+            --primary-glow: rgba(251,191,36,0.25);
+            --success: #22C55E;
+            --success-subtle: rgba(34,197,94,0.1);
+            --danger: #EF4444;
+            --danger-subtle: rgba(239,68,68,0.1);
+            --info: #3B82F6;
+            --info-subtle: rgba(59,130,246,0.1);
+            --klaviyo: #7C3AED;
+            --klaviyo-subtle: rgba(124,58,237,0.1);
+            --attentive: #3B82F6;
+            --attentive-subtle: rgba(59,130,246,0.1);
+            --ribh: #FBBF24;
+            --ribh-subtle: rgba(251,191,36,0.1);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== STICKY NAV ========== */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5,5,5,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .nav-brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-brand span {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: var(--primary-subtle);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-xs);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: var(--primary-subtle);
+        }
+
+        /* ========== LAYOUT ========== */
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--primary-subtle);
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), #F59E0B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ========== SECTION HEADERS ========== */
+        .section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .section + .section {
+            border-top: 1px solid var(--border);
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .section-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 650px;
+            line-height: 1.8;
+        }
+
+        .section-header {
+            margin-bottom: 48px;
+        }
+
+        .section-header.center {
+            text-align: center;
+        }
+
+        .section-header.center .section-subtitle {
+            margin: 0 auto;
+        }
+
+        /* ========== CARDS ========== */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* ========== SECTION 1: TIMELINE ========== */
+        .timeline-track {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 40px 0;
+        }
+
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to left, var(--primary), rgba(251,191,36,0.1));
+            transform: translateY(-50%);
+            z-index: 0;
+        }
+
+        .timeline-node {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timeline-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+            box-shadow: 0 0 20px rgba(251,191,36,0.15);
+            transition: all 0.4s;
+        }
+
+        .timeline-node:hover .timeline-dot {
+            background: var(--primary-subtle);
+            box-shadow: 0 0 30px rgba(251,191,36,0.3);
+            transform: scale(1.1);
+        }
+
+        .timeline-time {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 6px;
+            white-space: nowrap;
+        }
+
+        .timeline-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .timeline-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            max-width: 140px;
+        }
+
+        .timeline-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-top: 12px;
+            max-width: 180px;
+            text-align: center;
+        }
+
+        /* ========== SECTION 2: JOURNEY STEPS ========== */
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px;
+            display: grid;
+            grid-template-columns: 80px 1fr 320px;
+            gap: 32px;
+            align-items: start;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .step-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .step-number {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--primary-subtle);
+            border: 2px solid rgba(251,191,36,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .step-time {
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .step-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .step-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .step-features li::before {
+            content: '←';
+            color: var(--primary);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .step-compare {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-compare-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .compare-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .compare-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .compare-dot.klaviyo { background: var(--klaviyo); }
+        .compare-dot.attentive { background: var(--attentive); }
+
+        /* ========== SECTION 3: DASHBOARD MOCK ========== */
+        .dashboard-mock-wrapper {
+            position: relative;
+            padding: 4px;
+            border-radius: calc(var(--radius) + 4px);
+            background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.02), rgba(34,197,94,0.1));
+        }
+
+        .dashboard-mock {
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mock-titlebar {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mock-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .mock-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .mock-dot.red { background: #EF4444; }
+        .mock-dot.yellow { background: #FBBF24; }
+        .mock-dot.green { background: #22C55E; }
+
+        .mock-url {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            padding: 4px 12px;
+            border-radius: 4px;
+            direction: ltr;
+        }
+
+        .mock-body {
+            padding: 32px;
+        }
+
+        .mock-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .mock-today {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .mock-today .amount {
+            color: var(--success);
+        }
+
+        .mock-date {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* KPI Grid */
+        .mock-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .mock-kpi {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .mock-kpi:hover {
+            border-color: rgba(251,191,36,0.2);
+            transform: translateY(-2px);
+        }
+
+        .mock-kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+
+        .mock-kpi-value.carts { color: var(--primary); }
+        .mock-kpi-value.messages { color: var(--info); }
+        .mock-kpi-value.sales { color: var(--success); }
+        .mock-kpi-value.revenue { color: var(--success); }
+
+        .mock-kpi-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .mock-kpi-sub {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* AI Insight */
+        .mock-ai-insight {
+            position: relative;
+            background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(251,191,36,0.02));
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: var(--radius-sm);
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .mock-ai-insight::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(251,191,36,0.1), transparent 70%);
+            pointer-events: none;
+            animation: ai-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes ai-pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .mock-ai-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .ai-sparkle {
+            animation: sparkle 2s ease-in-out infinite;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        .mock-ai-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Recovery List */
+        .mock-recovery-header {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .mock-recovery-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .mock-recovery-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 18px;
+            transition: all 0.3s;
+        }
+
+        .mock-recovery-item:hover {
+            border-color: var(--border-hover);
+        }
+
+        .recovery-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .recovery-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .recovery-avatar.a1 { background: rgba(251,191,36,0.15); color: var(--primary); }
+        .recovery-avatar.a2 { background: rgba(59,130,246,0.15); color: var(--info); }
+        .recovery-avatar.a3 { background: rgba(124,58,237,0.15); color: var(--klaviyo); }
+
+        .recovery-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .recovery-detail {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .recovery-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .recovery-badge.purchased {
+            background: var(--success-subtle);
+            color: var(--success);
+        }
+
+        .recovery-badge.pending {
+            background: var(--primary-subtle);
+            color: var(--primary);
+        }
+
+        /* Action buttons */
+        .mock-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mock-btn {
+            padding: 10px 24px;
+            border-radius: var(--radius-xs);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .mock-btn.primary {
+            background: var(--primary);
+            color: #000;
+        }
+
+        .mock-btn.primary:hover {
+            background: #F59E0B;
+            transform: translateY(-1px);
+        }
+
+        .mock-btn.ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .mock-btn.ghost:hover {
+            border-color: var(--border-hover);
+            color: var(--text);
+        }
+
+        /* ========== SECTION 4: PARADIGM SHIFT ========== */
+        .shift-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .shift-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .shift-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .shift-card.klaviyo {
+            border-top: 3px solid var(--klaviyo);
+        }
+
+        .shift-card.attentive {
+            border-top: 3px solid var(--attentive);
+        }
+
+        .shift-card.ribh {
+            border-top: 3px solid var(--ribh);
+        }
+
+        .shift-card.ribh::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at top right, rgba(251,191,36,0.04), transparent 60%);
+            pointer-events: none;
+        }
+
+        .shift-brand {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .shift-brand.klaviyo { color: var(--klaviyo); }
+        .shift-brand.attentive { color: var(--attentive); }
+        .shift-brand.ribh { color: var(--ribh); }
+
+        .shift-sells {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .shift-quote {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
+            border-right: 3px solid var(--border);
+        }
+
+        .shift-card.klaviyo .shift-quote { border-right-color: var(--klaviyo); }
+        .shift-card.attentive .shift-quote { border-right-color: var(--attentive); }
+        .shift-card.ribh .shift-quote { border-right-color: var(--ribh); }
+
+        .shift-result {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .shift-result-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .shift-card.klaviyo .shift-result-icon { background: var(--klaviyo-subtle); color: var(--klaviyo); }
+        .shift-card.attentive .shift-result-icon { background: var(--attentive-subtle); color: var(--attentive); }
+        .shift-card.ribh .shift-result-icon { background: var(--ribh-subtle); color: var(--ribh); }
+
+        .shift-result-text {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .shift-result-text strong {
+            color: var(--text);
+        }
+
+        /* ========== SECTION 5: ELIMINATIONS ========== */
+        .elim-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .elim-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            transition: all 0.3s;
+        }
+
+        .elim-item:hover {
+            border-color: var(--danger);
+            background: var(--danger-subtle);
+        }
+
+        .elim-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--danger-subtle);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .elim-x {
+            color: var(--danger);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .elim-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ========== FOOTER ========== */
+        .blueprint-footer {
+            border-top: 1px solid var(--border);
+            padding: 48px 0;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-link.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .animate-in:nth-child(1) { animation-delay: 0.05s; }
+        .animate-in:nth-child(2) { animation-delay: 0.1s; }
+        .animate-in:nth-child(3) { animation-delay: 0.15s; }
+        .animate-in:nth-child(4) { animation-delay: 0.2s; }
+        .animate-in:nth-child(5) { animation-delay: 0.25s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .step-card {
+                grid-template-columns: 60px 1fr;
+            }
+
+            .step-compare {
+                grid-column: 1 / -1;
+            }
+
+            .shift-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 48px 0 40px; }
+            .section { padding: 48px 0; }
+
+            .timeline-track {
+                flex-direction: column;
+                gap: 32px;
+                padding: 20px 0;
+            }
+
+            .timeline-track::before {
+                top: 0;
+                bottom: 0;
+                left: 28px;
+                right: auto;
+                width: 2px;
+                height: 100%;
+                transform: none;
+            }
+
+            .timeline-node {
+                flex-direction: row;
+                text-align: start;
+                gap: 16px;
+            }
+
+            .timeline-dot {
+                width: 48px;
+                height: 48px;
+                margin-bottom: 0;
+            }
+
+            .timeline-card {
+                margin-top: 0;
+                max-width: none;
+                text-align: start;
+            }
+
+            .step-card {
+                grid-template-columns: 1fr;
+                padding: 24px;
+            }
+
+            .step-number {
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+
+            .mock-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .elim-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 2px;
+            }
+
+            .nav-link {
+                padding: 6px 10px;
+                font-size: 0.75rem;
+            }
+
+            .mock-body {
+                padding: 20px;
+            }
+
+            .mock-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mock-kpi-value {
+                font-size: 1.5rem;
+            }
+
+            .mock-actions {
+                flex-direction: column;
+            }
+
+            .mock-btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ STICKY NAV ============ -->
+<nav class="top-nav">
+    <div class="nav-inner">
+        <a href="/platform/blueprint/outcome.html" class="nav-brand">
+            رِبح
+            <span>المخطط الاستراتيجي</span>
+        </a>
+        <div class="nav-links">
+            <a href="/platform/blueprint/outcome.html" class="nav-link">النتيجة</a>
+            <a href="/platform/blueprint/engine.html" class="nav-link">المحرك</a>
+            <a href="/platform/blueprint/experience.html" class="nav-link active">التجربة</a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+        <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            الصفحة 3 من 3 — التجربة
+        </div>
+        <h1>كيف يعمل <span class="highlight">الكل معاً</span></h1>
+        <p>رحلة التاجر الكاملة من التسجيل إلى الإيرادات — كيف يبدو المنتج المثالي عندما تدمج أفضل ما في Klaviyo و Attentive و RIBH في تجربة واحدة سلسة.</p>
+    </section>
+
+    <!-- ============ SECTION 1: PERFECT TIMELINE ============ -->
+    <section class="section" id="timeline">
+        <div class="section-header center">
+            <div class="section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                الجدول الزمني المثالي
+            </div>
+            <h2 class="section-title">من الصفر إلى الإيرادات في ٧ أيام</h2>
+            <p class="section-subtitle">كل خطوة مصممة لتكون تلقائية. التاجر لا يحتاج أن يكون خبير تسويق — المنصة تعمل من أجله.</p>
+        </div>
+
+        <div class="timeline-track">
+            <!-- Node 1 -->
+            <div class="timeline-node animate-in">
+                <div class="timeline-dot">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                </div>
+                <div>
+                    <div class="timeline-time">٣٠ ثانية</div>
+                    <div class="timeline-label">التسجيل</div>
+                    <div class="timeline-card">
+                        <div class="timeline-desc">نقرة واحدة من متجر سلة — الحساب جاهز فوراً</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 2 -->
+            <div class="timeline-node animate-in">
+                <div class="timeline-dot">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </div>
+                <div>
+                    <div class="timeline-time">٥ دقائق</div>
+                    <div class="timeline-label">البيانات تتدفق</div>
+                    <div class="timeline-card">
+                        <div class="timeline-desc">سجل الطلبات والعملاء والشرائح جاهزة تلقائياً</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 3 -->
+            <div class="timeline-node animate-in">
+                <div class="timeline-dot">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                </div>
+                <div>
+                    <div class="timeline-time">١٥ دقيقة</div>
+                    <div class="timeline-label">التدفقات مفعّلة</div>
+                    <div class="timeline-card">
+                        <div class="timeline-desc">استرداد السلات والترحيب مفعّلة بزر واحد</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 4 -->
+            <div class="timeline-node animate-in">
+                <div class="timeline-dot">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </div>
+                <div>
+                    <div class="timeline-time">٢٤ ساعة</div>
+                    <div class="timeline-label">أول إيراد</div>
+                    <div class="timeline-card">
+                        <div class="timeline-desc">أول سلة مستردة — التاجر يرى المال الحقيقي</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Node 5 -->
+            <div class="timeline-node animate-in">
+                <div class="timeline-dot">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div>
+                    <div class="timeline-time">٧ أيام</div>
+                    <div class="timeline-label">الذكاء الاصطناعي يتعلم</div>
+                    <div class="timeline-card">
+                        <div class="timeline-desc">AI يعرف أفضل وقت وعرض ومنتج — يتحسن تلقائياً</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 2: STEP-BY-STEP JOURNEY ============ -->
+    <section class="section" id="journey">
+        <div class="section-header">
+            <div class="section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                الرحلة خطوة بخطوة
+            </div>
+            <h2 class="section-title">٥ خطوات من التسجيل إلى الذكاء الاصطناعي</h2>
+            <p class="section-subtitle">كل خطوة مقارنة مع Klaviyo و Attentive لتوضيح الفرق الجوهري.</p>
+        </div>
+
+        <div class="step-container">
+
+            <!-- Step 1 -->
+            <div class="step-card animate-in">
+                <div class="step-number">١</div>
+                <div class="step-content">
+                    <h3>التسجيل الفوري</h3>
+                    <div class="step-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ٣٠ ثانية
+                    </div>
+                    <ul class="step-features">
+                        <li>التاجر يضغط "تثبيت" في متجر تطبيقات سلة</li>
+                        <li>OAuth من سلة يمنح وصول لكل بيانات المتجر فوراً</li>
+                        <li>اسم العلامة والشعار والألوان تُكتشف تلقائياً</li>
+                        <li>رقم الجوال معروف مسبقاً من حساب سلة</li>
+                        <li>الحساب جاهز للعمل خلال ٣٠ ثانية فقط</li>
+                    </ul>
+                </div>
+                <div class="step-compare">
+                    <div class="step-compare-title">المقارنة</div>
+                    <div class="compare-item">
+                        <span class="compare-dot klaviyo"></span>
+                        <span><strong style="color: var(--klaviyo);">Klaviyo:</strong> معالج تسجيل من ٣١ شاشة (٥-١٠ دقائق)</span>
+                    </div>
+                    <div class="compare-item">
+                        <span class="compare-dot attentive"></span>
+                        <span><strong style="color: var(--attentive);">Attentive:</strong> دورة مبيعات ٢-١٢ أسبوع</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card animate-in">
+                <div class="step-number">٢</div>
+                <div class="step-content">
+                    <h3>الذكاء الفوري</h3>
+                    <div class="step-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ٥ دقائق
+                    </div>
+                    <ul class="step-features">
+                        <li>سجل الطلبات الكامل عبر API سلة في أقل من دقيقتين</li>
+                        <li>ملفات العملاء الفورية: سجل الشراء، التكرار، متوسط الطلب، الجوال، المدينة</li>
+                        <li>شرائح تلقائية: الأبطال، المعرضين للخطر، الجدد، سلات متروكة اليوم</li>
+                        <li>رؤى من اليوم الأول: "٤٧ عميل لم يطلبوا منذ ٣٠+ يوم"</li>
+                        <li>"١٢ سلة متروكة بقيمة ٤,٢٠٠ ر.س"</li>
+                    </ul>
+                </div>
+                <div class="step-compare">
+                    <div class="step-compare-title">المقارنة</div>
+                    <div class="compare-item">
+                        <span class="compare-dot klaviyo"></span>
+                        <span><strong style="color: var(--klaviyo);">Klaviyo:</strong> يحتاج ١٨٠ يوم للتنبؤات</span>
+                    </div>
+                    <div class="compare-item">
+                        <span class="compare-dot attentive"></span>
+                        <span><strong style="color: var(--attentive);">Attentive:</strong> يحتاج إعداد يدوي للعلامات و DNS</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card animate-in">
+                <div class="step-number">٣</div>
+                <div class="step-content">
+                    <h3>تفعيل بزر واحد</h3>
+                    <div class="step-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ١٥ دقيقة
+                    </div>
+                    <ul class="step-features">
+                        <li>لوحة التحكم تعرض: "١٢ سلة متروكة بقيمة ٤,٢٠٠ ر.س. استرجعهم؟"</li>
+                        <li>زر ١: "استرداد السلات المتروكة" ← تشغيل (تدفق واتساب عربي جاهز)</li>
+                        <li>زر ٢: "سلسلة الترحيب" ← تشغيل</li>
+                        <li>زر ٣: "استرجاع الغائبين" ← تشغيل</li>
+                        <li>نافذة الخروج المنبثقة تُثبّت تلقائياً عبر سلة</li>
+                    </ul>
+                </div>
+                <div class="step-compare">
+                    <div class="step-compare-title">المقارنة</div>
+                    <div class="compare-item">
+                        <span class="compare-dot klaviyo"></span>
+                        <span><strong style="color: var(--klaviyo);">Klaviyo:</strong> يحتاج ٤٥ دقيقة تخصيص التدفقات</span>
+                    </div>
+                    <div class="compare-item">
+                        <span class="compare-dot attentive"></span>
+                        <span><strong style="color: var(--attentive);">Attentive:</strong> يحتاج ٢-٤ أسابيع مع مستشار</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-card animate-in">
+                <div class="step-number">٤</div>
+                <div class="step-content">
+                    <h3>أول إيراد</h3>
+                    <div class="step-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ٢٤ ساعة
+                    </div>
+                    <ul class="step-features">
+                        <li>خلال ساعة: أول رسائل استرداد تُرسل عبر واتساب</li>
+                        <li>خلال ٤ ساعات: أول عميل يرد على عرض الذكاء الاصطناعي</li>
+                        <li>خلال ٢٤ ساعة: أول سلة مستردة — "أحمد: سلة ٣٤٠ ر.س ← خصم ١٠٪ ← تم الشراء"</li>
+                        <li>لوحة التحكم: "رِبح استرد ٣٤٠ ر.س اليوم"</li>
+                    </ul>
+                </div>
+                <div class="step-compare">
+                    <div class="step-compare-title">المقارنة</div>
+                    <div class="compare-item">
+                        <span class="compare-dot klaviyo"></span>
+                        <span><strong style="color: var(--klaviyo);">Klaviyo:</strong> من ساعات إلى أيام</span>
+                    </div>
+                    <div class="compare-item">
+                        <span class="compare-dot attentive"></span>
+                        <span><strong style="color: var(--attentive);">Attentive:</strong> ٢٤-٤٨ ساعة</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-card animate-in">
+                <div class="step-number">٥</div>
+                <div class="step-content">
+                    <h3>ذكاء اصطناعي يتعلم</h3>
+                    <div class="step-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        ٧ أيام
+                    </div>
+                    <ul class="step-features">
+                        <li>AI يعرف أفضل وقت إرسال لعملاء هذا التاجر</li>
+                        <li>AI يعرف أفضل نوع عرض (نسبة ٪ أم مبلغ أم شحن مجاني)</li>
+                        <li>AI يعرف أي المنتجات تُتركها العملاء أكثر</li>
+                        <li>رؤية أسبوعية: "العملاء يستجيبون ٣ أضعاف الساعة ٨ مساءً. تم التعديل تلقائياً."</li>
+                        <li>تأثير الشبكة: "المتاجر المشابهة تحقق ٢٣٪ استرداد مع خصم ١٥٪"</li>
+                    </ul>
+                </div>
+                <div class="step-compare">
+                    <div class="step-compare-title">المقارنة</div>
+                    <div class="compare-item">
+                        <span class="compare-dot klaviyo"></span>
+                        <span><strong style="color: var(--klaviyo);">Klaviyo:</strong> ١٨٠+ يوم</span>
+                    </div>
+                    <div class="compare-item">
+                        <span class="compare-dot attentive"></span>
+                        <span><strong style="color: var(--attentive);">Attentive:</strong> ٣٠-٦٠ يوم</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ============ SECTION 3: DAILY DASHBOARD MOCK ============ -->
+    <section class="section" id="dashboard">
+        <div class="section-header center">
+            <div class="section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                لوحة التحكم اليومية
+            </div>
+            <h2 class="section-title">هذا ما يراه التاجر كل يوم</h2>
+            <p class="section-subtitle">لوحة تحكم واضحة ومباشرة — بدون تعقيد. كل رقم يُحكي قصة إيراد مسترد.</p>
+        </div>
+
+        <div class="dashboard-mock-wrapper">
+            <div class="dashboard-mock">
+                <!-- Browser titlebar -->
+                <div class="mock-titlebar">
+                    <div class="mock-dots">
+                        <div class="mock-dot red"></div>
+                        <div class="mock-dot yellow"></div>
+                        <div class="mock-dot green"></div>
+                    </div>
+                    <div class="mock-url">ribh.app/dashboard</div>
+                    <div style="width: 50px;"></div>
+                </div>
+
+                <!-- Dashboard body -->
+                <div class="mock-body">
+                    <!-- Header -->
+                    <div class="mock-header">
+                        <div>
+                            <div class="mock-today">اليوم: <span class="amount" id="heroRevenue">٠</span> ر.س تم استردادها</div>
+                        </div>
+                        <div class="mock-date">الثلاثاء، ١٠ فبراير ٢٠٢٦</div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="mock-kpi-grid">
+                        <div class="mock-kpi">
+                            <div class="mock-kpi-value carts" id="kpiCarts">٠</div>
+                            <div class="mock-kpi-label">سلات متروكة</div>
+                            <div class="mock-kpi-sub">اليوم</div>
+                        </div>
+                        <div class="mock-kpi">
+                            <div class="mock-kpi-value messages" id="kpiMessages">٠</div>
+                            <div class="mock-kpi-label">رسائل مرسلة</div>
+                            <div class="mock-kpi-sub">واتساب + SMS</div>
+                        </div>
+                        <div class="mock-kpi">
+                            <div class="mock-kpi-value sales" id="kpiSales">٠</div>
+                            <div class="mock-kpi-label">مبيعات مستردة</div>
+                            <div class="mock-kpi-sub">معدل الاسترداد ٢٥٪</div>
+                        </div>
+                        <div class="mock-kpi">
+                            <div class="mock-kpi-value revenue" id="kpiRevenue">٠</div>
+                            <div class="mock-kpi-label">الإيرادات (ر.س)</div>
+                            <div class="mock-kpi-sub">+١٢٪ عن أمس</div>
+                        </div>
+                    </div>
+
+                    <!-- AI Insight -->
+                    <div class="mock-ai-insight">
+                        <div class="mock-ai-label">
+                            <svg class="ai-sparkle" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            رؤية الذكاء الاصطناعي
+                        </div>
+                        <div class="mock-ai-text">
+                            العملاء الذين يتلقون عروض خلال ٣٠ دقيقة يتحولون <strong style="color: var(--primary);">٢.٥ ضعف</strong> أكثر. تم تعديل توقيت الإرسال <strong style="color: var(--success);">تلقائياً</strong> لتحقيق أقصى استرداد.
+                        </div>
+                    </div>
+
+                    <!-- Recovery list -->
+                    <div class="mock-recovery-header">آخر الاستردادات</div>
+                    <div class="mock-recovery-list">
+                        <div class="mock-recovery-item">
+                            <div class="recovery-info">
+                                <div class="recovery-avatar a1">أ</div>
+                                <div>
+                                    <div class="recovery-name">أحمد س.</div>
+                                    <div class="recovery-detail">٥٤٠ ر.س ← خصم ١٠٪ ← تم الشراء</div>
+                                </div>
+                            </div>
+                            <div class="recovery-badge purchased">تم الشراء</div>
+                        </div>
+                        <div class="mock-recovery-item">
+                            <div class="recovery-info">
+                                <div class="recovery-avatar a2">س</div>
+                                <div>
+                                    <div class="recovery-name">سارة م.</div>
+                                    <div class="recovery-detail">١٨٠ ر.س ← شحن مجاني ← تم الشراء</div>
+                                </div>
+                            </div>
+                            <div class="recovery-badge purchased">تم الشراء</div>
+                        </div>
+                        <div class="mock-recovery-item">
+                            <div class="recovery-info">
+                                <div class="recovery-avatar a3">خ</div>
+                                <div>
+                                    <div class="recovery-name">خالد ر.</div>
+                                    <div class="recovery-detail">٢٩٠ ر.س ← خصم ١٥٪ ← تم الفتح</div>
+                                </div>
+                            </div>
+                            <div class="recovery-badge pending">بانتظار الرد</div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mock-actions">
+                        <button class="mock-btn primary">إرسال حملة</button>
+                        <button class="mock-btn ghost">عرض كل السلات</button>
+                        <button class="mock-btn ghost">تعديل العروض</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 4: FUNDAMENTAL SHIFT ============ -->
+    <section class="section" id="shift">
+        <div class="section-header center">
+            <div class="section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                التحول الجوهري
+            </div>
+            <h2 class="section-title">ثلاث فلسفات مختلفة</h2>
+            <p class="section-subtitle">الفرق ليس في الميزات — الفرق في ما يُطلب من التاجر.</p>
+        </div>
+
+        <div class="shift-grid">
+            <!-- Klaviyo -->
+            <div class="shift-card klaviyo">
+                <div class="shift-brand klaviyo">Klaviyo</div>
+                <div class="shift-sells">تبيع أدوات</div>
+                <div class="shift-quote">
+                    "هنا ٨٠ قالب تدفق، ٣٥٠ تكامل، وتحليلات تنبؤية. ابنِ آلة التسويق الخاصة بك."
+                </div>
+                <div class="shift-result">
+                    <div class="shift-result-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    </div>
+                    <span class="shift-result-text">التاجر لازم <strong>يتعلم</strong> المنصة</span>
+                </div>
+            </div>
+
+            <!-- Attentive -->
+            <div class="shift-card attentive">
+                <div class="shift-brand attentive">Attentive</div>
+                <div class="shift-sells">تبيع هوية</div>
+                <div class="shift-quote">
+                    "بنلاقي الزوار المجهولين و AI يحولهم. بس أولاً، كلم فريق المبيعات عندنا."
+                </div>
+                <div class="shift-result">
+                    <div class="shift-result-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <span class="shift-result-text">التاجر لازم <strong>ينتظر</strong> الإعداد</span>
+                </div>
+            </div>
+
+            <!-- RIBH -->
+            <div class="shift-card ribh">
+                <div class="shift-brand ribh">رِبح RIBH</div>
+                <div class="shift-sells">تبيع نتائج</div>
+                <div class="shift-quote">
+                    "شغّل الزر. نسترد سلاتك المتروكة. هذا كم صرت تربح اليوم."
+                </div>
+                <div class="shift-result">
+                    <div class="shift-result-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    </div>
+                    <span class="shift-result-text">التاجر يرى <strong>إيرادات</strong> من اليوم الأول</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ SECTION 5: WHAT MERCHANT DOESN'T DO ============ -->
+    <section class="section" id="eliminated">
+        <div class="section-header center">
+            <div class="section-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                ما لا يحتاج التاجر يسويه
+            </div>
+            <h2 class="section-title">كل هذا تم حذفه</h2>
+            <p class="section-subtitle">رِبح تحذف كل التعقيدات التي تجعل منصات التسويق صعبة الاستخدام.</p>
+        </div>
+
+        <div class="elim-grid">
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا معالج تسجيل من ٣١ شاشة</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا إعداد DNS لنطاقات الإرسال</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا مكالمات مبيعات ولا تفاوض عقود</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا بناء تدفقات يدوي</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا تخصيص قوالب يدوي</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا إعداد شرائح يدوي</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا إعداد اختبارات A/B (الذكاء الاصطناعي يسويها)</div>
+            </div>
+            <div class="elim-item animate-in">
+                <div class="elim-icon"><span class="elim-x">&times;</span></div>
+                <div class="elim-text">لا جدولة حملات يدوية (AI يقرر متى)</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="blueprint-footer">
+    <div class="page-container">
+        <div class="footer-text">المخطط الاستراتيجي لرِبح — الرؤية الشاملة للمنتج</div>
+        <div class="footer-nav">
+            <a href="/platform/blueprint/outcome.html" class="footer-link">النتيجة</a>
+            <a href="/platform/blueprint/engine.html" class="footer-link">المحرك</a>
+            <a href="/platform/blueprint/experience.html" class="footer-link active">التجربة</a>
+        </div>
+    </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+(function() {
+    'use strict';
+
+    // ===== Animated Counter Numbers =====
+    function animateCounter(element, target, duration, isArabic) {
+        const startTime = performance.now();
+        const startValue = 0;
+
+        function toArabicNumerals(num) {
+            const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+            return String(num).replace(/\d/g, d => arabicDigits[d]);
+        }
+
+        function formatNumber(num) {
+            const rounded = Math.round(num);
+            const formatted = rounded.toLocaleString('en-US');
+            if (isArabic !== false) {
+                return toArabicNumerals(formatted.replace(/,/g, '٬'));
+            }
+            return formatted;
+        }
+
+        function easeOutExpo(t) {
+            return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+        }
+
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const easedProgress = easeOutExpo(progress);
+            const currentValue = startValue + (target - startValue) * easedProgress;
+
+            element.textContent = formatNumber(currentValue);
+
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+
+        requestAnimationFrame(update);
+    }
+
+    // ===== Intersection Observer for Counter Animation =====
+    let countersAnimated = false;
+
+    function startCounters() {
+        if (countersAnimated) return;
+        countersAnimated = true;
+
+        // Dashboard KPI counters
+        const kpiCarts = document.getElementById('kpiCarts');
+        const kpiMessages = document.getElementById('kpiMessages');
+        const kpiSales = document.getElementById('kpiSales');
+        const kpiRevenue = document.getElementById('kpiRevenue');
+        const heroRevenue = document.getElementById('heroRevenue');
+
+        if (kpiCarts) animateCounter(kpiCarts, 12, 1500);
+        if (kpiMessages) animateCounter(kpiMessages, 8, 1800);
+        if (kpiSales) animateCounter(kpiSales, 3, 2000);
+        if (kpiRevenue) animateCounter(kpiRevenue, 2340, 2200);
+        if (heroRevenue) animateCounter(heroRevenue, 2340, 2200);
+    }
+
+    // Observe the dashboard section
+    const dashboardSection = document.getElementById('dashboard');
+    if (dashboardSection && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    startCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+        observer.observe(dashboardSection);
+    }
+
+    // ===== Scroll Animations =====
+    function initScrollAnimations() {
+        const animElements = document.querySelectorAll('.animate-in');
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: show all immediately
+            animElements.forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+            return;
+        }
+
+        const animObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                    animObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        animElements.forEach(function(el) {
+            el.style.animationPlayState = 'paused';
+            animObserver.observe(el);
+        });
+    }
+
+    // ===== Smooth scroll for anchor links =====
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
+    // ===== Init =====
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollAnimations);
+    } else {
+        initScrollAnimations();
+    }
+
+})();
+</script>
+
+</body>
+</html>

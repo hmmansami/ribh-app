@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المحرك — بنية المنصة | رِبح Blueprint</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           RIBH Blueprint — Engine Page
+           Page 2 of 3: The 5-Layer Engine
+           ============================================ */
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050505;
+            --bg-surface: #0a0a0a;
+            --bg-card: #0f0f0f;
+            --bg-elevated: #141414;
+            --border: rgba(255,255,255,0.06);
+            --border-hover: rgba(255,255,255,0.12);
+            --text: #f5f5f5;
+            --text-secondary: #a3a3a3;
+            --text-muted: #6b6b6b;
+            --primary: #FBBF24;
+            --primary-dim: rgba(251,191,36,0.15);
+            --primary-glow: rgba(251,191,36,0.3);
+            --klaviyo: #7C3AED;
+            --klaviyo-dim: rgba(124,58,237,0.15);
+            --attentive: #3B82F6;
+            --attentive-dim: rgba(59,130,246,0.15);
+            --ribh: #FBBF24;
+            --ribh-dim: rgba(251,191,36,0.12);
+            --success: #10B981;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-xs: 6px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ---- Sticky Nav ---- */
+        .blueprint-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5,5,5,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--primary-dim);
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--text);
+            background: rgba(255,255,255,0.04);
+        }
+
+        .nav-link.active {
+            color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .nav-link .nav-num {
+            font-size: 11px;
+            opacity: 0.5;
+            margin-left: 4px;
+        }
+
+        /* ---- Page Container ---- */
+        .page-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ---- Hero Section ---- */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-dim), transparent);
+        }
+
+        .hero-overline {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-sub {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 48px;
+            line-height: 1.8;
+        }
+
+        /* ---- Flywheel Diagram ---- */
+        .flywheel {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px 32px;
+            margin-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flywheel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--attentive), var(--klaviyo), var(--primary));
+        }
+
+        .flywheel-title {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-weight: 500;
+        }
+
+        .flywheel-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .flywheel-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 20px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: default;
+            min-width: 120px;
+        }
+
+        .flywheel-node:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 24px var(--primary-dim);
+            transform: translateY(-2px);
+        }
+
+        .flywheel-node-num {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #F59E0B);
+            color: #000;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flywheel-node-ar {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .flywheel-node-en {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .flywheel-arrow {
+            font-size: 20px;
+            color: var(--primary);
+            padding: 0 6px;
+            opacity: 0.5;
+        }
+
+        .flywheel-loop {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .flywheel-loop-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 8px 20px;
+            background: var(--primary-dim);
+            border-radius: 20px;
+            border: 1px solid rgba(251,191,36,0.2);
+        }
+
+        .flywheel-loop-label svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ---- Layer Section ---- */
+        .layer-section {
+            position: relative;
+            margin-bottom: 32px;
+        }
+
+        /* Connector line between layers */
+        .layer-connector {
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+        }
+
+        .layer-connector-line {
+            width: 3px;
+            height: 48px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .layer-connector-line::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        .layer-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .layer-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* Layer Header */
+        .layer-header {
+            padding: 32px 32px 24px;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .layer-badge {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #F59E0B);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 800;
+            color: #000;
+            flex-shrink: 0;
+            box-shadow: 0 4px 24px var(--primary-dim);
+        }
+
+        .layer-title-block {
+            flex: 1;
+        }
+
+        .layer-name-ar {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .layer-name-en {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 4px;
+        }
+
+        /* Fundamental Truth */
+        .truth-box {
+            margin: 24px 32px;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, var(--primary-dim), rgba(245,158,11,0.05));
+            border: 1px solid rgba(251,191,36,0.15);
+            border-radius: var(--radius-sm);
+            position: relative;
+        }
+
+        .truth-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary);
+            border-radius: 0 3px 3px 0;
+        }
+
+        .truth-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .truth-label svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .truth-text {
+            font-size: 17px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* Comparison Grid */
+        .comparison {
+            padding: 0 32px 32px;
+        }
+
+        .comparison-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            padding-top: 8px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        .comparison-col {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .comparison-col:hover {
+            border-color: var(--border-hover);
+        }
+
+        .comparison-col.col-klaviyo {
+            border-top: 2px solid var(--klaviyo);
+        }
+
+        .comparison-col.col-attentive {
+            border-top: 2px solid var(--attentive);
+        }
+
+        .comparison-col.col-ribh {
+            border-top: 2px solid var(--ribh);
+            background: rgba(251,191,36,0.03);
+            box-shadow: 0 0 40px rgba(251,191,36,0.04);
+        }
+
+        .col-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .col-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .col-dot.dot-klaviyo { background: var(--klaviyo); }
+        .col-dot.dot-attentive { background: var(--attentive); }
+        .col-dot.dot-ribh { background: var(--ribh); box-shadow: 0 0 8px var(--primary-glow); }
+
+        .col-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .col-badge-merged {
+            font-size: 10px;
+            padding: 2px 8px;
+            background: var(--primary-dim);
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 600;
+            margin-right: auto;
+        }
+
+        .col-list {
+            list-style: none;
+        }
+
+        .col-list li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            padding: 4px 0;
+            padding-right: 16px;
+            position: relative;
+        }
+
+        .col-list li::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 12px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--text-muted);
+        }
+
+        .col-klaviyo .col-list li::before { background: var(--klaviyo); opacity: 0.6; }
+        .col-attentive .col-list li::before { background: var(--attentive); opacity: 0.6; }
+        .col-ribh .col-list li::before { background: var(--ribh); }
+
+        /* Tools Grid */
+        .tools-section {
+            padding: 0 32px 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .tools-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            padding-top: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tools-title svg {
+            width: 16px;
+            height: 16px;
+            color: var(--primary);
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .tool-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-xs);
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.25s;
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            background: var(--bg-elevated);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+
+        .tool-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: var(--primary-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .tool-icon svg {
+            width: 18px;
+            height: 18px;
+            color: var(--primary);
+        }
+
+        .tool-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tool-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .tool-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ---- Footer ---- */
+        .blueprint-footer {
+            text-align: center;
+            padding: 60px 24px 40px;
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: var(--radius-xs);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+            border-color: var(--primary);
+            background: var(--primary-dim);
+        }
+
+        .footer-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .footer-copy {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 900px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .flywheel-chain {
+                gap: 8px;
+            }
+
+            .flywheel-node {
+                min-width: 90px;
+                padding: 12px 14px;
+            }
+
+            .flywheel-node-ar {
+                font-size: 13px;
+            }
+
+            .flywheel-arrow {
+                font-size: 16px;
+                padding: 0 2px;
+            }
+
+            .layer-header {
+                padding: 24px 20px 20px;
+            }
+
+            .comparison, .tools-section {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .truth-box {
+                margin-left: 20px;
+                margin-right: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .flywheel-chain {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .flywheel-arrow {
+                transform: rotate(90deg);
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-inner {
+                flex-direction: column;
+                height: auto;
+                padding: 12px 0;
+                gap: 8px;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .nav-link {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+
+            .layer-badge {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+
+            .layer-name-ar {
+                font-size: 22px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero-sub {
+                font-size: 15px;
+            }
+        }
+
+        /* ---- Scroll Animations ---- */
+        .layer-section {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .layer-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Pulse animation for badge */
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 4px 24px var(--primary-dim); }
+            50% { box-shadow: 0 4px 32px var(--primary-glow); }
+        }
+
+        .layer-badge {
+            animation: badge-pulse 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="blueprint-nav">
+    <div class="nav-inner">
+        <a href="/platform/blueprint/outcome.html" class="nav-brand">
+            <span class="nav-logo">RIBH Blueprint</span>
+            <span class="nav-tag">داخلي</span>
+        </a>
+        <div class="nav-links">
+            <a href="/platform/blueprint/outcome.html" class="nav-link">
+                النتيجة
+                <span class="nav-num">01</span>
+            </a>
+            <a href="/platform/blueprint/engine.html" class="nav-link active">
+                المحرك
+                <span class="nav-num">02</span>
+            </a>
+            <a href="/platform/blueprint/experience.html" class="nav-link">
+                التجربة
+                <span class="nav-num">03</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="page-container">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+        <div class="hero-overline">الصفحة ٢ من ٣ — المبادئ الأولى</div>
+        <h1>المحرك: ٥ طبقات تبني منصة متكاملة</h1>
+        <p class="hero-sub">
+            كل منصة ناجحة تتكون من نفس الطبقات الخمس. الفرق بيننا وبين Klaviyo و Attentive هو إننا نبني كل طبقة للسوق السعودي من اليوم الأول.
+        </p>
+    </section>
+
+    <!-- ============ FLYWHEEL DIAGRAM ============ -->
+    <div class="flywheel">
+        <div class="flywheel-title">دورة المحرك الكاملة — كل طبقة تغذي اللي بعدها</div>
+        <div class="flywheel-chain">
+            <div class="flywheel-node">
+                <div class="flywheel-node-num">1</div>
+                <div class="flywheel-node-ar">اكتشف وأسر</div>
+                <div class="flywheel-node-en">CAPTURE</div>
+            </div>
+            <div class="flywheel-arrow">&larr;</div>
+            <div class="flywheel-node">
+                <div class="flywheel-node-num">2</div>
+                <div class="flywheel-node-ar">اعرف عميلك</div>
+                <div class="flywheel-node-en">KNOW</div>
+            </div>
+            <div class="flywheel-arrow">&larr;</div>
+            <div class="flywheel-node">
+                <div class="flywheel-node-num">3</div>
+                <div class="flywheel-node-ar">تنبأ</div>
+                <div class="flywheel-node-en">PREDICT</div>
+            </div>
+            <div class="flywheel-arrow">&larr;</div>
+            <div class="flywheel-node">
+                <div class="flywheel-node-num">4</div>
+                <div class="flywheel-node-ar">أرسل الرسالة</div>
+                <div class="flywheel-node-en">MESSAGE</div>
+            </div>
+            <div class="flywheel-arrow">&larr;</div>
+            <div class="flywheel-node">
+                <div class="flywheel-node-num">5</div>
+                <div class="flywheel-node-ar">استرد واربح</div>
+                <div class="flywheel-node-en">RECOVER</div>
+            </div>
+        </div>
+        <div class="flywheel-loop">
+            <span class="flywheel-loop-label">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg>
+                دورة التجارة الإلكترونية السعودية — SAUDI ECOMMERCE FLYWHEEL
+            </span>
+        </div>
+    </div>
+
+
+    <!-- ======================================================
+         LAYER 1: CAPTURE
+         ====================================================== -->
+    <section class="layer-section" id="layer-1">
+        <div class="layer-card">
+            <div class="layer-header">
+                <div class="layer-badge">1</div>
+                <div class="layer-title-block">
+                    <div class="layer-name-ar">اكتشف وأسر</div>
+                    <div class="layer-name-en">Layer 1 — CAPTURE</div>
+                </div>
+            </div>
+
+            <div class="truth-box">
+                <div class="truth-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    الحقيقة الجوهرية — FUNDAMENTAL TRUTH
+                </div>
+                <div class="truth-text">ما تقدر تبيع لشخص ما تقدر توصله. جمع البيانات هو أساس كل شيء.</div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-title">المقارنة — كيف كل منصة تحل المشكلة</div>
+                <div class="comparison-grid">
+                    <!-- Klaviyo -->
+                    <div class="comparison-col col-klaviyo">
+                        <div class="col-header">
+                            <span class="col-dot dot-klaviyo"></span>
+                            <span class="col-name">Klaviyo</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>نماذج التسجيل (Popups, Embeds, Flyouts)</li>
+                            <li>أكثر من 350 تكامل (Integration)</li>
+                            <li>تتبع الموقع عبر JavaScript</li>
+                            <li>يعتمد على أن الزائر يعبي النموذج بنفسه</li>
+                        </ul>
+                    </div>
+                    <!-- Attentive -->
+                    <div class="comparison-col col-attentive">
+                        <div class="col-header">
+                            <span class="col-dot dot-attentive"></span>
+                            <span class="col-name">Attentive</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>تسجيل بنقرتين (Two-Tap) — براءة اختراع</li>
+                            <li>Enhanced Tag — تتبع من السيرفر</li>
+                            <li>Identity Graph — خريطة هوية العميل</li>
+                            <li>AI Grow + عجلة الحظ (Spin-to-Win)</li>
+                            <li>نافذة الخروج (Exit Intent)</li>
+                        </ul>
+                    </div>
+                    <!-- RIBH -->
+                    <div class="comparison-col col-ribh">
+                        <div class="col-header">
+                            <span class="col-dot dot-ribh"></span>
+                            <span class="col-name">رِبح — المدمج</span>
+                            <span class="col-badge-merged">MERGED</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>Salla OAuth = بيانات كل العملاء فوراً بدون نماذج</li>
+                            <li>نافذة خروج مع اشتراك واتساب — نقرة وحدة بس</li>
+                            <li>Webhooks من سلة تلتقط كل حدث سلة لحظياً</li>
+                            <li>أرقام الجوال موجودة أصلاً في سلة — ما تحتاج تجمعها</li>
+                            <li>واتساب أبسط من SMS — ما يحتاج رمز تأكيد</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    الأدوات والتقنيات — TOOLS &amp; METHODS
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">Salla OAuth API</div>
+                            <div class="tool-desc">ربط المتجر بنقرة واحدة — يجلب كل بيانات العملاء والطلبات</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">Salla Webhooks</div>
+                            <div class="tool-desc">استقبال أحداث السلة والطلبات لحظياً — بدون أي تأخير</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">exit-popup.js</div>
+                            <div class="tool-desc">نافذة خروج ذكية — تظهر قبل ما الزائر يطلع من الصفحة</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">WhatsApp Click-to-Chat</div>
+                            <div class="tool-desc">روابط محادثة واتساب مباشرة — اشتراك بنقرة واحدة</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connector -->
+    <div class="layer-connector"><div class="layer-connector-line"></div></div>
+
+
+    <!-- ======================================================
+         LAYER 2: KNOW
+         ====================================================== -->
+    <section class="layer-section" id="layer-2">
+        <div class="layer-card">
+            <div class="layer-header">
+                <div class="layer-badge">2</div>
+                <div class="layer-title-block">
+                    <div class="layer-name-ar">اعرف عميلك</div>
+                    <div class="layer-name-en">Layer 2 — KNOW</div>
+                </div>
+            </div>
+
+            <div class="truth-box">
+                <div class="truth-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    الحقيقة الجوهرية — FUNDAMENTAL TRUTH
+                </div>
+                <div class="truth-text">شخص واحد = سجل واحد. البيانات المتفرقة ضوضاء بلا قيمة.</div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-title">المقارنة — كيف كل منصة تحل المشكلة</div>
+                <div class="comparison-grid">
+                    <div class="comparison-col col-klaviyo">
+                        <div class="col-header">
+                            <span class="col-dot dot-klaviyo"></span>
+                            <span class="col-name">Klaviyo</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>منصة بيانات العملاء (CDP) — ملفات موحدة</li>
+                            <li>أكثر من 350 مصدر بيانات مدمج</li>
+                            <li>احتفاظ بالبيانات بلا حدود زمنية</li>
+                            <li>حذف التكرار عبر مصادر متعددة (Deduplication)</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-attentive">
+                        <div class="col-header">
+                            <span class="col-dot dot-attentive"></span>
+                            <span class="col-name">Attentive</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>Identity Graph — الهاتف هو المعرف الأساسي</li>
+                            <li>ربط الأجهزة المتعددة (Cross-Device Matching)</li>
+                            <li>Rich Data Capture — يكمل بيانات الزوار المجهولين</li>
+                            <li>ملف عميل واحد عبر كل القنوات</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-ribh">
+                        <div class="col-header">
+                            <span class="col-dot dot-ribh"></span>
+                            <span class="col-name">رِبح — المدمج</span>
+                            <span class="col-badge-merged">MERGED</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>ملف عميل موحد من بيانات سلة (طلبات، منتجات، عناوين)</li>
+                            <li>رقم الجوال هو المعرف الأساسي (صيغة 966+) — نفس فلسفة Attentive</li>
+                            <li>تقييم RFM من اليوم الأول — بدون انتظار 180 يوم مثل Klaviyo</li>
+                            <li>تاريخ المشتريات + السلات + الرسائل في سجل واحد</li>
+                            <li>تخزين مزدوج: Firestore + ملفات JSON المحلية</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    الأدوات والتقنيات — TOOLS &amp; METHODS
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">Firestore</div>
+                            <div class="tool-desc">قاعدة بيانات رئيسية — salla_merchants, abandoned_carts</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">Local JSON Storage</div>
+                            <div class="tool-desc">stores.json, customers.json — وصول فوري بدون شبكة</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">rfmSegmentation.js</div>
+                            <div class="tool-desc">تقسيم العملاء (Champions, Loyal, At Risk) من أول يوم</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">Phone Normalization (+966)</div>
+                            <div class="tool-desc">توحيد صيغة الأرقام السعودية — معرف واحد لكل عميل</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connector -->
+    <div class="layer-connector"><div class="layer-connector-line"></div></div>
+
+
+    <!-- ======================================================
+         LAYER 3: PREDICT
+         ====================================================== -->
+    <section class="layer-section" id="layer-3">
+        <div class="layer-card">
+            <div class="layer-header">
+                <div class="layer-badge">3</div>
+                <div class="layer-title-block">
+                    <div class="layer-name-ar">تنبأ بالخطوة التالية</div>
+                    <div class="layer-name-en">Layer 3 — PREDICT</div>
+                </div>
+            </div>
+
+            <div class="truth-box">
+                <div class="truth-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    الحقيقة الجوهرية — FUNDAMENTAL TRUTH
+                </div>
+                <div class="truth-text">البيانات بدون ذكاء = ضوضاء. القيمة الحقيقية هي معرفة إيش تسوي.</div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-title">المقارنة — كيف كل منصة تحل المشكلة</div>
+                <div class="comparison-grid">
+                    <div class="comparison-col col-klaviyo">
+                        <div class="col-header">
+                            <span class="col-dot dot-klaviyo"></span>
+                            <span class="col-name">Klaviyo</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>تحليلات تنبؤية بالتعلم الآلي (CLV, Churn, Next Order)</li>
+                            <li>يحتاج أكثر من 500 عميل و180 يوم للتفعيل</li>
+                            <li>تقسيم RFM — شرائح ديناميكية لحظية</li>
+                            <li>Smart Send Time — توقيت إرسال ذكي</li>
+                            <li>مقارنة مع 183 ألف متجر (Peer Benchmarking)</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-attentive">
+                        <div class="col-header">
+                            <span class="col-dot dot-attentive"></span>
+                            <span class="col-name">Attentive</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>ذكاء اصطناعي مدرب على 1.4 تريليون نقطة بيانات</li>
+                            <li>AI Journeys — تخصيص تلقائي بالكامل</li>
+                            <li>Audiences AI — شرائح ذكية</li>
+                            <li>Send Time AI — أفضل وقت إرسال</li>
+                            <li>Brand Voice AI — صوت العلامة التجارية</li>
+                            <li>منع الإرسال التنبؤي (Predictive Suppression)</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-ribh">
+                        <div class="col-header">
+                            <span class="col-dot dot-ribh"></span>
+                            <span class="col-name">رِبح — المدمج</span>
+                            <span class="col-badge-merged">MERGED</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>تقسيم RFM فوري من اليوم الأول (Champions, Loyal, At Risk)</li>
+                            <li>توليد عروض بالذكاء الاصطناعي عبر Groq (مجاني) مع Gemini احتياطي</li>
+                            <li>تحليلات تنبؤية: CLV، احتمالية المغادرة، الطلب التالي</li>
+                            <li>إطار A/B Testing — اختبار كل شيء</li>
+                            <li>حماية ذكية ضد الحظر (Anti-Ban) — تأخيرات بشرية</li>
+                            <li>تعلم أفضل قناة لكل عميل (واتساب / إيميل / SMS)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    الأدوات والتقنيات — TOOLS &amp; METHODS
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">predictiveAnalytics.js</div>
+                            <div class="tool-desc">حساب CLV، احتمالية المغادرة، توقع الطلب التالي</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">rfmSegmentation.js</div>
+                            <div class="tool-desc">تقسيم تلقائي: أبطال، أوفياء، معرضين للخطر، نائمين</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">abTesting.js</div>
+                            <div class="tool-desc">إطار اختبار A/B — قارن العروض والرسائل والتوقيت</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">offerGenerator.js</div>
+                            <div class="tool-desc">توليد عروض ذكية عبر Groq API مع Gemini كاحتياطي</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">antiBan.js</div>
+                            <div class="tool-desc">تأخيرات إرسال بشرية — حماية من حظر واتساب</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connector -->
+    <div class="layer-connector"><div class="layer-connector-line"></div></div>
+
+
+    <!-- ======================================================
+         LAYER 4: MESSAGE
+         ====================================================== -->
+    <section class="layer-section" id="layer-4">
+        <div class="layer-card">
+            <div class="layer-header">
+                <div class="layer-badge">4</div>
+                <div class="layer-title-block">
+                    <div class="layer-name-ar">أرسل الرسالة المثالية</div>
+                    <div class="layer-name-en">Layer 4 — MESSAGE</div>
+                </div>
+            </div>
+
+            <div class="truth-box">
+                <div class="truth-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    الحقيقة الجوهرية — FUNDAMENTAL TRUTH
+                </div>
+                <div class="truth-text">الذكاء بدون فعل = هدر. الرسالة هي اللي تجيب الإيراد.</div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-title">المقارنة — كيف كل منصة تحل المشكلة</div>
+                <div class="comparison-grid">
+                    <div class="comparison-col col-klaviyo">
+                        <div class="col-header">
+                            <span class="col-dot dot-klaviyo"></span>
+                            <span class="col-name">Klaviyo</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>أكثر من 80 قالب رحلة جاهز</li>
+                            <li>محرر سحب وإفلات للإيميلات + 350 قالب</li>
+                            <li>تفرعات شرطية + اختبار A/B</li>
+                            <li>إيميل + SMS + Push + واتساب (تجريبي) + RCS (تجريبي)</li>
+                            <li>K:AI Marketing Agent — وكيل تسويق ذكي</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-attentive">
+                        <div class="col-header">
+                            <span class="col-dot dot-attentive"></span>
+                            <span class="col-name">Attentive</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>AI Journeys — رحلات ذاتية التشغيل بالكامل</li>
+                            <li>Magic Message — نصوص وصور بالذكاء الاصطناعي</li>
+                            <li>اتصال مباشر مع شركات الاتصالات (SMS)</li>
+                            <li>أولوية تلقائية بين الرحلات</li>
+                            <li>محرك امتثال + Litigator Defender</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-ribh">
+                        <div class="col-header">
+                            <span class="col-dot dot-ribh"></span>
+                            <span class="col-name">رِبح — المدمج</span>
+                            <span class="col-badge-merged">MERGED</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>بدل 350 قالب — الذكاء الاصطناعي يولد قوالب عربية لحظياً عبر Groq</li>
+                            <li>بدل بناء رحلات يدوي — زر تشغيل/إيقاف (سلات متروكة، ترحيب، استرجاع)</li>
+                            <li>واتساب أولاً (98% معدل فتح في السعودية) مع إيميل + SMS احتياطي</li>
+                            <li>عروض مخصصة لكل عميل بالذكاء الاصطناعي</li>
+                            <li>تسلسل متعدد الخطوات: واتساب ← إيميل ← SMS</li>
+                            <li>محرك دورة الحياة ينسق كل شيء تلقائياً</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    الأدوات والتقنيات — TOOLS &amp; METHODS
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">lifecycleEngineV2.js</div>
+                            <div class="tool-desc">المحرك الرئيسي — ينسق التسلسلات والعروض والتوقيت</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">sequenceEngine.js</div>
+                            <div class="tool-desc">تسلسل متعدد الخطوات: واتساب ← إيميل ← SMS</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">offerGenerator.js</div>
+                            <div class="tool-desc">عروض مخصصة لكل عميل — خصومات ذكية بالذكاء الاصطناعي</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">aiMessenger.js</div>
+                            <div class="tool-desc">رسائل مخصصة بالذكاء الاصطناعي — نصوص طبيعية بالعربي</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">whatsappBridge.js</div>
+                            <div class="tool-desc">Baileys WebSocket — واتساب مجاني عبر رقم التاجر</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">emailSender.js</div>
+                            <div class="tool-desc">إرسال إيميلات عبر AWS SES — قناة احتياطية</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">smsSender.js</div>
+                            <div class="tool-desc">Twilio + AWS SNS — قناة SMS كملاذ أخير</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">messageQueue.js</div>
+                            <div class="tool-desc">طابور رسائل ذكي — إرسال منظم بدون تحميل زائد</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Connector -->
+    <div class="layer-connector"><div class="layer-connector-line"></div></div>
+
+
+    <!-- ======================================================
+         LAYER 5: RECOVER
+         ====================================================== -->
+    <section class="layer-section" id="layer-5">
+        <div class="layer-card">
+            <div class="layer-header">
+                <div class="layer-badge">5</div>
+                <div class="layer-title-block">
+                    <div class="layer-name-ar">استرد واربح</div>
+                    <div class="layer-name-en">Layer 5 — RECOVER</div>
+                </div>
+            </div>
+
+            <div class="truth-box">
+                <div class="truth-label">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                    الحقيقة الجوهرية — FUNDAMENTAL TRUTH
+                </div>
+                <div class="truth-text">اللي ينقاس يتحسن. الإسناد يقفل الحلقة ويبدأ دورة جديدة.</div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-title">المقارنة — كيف كل منصة تحل المشكلة</div>
+                <div class="comparison-grid">
+                    <div class="comparison-col col-klaviyo">
+                        <div class="col-header">
+                            <span class="col-dot dot-klaviyo"></span>
+                            <span class="col-name">Klaviyo</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>إسناد إيراد متعدد نقاط اللمس (Multi-Touch Attribution)</li>
+                            <li>Revenue Per Recipient — إيراد لكل مستلم</li>
+                            <li>مقارنة مع 183 ألف متجر (Peer Benchmarking)</li>
+                            <li>تقارير مخصصة + نتائج A/B</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-attentive">
+                        <div class="col-header">
+                            <span class="col-dot dot-attentive"></span>
+                            <span class="col-name">Attentive</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>تجارة محادثات (Concierge) — ردود ذكية ثنائية الاتجاه</li>
+                            <li>Text-to-Buy — الشراء عبر رسالة نصية</li>
+                            <li>المشتركين ينفقون 50% أكثر</li>
+                            <li>إسناد: يوم مشاهدة / 5 أيام نقرة</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-col col-ribh">
+                        <div class="col-header">
+                            <span class="col-dot dot-ribh"></span>
+                            <span class="col-name">رِبح — المدمج</span>
+                            <span class="col-badge-merged">MERGED</span>
+                        </div>
+                        <ul class="col-list">
+                            <li>إسناد قصصي: "أحمد — سلة 340 ر.س ← عرض 10% ← اشترى" — مش بس أرقام</li>
+                            <li>محادثات واتساب ذكية ثنائية الاتجاه مثل Attentive Concierge</li>
+                            <li>بيع إضافي بعد الشراء (Post-Purchase Upsell)</li>
+                            <li>استرداد تصفح المنتجات (Browse Abandonment)</li>
+                            <li>جمع تقييمات عبر واتساب</li>
+                            <li>تتبع أحداث كامل للقمع — تأثير الشبكة عبر متاجر سلة</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tools-section">
+                <div class="tools-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    الأدوات والتقنيات — TOOLS &amp; METHODS
+                </div>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">eventTracker.js</div>
+                            <div class="tool-desc">تسجيل كل حدث في القمع — من المشاهدة للشراء</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">postPurchaseUpsell.js</div>
+                            <div class="tool-desc">عروض بيع إضافي ذكية بعد إتمام الشراء</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">browseAbandonment.js</div>
+                            <div class="tool-desc">استرداد الزوار اللي شافوا منتجات بدون ما يضيفوها للسلة</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">reviewCollector.js</div>
+                            <div class="tool-desc">جمع تقييمات العملاء تلقائياً عبر واتساب</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">campaignLauncher.js</div>
+                            <div class="tool-desc">حملات تواصل بارد — توسع قاعدة العملاء</div>
+                        </div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                        </div>
+                        <div class="tool-info">
+                            <div class="tool-name">customerImport.js</div>
+                            <div class="tool-desc">استيراد عملاء من CSV ونقاط البيع</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /page-container -->
+
+
+<!-- ============ FOOTER ============ -->
+<footer class="blueprint-footer">
+    <div class="footer-nav">
+        <a href="/platform/blueprint/outcome.html" class="footer-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            الصفحة السابقة: النتيجة
+        </a>
+        <a href="/platform/blueprint/experience.html" class="footer-link">
+            الصفحة التالية: التجربة
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+        </a>
+    </div>
+    <div class="footer-copy">RIBH Blueprint — وثيقة داخلية | 2026</div>
+</footer>
+
+
+<!-- ============ SCROLL ANIMATION ============ -->
+<script>
+(function() {
+    const sections = document.querySelectorAll('.layer-section');
+
+    // Immediately show sections that are already in view
+    function revealSections() {
+        sections.forEach(function(section) {
+            const rect = section.getBoundingClientRect();
+            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+            if (rect.top < windowHeight * 0.88) {
+                section.classList.add('visible');
+            }
+        });
+    }
+
+    // Run on load
+    revealSections();
+
+    // Run on scroll with throttle
+    let ticking = false;
+    window.addEventListener('scroll', function() {
+        if (!ticking) {
+            window.requestAnimationFrame(function() {
+                revealSections();
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+})();
+</script>
+
+</body>
+</html>
