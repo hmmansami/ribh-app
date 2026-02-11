@@ -349,5 +349,32 @@ Secrets are managed in:
 
 ---
 
+## Protected Files — DO NOT MODIFY WITHOUT EXPLICIT PERMISSION
+
+The following files contain the **approved, polished design** (tagged `v1-polished-dashboard`). Any AI session that modifies these files risks breaking the live site.
+
+**RULES:**
+1. **NEVER merge multiple platform pages** into fewer pages. Each page is separate on purpose.
+2. **NEVER "simplify" or "redesign" the UI** unless the user explicitly asks for a specific change.
+3. **NEVER delete platform pages** or restructure `public/platform/`.
+4. **Before modifying any file below**, describe exactly what you plan to change and wait for approval.
+5. **After any UI change**, provide the live URL so the user can verify before making more changes.
+6. If something breaks, revert to tag `v1-polished-dashboard`: `git checkout v1-polished-dashboard -- public/platform/`
+
+### Protected file list:
+- `public/platform/shared/shell.css` — Design system (layout, colors, components)
+- `public/platform/shared/shell.js` — Navigation shell (sidebar, topbar)
+- `public/platform/dashboard.html` — Main dashboard
+- `public/platform/analytics.html` — Analytics page
+- `public/platform/journeys.html` — Journeys page
+- `public/platform/settings.html` — Settings page
+- `public/platform/signup-tools.html` — Signup tools page
+- `public/platform/subscribers.html` — Subscribers page
+- `public/platform/subscriber.html` — Subscriber detail page
+
+---
+
 ## Corrections Log
-- (Add new rules here every time the user corrects a mistake)
+- NEVER merge platform pages into fewer pages — this broke the entire UI before
+- NEVER modify shell.css or shell.js without explicit approval — sidebar/layout breaks easily
+- Always show the user the live URL after UI changes so they can verify
