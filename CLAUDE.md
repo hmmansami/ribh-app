@@ -30,7 +30,7 @@ RIBH (رِبح) is an abandoned cart recovery platform for Salla/Shopify stores 
 | Layer | Technology |
 |-------|-----------|
 | Runtime | Node.js 20 |
-| Backend | Express (single `functions/server.js` — 9,400+ lines) |
+| Backend | Express (single `functions/server.js` — 9,408 lines) |
 | Hosting | Firebase Hosting (static files from `public/`) |
 | Functions | Firebase Cloud Functions (`europe-west1`) |
 | Database | Firestore (Admin SDK only, all client access blocked) |
@@ -54,43 +54,47 @@ RIBH (رِبح) is an abandoned cart recovery platform for Salla/Shopify stores 
 ```
 ribh-app/
 ├── functions/                  # Backend: Cloud Functions + Express API
-│   ├── index.js               # Firebase exports: api, keepAlive, triggerKeepAlive
-│   ├── server.js              # Main Express app (9,400+ lines, ALL routes)
+│   ├── index.js               # Firebase exports: api, keepAlive, triggerKeepAlive (147 lines)
+│   ├── server.js              # Main Express app (9,408 lines, ~160 routes)
 │   ├── package.json           # Node 20, Baileys, AWS SDK, Firebase
-│   ├── lib/                   # 62 business logic modules
-│   ├── routes/                # Modular route files (salla.js, shopify.js, payment.js)
-│   ├── webhooks/              # Webhook handlers (sallaCart.js, sallaOrder.js + tests)
+│   ├── lib/                   # 48 business logic modules
+│   ├── routes/                # Modular route files (salla.js, shopify.js)
+│   ├── webhooks/              # Webhook handlers (sallaCart.js, sallaOrder.js)
 │   ├── test/                  # Tests (fullFlowTest.js, quick-test.js, sample payloads)
-│   └── data/                  # Local JSON file storage (stores, customers, sequences)
+│   └── data/                  # Local JSON file storage (customers, sequences, email_usage)
 ├── public/                    # Frontend: static HTML/CSS/JS served by Firebase Hosting
 │   ├── index.html             # Marketing homepage
-│   ├── app.html               # Main SPA dashboard (~108KB, vanilla JS)
 │   ├── login.html             # Magic link authentication
 │   ├── onboarding.html        # Setup wizard
-│   ├── setup.html             # WhatsApp QR connection
-│   ├── admin/                 # Admin dashboard (signups, campaigns, outreach)
-│   ├── platform/              # Klaviyo-like multi-page platform
-│   │   └── shared/            # Shared shell.js + shell.css
-│   ├── widget/                # Exit-intent popup (exit-popup.js)
-│   └── js/                    # analytics.js, transitions.js
-├── whatsapp-bridge/           # Standalone WhatsApp bridge service (Render)
+│   ├── privacy.html           # Privacy policy
+│   ├── prototype.html         # Prototype/demo page
+│   ├── platform/              # Multi-page platform dashboard (10 pages)
+│   │   ├── shared/            # Shared shell.js + shell.css
+│   │   └── blueprint/         # Reference design pages (engine, experience, outcome)
+│   ├── js/                    # analytics.js
+│   ├── archive/               # Archived UI pages
+│   └── _redirects             # Redirect rules
+├── whatsapp-bridge/           # Placeholder for WhatsApp bridge service (empty)
+├── test/                      # Root-level tests (e2e-test.js, simulate-salla.js)
+├── archive/                   # Archived designs and pages
+├── bemo-avatar/               # Avatar assets
 ├── .github/workflows/         # CI/CD pipelines
 │   ├── firebase-hosting.yml   # Deploy on push to main
 │   └── auto-merge-claude.yml  # Auto-merge claude/** → main
-├── docs/                      # Strategy docs, research, deployment guides
-├── scripts/                   # Build/deploy utility scripts
+├── docs/                      # Strategy docs & research
 ├── firebase.json              # Hosting config + function rewrites
 ├── firestore.rules            # All client access blocked (Admin SDK only)
 ├── .firebaserc                # Project: ribh-484706
-├── server.js                  # Root entry point (Render/standalone mode)
-└── render.yaml                # Render deployment config
+├── server.js                  # Root entry point (Render/standalone mode, 39 lines)
+├── render.yaml                # Render deployment config
+└── vercel.json                # Vercel deployment config
 ```
 
 ### Key Entry Points
 | Context | File | Purpose |
 |---------|------|---------|
 | Firebase Functions | `functions/index.js` | Exports `api` (Express), `keepAlive` (scheduler), `triggerKeepAlive` |
-| Express App | `functions/server.js` | All 50+ API routes, middleware, integrations |
+| Express App | `functions/server.js` | All ~160 API routes, middleware, integrations |
 | Standalone/Render | `server.js` (root) | Wraps functions/server.js for non-Firebase hosting |
 
 ---
@@ -98,7 +102,7 @@ ribh-app/
 ## Architecture Overview
 
 ```
-Clients (public/*.html)
+Clients (public/*.html, public/platform/*.html)
         │ HTTPS
         ▼
 Firebase Hosting → Cloud Functions (europe-west1)
@@ -113,43 +117,100 @@ Firestore  Baileys  AWS SES   Groq AI
 
 ### Data Storage
 - **Firestore**: Persistent data — `salla_merchants`, `abandoned_carts`, `sequences`, `whatsapp_sessions`, `leads`
-- **Local JSON** (`functions/data/`): Fast-access file storage — `stores.json`, `customers.json`, `sequences.json`, `discount_codes.json`, `ab_tests.json`, `personality.json`, `email_usage.json`, `popup_leads.json`, `referrals.json`, `store_settings.json`
+- **Local JSON** (`functions/data/`): Fast-access file storage — `customers.json`, `sequences.json`, `email_usage.json`
 - **Firestore rules**: All client reads/writes blocked (`allow read, write: if false`). All access through Admin SDK in Cloud Functions.
 
 ---
 
 ## Core Business Logic Modules (`functions/lib/`)
 
+48 JavaScript modules organized by function:
+
+### Core Orchestration
 | Module | Purpose |
 |--------|---------|
 | `lifecycleEngineV2.js` | Core orchestration — sequences, WhatsApp, offers, timing |
+| `lifecycleEngine.js` | Legacy lifecycle engine (fallback) |
+| `sequenceEngine.js` | Multi-step flow orchestration |
+| `cartDetection.js` | Abandoned cart detection |
+| `messageQueue.js` | Message queuing system |
+
+### Platform Integrations
+| Module | Purpose |
+|--------|---------|
 | `sallaWebhooks.js` | Salla webhook handler, phone normalization (+966 format) |
 | `sallaApp.js` | Salla OAuth + token management |
 | `shopifyApp.js` | Shopify OAuth + webhooks |
+
+### WhatsApp (5 modules)
+| Module | Purpose |
+|--------|---------|
 | `whatsappBridge.js` | Baileys WebSocket integration (local) |
-| `whatsappClient.js` | HTTP client to Render bridge service |
 | `whatsappBridgeV2.js` | Updated WhatsApp bridge |
-| `offerGenerator.js` | AI offer generation via Groq API |
+| `whatsappClient.js` | HTTP client to Render bridge service |
+| `whatsappAssistant.js` | AI-powered WhatsApp messaging |
+| `whatsappSender.js` | WhatsApp message sending |
+
+### Messaging & Communication
+| Module | Purpose |
+|--------|---------|
 | `emailSender.js` | AWS SES email sending |
 | `smsSender.js` | AWS SNS + Twilio SMS |
-| `sequenceEngine.js` | Multi-step flow orchestration |
-| `messageQueue.js` | Message queuing system |
 | `aiMessenger.js` | AI-powered personalized messaging |
-| `antiBan.js` | Rate limiting + human-like sending delays |
-| `rfmSegmentation.js` | RFM customer scoring |
-| `predictiveAnalytics.js` | CLV, churn prediction, next order |
-| `campaignLauncher.js` | Cold outreach campaigns |
-| `customerImport.js` | CSV/POS customer import |
-| `reviewCollector.js` | WhatsApp review collection |
+| `messageVariants.js` | Message variant generation |
+| `fallbackSender.js` | Fallback messaging system |
+| `metaWhatsApp.js` | Meta WhatsApp API integration |
+| `replyDetector.js` | Incoming message/reply detection |
+| `orderNotifications.js` | Order notification handling |
+
+### AI & Offers
+| Module | Purpose |
+|--------|---------|
+| `offerGenerator.js` | AI offer generation via Groq API |
+| `offer-generator.js` | Alternative offer generation module |
 | `postPurchaseUpsell.js` | AI-powered post-purchase upsells |
-| `browseAbandonment.js` | Product view recovery |
+| `toneAdapter.js` | Message tone adaptation |
+| `aiLearning.js` | Continuous learning from behavior |
+
+### Analytics & Segmentation
+| Module | Purpose |
+|--------|---------|
+| `predictiveAnalytics.js` | CLV, churn prediction, next order |
+| `rfmSegmentation.js` | RFM customer scoring |
+| `analyticsEngine.js` | Comprehensive analytics |
+| `analytics.js` | General analytics utilities |
 | `eventTracker.js` | Event logging for analytics |
-| `cartDetection.js` | Abandoned cart detection |
+| `customerScoring.js` | Customer scoring system |
+| `storeAnalyzer.js` | Store analysis for AI insights |
+
+### Campaigns & Outreach
+| Module | Purpose |
+|--------|---------|
+| `campaignLauncher.js` | Cold outreach campaign management |
+| `campaignGenerator.js` | Campaign generation |
+| `outreachTracker.js` | WhatsApp outreach A/B testing |
+| `browseAbandonment.js` | Product view recovery |
+| `reviewCollector.js` | WhatsApp review collection |
 | `abTesting.js` | A/B test framework |
+
+### Data & Utilities
+| Module | Purpose |
+|--------|---------|
+| `customerImport.js` | CSV/POS customer import with deduplication |
+| `discountCodes.js` | Discount code management |
+| `referralSystem.js` | Referral tracking & management |
+| `paymentTokens.js` | Payment token handling |
+| `optOutManager.js` | Opt-out list management |
+| `productMemory.js` | Product view tracking |
+| `timingLearner.js` | Sending time optimization |
+| `qrOptin.js` | QR code opt-in system |
+| `antiBan.js` | Rate limiting + human-like sending delays |
 
 ---
 
 ## API Routes (in `functions/server.js`)
+
+~160 routes total. Key route groups:
 
 ### Authentication
 ```
@@ -199,13 +260,43 @@ GET /api/analytics/v2               → Comprehensive analytics
 POST /api/events/track              → Track custom event
 ```
 
-### Admin
+### Campaigns
+```
+POST /api/campaigns/broadcast  → Broadcast campaign
+GET  /api/ab-tests             → A/B test management
+GET  /api/referrals            → Referral tracking
+```
+
+### Admin & System
 ```
 GET  /api/carts              → List abandoned carts
 GET  /api/stats              → Global stats
 GET  /api/stores             → List all stores
 GET  /health                 → Health check
+GET  /api/cron/*             → Cron job endpoints
+GET  /widget.js              → Dynamic widget script
 ```
+
+---
+
+## Platform Pages (`public/platform/`)
+
+10 separate HTML pages — each is a standalone page sharing shell.js + shell.css:
+
+| Page | Purpose |
+|------|---------|
+| `dashboard.html` | Main dashboard with KPIs and overview |
+| `analytics.html` | Analytics and reporting |
+| `journeys.html` | Journey/sequence builder |
+| `campaigns.html` | Campaign management |
+| `settings.html` | Store settings (largest page) |
+| `signup-tools.html` | Signup widgets and exit-intent popups |
+| `subscribers.html` | Subscriber list view |
+| `subscriber.html` | Individual subscriber detail |
+| `segments.html` | Customer segments |
+| `inbox.html` | Inbox/messages |
+
+Blueprint reference pages in `blueprint/`: `engine.html`, `experience.html`, `outcome.html`
 
 ---
 
@@ -253,6 +344,9 @@ npm run serve
 
 # Or run standalone Express server
 node functions/server.js
+
+# Or run root server (Render mode)
+node server.js
 ```
 
 ### Testing
@@ -263,8 +357,18 @@ node functions/test/fullFlowTest.js
 # Run quick validation
 node functions/test/quick-test.js
 
-# Webhook-specific tests
-node functions/webhooks/sallaCart.test.js
+# Abandoned cart WhatsApp test
+node functions/test/test-abandoned-cart-whatsapp.js
+
+# Root-level e2e test
+node test/e2e-test.js
+
+# Salla simulation
+node test/simulate-salla.js
+
+# In-lib unit tests
+node functions/lib/messageQueue.test.js
+node functions/lib/replyDetector.test.js
 ```
 
 ### Linting
@@ -283,6 +387,35 @@ firebase deploy --project ribh-484706 --force
 # Verify deployment
 gh run list --repo hmmansami/ribh-app --limit 1
 ```
+
+---
+
+## Dependencies
+
+### Functions (`functions/package.json`)
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@aws-sdk/client-ses` | ^3.975.0 | AWS SES email sending |
+| `@aws-sdk/client-sns` | ^3.750.0 | AWS SNS SMS sending |
+| `axios` | ^1.6.0 | HTTP client |
+| `baileys` | ^6.7.21 | WhatsApp WebSocket library |
+| `cors` | ^2.8.5 | CORS middleware |
+| `dotenv` | ^16.0.3 | Environment variables |
+| `express` | ^4.18.2 | Web framework |
+| `firebase-admin` | ^11.5.0 | Firebase Admin SDK |
+| `firebase-functions` | ^4.3.1 | Cloud Functions SDK |
+| `node-fetch` | ^2.7.0 | Fetch API for Node |
+| `pino` | ^8.21.0 | Logging library |
+| `qrcode` | ^1.5.4 | QR code generation |
+| `twilio` | ^4.20.0 | SMS via Twilio |
+
+Optional: `whatsapp-web.js@^1.23.0`
+
+### Root (`package.json`)
+| Package | Purpose |
+|---------|---------|
+| `axios`, `cors`, `dotenv`, `express`, `firebase-admin` | Standalone server deps |
+| `firebase-tools` (dev) | Firebase CLI |
 
 ---
 
@@ -316,13 +449,37 @@ Secrets are managed in:
 
 ### `firebase-hosting.yml` — Deploy to Firebase
 - **Trigger**: Push to `main` or manual dispatch
-- **Steps**: Checkout → Node 20 → Create `.env` → Install deps → Auth to GCloud → `firebase deploy`
+- **Steps**: Checkout → Node 20 → Create `.env` from secrets → Install deps → Auth to GCloud → `firebase deploy`
 - **Secrets**: `FIREBASE_SERVICE_ACCOUNT_RIBH_484706` + all env vars above
 
 ### `auto-merge-claude.yml` — Auto-merge Claude branches
 - **Trigger**: Push to `claude/**`
 - **Steps**: Checkout → Merge to `main` → Trigger firebase deploy workflow
 - **Effect**: Any `claude/*` branch push auto-deploys
+
+---
+
+## Firebase Configuration (`firebase.json`)
+
+### Hosting
+- Public directory: `public/`
+- Clean URLs enabled (no `.html` extensions needed)
+- Trailing slash disabled
+- 1-year cache for JS/CSS assets
+
+### Function Rewrites
+| URL Pattern | Target |
+|-------------|--------|
+| `/api/**` | `api` function (europe-west1) |
+| `/oauth/**` | `api` function |
+| `/webhooks/**` | `api` function |
+| `/shopify/**` | `api` function |
+| `/salla/**` | `api` function |
+
+### Emulators
+- Functions: port 5001
+- Firestore: port 8080
+- Hosting: port 5000
 
 ---
 
@@ -340,12 +497,13 @@ Secrets are managed in:
 
 ## Important Conventions
 
-1. **server.js is monolithic** — 9,400+ lines. All routes live here. Route files in `routes/` are modular additions, not replacements.
-2. **No frontend framework** — Dashboard (`app.html`) is vanilla JS with inline state management. No React/Vue/Svelte.
+1. **server.js is monolithic** — 9,408 lines. All routes live here. Route files in `routes/` are modular additions, not replacements.
+2. **No frontend framework** — Platform pages are vanilla HTML/CSS/JS with shared shell. No React/Vue/Svelte.
 3. **Arabic-first** — All user-facing strings are Arabic. Variable names and code comments are in English.
 4. **Free-tier focused** — Architecture optimizes for zero cost: Baileys (free WhatsApp), Groq (free AI), Firebase Spark (free hosting).
-5. **Keep-alive scheduler** — `keepAlive` function runs every 5 minutes to prevent cold starts and process pending sequences.
+5. **Keep-alive scheduler** — `keepAlive` function runs every 5 minutes to prevent cold starts, process pending sequences, and check abandoned carts.
 6. **Dual persistence** — Some data is in both Firestore and local JSON files (`functions/data/`). JSON files are the faster-access layer.
+7. **Separate platform pages** — Each platform page is an independent HTML file. Never merge them.
 
 ---
 
@@ -367,10 +525,13 @@ The following files contain the **approved, polished design** (tagged `v1-polish
 - `public/platform/dashboard.html` — Main dashboard
 - `public/platform/analytics.html` — Analytics page
 - `public/platform/journeys.html` — Journeys page
+- `public/platform/campaigns.html` — Campaigns page
 - `public/platform/settings.html` — Settings page
 - `public/platform/signup-tools.html` — Signup tools page
 - `public/platform/subscribers.html` — Subscribers page
 - `public/platform/subscriber.html` — Subscriber detail page
+- `public/platform/segments.html` — Customer segments page
+- `public/platform/inbox.html` — Inbox/messages page
 
 ---
 
@@ -378,3 +539,5 @@ The following files contain the **approved, polished design** (tagged `v1-polish
 - NEVER merge platform pages into fewer pages — this broke the entire UI before
 - NEVER modify shell.css or shell.js without explicit approval — sidebar/layout breaks easily
 - Always show the user the live URL after UI changes so they can verify
+- The `whatsapp-bridge/` directory is currently empty — WhatsApp integration lives in `functions/lib/whatsappBridge*.js`
+- No `public/admin/`, `public/widget/`, or `scripts/` directories exist — features are in `public/platform/` and `functions/lib/`
