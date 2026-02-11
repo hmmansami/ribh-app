@@ -9,11 +9,12 @@
 - When there's a bug, start by writing a test that reproduces it, then fix it until the test passes.
 
 ## Deployment
-- GitHub PAT is available for direct pushes to main (no PRs needed).
-- Pushes to main auto-deploy to Firebase Hosting via GitHub Actions.
-- `claude/**` branches auto-merge to main via `.github/workflows/auto-merge-claude.yml`.
-- Firebase service account currently lacks `serviceusage.serviceUsageConsumer` role — only hosting deploys work (no functions/firestore).
-- Always verify deploy passes after pushing: `gh run list --repo hmmansami/ribh-app --limit 1`
+- **NEVER push directly to main.** Always use a `claude/**` branch.
+- `claude/**` branches deploy to a **preview channel URL** (temporary, expires in 7 days).
+- The user reviews the preview on their phone. If approved, they promote to production.
+- Pushes to `main` auto-deploy to Firebase Hosting (production) via GitHub Actions.
+- To promote: Go to GitHub Actions → "Promote to Production" → Run workflow → enter branch name.
+- Always provide the preview URL after deploying so the user can check on mobile.
 - Deploy command (manual): `firebase deploy --project ribh-484706 --force`
 
 ---
@@ -70,7 +71,6 @@ ribh-app/
 │   ├── prototype.html         # Prototype/demo page
 │   ├── platform/              # Multi-page platform dashboard (10 pages)
 │   │   ├── shared/            # Shared shell.js + shell.css
-│   │   └── blueprint/         # Reference design pages (engine, experience, outcome)
 │   ├── js/                    # analytics.js
 │   ├── archive/               # Archived UI pages
 │   └── _redirects             # Redirect rules
@@ -80,7 +80,8 @@ ribh-app/
 ├── bemo-avatar/               # Avatar assets
 ├── .github/workflows/         # CI/CD pipelines
 │   ├── firebase-hosting.yml   # Deploy on push to main
-│   └── auto-merge-claude.yml  # Auto-merge claude/** → main
+│   ├── auto-merge-claude.yml  # Preview deploy for claude/** branches
+│   └── promote-to-production.yml  # Manual promote preview → production
 ├── docs/                      # Strategy docs & research
 ├── firebase.json              # Hosting config + function rewrites
 ├── firestore.rules            # All client access blocked (Admin SDK only)
@@ -296,8 +297,6 @@ GET  /widget.js              → Dynamic widget script
 | `segments.html` | Customer segments |
 | `inbox.html` | Inbox/messages |
 
-Blueprint reference pages in `blueprint/`: `engine.html`, `experience.html`, `outcome.html`
-
 ---
 
 ## Authentication Pattern
@@ -452,10 +451,15 @@ Secrets are managed in:
 - **Steps**: Checkout → Node 20 → Create `.env` from secrets → Install deps → Auth to GCloud → `firebase deploy`
 - **Secrets**: `FIREBASE_SERVICE_ACCOUNT_RIBH_484706` + all env vars above
 
-### `auto-merge-claude.yml` — Auto-merge Claude branches
+### `auto-merge-claude.yml` — Preview Deploy Claude branches
 - **Trigger**: Push to `claude/**`
-- **Steps**: Checkout → Merge to `main` → Trigger firebase deploy workflow
-- **Effect**: Any `claude/*` branch push auto-deploys
+- **Steps**: Checkout → Deploy to Firebase preview channel → Output preview URL
+- **Effect**: Creates a temporary preview URL (expires 7 days). Does NOT merge to main.
+
+### `promote-to-production.yml` — Promote Preview to Production
+- **Trigger**: Manual (workflow_dispatch)
+- **Input**: Branch name to promote
+- **Steps**: Merge branch to main → Trigger Firebase production deploy
 
 ---
 
@@ -465,7 +469,7 @@ Secrets are managed in:
 - Public directory: `public/`
 - Clean URLs enabled (no `.html` extensions needed)
 - Trailing slash disabled
-- 1-year cache for JS/CSS assets
+- No-cache headers for JS/CSS/HTML (forces fresh content on every visit)
 
 ### Function Rewrites
 | URL Pattern | Target |
