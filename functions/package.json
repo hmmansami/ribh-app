@@ -8,7 +8,8 @@
         "deploy": "firebase deploy --only functions",
         "logs": "firebase functions:log",
         "lint": "eslint .",
-        "test": "echo \"No tests yet\""
+        "test": "npm run test:smoke:auto-activation",
+        "test:smoke:auto-activation": "node scripts/smoke-auto-activation.js"
     },
     "engines": {
         "node": "20"
