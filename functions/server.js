@@ -255,6 +255,12 @@ try {
     contentGenerator = null;
 }
 
+// Edge-trigger guard: tracks which merchants have already been auto-activated via WhatsApp
+const whatsAppActivatedMerchants = new Set();
+
+// Global kill-switch for auto-activation (set via env or runtime)
+const AUTO_ACTIVATION_ENABLED = process.env.AUTO_ACTIVATION_ENABLED !== 'false';
+
 // Review Engine - Post-purchase review collection
 let reviewEngine;
 try {
@@ -1586,8 +1592,10 @@ app.get('/api/whatsapp/status', async (req, res) => {
         const status = whatsappBridge.getStatus(merchantId);
         const pendingQR = whatsappBridge.getPendingQR(merchantId);
 
-        // 🚀 AUTO-ACTIVATION: If WhatsApp just connected, trigger full activation
-        if (status?.connected && autoActivation) {
+        // 🚀 AUTO-ACTIVATION: Edge-triggered — only fires ONCE on first connect
+        // Uses in-memory set to avoid Firestore reads on every poll
+        if (AUTO_ACTIVATION_ENABLED && status?.connected && autoActivation && !whatsAppActivatedMerchants.has(merchantId)) {
+            whatsAppActivatedMerchants.add(merchantId);
             try {
                 const activationResult = await autoActivation.onWhatsAppConnected(merchantId, {
                     phone: status.phone || '',
@@ -1596,10 +1604,10 @@ app.get('/api/whatsapp/status', async (req, res) => {
                 if (activationResult?.status === 'fully_active') {
                     console.log(`🚀 [AutoActivation] FULLY ACTIVE after WhatsApp connect: ${merchantId}`);
                 }
-                // Attach activation status to response
                 status.activation = activationResult;
             } catch (e) {
                 console.log('⚠️ Auto-activation on WhatsApp connect error:', e.message);
+                whatsAppActivatedMerchants.delete(merchantId); // Allow retry on error
             }
         }
 
@@ -2510,7 +2518,7 @@ async function handleSallaWebhook(req, res) {
         }
 
         // 🚀 Process through Auto-Activation Engine (smart routing with AI)
-        if (autoActivation) {
+        if (AUTO_ACTIVATION_ENABLED && autoActivation) {
             try {
                 switch (event.event) {
                     case 'cart.abandoned':
@@ -3432,7 +3440,7 @@ async function handleAppInstalled(data, merchant) {
     }
 
     // 🚀 AUTO-ACTIVATION: Trigger one-click activation on Salla connect
-    if (autoActivation) {
+    if (AUTO_ACTIVATION_ENABLED && autoActivation) {
         try {
             const activationResult = await autoActivation.onSallaConnected(merchantId, {
                 storeName: data?.store?.name || data?.name || 'متجر',
@@ -6945,16 +6953,30 @@ app.get('/api/analytics/summary', async (req, res) => {
 
 
 // ==========================================
-// 🚀 AUTO-ACTIVATION API ENDPOINTS
+// 🚀 AUTO-ACTIVATION API ENDPOINTS (all auth-guarded)
 // ==========================================
 
+// Auth middleware for activation API — returns JSON 401 (not redirect)
+async function requireStoreAuth(req, res, next) {
+    const cookies = parseCookies(req);
+    const token = req.query.token || cookies.ribhToken;
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'Authentication required' });
+    }
+    const stores = await readDB(STORES_FILE);
+    const store = stores.find(s => s.ribhToken === token);
+    if (!store) {
+        return res.status(401).json({ success: false, error: 'Invalid token' });
+    }
+    req.store = store;
+    req.storeId = store.merchant;
+    next();
+}
+
 // Get activation status & dashboard data
-app.get('/api/activation/status', async (req, res) => {
+app.get('/api/activation/status', requireStoreAuth, async (req, res) => {
     try {
-        const merchantId = req.query.merchant || req.storeId;
-        if (!merchantId) {
-            return res.status(400).json({ success: false, error: 'Merchant ID required' });
-        }
+        const merchantId = req.storeId;
         if (!autoActivation) {
             return res.status(503).json({ success: false, error: 'Auto-activation not available' });
         }
@@ -6968,12 +6990,12 @@ app.get('/api/activation/status', async (req, res) => {
 });
 
 // Toggle a sequence on/off
-app.post('/api/activation/toggle', async (req, res) => {
+app.post('/api/activation/toggle', requireStoreAuth, async (req, res) => {
     try {
-        const { merchant, type, active } = req.body;
-        const merchantId = merchant || req.storeId;
-        if (!merchantId || !type) {
-            return res.status(400).json({ success: false, error: 'merchant and type required' });
+        const { type, active } = req.body;
+        const merchantId = req.storeId;
+        if (!type) {
+            return res.status(400).json({ success: false, error: 'type required' });
         }
         if (!autoActivation) {
             return res.status(503).json({ success: false, error: 'Auto-activation not available' });
@@ -6987,13 +7009,9 @@ app.post('/api/activation/toggle', async (req, res) => {
 });
 
 // Force full activation (manual trigger)
-app.post('/api/activation/activate', async (req, res) => {
+app.post('/api/activation/activate', requireStoreAuth, async (req, res) => {
     try {
-        const { merchant } = req.body;
-        const merchantId = merchant || req.storeId;
-        if (!merchantId) {
-            return res.status(400).json({ success: false, error: 'merchant required' });
-        }
+        const merchantId = req.storeId;
         if (!autoActivation) {
             return res.status(503).json({ success: false, error: 'Auto-activation not available' });
         }
@@ -7006,7 +7024,7 @@ app.post('/api/activation/activate', async (req, res) => {
 });
 
 // Get AI content provider status
-app.get('/api/activation/ai-status', async (req, res) => {
+app.get('/api/activation/ai-status', requireStoreAuth, async (req, res) => {
     try {
         const status = contentGenerator ? contentGenerator.getProviderStatus() : { primary: 'templates' };
         res.json({ success: true, ...status });
@@ -7016,7 +7034,7 @@ app.get('/api/activation/ai-status', async (req, res) => {
 });
 
 // Generate AI offer preview (for testing)
-app.post('/api/activation/preview-offer', async (req, res) => {
+app.post('/api/activation/preview-offer', requireStoreAuth, async (req, res) => {
     try {
         if (!contentGenerator) {
             return res.status(503).json({ success: false, error: 'Content Generator not available' });
