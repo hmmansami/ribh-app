@@ -101,6 +101,8 @@ var RibhShell = {
             </div>
         </aside>
 
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <div class="shell-main">
             <header class="shell-topbar">
                 <div class="topbar-right">
@@ -172,16 +174,35 @@ var RibhShell = {
     bindEvents: function() {
         var menuBtn = document.getElementById('menuBtn');
         var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+
+        function closeSidebar() {
+            if (sidebar) sidebar.classList.remove('open');
+            if (overlay) overlay.classList.remove('visible');
+        }
+
+        function openSidebar() {
+            if (sidebar) sidebar.classList.add('open');
+            if (overlay) overlay.classList.add('visible');
+        }
 
         if (menuBtn && sidebar) {
             menuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('open');
+                if (sidebar.classList.contains('open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
             });
+
+            if (overlay) {
+                overlay.addEventListener('click', closeSidebar);
+            }
 
             // Close sidebar on outside click (mobile)
             document.addEventListener('click', function(e) {
                 if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== menuBtn && !menuBtn.contains(e.target)) {
-                    sidebar.classList.remove('open');
+                    closeSidebar();
                 }
             });
         }

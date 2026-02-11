@@ -750,6 +750,7 @@
         .hero-narrative { font-size: 14px; }
         .sparkline-bars { max-width: 100%; }
         .quick-actions { grid-template-columns: repeat(2, 1fr); }
+        .quick-actions .quick-action-card { padding: 18px 12px; gap: 8px; }
         .ai-insight-item {
             flex-wrap: wrap;
         }
@@ -758,10 +759,11 @@
             margin-top: 4px;
         }
         .journey-metric { display: none; }
+        .recovery-amount { font-size: 13px; }
     }
     @media (max-width: 480px) {
         .hero-value { font-size: 28px; }
-        .quick-actions { grid-template-columns: 1fr; }
+        .quick-actions { grid-template-columns: 1fr 1fr; }
         .hero-top { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
 </style>
