@@ -11,367 +11,1144 @@
 
 <div id="page-content">
     <!-- Page Header -->
-    <div class="page-header flex justify-between items-center">
+    <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;">
         <div>
             <h1 class="page-title">الرحلات</h1>
-            <p class="page-subtitle">رحلات عملاء تلقائية — من الاشتراك للولاء</p>
+            <p class="page-subtitle">رحلات عملائك الآلية — من السلة المتروكة حتى الشراء</p>
         </div>
-        <button class="btn btn-primary" onclick="showCreateModal()">+ رحلة جديدة</button>
+        <button class="btn btn-primary" id="btnCreateJourney">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            انشاء رحلة جديدة
+        </button>
     </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <button class="tab active" data-filter="all">الكل <span class="text-dim">(7)</span></button>
-        <button class="tab" data-filter="active">نشط <span class="text-dim">(3)</span></button>
-        <button class="tab" data-filter="draft">مسودة <span class="text-dim">(4)</span></button>
+    <!-- KPI Summary -->
+    <div class="kpi-grid kpi-grid-3" id="kpiGrid">
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                الرحلات النشطة
+            </div>
+            <div class="kpi-value" id="kpiActiveCount">0</div>
+            <div class="kpi-change up">تعمل الان</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                اجمالي الايرادات
+            </div>
+            <div class="kpi-value" id="kpiRevenue">0 ر.س</div>
+            <div class="kpi-change up">من كل الرحلات</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                متوسط التحويل
+            </div>
+            <div class="kpi-value" id="kpiConversion">0%</div>
+            <div class="kpi-change up">عبر كل الرحلات</div>
+        </div>
     </div>
 
-    <!-- Journeys Grid -->
-    <div class="journeys-grid" id="journeysGrid">
-        <!-- Cart Recovery -->
-        <div class="journey-card" data-status="active" data-type="cart_recovery">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--warning-subtle); color: var(--warning);">🛒</div>
-                <span class="badge badge-success">نشط</span>
-            </div>
-            <h3 class="journey-card-title">استرداد السلات المتروكة</h3>
-            <p class="journey-card-desc">رسائل تلقائية للعملاء اللي تركوا سلاتهم — خصومات تدريجية عبر واتساب + SMS</p>
-            <div class="journey-card-steps">
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <span class="text-sm text-dim">3 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric">
-                    <div class="metric-value">30%</div>
-                    <div class="metric-label">استرداد</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">142</div>
-                    <div class="metric-label">مرسلة</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">98%</div>
-                    <div class="metric-label">تسليم</div>
-                </div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('cart_recovery')">تعديل</button>
-            </div>
-        </div>
+    <!-- Filter Tabs -->
+    <div class="tabs" id="filterTabs">
+        <button class="tab active" data-filter="all">الكل <span class="tab-count" id="countAll"></span></button>
+        <button class="tab" data-filter="active">نشط <span class="tab-count" id="countActive"></span></button>
+        <button class="tab" data-filter="draft">مسودة <span class="tab-count" id="countDraft"></span></button>
+        <button class="tab" data-filter="stopped">متوقف <span class="tab-count" id="countStopped"></span></button>
+    </div>
 
-        <!-- Welcome -->
-        <div class="journey-card" data-status="active" data-type="welcome">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--info-subtle); color: var(--info);">👋</div>
-                <span class="badge badge-success">نشط</span>
-            </div>
-            <h3 class="journey-card-title">رحلة الترحيب</h3>
-            <p class="journey-card-desc">ترحيب بالمشتركين الجدد — هدية ترحيبية وتعريف بالمتجر</p>
-            <div class="journey-card-steps">
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <span class="text-sm text-dim">3 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric">
-                    <div class="metric-value">85%</div>
-                    <div class="metric-label">قراءة</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">67</div>
-                    <div class="metric-label">مرسلة</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">12%</div>
-                    <div class="metric-label">تحويل</div>
-                </div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('welcome')">تعديل</button>
-            </div>
-        </div>
+    <!-- Journey Cards List -->
+    <div class="journeys-list" id="journeysList"></div>
+</div>
 
-        <!-- Post Purchase -->
-        <div class="journey-card" data-status="active" data-type="post_purchase">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--success-subtle); color: var(--success);">📦</div>
-                <span class="badge badge-success">نشط</span>
-            </div>
-            <h3 class="journey-card-title">متابعة بعد الشراء</h3>
-            <p class="journey-card-desc">شكر العميل + طلب تقييم + توصية منتجات مشابهة</p>
-            <div class="journey-card-steps">
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <div class="step-line"></div>
-                <div class="step-dot active"></div>
-                <span class="text-sm text-dim">3 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric">
-                    <div class="metric-value">92%</div>
-                    <div class="metric-label">قراءة</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">89</div>
-                    <div class="metric-label">مرسلة</div>
-                </div>
-                <div class="metric">
-                    <div class="metric-value">23%</div>
-                    <div class="metric-label">تقييم</div>
-                </div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <button class="btn btn-ghost btn-sm" onclick="editJourney('post_purchase')">تعديل</button>
-            </div>
+<!-- Create Journey Modal -->
+<div class="modal-overlay" id="createModal">
+    <div class="modal" style="max-width:680px;">
+        <div class="modal-header">
+            <h2 class="modal-title">رحلة جديدة</h2>
+            <button class="modal-close" id="btnCloseModal">&times;</button>
         </div>
-
-        <!-- Winback -->
-        <div class="journey-card" data-status="draft" data-type="winback">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--danger-subtle); color: var(--danger);">💔</div>
-                <span class="badge badge-warning">مسودة</span>
-            </div>
-            <h3 class="journey-card-title">استرجاع الغائبين</h3>
-            <p class="journey-card-desc">عملاء ما اشتروا من 30+ يوم — عروض متدرجة لإرجاعهم</p>
-            <div class="journey-card-steps">
-                <div class="step-dot"></div>
-                <div class="step-line"></div>
-                <div class="step-dot"></div>
-                <div class="step-line"></div>
-                <div class="step-dot"></div>
-                <span class="text-sm text-dim">3 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">استرداد</div></div>
-                <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('winback')">تفعيل</button>
-            </div>
-        </div>
-
-        <!-- Birthday -->
-        <div class="journey-card" data-status="draft" data-type="birthday">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: var(--primary-subtle); color: var(--primary);">🎂</div>
-                <span class="badge badge-warning">مسودة</span>
-            </div>
-            <h3 class="journey-card-title">تهنئة عيد ميلاد</h3>
-            <p class="journey-card-desc">هدية خصم لعيد ميلاد العميل — تُرسل تلقائياً</p>
-            <div class="journey-card-steps">
-                <div class="step-dot"></div>
-                <div class="step-line"></div>
-                <div class="step-dot"></div>
-                <span class="text-sm text-dim">2 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">استرداد</div></div>
-                <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب + SMS</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('birthday')">تفعيل</button>
-            </div>
-        </div>
-
-        <!-- Browse Abandonment -->
-        <div class="journey-card" data-status="draft" data-type="browse_abandonment">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: rgba(139, 92, 246, 0.1); color: #8B5CF6;">👁️</div>
-                <span class="badge badge-warning">مسودة</span>
-            </div>
-            <h3 class="journey-card-title">متابعة التصفح</h3>
-            <p class="journey-card-desc">عميل تصفح منتج بدون ما يضيفه للسلة — تذكير ذكي</p>
-            <div class="journey-card-steps">
-                <div class="step-dot"></div>
-                <div class="step-line"></div>
-                <div class="step-dot"></div>
-                <span class="text-sm text-dim">2 خطوات</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">تحويل</div></div>
-                <div class="metric"><div class="metric-value">0</div><div class="metric-label">مرسلة</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">نقر</div></div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <button class="btn btn-primary btn-sm" onclick="activateJourney('browse_abandonment')">تفعيل</button>
-            </div>
-        </div>
-
-        <!-- Back in Stock -->
-        <div class="journey-card" data-status="draft" data-type="back_in_stock">
-            <div class="journey-card-header">
-                <div class="journey-card-icon" style="background: rgba(34, 211, 238, 0.1); color: #22D3EE;">📢</div>
-                <span class="badge badge-neutral">قريباً</span>
-            </div>
-            <h3 class="journey-card-title">تنبيه عودة المنتج</h3>
-            <p class="journey-card-desc">منتج رجع بالمخزون — إشعار فوري للعملاء المهتمين</p>
-            <div class="journey-card-steps">
-                <div class="step-dot"></div>
-                <span class="text-sm text-dim">خطوة واحدة</span>
-            </div>
-            <div class="journey-card-metrics">
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
-                <div class="metric"><div class="metric-value">—</div><div class="metric-label">—</div></div>
-            </div>
-            <div class="journey-card-footer">
-                <span class="text-sm text-dim">واتساب</span>
-                <span class="text-sm text-dim">قريباً</span>
-            </div>
+        <div class="modal-body">
+            <p class="text-sm text-dim mb-16">اختر نوع الرحلة اللي تبي تنشئها</p>
+            <div class="create-grid" id="createGrid"></div>
         </div>
     </div>
 </div>
 
+<!-- Toast Container -->
+<div id="toastContainer" class="toast-container"></div>
+
 <style>
-    .journeys-grid {
-        display: grid;
+    /* ============================================
+       KPI Grid Override — 3 columns
+       ============================================ */
+    .kpi-grid-3 {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    /* ============================================
+       Tab Counts
+       ============================================ */
+    .tab-count {
+        color: var(--text-faint);
+        font-weight: 500;
+        font-size: 12px;
+    }
+    .tab.active .tab-count {
+        color: var(--primary);
+        opacity: 0.7;
+    }
+
+    /* ============================================
+       Journeys List (Stacked Cards)
+       ============================================ */
+    .journeys-list {
+        display: flex;
+        flex-direction: column;
         gap: 16px;
     }
 
-    .journey-card {
+    /* ============================================
+       Journey Card — Klaviyo Flow Style
+       ============================================ */
+    .j-card {
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 24px;
-        transition: all 0.2s;
-        display: flex;
-        flex-direction: column;
+        padding: 0;
+        transition: all 0.25s ease;
+        overflow: hidden;
+        position: relative;
     }
-    .journey-card:hover {
+    .j-card:hover {
         border-color: var(--border-hover);
-        transform: translateY(-2px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .j-card.is-active {
+        border-color: rgba(34, 197, 94, 0.15);
+    }
+    .j-card.is-active::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        height: 2px;
+        background: var(--success);
+        opacity: 0.6;
+    }
+    .j-card.is-dimmed {
+        opacity: 0.55;
+    }
+    .j-card.is-dimmed:hover {
+        opacity: 0.8;
+    }
+    .j-card.is-draft {
+        border-style: dashed;
     }
 
-    .journey-card-header {
+    /* Card Header */
+    .j-card-head {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 14px;
+        gap: 16px;
+        padding: 20px 24px 0;
     }
-    .journey-card-icon {
-        width: 44px;
-        height: 44px;
+    .j-card-icon {
+        width: 48px;
+        height: 48px;
         border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
+        flex-shrink: 0;
     }
-    .journey-card-title {
-        font-size: 16px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-    .journey-card-desc {
-        font-size: 13px;
-        color: var(--text-dim);
-        line-height: 1.6;
-        margin-bottom: 16px;
+    .j-card-info {
         flex: 1;
+        min-width: 0;
     }
-
-    .journey-card-steps {
+    .j-card-name-row {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 10px;
+        margin-bottom: 2px;
+    }
+    .j-card-name {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--text);
+    }
+    .j-card-desc {
+        font-size: 13px;
+        color: var(--text-dim);
+        line-height: 1.5;
+    }
+    .j-card-toggle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+    .j-card-toggle .toggle-label {
+        font-size: 12px;
+        font-weight: 600;
+        min-width: 44px;
+        text-align: center;
+    }
+
+    /* Trigger & Steps Section */
+    .j-card-body {
+        padding: 16px 24px;
+    }
+    .j-card-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-muted);
         margin-bottom: 16px;
+        padding: 10px 14px;
+        background: var(--bg-elevated);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border);
     }
-    .step-dot {
-        width: 10px;
-        height: 10px;
+    .j-card-trigger svg {
+        flex-shrink: 0;
+        color: var(--primary);
+        opacity: 0.7;
+    }
+    .j-card-trigger strong {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    /* Step Visualization — Horizontal Pipeline */
+    .j-steps {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+    .j-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        min-width: 70px;
+    }
+    .j-step-dot {
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        background: var(--bg-hover);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border: 2px solid var(--border);
+        background: var(--bg-elevated);
+        transition: all 0.3s;
+        position: relative;
     }
-    .step-dot.active {
-        background: var(--primary);
-        border-color: var(--primary);
+    .j-step-dot svg {
+        width: 16px;
+        height: 16px;
     }
-    .step-line {
-        width: 20px;
+    .j-step-dot.step-wa {
+        border-color: rgba(37, 211, 102, 0.4);
+        color: #25D366;
+    }
+    .j-step-dot.step-email {
+        border-color: rgba(59, 130, 246, 0.4);
+        color: var(--info);
+    }
+    .j-step-dot.step-sms {
+        border-color: rgba(168, 85, 247, 0.4);
+        color: #A855F7;
+    }
+    .j-step-dot.step-wait {
+        border-color: rgba(161, 161, 170, 0.3);
+        color: var(--text-dim);
+    }
+    .is-active .j-step-dot.step-wa {
+        background: rgba(37, 211, 102, 0.12);
+        box-shadow: 0 0 10px rgba(37, 211, 102, 0.15);
+    }
+    .is-active .j-step-dot.step-email {
+        background: var(--info-subtle);
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+    }
+    .is-active .j-step-dot.step-sms {
+        background: rgba(168, 85, 247, 0.1);
+        box-shadow: 0 0 10px rgba(168, 85, 247, 0.15);
+    }
+    .is-active .j-step-dot.step-wait {
+        background: rgba(255, 255, 255, 0.03);
+    }
+    .j-step-label {
+        font-size: 11px;
+        color: var(--text-faint);
+        font-weight: 500;
+        white-space: nowrap;
+        text-align: center;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .j-step-connector {
+        width: 28px;
         height: 2px;
         background: var(--border);
+        flex-shrink: 0;
+        margin-top: -20px;
+        transition: background 0.3s;
+    }
+    .is-active .j-step-connector {
+        background: rgba(255, 255, 255, 0.1);
     }
 
-    .journey-card-metrics {
+    /* Metrics Row */
+    .j-card-metrics {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 8px;
-        padding: 14px 0;
+        padding: 14px 24px;
         border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 14px;
+        background: rgba(255, 255, 255, 0.01);
     }
-    .metric { text-align: center; }
-    .metric-value { font-size: 16px; font-weight: 700; }
-    .metric-label { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+    .j-metric {
+        text-align: center;
+    }
+    .j-metric-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.3;
+    }
+    .j-metric-label {
+        font-size: 11px;
+        color: var(--text-faint);
+        margin-top: 2px;
+    }
+    .j-metric-value.muted {
+        color: var(--text-faint);
+    }
 
-    .journey-card-footer {
+    /* Card Footer / Actions */
+    .j-card-footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 12px 24px;
+        border-top: 1px solid var(--border);
+    }
+    .j-card-channels {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+    .j-channel-tag {
+        font-size: 11px;
+        color: var(--text-faint);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 3px 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .j-channel-tag svg {
+        width: 12px;
+        height: 12px;
+    }
+    .j-card-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    @media (max-width: 1024px) { .journeys-grid { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 640px) { .journeys-grid { grid-template-columns: 1fr; } }
+    /* Draft Activate Button */
+    .btn-activate {
+        background: var(--success-subtle);
+        color: var(--success);
+        border: 1px solid rgba(34, 197, 94, 0.2);
+        padding: 6px 16px;
+        font-size: 13px;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-family: inherit;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-activate:hover {
+        background: rgba(34, 197, 94, 0.18);
+    }
+
+    /* Toggle Spinner */
+    .toggle-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid var(--border);
+        border-top-color: var(--primary);
+        border-radius: 50%;
+        animation: spinToggle 0.6s linear infinite;
+        display: inline-block;
+    }
+    @keyframes spinToggle {
+        to { transform: rotate(360deg); }
+    }
+
+    /* ============================================
+       Create Journey Modal Grid
+       ============================================ */
+    .create-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    .create-type {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 20px 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .create-type:hover {
+        border-color: var(--primary);
+        background: var(--primary-subtle);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(251, 191, 36, 0.1);
+    }
+    .create-type-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .create-type-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+    }
+    .create-type-desc {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.5;
+    }
+
+    /* ============================================
+       Toast Notification
+       ============================================ */
+    .toast-container {
+        position: fixed;
+        bottom: 24px;
+        left: 24px;
+        z-index: 200;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+    }
+    .toast {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 14px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: auto;
+        min-width: 260px;
+        max-width: 400px;
+        animation: toastIn 0.35s ease forwards;
+    }
+    .toast.removing {
+        animation: toastOut 0.35s ease forwards;
+    }
+    .toast-icon {
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .toast.toast-success { border-color: rgba(34, 197, 94, 0.3); }
+    .toast.toast-success .toast-icon { color: var(--success); }
+    .toast.toast-info { border-color: rgba(59, 130, 246, 0.3); }
+    .toast.toast-info .toast-icon { color: var(--info); }
+    .toast.toast-warning { border-color: rgba(245, 158, 11, 0.3); }
+    .toast.toast-warning .toast-icon { color: var(--warning); }
+
+    @keyframes toastIn {
+        from { opacity: 0; transform: translateX(-40px) translateY(10px); }
+        to { opacity: 1; transform: translateX(0) translateY(0); }
+    }
+    @keyframes toastOut {
+        from { opacity: 1; transform: translateX(0) translateY(0); }
+        to { opacity: 0; transform: translateX(-40px) translateY(10px); }
+    }
+
+    /* ============================================
+       Empty State
+       ============================================ */
+    .j-empty {
+        text-align: center;
+        padding: 60px 24px;
+        color: var(--text-dim);
+    }
+    .j-empty-icon {
+        font-size: 48px;
+        margin-bottom: 12px;
+        opacity: 0.3;
+    }
+    .j-empty-text {
+        font-size: 15px;
+        font-weight: 500;
+    }
+
+    /* ============================================
+       Responsive
+       ============================================ */
+    @media (max-width: 1024px) {
+        .kpi-grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .j-card-metrics { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 768px) {
+        .kpi-grid-3 { grid-template-columns: 1fr; }
+        .j-card-head { flex-wrap: wrap; padding: 16px 16px 0; }
+        .j-card-body { padding: 12px 16px; }
+        .j-card-metrics {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 12px 16px;
+        }
+        .j-card-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+        }
+        .j-card-actions { width: 100%; justify-content: flex-end; }
+        .j-card-toggle { margin-right: auto; margin-left: 0; }
+        .j-steps { padding-bottom: 6px; }
+        .create-grid { grid-template-columns: 1fr; }
+        .j-card-trigger { font-size: 12px; padding: 8px 10px; }
+    }
+    @media (max-width: 480px) {
+        .j-card-metrics { grid-template-columns: repeat(2, 1fr); }
+        .j-step { min-width: 60px; }
+        .j-step-dot { width: 30px; height: 30px; }
+        .j-step-dot svg { width: 13px; height: 13px; }
+        .j-step-connector { width: 18px; }
+    }
 </style>
 
 <script src="/platform/shared/shell.js"></script>
 <script>
-    // Tab filtering
-    document.querySelectorAll('.tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-            this.classList.add('active');
-            var filter = this.dataset.filter;
-            document.querySelectorAll('.journey-card').forEach(function(card) {
-                if (filter === 'all' || card.dataset.status === filter) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-    });
+(function() {
+    /* ============================================
+       SVG Icon Templates
+       ============================================ */
+    var ICONS = {
+        whatsapp: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>',
+        email: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+        sms: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+        wait: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+        trigger: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+        cart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',
+        user: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+        package: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
+        heart: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+        cake: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>',
+        eye: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+        bell: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>',
+        custom: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+        edit: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+        chart: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
+    };
 
-    function editJourney(type) {
-        window.location.href = '/platform/journey-editor.html?type=' + type;
+    /* ============================================
+       Journey Data (sample/fallback)
+       ============================================ */
+    var JOURNEYS = [
+        {
+            id: 'cart_recovery',
+            name: '\u0627\u0633\u062A\u0631\u062F\u0627\u062F \u0627\u0644\u0633\u0644\u0627\u062A \u0627\u0644\u0645\u062A\u0631\u0648\u0643\u0629',
+            desc: '\u0631\u0633\u0627\u0626\u0644 \u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0644\u0627\u0633\u062A\u0631\u062F\u0627\u062F \u0627\u0644\u0633\u0644\u0627\u062A \u0627\u0644\u0645\u062A\u0631\u0648\u0643\u0629 \u0639\u0628\u0631 \u0648\u0627\u062A\u0633\u0627\u0628 \u0648\u0627\u064A\u0645\u064A\u0644 \u0645\u0639 \u062E\u0635\u0648\u0645\u0627\u062A \u062A\u062F\u0631\u064A\u062C\u064A\u0629',
+            status: 'active',
+            icon: 'cart',
+            iconBg: 'var(--warning-subtle)',
+            iconColor: 'var(--warning)',
+            trigger: '\u062A\u0631\u0643 \u0633\u0644\u0629 \u0628\u062F\u0648\u0646 \u0625\u0643\u0645\u0627\u0644 \u0627\u0644\u0634\u0631\u0627\u0621',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0630\u0643\u064A\u0631' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 4 \u0633\u0627\u0639\u0627\u062A' },
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u0639\u0631\u0636' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 24 \u0633\u0627\u0639\u0629' },
+                { type: 'email', label: '\u0627\u064A\u0645\u064A\u0644 \u062A\u0630\u0643\u064A\u0631' }
+            ],
+            metrics: { sent: 542, delivery: '98%', conversion: '30%', revenue: '8,450 \u0631.\u0633' },
+            channels: ['whatsapp', 'email']
+        },
+        {
+            id: 'welcome',
+            name: '\u0631\u062D\u0644\u0629 \u0627\u0644\u062A\u0631\u062D\u064A\u0628',
+            desc: '\u062A\u0631\u062D\u064A\u0628 \u0628\u0627\u0644\u0645\u0634\u062A\u0631\u0643\u064A\u0646 \u0627\u0644\u062C\u062F\u062F \u0645\u0639 \u062A\u0648\u0635\u064A\u0627\u062A \u0645\u0646\u062A\u062C\u0627\u062A \u0648\u0639\u0631\u0648\u0636 \u062E\u0627\u0635\u0629',
+            status: 'active',
+            icon: 'user',
+            iconBg: 'var(--info-subtle)',
+            iconColor: 'var(--info)',
+            trigger: '\u0627\u0634\u062A\u0631\u0627\u0643 \u0639\u0645\u064A\u0644 \u062C\u062F\u064A\u062F',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0631\u062D\u064A\u0628' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 \u064A\u0648\u0645' },
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0648\u0635\u064A\u0627\u062A' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 3 \u0623\u064A\u0627\u0645' },
+                { type: 'sms', label: 'SMS \u062E\u0635\u0645' }
+            ],
+            metrics: { sent: 267, delivery: '99%', conversion: '12%', revenue: '2,100 \u0631.\u0633' },
+            channels: ['whatsapp', 'sms']
+        },
+        {
+            id: 'post_purchase',
+            name: '\u0645\u062A\u0627\u0628\u0639\u0629 \u0628\u0639\u062F \u0627\u0644\u0634\u0631\u0627\u0621',
+            desc: '\u0634\u0643\u0631 \u0627\u0644\u0639\u0645\u064A\u0644 + \u0637\u0644\u0628 \u062A\u0642\u064A\u064A\u0645 + \u062A\u0648\u0635\u064A\u0629 \u0645\u0646\u062A\u062C\u0627\u062A \u0645\u0634\u0627\u0628\u0647\u0629 \u0644\u0632\u064A\u0627\u062F\u0629 \u0627\u0644\u0645\u0628\u064A\u0639\u0627\u062A',
+            status: 'active',
+            icon: 'package',
+            iconBg: 'var(--success-subtle)',
+            iconColor: 'var(--success)',
+            trigger: '\u0625\u062A\u0645\u0627\u0645 \u0637\u0644\u0628 \u062C\u062F\u064A\u062F',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u0634\u0643\u0631' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 3 \u0623\u064A\u0627\u0645' },
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0642\u064A\u064A\u0645' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 7 \u0623\u064A\u0627\u0645' },
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 upsell' }
+            ],
+            metrics: { sent: 389, delivery: '98%', conversion: '8%', revenue: '1,900 \u0631.\u0633' },
+            channels: ['whatsapp']
+        },
+        {
+            id: 'winback',
+            name: '\u0627\u0633\u062A\u0631\u062C\u0627\u0639 \u0627\u0644\u063A\u0627\u0626\u0628\u064A\u0646',
+            desc: '\u0639\u0631\u0648\u0636 \u0645\u062A\u062F\u0631\u062C\u0629 \u0644\u0625\u0631\u062C\u0627\u0639 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0644\u064A \u0645\u0627 \u0627\u0634\u062A\u0631\u0648\u0627 \u0645\u0646 \u0641\u062A\u0631\u0629 \u0637\u0648\u064A\u0644\u0629',
+            status: 'active',
+            icon: 'heart',
+            iconBg: 'var(--danger-subtle)',
+            iconColor: 'var(--danger)',
+            trigger: '\u0639\u062F\u0645 \u0634\u0631\u0627\u0621 \u0644\u0645\u062F\u0629 30 \u064A\u0648\u0645',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u0648\u062D\u0634\u062A\u0646\u0627' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 3 \u0623\u064A\u0627\u0645' },
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u0639\u0631\u0636 \u062D\u0635\u0631\u064A' },
+                { type: 'sms', label: 'SMS \u062A\u0630\u0643\u064A\u0631' }
+            ],
+            metrics: { sent: 156, delivery: '97%', conversion: '15%', revenue: '3,200 \u0631.\u0633' },
+            channels: ['whatsapp', 'sms']
+        },
+        {
+            id: 'birthday',
+            name: '\u0639\u064A\u062F \u0645\u064A\u0644\u0627\u062F \u0627\u0644\u0639\u0645\u064A\u0644',
+            desc: '\u062A\u0647\u0646\u0626\u0629 \u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0645\u0639 \u062E\u0635\u0645 \u062E\u0627\u0635 \u0628\u0645\u0646\u0627\u0633\u0628\u0629 \u0639\u064A\u062F \u0645\u064A\u0644\u0627\u062F \u0627\u0644\u0639\u0645\u064A\u0644',
+            status: 'active',
+            icon: 'cake',
+            iconBg: 'var(--primary-subtle)',
+            iconColor: 'var(--primary)',
+            trigger: '\u0642\u0628\u0644 \u0639\u064A\u062F \u0627\u0644\u0645\u064A\u0644\u0627\u062F \u0628\u064A\u0648\u0645',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0647\u0646\u0626\u0629 + \u062E\u0635\u0645' }
+            ],
+            metrics: { sent: 45, delivery: '100%', conversion: '22%', revenue: '890 \u0631.\u0633' },
+            channels: ['whatsapp']
+        },
+        {
+            id: 'browse_abandonment',
+            name: '\u062A\u0635\u0641\u062D \u0628\u062F\u0648\u0646 \u0634\u0631\u0627\u0621',
+            desc: '\u062A\u0630\u0643\u064A\u0631 \u0630\u0643\u064A \u0644\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0644\u064A \u062A\u0635\u0641\u062D\u0648\u0627 \u0645\u0646\u062A\u062C\u0627\u062A \u0628\u062F\u0648\u0646 \u0625\u0636\u0627\u0641\u0629 \u0644\u0644\u0633\u0644\u0629',
+            status: 'draft',
+            icon: 'eye',
+            iconBg: 'rgba(139, 92, 246, 0.1)',
+            iconColor: '#8B5CF6',
+            trigger: '\u062A\u0635\u0641\u062D \u0645\u0646\u062A\u062C \u0628\u062F\u0648\u0646 \u0625\u0636\u0627\u0641\u0629 \u0644\u0644\u0633\u0644\u0629',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u062A\u0630\u0643\u064A\u0631 \u0628\u0627\u0644\u0645\u0646\u062A\u062C' },
+                { type: 'wait', label: '\u0627\u0646\u062A\u0638\u0627\u0631 \u064A\u0648\u0645' },
+                { type: 'email', label: '\u0627\u064A\u0645\u064A\u0644' }
+            ],
+            metrics: null,
+            channels: ['whatsapp', 'email']
+        },
+        {
+            id: 'back_in_stock',
+            name: '\u0631\u062C\u0639 \u0627\u0644\u0645\u0646\u062A\u062C \u0644\u0644\u0645\u062E\u0632\u0648\u0646',
+            desc: '\u0625\u0634\u0639\u0627\u0631 \u0641\u0648\u0631\u064A \u0644\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0645\u0647\u062A\u0645\u064A\u0646 \u0639\u0646\u062F \u0639\u0648\u062F\u0629 \u0645\u0646\u062A\u062C \u0646\u0641\u0630',
+            status: 'draft',
+            icon: 'bell',
+            iconBg: 'rgba(34, 211, 238, 0.1)',
+            iconColor: '#22D3EE',
+            trigger: '\u0645\u0646\u062A\u062C \u0646\u0641\u0630 \u0648\u0631\u062C\u0639',
+            steps: [
+                { type: 'wa', label: '\u0648\u0627\u062A\u0633\u0627\u0628 \u0625\u0634\u0639\u0627\u0631 \u0641\u0648\u0631\u064A' }
+            ],
+            metrics: null,
+            channels: ['whatsapp']
+        }
+    ];
+
+    /* Create journey modal types */
+    var CREATE_TYPES = [
+        { id: 'cart_recovery', name: '\u0627\u0633\u062A\u0631\u062F\u0627\u062F \u0627\u0644\u0633\u0644\u0627\u062A', desc: '\u0627\u0633\u062A\u0631\u062F\u0627\u062F \u0627\u0644\u0633\u0644\u0627\u062A \u0627\u0644\u0645\u062A\u0631\u0648\u0643\u0629 \u0628\u062E\u0635\u0648\u0645\u0627\u062A \u062A\u062F\u0631\u064A\u062C\u064A\u0629', icon: 'cart', bg: 'var(--warning-subtle)', color: 'var(--warning)' },
+        { id: 'welcome', name: '\u062A\u0631\u062D\u064A\u0628', desc: '\u0631\u0633\u0627\u0626\u0644 \u062A\u0631\u062D\u064A\u0628\u064A\u0629 \u0644\u0644\u0645\u0634\u062A\u0631\u0643\u064A\u0646 \u0627\u0644\u062C\u062F\u062F', icon: 'user', bg: 'var(--info-subtle)', color: 'var(--info)' },
+        { id: 'post_purchase', name: '\u0645\u062A\u0627\u0628\u0639\u0629 \u0634\u0631\u0627\u0621', desc: '\u0634\u0643\u0631 \u0648\u062A\u0642\u064A\u064A\u0645 \u0648\u062A\u0648\u0635\u064A\u0627\u062A \u0628\u0639\u062F \u0627\u0644\u0634\u0631\u0627\u0621', icon: 'package', bg: 'var(--success-subtle)', color: 'var(--success)' },
+        { id: 'winback', name: '\u0627\u0633\u062A\u0631\u062C\u0627\u0639 \u063A\u0627\u0626\u0628\u064A\u0646', desc: '\u0625\u0631\u062C\u0627\u0639 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0644\u064A \u0645\u0627 \u0627\u0634\u062A\u0631\u0648\u0627 \u0645\u0646 \u0641\u062A\u0631\u0629', icon: 'heart', bg: 'var(--danger-subtle)', color: 'var(--danger)' },
+        { id: 'birthday', name: '\u0639\u064A\u062F \u0645\u064A\u0644\u0627\u062F', desc: '\u0647\u062F\u064A\u0629 \u062E\u0635\u0645 \u062A\u0644\u0642\u0627\u0626\u064A\u0629 \u0644\u0639\u064A\u062F \u0645\u064A\u0644\u0627\u062F \u0627\u0644\u0639\u0645\u064A\u0644', icon: 'cake', bg: 'var(--primary-subtle)', color: 'var(--primary)' },
+        { id: 'browse_abandonment', name: '\u062A\u0635\u0641\u062D \u0628\u062F\u0648\u0646 \u0634\u0631\u0627\u0621', desc: '\u062A\u0630\u0643\u064A\u0631 \u0630\u0643\u064A \u0644\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0644\u064A \u062A\u0635\u0641\u062D\u0648\u0627 \u0628\u062F\u0648\u0646 \u0634\u0631\u0627\u0621', icon: 'eye', bg: 'rgba(139, 92, 246, 0.1)', color: '#8B5CF6' },
+        { id: 'back_in_stock', name: '\u0631\u062C\u0648\u0639 \u0644\u0644\u0645\u062E\u0632\u0648\u0646', desc: '\u0625\u0634\u0639\u0627\u0631 \u0641\u0648\u0631\u064A \u0639\u0646\u062F \u0639\u0648\u062F\u0629 \u0645\u0646\u062A\u062C \u0646\u0641\u0630', icon: 'bell', bg: 'rgba(34, 211, 238, 0.1)', color: '#22D3EE' },
+        { id: 'custom', name: '\u0645\u062E\u0635\u0635', desc: '\u0627\u0646\u0634\u0626 \u0631\u062D\u0644\u0629 \u0645\u062E\u0635\u0635\u0629 \u0628\u0627\u0644\u0643\u0627\u0645\u0644', icon: 'custom', bg: 'var(--primary-subtle)', color: 'var(--primary)' }
+    ];
+
+    var currentFilter = 'all';
+    var journeysData = [];
+
+    /* ============================================
+       Toast System
+       ============================================ */
+    function showToast(message, type) {
+        type = type || 'success';
+        var container = document.getElementById('toastContainer');
+        if (!container) return;
+        var toast = document.createElement('div');
+        toast.className = 'toast toast-' + type;
+        var iconSvg = '';
+        if (type === 'success') {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+        } else if (type === 'warning') {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        } else {
+            iconSvg = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        }
+        toast.innerHTML = '<span class="toast-icon">' + iconSvg + '</span><span>' + message + '</span>';
+        container.appendChild(toast);
+        setTimeout(function() {
+            toast.classList.add('removing');
+            setTimeout(function() {
+                if (toast.parentNode) toast.parentNode.removeChild(toast);
+            }, 350);
+        }, 3000);
     }
 
-    function activateJourney(type) {
-        if (confirm('تفعيل رحلة ' + type + '؟')) {
-            RibhShell.api('/api/sequences/activate', {
-                method: 'POST',
-                body: { type: type }
-            }).then(function() {
-                location.reload();
-            }).catch(function() {
-                alert('تم التفعيل');
-                location.reload();
+    /* ============================================
+       Counter Animation
+       ============================================ */
+    function animateCounter(el, target, duration, formatter) {
+        var start = 0;
+        var startTime = null;
+        function step(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(start + (target - start) * eased);
+            el.textContent = formatter ? formatter(current) : current;
+            if (progress < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    /* ============================================
+       Build Step Dot HTML
+       ============================================ */
+    function buildStepDot(step) {
+        var cls = 'j-step-dot ';
+        var icon = '';
+        if (step.type === 'wa') {
+            cls += 'step-wa';
+            icon = ICONS.whatsapp;
+        } else if (step.type === 'email') {
+            cls += 'step-email';
+            icon = ICONS.email;
+        } else if (step.type === 'sms') {
+            cls += 'step-sms';
+            icon = ICONS.sms;
+        } else if (step.type === 'wait') {
+            cls += 'step-wait';
+            icon = ICONS.wait;
+        }
+        return '<div class="' + cls + '">' + icon + '</div>';
+    }
+
+    /* ============================================
+       Build Channel Tag HTML
+       ============================================ */
+    function buildChannelTag(channel) {
+        var icon = '';
+        var label = '';
+        if (channel === 'whatsapp') {
+            icon = ICONS.whatsapp;
+            label = '\u0648\u0627\u062A\u0633\u0627\u0628';
+        } else if (channel === 'email') {
+            icon = ICONS.email;
+            label = '\u0627\u064A\u0645\u064A\u0644';
+        } else if (channel === 'sms') {
+            icon = ICONS.sms;
+            label = 'SMS';
+        }
+        return '<span class="j-channel-tag">' + icon + ' ' + label + '</span>';
+    }
+
+    /* ============================================
+       Render Single Journey Card
+       ============================================ */
+    function renderJourneyCard(j) {
+        var isActive = j.status === 'active';
+        var isDraft = j.status === 'draft';
+        var isStopped = j.status === 'stopped';
+
+        var cardCls = 'j-card';
+        if (isActive) cardCls += ' is-active';
+        if (isStopped) cardCls += ' is-dimmed';
+        if (isDraft) cardCls += ' is-draft';
+
+        // Toggle or Draft badge
+        var toggleHtml = '';
+        if (isDraft) {
+            toggleHtml = '<div class="j-card-toggle">' +
+                '<span class="badge badge-warning">\u0645\u0633\u0648\u062F\u0629</span>' +
+                '<button class="btn-activate" data-id="' + j.id + '">\u062A\u0641\u0639\u064A\u0644</button>' +
+                '</div>';
+        } else {
+            var checked = isActive ? ' checked' : '';
+            var badgeCls = isActive ? 'badge badge-success' : 'badge badge-neutral';
+            var badgeText = isActive ? '\u0646\u0634\u0637' : '\u0645\u062A\u0648\u0642\u0641';
+            toggleHtml = '<div class="j-card-toggle">' +
+                '<label class="toggle"><input type="checkbox"' + checked + ' data-id="' + j.id + '"><span class="toggle-slider"></span></label>' +
+                '<span class="' + badgeCls + ' toggle-badge">' + badgeText + '</span>' +
+                '</div>';
+        }
+
+        // Steps
+        var stepsHtml = '';
+        j.steps.forEach(function(step, i) {
+            stepsHtml += '<div class="j-step">' + buildStepDot(step) + '<span class="j-step-label">' + step.label + '</span></div>';
+            if (i < j.steps.length - 1) {
+                stepsHtml += '<div class="j-step-connector"></div>';
+            }
+        });
+
+        // Metrics
+        var metricsHtml = '';
+        if (j.metrics) {
+            metricsHtml = '<div class="j-card-metrics">' +
+                '<div class="j-metric"><div class="j-metric-value">' + j.metrics.sent + '</div><div class="j-metric-label">\u0645\u0631\u0633\u0644\u0629</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value">' + j.metrics.delivery + '</div><div class="j-metric-label">\u062A\u0633\u0644\u064A\u0645</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value">' + j.metrics.conversion + '</div><div class="j-metric-label">\u062A\u062D\u0648\u064A\u0644</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value">' + j.metrics.revenue + '</div><div class="j-metric-label">\u0625\u064A\u0631\u0627\u062F\u0627\u062A</div></div>' +
+                '</div>';
+        } else {
+            metricsHtml = '<div class="j-card-metrics">' +
+                '<div class="j-metric"><div class="j-metric-value muted">--</div><div class="j-metric-label">\u0645\u0631\u0633\u0644\u0629</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value muted">--</div><div class="j-metric-label">\u062A\u0633\u0644\u064A\u0645</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value muted">--</div><div class="j-metric-label">\u062A\u062D\u0648\u064A\u0644</div></div>' +
+                '<div class="j-metric"><div class="j-metric-value muted">--</div><div class="j-metric-label">\u0625\u064A\u0631\u0627\u062F\u0627\u062A</div></div>' +
+                '</div>';
+        }
+
+        // Channels
+        var channelsHtml = '';
+        j.channels.forEach(function(ch) { channelsHtml += buildChannelTag(ch); });
+
+        // Action buttons
+        var actionsHtml = '<div class="j-card-actions">' +
+            '<button class="btn btn-ghost btn-sm" onclick="window.journeyPage.editJourney(\'' + j.id + '\')">' + ICONS.edit + ' \u062A\u0639\u062F\u064A\u0644</button>' +
+            '<button class="btn btn-ghost btn-sm" onclick="window.journeyPage.viewAnalytics(\'' + j.id + '\')">' + ICONS.chart + ' \u062A\u062D\u0644\u064A\u0644\u0627\u062A</button>' +
+            '</div>';
+
+        return '<div class="' + cardCls + '" data-id="' + j.id + '" data-status="' + j.status + '">' +
+            '<div class="j-card-head">' +
+                '<div class="j-card-icon" style="background:' + j.iconBg + ';color:' + j.iconColor + ';">' + ICONS[j.icon] + '</div>' +
+                '<div class="j-card-info">' +
+                    '<div class="j-card-name-row"><span class="j-card-name">' + j.name + '</span></div>' +
+                    '<div class="j-card-desc">' + j.desc + '</div>' +
+                '</div>' +
+                toggleHtml +
+            '</div>' +
+            '<div class="j-card-body">' +
+                '<div class="j-card-trigger">' + ICONS.trigger + ' <span>\u064A\u0628\u062F\u0623 \u0639\u0646\u062F: <strong>' + j.trigger + '</strong></span></div>' +
+                '<div class="j-steps">' + stepsHtml + '</div>' +
+            '</div>' +
+            metricsHtml +
+            '<div class="j-card-footer">' +
+                '<div class="j-card-channels">' + channelsHtml + '</div>' +
+                actionsHtml +
+            '</div>' +
+        '</div>';
+    }
+
+    /* ============================================
+       Render All Journeys
+       ============================================ */
+    function renderJourneys() {
+        var list = document.getElementById('journeysList');
+        if (!list) return;
+        var html = '';
+        var visibleCount = 0;
+
+        journeysData.forEach(function(j) {
+            if (currentFilter === 'all' || j.status === currentFilter) {
+                html += renderJourneyCard(j);
+                visibleCount++;
+            }
+        });
+
+        if (visibleCount === 0) {
+            html = '<div class="j-empty"><div class="j-empty-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="j-empty-text">\u0644\u0627 \u062A\u0648\u062C\u062F \u0631\u062D\u0644\u0627\u062A \u0641\u064A \u0647\u0630\u0627 \u0627\u0644\u062A\u0635\u0646\u064A\u0641</div></div>';
+        }
+
+        list.innerHTML = html;
+        bindToggleEvents();
+        bindActivateEvents();
+    }
+
+    /* ============================================
+       Update Tab Counts
+       ============================================ */
+    function updateCounts() {
+        var total = journeysData.length;
+        var active = 0, draft = 0, stopped = 0;
+        journeysData.forEach(function(j) {
+            if (j.status === 'active') active++;
+            else if (j.status === 'draft') draft++;
+            else if (j.status === 'stopped') stopped++;
+        });
+        var elAll = document.getElementById('countAll');
+        var elActive = document.getElementById('countActive');
+        var elDraft = document.getElementById('countDraft');
+        var elStopped = document.getElementById('countStopped');
+        if (elAll) elAll.textContent = '(' + total + ')';
+        if (elActive) elActive.textContent = '(' + active + ')';
+        if (elDraft) elDraft.textContent = '(' + draft + ')';
+        if (elStopped) elStopped.textContent = '(' + stopped + ')';
+    }
+
+    /* ============================================
+       Update KPIs
+       ============================================ */
+    function updateKPIs() {
+        var activeCount = 0;
+        var totalRevenue = 47850;
+        var avgConversion = 24;
+        journeysData.forEach(function(j) {
+            if (j.status === 'active') activeCount++;
+        });
+
+        var elActive = document.getElementById('kpiActiveCount');
+        var elRevenue = document.getElementById('kpiRevenue');
+        var elConversion = document.getElementById('kpiConversion');
+
+        if (elActive) {
+            animateCounter(elActive, activeCount, 800, function(n) { return n.toString(); });
+        }
+        if (elRevenue) {
+            animateCounter(elRevenue, totalRevenue, 1200, function(n) {
+                return n.toLocaleString('ar-SA') + ' \u0631.\u0633';
+            });
+        }
+        if (elConversion) {
+            animateCounter(elConversion, avgConversion, 800, function(n) {
+                return n + '%';
             });
         }
     }
 
-    function showCreateModal() {
-        alert('قريباً: منشئ الرحلات المرئي');
+    /* ============================================
+       Toggle Event Binding
+       ============================================ */
+    function bindToggleEvents() {
+        var toggles = document.querySelectorAll('.j-card-toggle .toggle input[type="checkbox"]');
+        toggles.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                var id = this.getAttribute('data-id');
+                var card = this.closest('.j-card');
+                var badge = card.querySelector('.toggle-badge');
+                var isChecked = this.checked;
+                var journey = journeysData.find(function(j) { return j.id === id; });
+                if (!journey) return;
+
+                // Disable during transition
+                this.disabled = true;
+                var origText = badge.textContent;
+                badge.innerHTML = '<span class="toggle-spinner"></span>';
+
+                var self = this;
+                setTimeout(function() {
+                    self.disabled = false;
+                    if (isChecked) {
+                        journey.status = 'active';
+                        card.setAttribute('data-status', 'active');
+                        card.classList.add('is-active');
+                        card.classList.remove('is-dimmed');
+                        badge.textContent = '\u0646\u0634\u0637';
+                        badge.className = 'badge badge-success toggle-badge';
+                        showToast('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 \u0631\u062D\u0644\u0629 ' + journey.name, 'success');
+                    } else {
+                        journey.status = 'stopped';
+                        card.setAttribute('data-status', 'stopped');
+                        card.classList.remove('is-active');
+                        card.classList.add('is-dimmed');
+                        badge.textContent = '\u0645\u062A\u0648\u0642\u0641';
+                        badge.className = 'badge badge-neutral toggle-badge';
+                        showToast('\u062A\u0645 \u0625\u064A\u0642\u0627\u0641 \u0631\u062D\u0644\u0629 ' + journey.name, 'info');
+                    }
+                    updateCounts();
+                    updateKPIs();
+                    // Re-filter if needed
+                    if (currentFilter !== 'all') {
+                        renderJourneys();
+                    }
+                }, 800);
+            });
+        });
     }
+
+    /* ============================================
+       Draft Activate Button Binding
+       ============================================ */
+    function bindActivateEvents() {
+        var btns = document.querySelectorAll('.btn-activate');
+        btns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                var journey = journeysData.find(function(j) { return j.id === id; });
+                if (!journey) return;
+                journey.status = 'active';
+                showToast('\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 \u0631\u062D\u0644\u0629 ' + journey.name, 'success');
+                updateCounts();
+                updateKPIs();
+                renderJourneys();
+            });
+        });
+    }
+
+    /* ============================================
+       Tab Filtering
+       ============================================ */
+    function initTabs() {
+        var tabs = document.querySelectorAll('#filterTabs .tab');
+        tabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                tabs.forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+                currentFilter = this.getAttribute('data-filter');
+                renderJourneys();
+            });
+        });
+    }
+
+    /* ============================================
+       Create Journey Modal
+       ============================================ */
+    function initCreateModal() {
+        var modal = document.getElementById('createModal');
+        var btnOpen = document.getElementById('btnCreateJourney');
+        var btnClose = document.getElementById('btnCloseModal');
+        var grid = document.getElementById('createGrid');
+
+        // Render types
+        if (grid) {
+            var html = '';
+            CREATE_TYPES.forEach(function(ct) {
+                html += '<div class="create-type" data-type="' + ct.id + '">' +
+                    '<div class="create-type-icon" style="background:' + ct.bg + ';color:' + ct.color + ';">' + ICONS[ct.icon] + '</div>' +
+                    '<div class="create-type-name">' + ct.name + '</div>' +
+                    '<div class="create-type-desc">' + ct.desc + '</div>' +
+                '</div>';
+            });
+            grid.innerHTML = html;
+
+            // Bind clicks
+            grid.querySelectorAll('.create-type').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    closeModal();
+                    showToast('\u0642\u0631\u064A\u0628\u0627\u064B: \u0645\u0646\u0634\u0626 \u0627\u0644\u0631\u062D\u0644\u0627\u062A', 'info');
+                });
+            });
+        }
+
+        function openModal() {
+            if (modal) {
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeModal() {
+            if (modal) {
+                modal.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        }
+
+        if (btnOpen) btnOpen.addEventListener('click', openModal);
+        if (btnClose) btnClose.addEventListener('click', closeModal);
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) closeModal();
+            });
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    }
+
+    /* ============================================
+       Public API for inline handlers
+       ============================================ */
+    window.journeyPage = {
+        editJourney: function(id) {
+            showToast('\u0642\u0631\u064A\u0628\u0627\u064B: \u0645\u062D\u0631\u0631 \u0627\u0644\u0631\u062D\u0644\u0627\u062A', 'info');
+        },
+        viewAnalytics: function(id) {
+            showToast('\u0642\u0631\u064A\u0628\u0627\u064B: \u062A\u062D\u0644\u064A\u0644\u0627\u062A \u0627\u0644\u0631\u062D\u0644\u0627\u062A', 'info');
+        }
+    };
+
+    /* ============================================
+       Initialize
+       ============================================ */
+    document.addEventListener('DOMContentLoaded', function() {
+        // Copy sample data
+        journeysData = JSON.parse(JSON.stringify(JOURNEYS));
+
+        // Try loading from API with fallback
+        RibhShell.api('/api/journeys').then(function(data) {
+            if (data && Array.isArray(data.journeys) && data.journeys.length > 0) {
+                journeysData = data.journeys;
+            }
+            renderJourneys();
+            updateCounts();
+            updateKPIs();
+        }).catch(function() {
+            renderJourneys();
+            updateCounts();
+            updateKPIs();
+        });
+
+        initTabs();
+        initCreateModal();
+    });
+})();
 </script>
 
 </body>

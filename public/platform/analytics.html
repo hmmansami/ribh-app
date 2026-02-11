@@ -10,105 +10,286 @@
 <body>
 
 <div id="page-content">
-    <div class="page-header">
-        <h1 class="page-title">التحليلات</h1>
-        <p class="page-subtitle">أداء التسويق الشخصي — كل رقم مهم</p>
-    </div>
 
-    <!-- Period Selector -->
-    <div class="tabs">
-        <button class="tab active" data-period="7d">7 أيام</button>
-        <button class="tab" data-period="30d">30 يوم</button>
-        <button class="tab" data-period="90d">90 يوم</button>
-        <button class="tab" data-period="all">الكل</button>
-    </div>
-
-    <!-- Revenue KPIs -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <div class="kpi-label">💰 الإيرادات المستردة</div>
-            <div class="kpi-value text-success">12,450 ر.س</div>
-            <div class="kpi-change up">↑ 18% عن الشهر الماضي</div>
+    <!-- Page Header + Period Tabs -->
+    <div class="analytics-header">
+        <div>
+            <h1 class="page-title">التحليلات</h1>
+            <p class="page-subtitle">تحليل شامل لاداء الاسترداد والتسويق</p>
         </div>
-        <div class="kpi-card">
-            <div class="kpi-label">📨 الرسائل المرسلة</div>
-            <div class="kpi-value">1,847</div>
-            <div class="kpi-change up">↑ 12%</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">📖 معدل القراءة</div>
-            <div class="kpi-value text-primary">91%</div>
-            <div class="kpi-change up">↑ 3%</div>
-        </div>
-        <div class="kpi-card">
-            <div class="kpi-label">🔗 معدل النقر</div>
-            <div class="kpi-value">24%</div>
-            <div class="kpi-change up">↑ 5%</div>
+        <div class="period-tabs" id="periodTabs">
+            <button class="tab active" data-period="7d">7 ايام</button>
+            <button class="tab" data-period="30d">30 يوم</button>
+            <button class="tab" data-period="90d">90 يوم</button>
+            <button class="tab" data-period="all">الكل</button>
         </div>
     </div>
 
-    <div class="grid-2">
-        <!-- Revenue Chart -->
+    <!-- 1. Hero Revenue Attribution -->
+    <div class="hero-attr">
+        <div class="hero-attr-main">
+            <div class="hero-attr-label">اجمالي الايرادات المستردة</div>
+            <div class="hero-attr-value">
+                <span class="hero-counter" id="heroCounter">0</span>
+                <span class="hero-currency">ر.س</span>
+            </div>
+            <div class="hero-attr-sub">
+                استرداد <strong id="heroRecovered">47</strong> سلة من <strong id="heroTotal">156</strong> &mdash; معدل <strong class="text-success" id="heroRate">30%</strong>
+            </div>
+        </div>
+        <div class="hero-attr-channels">
+            <div class="hero-channel-title">توزيع الايرادات بالقنوات</div>
+            <div class="hero-channel-row" id="channelWA">
+                <div class="hero-ch-info">
+                    <span class="hero-ch-dot" style="background:#25D366"></span>
+                    <span class="hero-ch-name">واتساب</span>
+                </div>
+                <div class="hero-ch-bar-wrap">
+                    <div class="hero-ch-bar hero-ch-bar-wa" style="width:0%" data-width="73"></div>
+                </div>
+                <span class="hero-ch-val" id="waRevVal">35,000 ر.س</span>
+                <span class="hero-ch-pct">73%</span>
+            </div>
+            <div class="hero-channel-row" id="channelEmail">
+                <div class="hero-ch-info">
+                    <span class="hero-ch-dot" style="background:var(--info)"></span>
+                    <span class="hero-ch-name">ايميل</span>
+                </div>
+                <div class="hero-ch-bar-wrap">
+                    <div class="hero-ch-bar hero-ch-bar-email" style="width:0%" data-width="17"></div>
+                </div>
+                <span class="hero-ch-val" id="emailRevVal">8,200 ر.س</span>
+                <span class="hero-ch-pct">17%</span>
+            </div>
+            <div class="hero-channel-row" id="channelSMS">
+                <div class="hero-ch-info">
+                    <span class="hero-ch-dot" style="background:#A855F7"></span>
+                    <span class="hero-ch-name">SMS</span>
+                </div>
+                <div class="hero-ch-bar-wrap">
+                    <div class="hero-ch-bar hero-ch-bar-sms" style="width:0%" data-width="10"></div>
+                </div>
+                <span class="hero-ch-val" id="smsRevVal">4,650 ر.س</span>
+                <span class="hero-ch-pct">10%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. KPI Grid -->
+    <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                الايرادات المستردة
+            </div>
+            <div class="kpi-value" id="kpiRevenue">0 ر.س</div>
+            <div class="kpi-change up">+18% عن الفترة السابقة</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                الرسائل المرسلة
+            </div>
+            <div class="kpi-value" id="kpiMessages">0</div>
+            <div class="kpi-change up">+12% عن الفترة السابقة</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                معدل القراءة
+            </div>
+            <div class="kpi-value kpi-with-dot">
+                <span id="kpiRead">0%</span>
+                <span class="kpi-dot kpi-dot-good"></span>
+            </div>
+            <div class="kpi-change up">اعلى من المعدل</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                معدل التحويل
+            </div>
+            <div class="kpi-value kpi-with-dot">
+                <span id="kpiConversion" class="text-primary">0%</span>
+                <span class="kpi-dot kpi-dot-primary"></span>
+            </div>
+            <div class="kpi-change up">+5% عن الشهر الماضي</div>
+        </div>
+    </div>
+
+    <!-- 3. Revenue Funnel -->
+    <div class="card funnel-card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">قمع الرسائل</div>
+                <div class="card-subtitle">من الارسال الى التحويل</div>
+            </div>
+            <span class="badge badge-primary">Attentive</span>
+        </div>
+        <div class="funnel-vis" id="funnelVis">
+            <div class="funnel-stage" data-idx="0">
+                <div class="funnel-stage-bar" style="width:100%"></div>
+                <div class="funnel-stage-info">
+                    <div class="funnel-stage-num" id="fSent">1,847</div>
+                    <div class="funnel-stage-name">مرسلة</div>
+                </div>
+            </div>
+            <div class="funnel-drop"><span id="fDrop1">-3%</span></div>
+            <div class="funnel-stage" data-idx="1">
+                <div class="funnel-stage-bar" style="width:97%"></div>
+                <div class="funnel-stage-info">
+                    <div class="funnel-stage-num" id="fDelivered">1,792</div>
+                    <div class="funnel-stage-name">مُستلمة</div>
+                </div>
+            </div>
+            <div class="funnel-drop"><span id="fDrop2">-6%</span></div>
+            <div class="funnel-stage" data-idx="2">
+                <div class="funnel-stage-bar" style="width:91%"></div>
+                <div class="funnel-stage-info">
+                    <div class="funnel-stage-num" id="fRead">1,681</div>
+                    <div class="funnel-stage-name">مقروءة</div>
+                </div>
+            </div>
+            <div class="funnel-drop"><span id="fDrop3">-56%</span></div>
+            <div class="funnel-stage" data-idx="3">
+                <div class="funnel-stage-bar" style="width:40%"></div>
+                <div class="funnel-stage-info">
+                    <div class="funnel-stage-num" id="fClicked">739</div>
+                    <div class="funnel-stage-name">نقر</div>
+                </div>
+            </div>
+            <div class="funnel-drop"><span id="fDrop4">-25%</span></div>
+            <div class="funnel-stage funnel-stage-final" data-idx="4">
+                <div class="funnel-stage-bar funnel-bar-final" style="width:30%"></div>
+                <div class="funnel-stage-info">
+                    <div class="funnel-stage-num funnel-num-final" id="fConverted">554</div>
+                    <div class="funnel-stage-name">تحويل</div>
+                </div>
+            </div>
+        </div>
+        <div class="funnel-summary-strip">
+            <div class="funnel-summary-item">
+                <span class="funnel-sum-label">معدل التحويل الاجمالي</span>
+                <span class="funnel-sum-val text-success" id="fTotalRate">30%</span>
+            </div>
+            <div class="funnel-sum-sep"></div>
+            <div class="funnel-summary-item">
+                <span class="funnel-sum-label">اكبر انخفاض</span>
+                <span class="funnel-sum-val text-warning">مقروءة &larr; نقر (-56%)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Two-Column: Channel Revenue + Revenue Over Time -->
+    <div class="grid-2 mt-24">
+        <!-- LEFT: Revenue by Channel -->
         <div class="card">
             <div class="card-header">
-                <div class="card-title">الإيرادات المستردة</div>
-                <div class="text-sm text-dim">آخر 7 أيام</div>
+                <div>
+                    <div class="card-title">ايرادات القنوات</div>
+                    <div class="card-subtitle">الايرادات والتفاعل بالقناة</div>
+                </div>
             </div>
-            <div class="chart-container" id="revenueChart">
-                <div class="bar-chart">
-                    <div class="bar-row"><span class="bar-label">السبت</span><div class="bar-track"><div class="bar-fill" style="width: 45%"></div></div><span class="bar-val">1,200</span></div>
-                    <div class="bar-row"><span class="bar-label">الأحد</span><div class="bar-track"><div class="bar-fill" style="width: 62%"></div></div><span class="bar-val">1,680</span></div>
-                    <div class="bar-row"><span class="bar-label">الاثنين</span><div class="bar-track"><div class="bar-fill" style="width: 38%"></div></div><span class="bar-val">980</span></div>
-                    <div class="bar-row"><span class="bar-label">الثلاثاء</span><div class="bar-track"><div class="bar-fill" style="width: 78%"></div></div><span class="bar-val">2,100</span></div>
-                    <div class="bar-row"><span class="bar-label">الأربعاء</span><div class="bar-track"><div class="bar-fill" style="width: 55%"></div></div><span class="bar-val">1,480</span></div>
-                    <div class="bar-row"><span class="bar-label">الخميس</span><div class="bar-track"><div class="bar-fill" style="width: 90%"></div></div><span class="bar-val">2,450</span></div>
-                    <div class="bar-row"><span class="bar-label">الجمعة</span><div class="bar-track"><div class="bar-fill" style="width: 85%"></div></div><span class="bar-val">2,310</span></div>
+            <div class="ch-detail-list">
+                <div class="ch-detail-item">
+                    <div class="ch-detail-head">
+                        <span class="ch-detail-dot" style="background:#25D366"></span>
+                        <span class="ch-detail-name">واتساب</span>
+                        <span class="badge badge-success">الاساسية</span>
+                    </div>
+                    <div class="ch-detail-rev" id="chWaRev">35,000 ر.س</div>
+                    <div class="ch-detail-bar-wrap"><div class="ch-detail-bar ch-bar-wa" style="width:73%"></div></div>
+                    <div class="ch-detail-stats">
+                        <span>1,420 رسالة</span>
+                        <span>قراءة 91%</span>
+                    </div>
+                </div>
+                <div class="ch-detail-item">
+                    <div class="ch-detail-head">
+                        <span class="ch-detail-dot" style="background:var(--info)"></span>
+                        <span class="ch-detail-name">ايميل</span>
+                    </div>
+                    <div class="ch-detail-rev" id="chEmailRev">8,200 ر.س</div>
+                    <div class="ch-detail-bar-wrap"><div class="ch-detail-bar ch-bar-email" style="width:17%"></div></div>
+                    <div class="ch-detail-stats">
+                        <span>312 رسالة</span>
+                        <span>فتح 45%</span>
+                    </div>
+                </div>
+                <div class="ch-detail-item">
+                    <div class="ch-detail-head">
+                        <span class="ch-detail-dot" style="background:#A855F7"></span>
+                        <span class="ch-detail-name">SMS</span>
+                    </div>
+                    <div class="ch-detail-rev" id="chSmsRev">4,650 ر.س</div>
+                    <div class="ch-detail-bar-wrap"><div class="ch-detail-bar ch-bar-sms" style="width:10%"></div></div>
+                    <div class="ch-detail-stats">
+                        <span>115 رسالة</span>
+                        <span>تسليم 96%</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Channel Breakdown -->
+        <!-- RIGHT: Revenue Over Time -->
         <div class="card">
             <div class="card-header">
-                <div class="card-title">أداء القنوات</div>
-            </div>
-            <div class="channel-list">
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-dot" style="background: var(--success);"></div>
-                        <span class="channel-name">واتساب</span>
-                    </div>
-                    <div class="channel-stats">
-                        <span class="channel-stat">1,420 رسالة</span>
-                        <span class="channel-stat">98% تسليم</span>
-                        <span class="channel-stat">91% قراءة</span>
-                    </div>
-                    <div class="channel-bar-track"><div class="channel-bar" style="width: 77%; background: var(--success);"></div></div>
+                <div>
+                    <div class="card-title">الايرادات اليومية</div>
+                    <div class="card-subtitle">اخر 7 ايام</div>
                 </div>
-                <div class="channel-item">
-                    <div class="channel-info">
-                        <div class="channel-dot" style="background: var(--info);"></div>
-                        <span class="channel-name">SMS</span>
-                    </div>
-                    <div class="channel-stats">
-                        <span class="channel-stat">427 رسالة</span>
-                        <span class="channel-stat">96% تسليم</span>
-                        <span class="channel-stat">—</span>
-                    </div>
-                    <div class="channel-bar-track"><div class="channel-bar" style="width: 23%; background: var(--info);"></div></div>
+            </div>
+            <div class="vbar-chart" id="vbarChart">
+                <div class="vbar-col" data-val="4200">
+                    <div class="vbar-tooltip">4,200 ر.س</div>
+                    <div class="vbar-fill" data-height="53"></div>
+                    <span class="vbar-label">س</span>
+                </div>
+                <div class="vbar-col" data-val="6800">
+                    <div class="vbar-tooltip">6,800 ر.س</div>
+                    <div class="vbar-fill" data-height="86"></div>
+                    <span class="vbar-label">ح</span>
+                </div>
+                <div class="vbar-col" data-val="3900">
+                    <div class="vbar-tooltip">3,900 ر.س</div>
+                    <div class="vbar-fill" data-height="49"></div>
+                    <span class="vbar-label">ن</span>
+                </div>
+                <div class="vbar-col" data-val="7950">
+                    <div class="vbar-tooltip">7,950 ر.س</div>
+                    <div class="vbar-fill" data-height="100"></div>
+                    <span class="vbar-label">ث</span>
+                </div>
+                <div class="vbar-col" data-val="5600">
+                    <div class="vbar-tooltip">5,600 ر.س</div>
+                    <div class="vbar-fill" data-height="70"></div>
+                    <span class="vbar-label">ر</span>
+                </div>
+                <div class="vbar-col" data-val="7400">
+                    <div class="vbar-tooltip">7,400 ر.س</div>
+                    <div class="vbar-fill" data-height="93"></div>
+                    <span class="vbar-label">خ</span>
+                </div>
+                <div class="vbar-col" data-val="6000">
+                    <div class="vbar-tooltip">6,000 ر.س</div>
+                    <div class="vbar-fill" data-height="75"></div>
+                    <span class="vbar-label">ج</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Journey Performance -->
+    <!-- 5. Journey Attribution Table -->
     <div class="card mt-24">
         <div class="card-header">
-            <div class="card-title">أداء الرحلات</div>
+            <div>
+                <div class="card-title">اداء الرحلات</div>
+                <div class="card-subtitle">ايرادات وتفاعل كل رحلة تسويقية</div>
+            </div>
             <a href="/platform/journeys.html" class="btn btn-ghost btn-sm">عرض الرحلات</a>
         </div>
         <div class="table-wrap">
-            <table>
+            <table id="journeyTable">
                 <thead>
                     <tr>
                         <th>الرحلة</th>
@@ -117,142 +298,1291 @@
                         <th>قراءة</th>
                         <th>نقر</th>
                         <th>تحويل</th>
-                        <th>إيرادات</th>
+                        <th>ايرادات</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="journeyBody">
                     <tr>
-                        <td><strong>استرداد السلات</strong></td>
+                        <td><div class="j-cell"><span class="j-dot" style="background:var(--warning)"></span><strong>استرداد السلات</strong></div></td>
                         <td>542</td>
-                        <td><span class="text-success">98%</span></td>
-                        <td>89%</td>
-                        <td>34%</td>
-                        <td><span class="text-success">30%</span></td>
-                        <td><strong class="text-success">8,450 ر.س</strong></td>
+                        <td><span class="rpill rpill-h">98%</span></td>
+                        <td><span class="rpill rpill-h">89%</span></td>
+                        <td><span class="rpill rpill-m">34%</span></td>
+                        <td><span class="rpill rpill-h">30%</span></td>
+                        <td><strong class="text-success">18,200 ر.س</strong></td>
                     </tr>
                     <tr>
-                        <td><strong>رحلة الترحيب</strong></td>
+                        <td><div class="j-cell"><span class="j-dot" style="background:var(--info)"></span><strong>رحلة الترحيب</strong></div></td>
                         <td>267</td>
-                        <td><span class="text-success">99%</span></td>
-                        <td>94%</td>
-                        <td>28%</td>
-                        <td>12%</td>
-                        <td><strong>2,100 ر.س</strong></td>
+                        <td><span class="rpill rpill-h">99%</span></td>
+                        <td><span class="rpill rpill-h">94%</span></td>
+                        <td><span class="rpill rpill-m">28%</span></td>
+                        <td><span class="rpill rpill-l">12%</span></td>
+                        <td><strong>9,400 ر.س</strong></td>
                     </tr>
                     <tr>
-                        <td><strong>متابعة بعد الشراء</strong></td>
+                        <td><div class="j-cell"><span class="j-dot" style="background:var(--success)"></span><strong>متابعة بعد الشراء</strong></div></td>
                         <td>389</td>
-                        <td><span class="text-success">98%</span></td>
-                        <td>92%</td>
-                        <td>18%</td>
-                        <td>8%</td>
-                        <td><strong>1,900 ر.س</strong></td>
+                        <td><span class="rpill rpill-h">98%</span></td>
+                        <td><span class="rpill rpill-h">92%</span></td>
+                        <td><span class="rpill rpill-l">18%</span></td>
+                        <td><span class="rpill rpill-l">8%</span></td>
+                        <td><strong>8,750 ر.س</strong></td>
+                    </tr>
+                    <tr>
+                        <td><div class="j-cell"><span class="j-dot" style="background:var(--danger)"></span><strong>استرجاع الغائبين</strong></div></td>
+                        <td>198</td>
+                        <td><span class="rpill rpill-h">97%</span></td>
+                        <td><span class="rpill rpill-h">85%</span></td>
+                        <td><span class="rpill rpill-m">22%</span></td>
+                        <td><span class="rpill rpill-l">9%</span></td>
+                        <td><strong>6,300 ر.س</strong></td>
+                    </tr>
+                    <tr>
+                        <td><div class="j-cell"><span class="j-dot" style="background:#8B5CF6"></span><strong>تصفح بدون شراء</strong></div></td>
+                        <td>451</td>
+                        <td><span class="rpill rpill-h">97%</span></td>
+                        <td><span class="rpill rpill-h">88%</span></td>
+                        <td><span class="rpill rpill-m">25%</span></td>
+                        <td><span class="rpill rpill-l">6%</span></td>
+                        <td><strong>5,200 ر.س</strong></td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Segment Performance -->
+    <!-- 6. Predictive Analytics -->
+    <div class="grid-3 mt-24" id="predictiveSection">
+        <!-- CLV Distribution -->
+        <div class="card predict-card">
+            <div class="predict-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                <span class="predict-title">توقع القيمة العمرية</span>
+            </div>
+            <div class="clv-tiers">
+                <div class="clv-tier">
+                    <span class="clv-tier-label">عالية (&gt;500 ر.س)</span>
+                    <div class="clv-tier-bar-wrap"><div class="clv-tier-bar" style="width:35%;background:var(--success)"></div></div>
+                    <span class="clv-tier-pct">35%</span>
+                </div>
+                <div class="clv-tier">
+                    <span class="clv-tier-label">متوسطة (200-500)</span>
+                    <div class="clv-tier-bar-wrap"><div class="clv-tier-bar" style="width:45%;background:var(--primary)"></div></div>
+                    <span class="clv-tier-pct">45%</span>
+                </div>
+                <div class="clv-tier">
+                    <span class="clv-tier-label">منخفضة (&lt;200)</span>
+                    <div class="clv-tier-bar-wrap"><div class="clv-tier-bar" style="width:20%;background:var(--text-faint)"></div></div>
+                    <span class="clv-tier-pct">20%</span>
+                </div>
+            </div>
+            <div class="predict-footer">متوسط CLV: <strong>387 ر.س</strong></div>
+        </div>
+
+        <!-- Churn Risk -->
+        <div class="card predict-card">
+            <div class="predict-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span class="predict-title">خطر الخسارة</span>
+            </div>
+            <div class="churn-center">
+                <div class="churn-big-num" id="churnCount">43</div>
+                <div class="churn-sub">عميل معرض للخسارة</div>
+            </div>
+            <div class="churn-urgency">
+                <div class="churn-urgency-row">
+                    <span class="churn-urg-dot" style="background:var(--danger)"></span>
+                    <span>حرج (14 يوم)</span>
+                    <strong class="text-danger">18</strong>
+                </div>
+                <div class="churn-urgency-row">
+                    <span class="churn-urg-dot" style="background:var(--warning)"></span>
+                    <span>متوسط (30 يوم)</span>
+                    <strong class="text-warning">25</strong>
+                </div>
+            </div>
+            <div class="predict-footer">ايرادات معرضة: <strong class="text-danger">12,800 ر.س</strong></div>
+        </div>
+
+        <!-- Send Time Optimization -->
+        <div class="card predict-card">
+            <div class="predict-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span class="predict-title">التوقيت الامثل</span>
+            </div>
+            <div class="heatmap-mini" id="heatmapMini">
+                <div class="hm-row">
+                    <span class="hm-label">ص</span>
+                    <span class="hm-cell hm-low" title="6 ص">6</span>
+                    <span class="hm-cell hm-low" title="7 ص">7</span>
+                    <span class="hm-cell hm-med" title="8 ص">8</span>
+                    <span class="hm-cell hm-high" title="9 ص">9</span>
+                    <span class="hm-cell hm-peak" title="10 ص">10</span>
+                    <span class="hm-cell hm-high" title="11 ص">11</span>
+                </div>
+                <div class="hm-row">
+                    <span class="hm-label">م</span>
+                    <span class="hm-cell hm-med" title="12 م">12</span>
+                    <span class="hm-cell hm-low" title="1 م">1</span>
+                    <span class="hm-cell hm-low" title="2 م">2</span>
+                    <span class="hm-cell hm-med" title="3 م">3</span>
+                    <span class="hm-cell hm-high" title="4 م">4</span>
+                    <span class="hm-cell hm-med" title="5 م">5</span>
+                </div>
+                <div class="hm-row">
+                    <span class="hm-label">مس</span>
+                    <span class="hm-cell hm-low" title="6 مس">6</span>
+                    <span class="hm-cell hm-med" title="7 مس">7</span>
+                    <span class="hm-cell hm-high" title="8 مس">8</span>
+                    <span class="hm-cell hm-peak" title="9 مس">9</span>
+                    <span class="hm-cell hm-high" title="10 مس">10</span>
+                    <span class="hm-cell hm-low" title="11 مس">11</span>
+                </div>
+            </div>
+            <div class="hm-legend">
+                <span class="hm-leg-item"><span class="hm-leg-box hm-low"></span>منخفض</span>
+                <span class="hm-leg-item"><span class="hm-leg-box hm-med"></span>متوسط</span>
+                <span class="hm-leg-item"><span class="hm-leg-box hm-high"></span>مرتفع</span>
+                <span class="hm-leg-item"><span class="hm-leg-box hm-peak"></span>الذروة</span>
+            </div>
+            <div class="predict-footer">افضل وقت: <strong class="text-primary">9-10 صباحا</strong></div>
+        </div>
+    </div>
+
+    <!-- 7. Segment Performance -->
     <div class="card mt-24">
         <div class="card-header">
-            <div class="card-title">أداء الشرائح</div>
+            <div>
+                <div class="card-title">اداء الشرائح</div>
+                <div class="card-subtitle">RFM &mdash; الايرادات حسب شريحة العملاء</div>
+            </div>
             <a href="/platform/segments.html" class="btn btn-ghost btn-sm">عرض الشرائح</a>
         </div>
-        <div class="segment-perf-grid">
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">🏆 أبطال</div>
-                <div class="segment-perf-value text-success">4,200 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 156 عميل</div>
+        <div class="seg-grid" id="segGrid">
+            <div class="seg-item seg-champions">
+                <div class="seg-top"><span class="seg-icon">&#9733;</span><span class="seg-name">ابطال</span></div>
+                <div class="seg-rev">12,400 ر.س</div>
+                <div class="seg-meta"><span>156 عميل</span><span>متوسط 79.5 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:85%;background:var(--success)"></div></div>
             </div>
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">💎 أوفياء</div>
-                <div class="segment-perf-value">3,890 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 312 عميل</div>
+            <div class="seg-item seg-loyal">
+                <div class="seg-top"><span class="seg-icon">&#9830;</span><span class="seg-name">اوفياء</span></div>
+                <div class="seg-rev">10,200 ر.س</div>
+                <div class="seg-meta"><span>312 عميل</span><span>متوسط 32.7 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:70%;background:var(--primary)"></div></div>
             </div>
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">⭐ محتملين</div>
-                <div class="segment-perf-value">2,450 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 245 عميل</div>
+            <div class="seg-item seg-potential">
+                <div class="seg-top"><span class="seg-icon">&#9650;</span><span class="seg-name">محتملين</span></div>
+                <div class="seg-rev">7,800 ر.س</div>
+                <div class="seg-meta"><span>245 عميل</span><span>متوسط 31.8 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:53%;background:var(--info)"></div></div>
             </div>
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">🆕 جدد</div>
-                <div class="segment-perf-value">1,200 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 189 عميل</div>
+            <div class="seg-item seg-new">
+                <div class="seg-top"><span class="seg-icon">&#43;</span><span class="seg-name">جدد</span></div>
+                <div class="seg-rev">5,400 ر.س</div>
+                <div class="seg-meta"><span>189 عميل</span><span>متوسط 28.6 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:37%;background:#8B5CF6"></div></div>
             </div>
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">⚠️ معرضين</div>
-                <div class="segment-perf-value text-warning">580 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 134 عميل</div>
+            <div class="seg-item seg-atrisk">
+                <div class="seg-top"><span class="seg-icon">&#9888;</span><span class="seg-name">معرضين</span></div>
+                <div class="seg-rev text-warning">2,100 ر.س</div>
+                <div class="seg-meta"><span>134 عميل</span><span>متوسط 15.7 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:15%;background:var(--warning)"></div></div>
             </div>
-            <div class="segment-perf-card">
-                <div class="segment-perf-name">💤 غائبين</div>
-                <div class="segment-perf-value text-danger">130 ر.س</div>
-                <div class="segment-perf-label">إيرادات · 211 عميل</div>
+            <div class="seg-item seg-lost">
+                <div class="seg-top"><span class="seg-icon">&#8943;</span><span class="seg-name">غائبين</span></div>
+                <div class="seg-rev text-danger">450 ر.س</div>
+                <div class="seg-meta"><span>211 عميل</span><span>متوسط 2.1 ر.س</span></div>
+                <div class="seg-pbar"><div class="seg-pfill" style="width:5%;background:var(--danger)"></div></div>
             </div>
         </div>
     </div>
+
+    <!-- 8. A/B Test Results -->
+    <div class="card mt-24">
+        <div class="card-header">
+            <div>
+                <div class="card-title">نتائج A/B</div>
+                <div class="card-subtitle">اختبارات التحسين النشطة</div>
+            </div>
+            <span class="badge badge-info">2 اختبار نشط</span>
+        </div>
+        <div class="ab-list" id="abList">
+            <div class="ab-test">
+                <div class="ab-test-head">
+                    <div>
+                        <div class="ab-test-name">نص رسالة الاسترداد الاولى</div>
+                        <div class="ab-test-sub">542 عينة &middot; بدأ قبل 5 ايام</div>
+                    </div>
+                    <span class="badge badge-success">فائز واضح</span>
+                </div>
+                <div class="ab-variants">
+                    <div class="ab-variant ab-winner">
+                        <div class="ab-var-head">
+                            <span class="ab-var-label">A</span>
+                            <span class="ab-var-tag badge badge-success">الفائز</span>
+                        </div>
+                        <div class="ab-var-desc">رسالة شخصية مع اسم العميل + خصم</div>
+                        <div class="ab-var-metrics">
+                            <div class="ab-metric"><span class="ab-metric-val text-success">34%</span><span class="ab-metric-lbl">تحويل</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">89%</span><span class="ab-metric-lbl">قراءة</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">18,200 ر.س</span><span class="ab-metric-lbl">ايرادات</span></div>
+                        </div>
+                    </div>
+                    <div class="ab-variant">
+                        <div class="ab-var-head">
+                            <span class="ab-var-label ab-var-label-b">B</span>
+                        </div>
+                        <div class="ab-var-desc">رسالة عامة بدون خصم</div>
+                        <div class="ab-var-metrics">
+                            <div class="ab-metric"><span class="ab-metric-val">21%</span><span class="ab-metric-lbl">تحويل</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">82%</span><span class="ab-metric-lbl">قراءة</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">11,400 ر.س</span><span class="ab-metric-lbl">ايرادات</span></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-sm ab-apply-btn">تطبيق الفائز</button>
+            </div>
+
+            <div class="ab-test">
+                <div class="ab-test-head">
+                    <div>
+                        <div class="ab-test-name">توقيت ارسال الرسالة الثانية</div>
+                        <div class="ab-test-sub">389 عينة &middot; بدأ قبل 3 ايام</div>
+                    </div>
+                    <span class="badge badge-warning">قيد الاختبار</span>
+                </div>
+                <div class="ab-variants">
+                    <div class="ab-variant">
+                        <div class="ab-var-head">
+                            <span class="ab-var-label">A</span>
+                        </div>
+                        <div class="ab-var-desc">بعد 2 ساعة من السلة المتروكة</div>
+                        <div class="ab-var-metrics">
+                            <div class="ab-metric"><span class="ab-metric-val">28%</span><span class="ab-metric-lbl">تحويل</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">91%</span><span class="ab-metric-lbl">قراءة</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">8,750 ر.س</span><span class="ab-metric-lbl">ايرادات</span></div>
+                        </div>
+                    </div>
+                    <div class="ab-variant">
+                        <div class="ab-var-head">
+                            <span class="ab-var-label ab-var-label-b">B</span>
+                        </div>
+                        <div class="ab-var-desc">بعد 6 ساعات من السلة المتروكة</div>
+                        <div class="ab-var-metrics">
+                            <div class="ab-metric"><span class="ab-metric-val">26%</span><span class="ab-metric-lbl">تحويل</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">88%</span><span class="ab-metric-lbl">قراءة</span></div>
+                            <div class="ab-metric"><span class="ab-metric-val">7,900 ر.س</span><span class="ab-metric-lbl">ايرادات</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <style>
-    .bar-chart { display: flex; flex-direction: column; gap: 12px; }
-    .bar-row { display: flex; align-items: center; gap: 12px; }
-    .bar-label { font-size: 13px; color: var(--text-dim); width: 60px; text-align: left; flex-shrink: 0; }
-    .bar-track { flex: 1; height: 24px; background: var(--bg-hover); border-radius: 6px; overflow: hidden; }
-    .bar-fill { height: 100%; background: linear-gradient(135deg, #FBBF24, #F59E0B); border-radius: 6px; transition: width 0.5s; }
-    .bar-val { font-size: 13px; font-weight: 600; width: 50px; text-align: right; flex-shrink: 0; }
+    /* ============================================
+       PAGE HEADER
+       ============================================ */
+    .analytics-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+    .period-tabs {
+        border-bottom: none;
+        margin-bottom: 0;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        padding: 4px;
+        gap: 2px;
+    }
+    .period-tabs .tab {
+        border-bottom: none;
+        border-radius: var(--radius-sm);
+        padding: 6px 14px;
+        font-size: 13px;
+    }
+    .period-tabs .tab.active {
+        background: var(--primary-subtle);
+        color: var(--primary);
+        border-bottom-color: transparent;
+    }
 
-    .channel-list { display: flex; flex-direction: column; gap: 20px; }
-    .channel-item { }
-    .channel-info { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .channel-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .channel-name { font-size: 14px; font-weight: 600; }
-    .channel-stats { display: flex; gap: 16px; margin-bottom: 8px; }
-    .channel-stat { font-size: 13px; color: var(--text-dim); }
-    .channel-bar-track { height: 6px; background: var(--bg-hover); border-radius: 3px; }
-    .channel-bar { height: 100%; border-radius: 3px; transition: width 0.5s; }
-
-    .segment-perf-grid {
+    /* ============================================
+       HERO REVENUE ATTRIBUTION
+       ============================================ */
+    .hero-attr {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px 32px;
+        margin-bottom: 24px;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-attr::before {
+        content: '';
+        position: absolute;
+        top: 0; right: 0; left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--success), var(--primary), var(--info));
+    }
+    .hero-attr-label {
+        font-size: 14px;
+        color: var(--text-dim);
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+    .hero-attr-value {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+    .hero-counter {
+        font-size: 48px;
+        font-weight: 800;
+        line-height: 1;
+        background: linear-gradient(135deg, #22C55E, #FBBF24);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    .hero-currency {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-dim);
+    }
+    .hero-attr-sub {
+        font-size: 14px;
+        color: var(--text-muted);
+        line-height: 1.7;
+    }
+    .hero-attr-sub strong { color: var(--text); font-weight: 700; }
+
+    .hero-attr-channels {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 14px;
+    }
+    .hero-channel-title {
+        font-size: 13px;
+        color: var(--text-dim);
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+    .hero-channel-row {
+        display: flex;
+        align-items: center;
         gap: 12px;
     }
-    .segment-perf-card {
+    .hero-ch-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 80px;
+        flex-shrink: 0;
+    }
+    .hero-ch-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .hero-ch-name {
+        font-size: 13px;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    .hero-ch-bar-wrap {
+        flex: 1;
+        height: 24px;
+        background: var(--bg-hover);
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    .hero-ch-bar {
+        height: 100%;
+        border-radius: 6px;
+        transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .hero-ch-bar-wa { background: linear-gradient(135deg, #25D366, #128C7E); }
+    .hero-ch-bar-email { background: linear-gradient(135deg, var(--info), #2563EB); }
+    .hero-ch-bar-sms { background: linear-gradient(135deg, #A855F7, #7C3AED); }
+    .hero-ch-val {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        min-width: 80px;
+        text-align: left;
+    }
+    .hero-ch-pct {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--text-dim);
+        min-width: 32px;
+        text-align: left;
+    }
+
+    /* ============================================
+       KPI ENHANCEMENTS
+       ============================================ */
+    .kpi-with-dot {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .kpi-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .kpi-dot-good {
+        background: var(--success);
+        box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+    .kpi-dot-primary {
+        background: var(--primary);
+        box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    /* ============================================
+       FUNNEL VISUALIZATION
+       ============================================ */
+    .funnel-card { margin-bottom: 0; }
+    .funnel-vis {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 0 16px;
+    }
+    .funnel-stage {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 0;
+    }
+    .funnel-stage-bar {
+        height: 36px;
+        border-radius: 6px;
+        background: linear-gradient(135deg, rgba(251,191,36,0.2), rgba(251,191,36,0.08));
+        border: 1px solid rgba(251,191,36,0.15);
+        transition: width 1s cubic-bezier(0.22,1,0.36,1);
+        min-width: 40px;
+    }
+    .funnel-bar-final {
+        background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(34,197,94,0.1));
+        border-color: rgba(34,197,94,0.25);
+    }
+    .funnel-stage-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+        min-width: 160px;
+    }
+    .funnel-stage-num {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        min-width: 60px;
+    }
+    .funnel-num-final {
+        color: var(--success);
+    }
+    .funnel-stage-name {
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+    .funnel-drop {
+        display: flex;
+        justify-content: center;
+        padding: 0 0 0 60px;
+    }
+    .funnel-drop span {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text-faint);
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 1px 10px;
+    }
+
+    .funnel-summary-strip {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 24px;
+        padding: 14px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        margin-top: 8px;
+    }
+    .funnel-summary-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .funnel-sum-label {
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+    .funnel-sum-val {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    .funnel-sum-sep {
+        width: 1px;
+        height: 24px;
+        background: var(--border);
+    }
+
+    /* ============================================
+       CHANNEL DETAIL (left col)
+       ============================================ */
+    .ch-detail-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .ch-detail-item {
         padding: 16px;
         background: var(--bg-elevated);
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
-        text-align: center;
     }
-    .segment-perf-name { font-size: 14px; font-weight: 600; margin-bottom: 8px; }
-    .segment-perf-value { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
-    .segment-perf-label { font-size: 12px; color: var(--text-faint); }
+    .ch-detail-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .ch-detail-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .ch-detail-name {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    .ch-detail-rev {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 10px;
+    }
+    .ch-detail-bar-wrap {
+        height: 6px;
+        background: var(--bg-hover);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+    .ch-detail-bar {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.8s ease;
+    }
+    .ch-bar-wa { background: #25D366; }
+    .ch-bar-email { background: var(--info); }
+    .ch-bar-sms { background: #A855F7; }
+    .ch-detail-stats {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-dim);
+    }
 
+    /* ============================================
+       VERTICAL BAR CHART (right col)
+       ============================================ */
+    .vbar-chart {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        height: 220px;
+        padding: 20px 0 0;
+        gap: 8px;
+    }
+    .vbar-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        height: 100%;
+        position: relative;
+    }
+    .vbar-fill {
+        width: 100%;
+        max-width: 40px;
+        border-radius: 6px 6px 0 0;
+        background: linear-gradient(180deg, var(--primary), rgba(251,191,36,0.3));
+        height: 0;
+        transition: height 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .vbar-label {
+        font-size: 12px;
+        color: var(--text-faint);
+        font-weight: 600;
+        margin-top: 8px;
+    }
+    .vbar-tooltip {
+        position: absolute;
+        top: -8px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--text);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+        z-index: 5;
+    }
+    .vbar-col:hover .vbar-tooltip {
+        opacity: 1;
+    }
+
+    /* ============================================
+       JOURNEY TABLE
+       ============================================ */
+    .j-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .j-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .rpill {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .rpill-h { background: var(--success-subtle); color: var(--success); }
+    .rpill-m { background: var(--warning-subtle); color: var(--warning); }
+    .rpill-l { background: var(--danger-subtle); color: var(--danger); }
+
+    /* ============================================
+       PREDICTIVE ANALYTICS
+       ============================================ */
+    .predict-card {
+        display: flex;
+        flex-direction: column;
+    }
+    .predict-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+    }
+    .predict-title {
+        font-size: 15px;
+        font-weight: 700;
+    }
+    .predict-footer {
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+        color: var(--text-dim);
+    }
+    .predict-footer strong {
+        color: var(--text);
+    }
+
+    /* CLV Tiers */
+    .clv-tiers {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+    .clv-tier {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .clv-tier-label {
+        font-size: 12px;
+        color: var(--text-muted);
+        width: 110px;
+        flex-shrink: 0;
+    }
+    .clv-tier-bar-wrap {
+        flex: 1;
+        height: 14px;
+        background: var(--bg-hover);
+        border-radius: 4px;
+        overflow: hidden;
+    }
+    .clv-tier-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.8s ease;
+    }
+    .clv-tier-pct {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-secondary);
+        min-width: 32px;
+        text-align: left;
+    }
+
+    /* Churn Risk */
+    .churn-center {
+        text-align: center;
+        padding: 12px 0 16px;
+    }
+    .churn-big-num {
+        font-size: 52px;
+        font-weight: 800;
+        color: var(--danger);
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+    .churn-sub {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+    .churn-urgency {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+    .churn-urgency-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+    .churn-urg-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+    .churn-urgency-row strong {
+        margin-right: auto;
+        margin-left: 0;
+    }
+
+    /* Heatmap */
+    .heatmap-mini {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    .hm-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .hm-label {
+        font-size: 11px;
+        color: var(--text-faint);
+        width: 24px;
+        flex-shrink: 0;
+        font-weight: 600;
+    }
+    .hm-cell {
+        flex: 1;
+        height: 32px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text-dim);
+        transition: transform 0.15s;
+        cursor: default;
+    }
+    .hm-cell:hover { transform: scale(1.1); z-index: 2; }
+    .hm-low { background: rgba(255,255,255,0.04); }
+    .hm-med { background: rgba(251,191,36,0.12); color: var(--text-muted); }
+    .hm-high { background: rgba(251,191,36,0.28); color: var(--primary); }
+    .hm-peak { background: rgba(251,191,36,0.5); color: #0a0a0a; font-weight: 800; }
+    .hm-legend {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 6px;
+    }
+    .hm-leg-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10px;
+        color: var(--text-faint);
+    }
+    .hm-leg-box {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+    }
+
+    /* ============================================
+       SEGMENT GRID
+       ============================================ */
+    .seg-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .seg-item {
+        padding: 18px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        transition: border-color 0.2s, transform 0.2s;
+    }
+    .seg-item:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-2px);
+    }
+    .seg-champions { border-top: 2px solid var(--success); }
+    .seg-loyal { border-top: 2px solid var(--primary); }
+    .seg-potential { border-top: 2px solid var(--info); }
+    .seg-new { border-top: 2px solid #8B5CF6; }
+    .seg-atrisk { border-top: 2px solid var(--warning); }
+    .seg-lost { border-top: 2px solid var(--danger); }
+
+    .seg-top {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .seg-icon {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    .seg-name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-secondary);
+    }
+    .seg-rev {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text);
+        margin-bottom: 6px;
+    }
+    .seg-meta {
+        display: flex;
+        gap: 12px;
+        font-size: 11px;
+        color: var(--text-faint);
+        margin-bottom: 10px;
+    }
+    .seg-pbar {
+        height: 4px;
+        background: var(--bg-hover);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .seg-pfill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.8s ease;
+    }
+
+    /* ============================================
+       A/B TEST RESULTS
+       ============================================ */
+    .ab-list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+    .ab-test {
+        padding: 20px;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+    }
+    .ab-test-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    .ab-test-name {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 4px;
+    }
+    .ab-test-sub {
+        font-size: 12px;
+        color: var(--text-dim);
+    }
+    .ab-variants {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .ab-variant {
+        padding: 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+    }
+    .ab-winner {
+        border-color: rgba(34, 197, 94, 0.3);
+        box-shadow: 0 0 16px rgba(34, 197, 94, 0.06);
+    }
+    .ab-var-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .ab-var-label {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--primary-subtle);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .ab-var-label-b {
+        background: rgba(255,255,255,0.06);
+        color: var(--text-dim);
+    }
+    .ab-var-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+    .ab-var-metrics {
+        display: flex;
+        gap: 16px;
+    }
+    .ab-metric {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .ab-metric-val {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--text);
+    }
+    .ab-metric-lbl {
+        font-size: 11px;
+        color: var(--text-faint);
+    }
+    .ab-apply-btn {
+        margin-top: 2px;
+    }
+
+    /* ============================================
+       ANIMATIONS
+       ============================================ */
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-attr, .kpi-card, .funnel-card, .predict-card, .seg-item, .ab-test {
+        animation: fadeUp 0.4s ease both;
+    }
+    .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.1s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.2s; }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 1024px) {
+        .hero-attr { grid-template-columns: 1fr; gap: 24px; }
+        .seg-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 768px) {
-        .segment-perf-grid { grid-template-columns: 1fr 1fr; }
+        .analytics-header { flex-direction: column; }
+        .period-tabs { width: 100%; justify-content: center; }
+        .hero-counter { font-size: 36px; }
+        .hero-attr { padding: 20px; }
+        .hero-ch-val { font-size: 12px; min-width: 60px; }
+        .funnel-stage { flex-wrap: wrap; }
+        .funnel-stage-info { min-width: 120px; }
+        .funnel-stage-num { font-size: 18px; }
+        .vbar-chart { height: 160px; }
+        .ab-variants { grid-template-columns: 1fr; }
+        .seg-grid { grid-template-columns: 1fr 1fr; }
+        .funnel-summary-strip { flex-direction: column; gap: 10px; }
+        .funnel-sum-sep { width: 100%; height: 1px; }
+        .clv-tier-label { width: 80px; font-size: 11px; }
+    }
+    @media (max-width: 480px) {
+        .seg-grid { grid-template-columns: 1fr; }
+        .hero-ch-pct { display: none; }
+        .ab-var-metrics { flex-wrap: wrap; gap: 10px; }
+        .hero-counter { font-size: 30px; }
     }
 </style>
 
 <script src="/platform/shared/shell.js"></script>
 <script>
-    // Period tab switching
-    document.querySelectorAll('.tab').forEach(function(tab) {
-        tab.addEventListener('click', function() {
-            document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-            this.classList.add('active');
-            // In production: reload data for selected period
-        });
-    });
+(function() {
+    /* ============================================
+       SAMPLE DATA
+       ============================================ */
+    var SAMPLE = {
+        revenue: 47850,
+        recoveredCarts: 47,
+        totalCarts: 156,
+        recoveryRate: 30,
+        messagesSent: 1847,
+        readRate: 91,
+        conversionRate: 30,
+        channels: {
+            whatsapp: { revenue: 35000, pct: 73, messages: 1420, readRate: 91 },
+            email:    { revenue: 8200,  pct: 17, messages: 312,  readRate: 45 },
+            sms:      { revenue: 4650,  pct: 10, messages: 115,  readRate: 96 }
+        },
+        funnel: {
+            sent: 1847, delivered: 1792, read: 1681, clicked: 739, converted: 554
+        },
+        dailyRevenue: [4200, 6800, 3900, 7950, 5600, 7400, 6000],
+        journeys: [
+            { name: 'استرداد السلات', sent: 542, delivery: 98, read: 89, click: 34, conversion: 30, revenue: 18200, color: 'var(--warning)' },
+            { name: 'رحلة الترحيب', sent: 267, delivery: 99, read: 94, click: 28, conversion: 12, revenue: 9400, color: 'var(--info)' },
+            { name: 'متابعة بعد الشراء', sent: 389, delivery: 98, read: 92, click: 18, conversion: 8, revenue: 8750, color: 'var(--success)' },
+            { name: 'استرجاع الغائبين', sent: 198, delivery: 97, read: 85, click: 22, conversion: 9, revenue: 6300, color: 'var(--danger)' },
+            { name: 'تصفح بدون شراء', sent: 451, delivery: 97, read: 88, click: 25, conversion: 6, revenue: 5200, color: '#8B5CF6' }
+        ],
+        segments: [
+            { name: 'ابطال', revenue: 12400, customers: 156, avg: 79.5 },
+            { name: 'اوفياء', revenue: 10200, customers: 312, avg: 32.7 },
+            { name: 'محتملين', revenue: 7800, customers: 245, avg: 31.8 },
+            { name: 'جدد', revenue: 5400, customers: 189, avg: 28.6 },
+            { name: 'معرضين', revenue: 2100, customers: 134, avg: 15.7 },
+            { name: 'غائبين', revenue: 450, customers: 211, avg: 2.1 }
+        ],
+        churnRisk: 43,
+        clv: 387
+    };
 
-    // Load real analytics data
-    document.addEventListener('DOMContentLoaded', function() {
-        RibhShell.api('/api/analytics/v2').then(function(data) {
-            if (!data) return;
-            // Update KPIs with real data when available
-        }).catch(function() {
-            // Use sample data
+    /* ============================================
+       COUNTER ANIMATION
+       ============================================ */
+    function animateCount(el, target, duration, formatter) {
+        if (!el) return;
+        var startTime = null;
+        function step(ts) {
+            if (!startTime) startTime = ts;
+            var p = Math.min((ts - startTime) / duration, 1);
+            var eased = 1 - Math.pow(1 - p, 3);
+            var val = Math.round(target * eased);
+            el.textContent = formatter ? formatter(val) : val.toLocaleString('ar-SA');
+            if (p < 1) requestAnimationFrame(step);
+            else el.textContent = formatter ? formatter(target) : target.toLocaleString('ar-SA');
+        }
+        requestAnimationFrame(step);
+    }
+
+    /* ============================================
+       ANIMATE BARS (horizontal hero channel bars)
+       ============================================ */
+    function animateHeroBars() {
+        var bars = document.querySelectorAll('.hero-ch-bar');
+        bars.forEach(function(bar, i) {
+            var w = bar.getAttribute('data-width');
+            setTimeout(function() { bar.style.width = w + '%'; }, 300 + i * 150);
         });
-    });
+    }
+
+    /* ============================================
+       ANIMATE VERTICAL BAR CHART
+       ============================================ */
+    function animateVBars() {
+        var fills = document.querySelectorAll('.vbar-fill');
+        fills.forEach(function(fill, i) {
+            var h = fill.getAttribute('data-height');
+            setTimeout(function() { fill.style.height = h + '%'; }, 400 + i * 100);
+        });
+    }
+
+    /* ============================================
+       PERIOD TAB SWITCHING
+       ============================================ */
+    function bindTabs() {
+        var tabs = document.querySelectorAll('#periodTabs .tab');
+        tabs.forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                tabs.forEach(function(t) { t.classList.remove('active'); });
+                this.classList.add('active');
+            });
+        });
+    }
+
+    /* ============================================
+       APPLY DATA TO DOM
+       ============================================ */
+    function applyData(d) {
+        // Hero counter
+        var heroEl = document.getElementById('heroCounter');
+        animateCount(heroEl, d.revenue, 1600, function(n) {
+            return n.toLocaleString('ar-SA');
+        });
+
+        // Hero sub-text
+        setText('heroRecovered', d.recoveredCarts);
+        setText('heroTotal', d.totalCarts);
+        var rateEl = document.getElementById('heroRate');
+        if (rateEl) rateEl.textContent = d.recoveryRate + '%';
+
+        // Channel revenue values
+        setText('waRevVal', fmtSAR(d.channels.whatsapp.revenue));
+        setText('emailRevVal', fmtSAR(d.channels.email.revenue));
+        setText('smsRevVal', fmtSAR(d.channels.sms.revenue));
+
+        // KPI
+        var kpiRevEl = document.getElementById('kpiRevenue');
+        animateCount(kpiRevEl, d.revenue, 1400, function(n) {
+            return n.toLocaleString('ar-SA') + ' ر.س';
+        });
+        var kpiMsgEl = document.getElementById('kpiMessages');
+        animateCount(kpiMsgEl, d.messagesSent, 1200, function(n) {
+            return n.toLocaleString('ar-SA');
+        });
+        var kpiReadEl = document.getElementById('kpiRead');
+        animateCount(kpiReadEl, d.readRate, 1000, function(n) { return n + '%'; });
+        var kpiConvEl = document.getElementById('kpiConversion');
+        animateCount(kpiConvEl, d.conversionRate, 1000, function(n) { return n + '%'; });
+
+        // Funnel
+        setText('fSent', fmtNum(d.funnel.sent));
+        setText('fDelivered', fmtNum(d.funnel.delivered));
+        setText('fRead', fmtNum(d.funnel.read));
+        setText('fClicked', fmtNum(d.funnel.clicked));
+        setText('fConverted', fmtNum(d.funnel.converted));
+
+        var drops = [
+            { id: 'fDrop1', from: d.funnel.sent, to: d.funnel.delivered },
+            { id: 'fDrop2', from: d.funnel.delivered, to: d.funnel.read },
+            { id: 'fDrop3', from: d.funnel.read, to: d.funnel.clicked },
+            { id: 'fDrop4', from: d.funnel.clicked, to: d.funnel.converted }
+        ];
+        drops.forEach(function(dr) {
+            var pct = dr.from > 0 ? Math.round(((dr.from - dr.to) / dr.from) * 100) : 0;
+            setText(dr.id, '-' + pct + '%');
+        });
+
+        var totalConv = d.funnel.sent > 0 ? Math.round((d.funnel.converted / d.funnel.sent) * 100) : 0;
+        setText('fTotalRate', totalConv + '%');
+
+        // Churn
+        var churnEl = document.getElementById('churnCount');
+        animateCount(churnEl, d.churnRisk, 800);
+
+        // Animate
+        animateHeroBars();
+        animateVBars();
+    }
+
+    /* ============================================
+       HELPERS
+       ============================================ */
+    function setText(id, text) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+
+    function fmtNum(n) {
+        if (n == null) return '--';
+        return typeof RibhShell !== 'undefined' ? RibhShell.formatNumber(n) : n.toLocaleString('ar-SA');
+    }
+
+    function fmtSAR(n) {
+        if (n == null) return '--';
+        return typeof RibhShell !== 'undefined' ? RibhShell.formatSAR(n) : n.toLocaleString('ar-SA') + ' ر.س';
+    }
+
+    /* ============================================
+       LOAD FROM API OR SAMPLE
+       ============================================ */
+    function loadAnalytics() {
+        bindTabs();
+
+        if (typeof RibhShell !== 'undefined' && RibhShell.api) {
+            RibhShell.api('/api/analytics/v2').then(function(data) {
+                if (data && !data.error) {
+                    var d = {
+                        revenue: data.recoveredRevenue || data.revenue || SAMPLE.revenue,
+                        recoveredCarts: data.recoveredCarts || SAMPLE.recoveredCarts,
+                        totalCarts: data.totalCarts || data.abandonedCarts || SAMPLE.totalCarts,
+                        recoveryRate: data.recoveryRate || SAMPLE.recoveryRate,
+                        messagesSent: data.messagesSent || SAMPLE.messagesSent,
+                        readRate: data.readRate || SAMPLE.readRate,
+                        conversionRate: data.conversionRate || SAMPLE.conversionRate,
+                        channels: data.channels || SAMPLE.channels,
+                        funnel: data.funnel || SAMPLE.funnel,
+                        dailyRevenue: data.dailyRevenue || SAMPLE.dailyRevenue,
+                        churnRisk: data.churnRisk || SAMPLE.churnRisk,
+                        clv: data.clv || SAMPLE.clv
+                    };
+                    applyData(d);
+                } else {
+                    applyData(SAMPLE);
+                }
+            }).catch(function() {
+                applyData(SAMPLE);
+            });
+        } else {
+            applyData(SAMPLE);
+        }
+    }
+
+    /* ============================================
+       INIT
+       ============================================ */
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadAnalytics);
+    } else {
+        loadAnalytics();
+    }
+})();
 </script>
 
 </body>

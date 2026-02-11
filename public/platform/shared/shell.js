@@ -35,18 +35,62 @@ var RibhShell = {
             </div>
 
             <nav class="sidebar-nav">
-                <a href="/platform/dashboard.html" class="nav-link ${this.isActive('dashboard')}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                    <span>لوحة التحكم</span>
-                </a>
-                <a href="/platform/inbox.html" class="nav-link ${this.isActive('inbox')}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                    <span>المحادثات</span>
-                </a>
-                <a href="/platform/settings.html" class="nav-link ${this.isActive('settings')}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                    <span>الإعدادات</span>
-                </a>
+                <div class="nav-section">
+                    <div class="nav-section-label">الرئيسية</div>
+                    <a href="/platform/dashboard.html" class="nav-link ${this.isActive('dashboard')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        <span>لوحة التحكم</span>
+                    </a>
+                    <a href="/platform/inbox.html" class="nav-link ${this.isActive('inbox')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        <span>المحادثات</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">التسويق</div>
+                    <a href="/platform/journeys.html" class="nav-link ${this.isActive('journeys')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        <span>الرحلات</span>
+                        <span class="nav-badge">7</span>
+                    </a>
+                    <a href="/platform/campaigns.html" class="nav-link ${this.isActive('campaigns')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                        <span>الحملات</span>
+                    </a>
+                    <a href="/platform/signup-tools.html" class="nav-link ${this.isActive('signup-tools')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10v10H7z"/></svg>
+                        <span>أدوات الاشتراك</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">العملاء</div>
+                    <a href="/platform/subscribers.html" class="nav-link ${this.isActive('subscribers')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>المشتركين</span>
+                    </a>
+                    <a href="/platform/segments.html" class="nav-link ${this.isActive('segments')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+                        <span>الشرائح</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">التحليلات</div>
+                    <a href="/platform/analytics.html" class="nav-link ${this.isActive('analytics')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        <span>التحليلات</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-label">النظام</div>
+                    <a href="/platform/settings.html" class="nav-link ${this.isActive('settings')}">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <span>الإعدادات</span>
+                    </a>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
@@ -82,14 +126,25 @@ var RibhShell = {
         </div>
         `;
 
-        // Move existing body content into shellContent
+        // Preserve page-specific <style> blocks before clearing body
         var existingContent = document.getElementById('page-content');
+        var pageStyles = Array.prototype.slice.call(document.body.querySelectorAll('style'));
+
+        // Clear body and rebuild with shell layout
         document.body.innerHTML = '';
         document.body.appendChild(layout);
+
+        // Re-append preserved page styles to head so they survive
+        pageStyles.forEach(function(style) {
+            document.head.appendChild(style);
+        });
 
         if (existingContent) {
             document.getElementById('shellContent').appendChild(existingContent);
         }
+
+        // Show body now that shell is ready (prevents FOUC)
+        document.body.classList.add('shell-ready');
 
         // Set page title
         var titles = {
@@ -101,7 +156,8 @@ var RibhShell = {
             'subscribers': 'المشتركين',
             'segments': 'الشرائح',
             'analytics': 'التحليلات',
-            'settings': 'الإعدادات'
+            'settings': 'الإعدادات',
+            'subscriber': 'تفاصيل المشترك'
         };
         var titleEl = document.getElementById('pageTitle');
         if (titleEl) {
