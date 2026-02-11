@@ -235,6 +235,26 @@ try {
     loyaltyEngine = null;
 }
 
+// 🚀 Auto-Activation Engine - One-click activation (Attentive AI + Klaviyo flows + ReConvert simplicity)
+let autoActivation;
+try {
+    autoActivation = require('./lib/autoActivation');
+    console.log('✅ Auto-Activation Engine loaded - One-click recovery enabled!');
+} catch (e) {
+    console.log('⚠️ Auto-Activation Engine not available:', e.message);
+    autoActivation = null;
+}
+
+// 🤖 Content Generator - Gemini/Groq AI personalized messages
+let contentGenerator;
+try {
+    contentGenerator = require('./lib/contentGenerator');
+    console.log('✅ Content Generator loaded - AI personalized messages enabled!');
+} catch (e) {
+    console.log('⚠️ Content Generator not available:', e.message);
+    contentGenerator = null;
+}
+
 // Review Engine - Post-purchase review collection
 let reviewEngine;
 try {
@@ -1566,6 +1586,23 @@ app.get('/api/whatsapp/status', async (req, res) => {
         const status = whatsappBridge.getStatus(merchantId);
         const pendingQR = whatsappBridge.getPendingQR(merchantId);
 
+        // 🚀 AUTO-ACTIVATION: If WhatsApp just connected, trigger full activation
+        if (status?.connected && autoActivation) {
+            try {
+                const activationResult = await autoActivation.onWhatsAppConnected(merchantId, {
+                    phone: status.phone || '',
+                    platform: status.platform || 'baileys'
+                });
+                if (activationResult?.status === 'fully_active') {
+                    console.log(`🚀 [AutoActivation] FULLY ACTIVE after WhatsApp connect: ${merchantId}`);
+                }
+                // Attach activation status to response
+                status.activation = activationResult;
+            } catch (e) {
+                console.log('⚠️ Auto-activation on WhatsApp connect error:', e.message);
+            }
+        }
+
         res.json({
             success: true,
             ...status,
@@ -2472,7 +2509,30 @@ async function handleSallaWebhook(req, res) {
                 console.log(`📌 Unhandled event: ${event.event}`);
         }
 
-        // Process through Lifecycle Engine for AI-powered offers
+        // 🚀 Process through Auto-Activation Engine (smart routing with AI)
+        if (autoActivation) {
+            try {
+                switch (event.event) {
+                    case 'cart.abandoned':
+                    case 'abandoned_cart.created':
+                    case 'abandoned.cart':
+                        await autoActivation.processAbandonedCart(event.merchant, event.data);
+                        break;
+                    case 'order.created':
+                    case 'order.create':
+                        await autoActivation.processOrderCreated(event.merchant, event.data);
+                        break;
+                    case 'customer.created':
+                    case 'customer.create':
+                        await autoActivation.processNewCustomer(event.merchant, event.data);
+                        break;
+                }
+            } catch (e) {
+                console.log('⚠️ AutoActivation event processing error:', e.message);
+            }
+        }
+
+        // Fallback: Process through Lifecycle Engine for AI-powered offers
         if (lifecycleEngine) {
             lifecycleEngine.processEvent(event.event, event.merchant, event.data);
         }
@@ -3369,6 +3429,28 @@ async function handleAppInstalled(data, merchant) {
         existingStore.active = true;
         await writeDB(STORES_FILE, stores);
         console.log(`✅ Store ${merchantId} updated with install data`);
+    }
+
+    // 🚀 AUTO-ACTIVATION: Trigger one-click activation on Salla connect
+    if (autoActivation) {
+        try {
+            const activationResult = await autoActivation.onSallaConnected(merchantId, {
+                storeName: data?.store?.name || data?.name || 'متجر',
+                email: data?.owner?.email || data?.email || '',
+                category: data?.store?.category || data?.category || 'general'
+            });
+            console.log(`🚀 [AutoActivation] Salla connected result:`, activationResult?.status);
+
+            // Pre-generate AI content for this store
+            if (contentGenerator) {
+                contentGenerator.pregenerateStoreContent(merchantId, {
+                    storeName: data?.store?.name || data?.name || '',
+                    category: data?.store?.category || 'general'
+                }).catch(e => console.log('⚠️ Content pregeneration skipped:', e.message));
+            }
+        } catch (e) {
+            console.log('⚠️ Auto-activation on install error:', e.message);
+        }
     }
 }
 
@@ -5155,7 +5237,7 @@ function formatTimeAgo(dateStr) {
 // ==========================================
 
 // Get referral stats for a store
-app.get('/api/referrals', (req, res) => {
+app.get('/api/referrals', async (req, res) => {
     const cookies = parseCookies(req);
     const token = req.query.token || cookies.ribhToken;
 
@@ -5210,7 +5292,7 @@ if (!fs.existsSync(POPUP_LEADS_FILE)) {
 }
 
 // Capture email from popup
-app.post('/api/popup/capture', (req, res) => {
+app.post('/api/popup/capture', async (req, res) => {
     const { storeId, email, discount, source } = req.body;
 
     if (!email) {
@@ -6860,6 +6942,95 @@ app.get('/api/analytics/summary', async (req, res) => {
 
 
 // Keep-alive for Render removed as project moved to Firebase.
+
+
+// ==========================================
+// 🚀 AUTO-ACTIVATION API ENDPOINTS
+// ==========================================
+
+// Get activation status & dashboard data
+app.get('/api/activation/status', async (req, res) => {
+    try {
+        const merchantId = req.query.merchant || req.storeId;
+        if (!merchantId) {
+            return res.status(400).json({ success: false, error: 'Merchant ID required' });
+        }
+        if (!autoActivation) {
+            return res.status(503).json({ success: false, error: 'Auto-activation not available' });
+        }
+        const dashboard = await autoActivation.getActivationDashboard(merchantId);
+        const aiStatus = contentGenerator ? contentGenerator.getProviderStatus() : { primary: 'templates' };
+        res.json({ success: true, ...dashboard, ai: aiStatus });
+    } catch (error) {
+        console.error('❌ Activation status error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Toggle a sequence on/off
+app.post('/api/activation/toggle', async (req, res) => {
+    try {
+        const { merchant, type, active } = req.body;
+        const merchantId = merchant || req.storeId;
+        if (!merchantId || !type) {
+            return res.status(400).json({ success: false, error: 'merchant and type required' });
+        }
+        if (!autoActivation) {
+            return res.status(503).json({ success: false, error: 'Auto-activation not available' });
+        }
+        const result = await autoActivation.toggleSequence(merchantId, type, active !== false);
+        res.json({ success: true, ...result });
+    } catch (error) {
+        console.error('❌ Toggle error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Force full activation (manual trigger)
+app.post('/api/activation/activate', async (req, res) => {
+    try {
+        const { merchant } = req.body;
+        const merchantId = merchant || req.storeId;
+        if (!merchantId) {
+            return res.status(400).json({ success: false, error: 'merchant required' });
+        }
+        if (!autoActivation) {
+            return res.status(503).json({ success: false, error: 'Auto-activation not available' });
+        }
+        const result = await autoActivation.activateAll(merchantId);
+        res.json({ success: true, ...result });
+    } catch (error) {
+        console.error('❌ Activation error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get AI content provider status
+app.get('/api/activation/ai-status', async (req, res) => {
+    try {
+        const status = contentGenerator ? contentGenerator.getProviderStatus() : { primary: 'templates' };
+        res.json({ success: true, ...status });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Generate AI offer preview (for testing)
+app.post('/api/activation/preview-offer', async (req, res) => {
+    try {
+        if (!contentGenerator) {
+            return res.status(503).json({ success: false, error: 'Content Generator not available' });
+        }
+        const { cartData, customerData } = req.body;
+        const offer = await contentGenerator.generateSmartOffer(
+            cartData || { total: 350, items: [{ name: 'منتج تجريبي' }] },
+            customerData || { name: 'أحمد' }
+        );
+        res.json({ success: true, offer });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
 
 // ==========================================
