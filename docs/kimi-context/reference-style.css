@@ -1,0 +1,64 @@
+/* Reference style extracted from provided screenshot (Claude Code dark UI vibe)
+   Intent: premium dark shell + glass panels + quiet contrast + clean spacing
+   Not literal copy; direction only.
+*/
+
+:root {
+  --bg-0: #0d0f14;
+  --bg-1: #11141b;
+  --bg-2: #171b24;
+  --panel: #141923;
+  --panel-soft: #1a202c;
+  --line: #252b38;
+  --text: #e8edf7;
+  --muted: #a8b0c1;
+  --brand: #f59e0b;
+  --ok: #22c55e;
+  --danger: #ef4444;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --shadow: 0 12px 36px rgba(0,0,0,.45);
+}
+
+body {
+  background: radial-gradient(1200px 700px at 75% -10%, #202738 0%, var(--bg-0) 55%);
+  color: var(--text);
+  font-family: "Inter", "SF Pro Text", "Noto Sans Arabic", system-ui, sans-serif;
+}
+
+.shell {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(26,32,44,.8), rgba(17,20,27,.92));
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, #171c28, #121723);
+}
+
+.kpi {
+  border: 1px solid #2a3242;
+  background: #141a25;
+  border-radius: 10px;
+}
+
+.cta {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: #111827;
+  font-weight: 800;
+  border-radius: 12px;
+  border: none;
+}
+
+.chip {
+  display: inline-flex;
+  gap: 6px;
+  border: 1px solid #31394a;
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--muted);
+}

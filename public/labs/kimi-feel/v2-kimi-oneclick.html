@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>رِبح — استرجاع فوري</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Deep Space Dark */
+  --bg-0: #07080a;
+  --bg-1: #0c0e12;
+  --bg-2: #11141a;
+  --bg-3: #171b23;
+  --panel: #141821;
+  --panel-elevated: #1a1f28;
+  --line: #1e2430;
+  --line-bright: #2a3342;
+  
+  /* Text */
+  --text: #f5f7fa;
+  --text-2: #a8b4c4;
+  --text-3: #6c7a8f;
+  
+  /* Brand */
+  --saudi-green: #00a854;
+  --saudi-green-bright: #00d46b;
+  --saudi-green-dim: rgba(0, 168, 84, 0.1);
+  --saudi-green-glow: rgba(0, 212, 107, 0.35);
+  
+  /* Accents */
+  --gold: #f5c842;
+  --blue: #4f8cff;
+  --blue-dim: rgba(79, 140, 255, 0.15);
+  --purple: #a855f7;
+  
+  /* Spacing */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+  --shadow-glow: 0 0 60px var(--saudi-green-glow);
+}
+
+body {
+  font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-0);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ AMBIENT ═══ */
+.ambient {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.5;
+}
+
+.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: var(--saudi-green-dim);
+  top: -100px;
+  right: -100px;
+}
+
+.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: var(--blue-dim);
+  bottom: 10%;
+  left: -80px;
+}
+
+/* ═══ CONTAINER ═══ */
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══ TOP BAR ═══ */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--saudi-green), var(--saudi-green-bright));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+}
+
+.brand-text {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.help-btn {
+  padding: 8px 14px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.help-btn:hover {
+  border-color: var(--line-bright);
+  color: var(--text);
+}
+
+/* ═══ HERO CARD ═══ */
+.hero-card {
+  background: linear-gradient(180deg, var(--panel) 0%, var(--bg-1) 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 28px 24px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-bright), transparent);
+}
+
+.hero-glow {
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, var(--saudi-green-glow) 0%, transparent 60%);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* Status Header */
+.status-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.connection-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--line-bright);
+  transition: all 0.3s ease;
+}
+
+.dot.active {
+  background: var(--saudi-green);
+  box-shadow: 0 0 8px var(--saudi-green-glow);
+}
+
+.dot.active.pulse {
+  animation: dotPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+
+.status-text {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+/* Hero Content */
+.hero-title {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.hero-title .highlight {
+  color: var(--saudi-green-bright);
+  position: relative;
+}
+
+.hero-desc {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+/* Preview Stack */
+.preview-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+}
+
+.preview-item:hover {
+  border-color: var(--line-bright);
+  transform: translateX(-4px);
+}
+
+.preview-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.preview-icon.green { background: var(--saudi-green-dim); }
+.preview-icon.blue { background: var(--blue-dim); }
+
+.preview-content {
+  flex: 1;
+}
+
+.preview-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.preview-desc {
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.preview-value {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--saudi-green-bright);
+  direction: ltr;
+}
+
+/* ═══ MAIN CTA SECTION ═══ */
+.cta-section {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.cta-main {
+  width: 100%;
+  padding: 22px 28px;
+  background: linear-gradient(135deg, var(--saudi-green) 0%, var(--saudi-green-bright) 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 32px var(--saudi-green-glow);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-main:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 40px var(--saudi-green-glow);
+}
+
+.cta-main:active {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.cta-main::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255,255,255,0.1) 50%,
+    transparent 60%
+  );
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(0deg); }
+  100% { transform: translateX(100%) rotate(0deg); }
+}
+
+.cta-label {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.cta-sublabel {
+  font-size: 12px;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+/* Trust Pills */
+.trust-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  justify-content: center;
+}
+
+.trust-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg-3);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  font-size: 11px;
+  color: var(--text-2);
+}
+
+.trust-pill svg {
+  width: 14px;
+  height: 14px;
+  color: var(--saudi-green-bright);
+}
+
+/* ═══ TIMELINE CARD ═══ */
+.timeline-card {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.timeline-title {
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.timeline-badge {
+  padding: 4px 10px;
+  background: var(--saudi-green-dim);
+  border: 1px solid var(--saudi-green);
+  border-radius: 100px;
+  font-size: 11px;
+  color: var(--saudi-green-bright);
+  font-weight: 600;
+}
+
+.timeline-flow {
+  position: relative;
+}
+
+.timeline-connector {
+  position: absolute;
+  right: 15px;
+  top: 24px;
+  bottom: 24px;
+  width: 2px;
+  background: var(--line);
+  border-radius: 1px;
+}
+
+.timeline-connector-fill {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, var(--saudi-green), var(--saudi-green-bright));
+  border-radius: 1px;
+  transition: height 0.5s ease;
+}
+
+.timeline-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 0;
+  position: relative;
+}
+
+.step-node {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-3);
+  border: 2px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+  z-index: 1;
+  transition: all 0.4s ease;
+}
+
+.timeline-step.active .step-node {
+  background: var(--saudi-green);
+  border-color: var(--saudi-green-bright);
+  color: white;
+  box-shadow: 0 0 16px var(--saudi-green-glow);
+  animation: nodePulse 1.5s ease-in-out infinite;
+}
+
+.timeline-step.completed .step-node {
+  background: var(--saudi-green);
+  border-color: var(--saudi-green);
+  color: white;
+}
+
+@keyframes nodePulse {
+  0%, 100% { box-shadow: 0 0 16px var(--saudi-green-glow); }
+  50% { box-shadow: 0 0 24px var(--saudi-green-glow); }
+}
+
+.step-body {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.step-heading {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.step-text {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+
+.step-time {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 500;
+  white-space: nowrap;
+  padding-top: 4px;
+}
+
+/* ═══ REVENUE PROJECTION ═══ */
+.projection-card {
+  background: linear-gradient(135deg, var(--panel) 0%, var(--bg-2) 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.projection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
+}
+
+.projection-label {
+  font-size: 12px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.projection-amount {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--gold);
+  direction: ltr;
+  display: inline-block;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.projection-unit {
+  font-size: 20px;
+  color: var(--text-2);
+  font-weight: 600;
+}
+
+.projection-period {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* ═══ BOTTOM BAR ═══ */
+.bottom-bar {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.secure-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--text-3);
+}
+
+.secure-note svg {
+  width: 16px;
+  height: 16px;
+  color: var(--saudi-green-bright);
+}
+
+/* ═══ ACTIVATED STATE ═══ */
+.activated-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-0);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 40px 24px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease;
+}
+
+.activated-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.activated-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.success-ring {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: conic-gradient(var(--saudi-green) 0%, var(--saudi-green) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  position: relative;
+  animation: ringExpand 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.success-ring::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  background: var(--bg-0);
+  border-radius: 50%;
+}
+
+.success-check {
+  position: relative;
+  font-size: 56px;
+  z-index: 1;
+  animation: checkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes ringExpand {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.activated-title {
+  font-size: 32px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.activated-subtitle {
+  font-size: 16px;
+  color: var(--text-2);
+  line-height: 1.7;
+  max-width: 300px;
+}
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 32px;
+  padding: 12px 20px;
+  background: var(--saudi-green-dim);
+  border: 1px solid var(--saudi-green);
+  border-radius: 100px;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--saudi-green-bright);
+  border-radius: 50%;
+  animation: livePulse 1s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.9); }
+}
+
+.live-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--saudi-green-bright);
+}
+
+.activated-footer {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.close-btn {
+  padding: 14px 32px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  border-color: var(--line-bright);
+  background: var(--bg-3);
+}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  animation: fadeInUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+.animate-in:nth-child(1) { animation-delay: 0.1s; }
+.animate-in:nth-child(2) { animation-delay: 0.2s; }
+.animate-in:nth-child(3) { animation-delay: 0.3s; }
+.animate-in:nth-child(4) { animation-delay: 0.4s; }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 400px) {
+  .hero-title { font-size: 22px; }
+  .projection-amount { font-size: 36px; }
+  .preview-item { padding: 12px; }
+  .step-time { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+</div>
+
+<div class="container">
+
+  <!-- ═══ TOP BAR ═══ -->
+  <div class="top-bar animate-in">
+    <div class="brand">
+      <div class="brand-logo">ر</div>
+      <div class="brand-text">رِبح</div>
+    </div>
+    <button class="help-btn">تحتاج مساعدة؟</button>
+  </div>
+
+  <!-- ═══ HERO CARD ═══ -->
+  <div class="hero-card animate-in">
+    <div class="hero-glow"></div>
+    
+    <div class="status-header">
+      <div class="connection-dots">
+        <div class="dot active"></div>
+        <div class="dot active"></div>
+        <div class="dot active pulse"></div>
+      </div>
+      <span class="status-text">المتجر والواتساب متصلان</span>
+    </div>
+
+    <h1 class="hero-title">
+      استرجع <span class="highlight">١٢,٤٠٠ ر.س</span><br>
+      من السلات المتروكة
+    </h1>
+    
+    <p class="hero-desc">
+      النظام جاهز لإرسال رسائل ذكية تلقائية لعملائك.
+      لا يحتاج خبرة تقنية — اضغط زر واحد ونحن ندير الباقي.
+    </p>
+
+    <div class="preview-stack">
+      <div class="preview-item">
+        <div class="preview-icon green">🛒</div>
+        <div class="preview-content">
+          <div class="preview-title">سلات متروكة</div>
+          <div class="preview-desc">١٨ سلة تنتظر الاسترجاع</div>
+        </div>
+        <div class="preview-value">+٩,٦٠٠</div>
+      </div>
+      <div class="preview-item">
+        <div class="preview-icon blue">😴</div>
+        <div class="preview-content">
+          <div class="preview-title">عملاء غير نشطين</div>
+          <div class="preview-desc">١٤٣ عميل لم يشتروا منذ ٦٠ يوم</div>
+        </div>
+        <div class="preview-value">+٢,٨٠٠</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CTA SECTION ═══ -->
+  <div class="cta-section animate-in">
+    <button class="cta-main" onclick="activate()">
+      <span class="cta-label">فعّل الاسترجاع الذكي</span>
+      <span class="cta-sublabel">نقرة واحدة — يعمل فوراً</span>
+    </button>
+    
+    <div class="trust-pills">
+      <div class="trust-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        آمن
+      </div>
+      <div class="trust-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        فوري
+      </div>
+      <div class="trust-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        تحت سيطرتك
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TIMELINE CARD ═══ -->
+  <div class="timeline-card animate-in">
+    <div class="timeline-header">
+      <div class="timeline-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        رحلة التفعيل
+      </div>
+      <div class="timeline-badge">٣ خطوات</div>
+    </div>
+    
+    <div class="timeline-flow">
+      <div class="timeline-connector">
+        <div class="timeline-connector-fill" id="connectorFill"></div>
+      </div>
+      
+      <div class="timeline-step" data-step="1">
+        <div class="step-node">١</div>
+        <div class="step-body">
+          <div class="step-heading">تحليل الذكاء الاصطناعي</div>
+          <div class="step-text">نحلّل سلوك ١٨ عميلاً لصياغة أفضل رسالة</div>
+        </div>
+        <div class="step-time">فوراً</div>
+      </div>
+      
+      <div class="timeline-step" data-step="2">
+        <div class="step-node">٢</div>
+        <div class="step-body">
+          <div class="step-heading">أول رسالة واتساب</div>
+          <div class="step-text">تُرسل تلقائياً لأول سلة متروكة خلال ساعة</div>
+        </div>
+        <div class="step-time">خلال ساعة</div>
+      </div>
+      
+      <div class="timeline-step" data-step="3">
+        <div class="step-node">٣</div>
+        <div class="step-body">
+          <div class="step-heading">أول طلب مسترجع</div>
+          <div class="step-text">إشعار مباشر باستكمال العميل للشراء</div>
+        </div>
+        <div class="step-time">خلال ٢٤ ساعة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PROJECTION CARD ═══ -->
+  <div class="projection-card animate-in">
+    <div class="projection-label">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      الإيرادات المتوقعة خلال ٣٠ يوم
+    </div>
+    <div class="projection-amount">
+      ١٢,٤٠٠
+      <span class="projection-unit">ر.س</span>
+    </div>
+    <div class="projection-period">بناءً على متوسط متجرك</div>
+  </div>
+
+  <!-- ═══ BOTTOM BAR ═══ -->
+  <div class="bottom-bar animate-in">
+    <div class="secure-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      مشفّر بالكامل · لا نحتفظ ببياناتك المالية · تستطيع الإيقاف في أي لحظة
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ACTIVATED OVERLAY ═══ -->
+<div class="activated-overlay" id="activatedOverlay">
+  <div class="activated-content">
+    <div class="success-ring">
+      <div class="success-check">✓</div>
+    </div>
+    <h2 class="activated-title">تم التفعيل!</h2>
+    <p class="activated-subtitle">
+      الاسترجاع الذكي يعمل الآن.<br>
+      سنُعلمك بأول طلب مسترجع فوراً.
+    </p>
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      <span class="live-text">النظام يعمل الآن</span>
+    </div>
+  </div>
+  <div class="activated-footer">
+    <button class="close-btn" onclick="closeOverlay()">الذهاب للوحة التحكم</button>
+  </div>
+</div>
+
+<script>
+let isActivating = false;
+
+function activate() {
+  if (isActivating) return;
+  isActivating = true;
+  
+  const btn = document.querySelector('.cta-main');
+  const steps = document.querySelectorAll('.timeline-step');
+  const connectorFill = document.getElementById('connectorFill');
+  
+  // Update button
+  btn.innerHTML = '<span class="cta-label">جاري التفعيل...</span>';
+  btn.style.opacity = '0.8';
+  
+  // Animate timeline
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress++;
+    
+    // Update connector
+    connectorFill.style.height = (progress / 3 * 100) + '%';
+    
+    // Update steps
+    if (progress <= steps.length) {
+      steps.forEach((step, i) => {
+        if (i < progress) {
+          step.classList.add('active');
+          setTimeout(() => {
+            step.classList.remove('active');
+            step.classList.add('completed');
+          }, 500);
+        }
+      });
+    }
+    
+    if (progress > 3) {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById('activatedOverlay').classList.add('show');
+      }, 400);
+    }
+  }, 700);
+}
+
+function closeOverlay() {
+  document.getElementById('activatedOverlay').classList.remove('show');
+  // Reset for demo
+  setTimeout(() => {
+    location.reload();
+  }, 200);
+}
+</script>
+
+</body>
+</html>
