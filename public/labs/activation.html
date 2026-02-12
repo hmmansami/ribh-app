@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفعيل بنقرة واحدة | رِبح</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   RIBH Design Tokens (from shell.css)
+   ============================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #050505;
+    --bg-surface: #0a0a0a;
+    --bg-card: #0f0f0f;
+    --bg-elevated: #141414;
+    --bg-hover: #1a1a1a;
+    --bg-input: #111111;
+    --border: rgba(255, 255, 255, 0.06);
+    --border-hover: rgba(255, 255, 255, 0.12);
+    --border-active: rgba(251, 191, 36, 0.3);
+    --text: #FFFFFF;
+    --text-secondary: #D4D4D8;
+    --text-muted: #A1A1AA;
+    --text-dim: #71717A;
+    --text-faint: #52525B;
+    --primary: #FBBF24;
+    --primary-hover: #F59E0B;
+    --primary-subtle: rgba(251, 191, 36, 0.08);
+    --primary-glow: rgba(251, 191, 36, 0.25);
+    --success: #22C55E;
+    --success-subtle: rgba(34, 197, 94, 0.1);
+    --warning: #F59E0B;
+    --warning-subtle: rgba(245, 158, 11, 0.1);
+    --danger: #EF4444;
+    --danger-subtle: rgba(239, 68, 68, 0.1);
+    --info: #3B82F6;
+    --info-subtle: rgba(59, 130, 246, 0.1);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'IBM Plex Sans Arabic', 'Tajawal', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    direction: rtl;
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.page-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+}
+
+/* ============================================
+   TOP BAR (minimal)
+   ============================================ */
+.lab-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+}
+
+.lab-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lab-logo {
+    font-size: 22px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.lab-badge {
+    background: var(--primary-subtle);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(251, 191, 36, 0.2);
+}
+
+.lab-topbar-back {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s;
+}
+.lab-topbar-back:hover {
+    background: var(--bg-hover);
+    color: var(--text-muted);
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.activation-hero {
+    text-align: center;
+    padding: 48px 0 40px;
+}
+
+.hero-icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, var(--primary-subtle), rgba(251, 191, 36, 0.15));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(251, 191, 36, 0.2);
+}
+
+.hero-icon svg {
+    color: var(--primary);
+}
+
+.hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.hero-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.7;
+}
+
+/* ============================================
+   PROGRESS STEPS
+   ============================================ */
+.progress-section {
+    margin-bottom: 40px;
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 0 20px;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    flex: 0 0 auto;
+    min-width: 120px;
+}
+
+.step-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    border: 2px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-dim);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    z-index: 2;
+}
+
+.step.active .step-circle {
+    border-color: var(--primary);
+    background: var(--primary-subtle);
+    color: var(--primary);
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.step.completed .step-circle {
+    border-color: var(--success);
+    background: var(--success);
+    color: #fff;
+}
+
+.step-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dim);
+    transition: color 0.3s;
+    text-align: center;
+}
+
+.step.active .step-label { color: var(--primary); }
+.step.completed .step-label { color: var(--success); }
+
+.step-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    min-width: 60px;
+    max-width: 120px;
+    position: relative;
+    align-self: flex-start;
+    margin-top: 23px;
+}
+
+.step-connector-fill {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 0%;
+    background: var(--success);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 1px;
+}
+
+.step-connector.filled .step-connector-fill {
+    width: 100%;
+}
+
+/* ============================================
+   CHANNEL CARDS
+   ============================================ */
+.channels-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.channel-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.channel-card.connected {
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.channel-card.connected::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background: var(--success);
+}
+
+.channel-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.channel-icon-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.channel-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.channel-icon.salla {
+    background: rgba(90, 70, 255, 0.1);
+    color: #7C6AFF;
+}
+
+.channel-icon.whatsapp {
+    background: rgba(37, 211, 102, 0.1);
+    color: #25D366;
+}
+
+.channel-name {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.channel-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.channel-status.pending {
+    background: var(--warning-subtle);
+    color: var(--warning);
+}
+
+.channel-status.connected {
+    background: var(--success-subtle);
+    color: var(--success);
+}
+
+.channel-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.channel-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.channel-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    width: 100%;
+}
+
+.channel-btn.salla-btn {
+    background: rgba(90, 70, 255, 0.12);
+    color: #7C6AFF;
+    border: 1px solid rgba(90, 70, 255, 0.2);
+}
+.channel-btn.salla-btn:hover {
+    background: rgba(90, 70, 255, 0.2);
+}
+
+.channel-btn.wa-btn {
+    background: rgba(37, 211, 102, 0.12);
+    color: #25D366;
+    border: 1px solid rgba(37, 211, 102, 0.2);
+}
+.channel-btn.wa-btn:hover {
+    background: rgba(37, 211, 102, 0.2);
+}
+
+.channel-btn.connected-btn {
+    background: var(--success-subtle);
+    color: var(--success);
+    cursor: default;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.channel-connected-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 12px;
+}
+
+.channel-connected-info svg {
+    color: var(--success);
+    flex-shrink: 0;
+}
+
+/* QR Code area */
+.qr-area {
+    margin-top: 16px;
+    padding: 20px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    text-align: center;
+    display: none;
+}
+
+.qr-area.visible { display: block; }
+
+.qr-placeholder {
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 12px;
+    background: #fff;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.qr-grid {
+    width: 160px;
+    height: 160px;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(16, 1fr);
+    gap: 1px;
+}
+
+.qr-cell {
+    border-radius: 1px;
+}
+
+.qr-cell.dark { background: #1a1a1a; }
+.qr-cell.light { background: #ffffff; }
+
+.qr-hint {
+    font-size: 13px;
+    color: var(--text-dim);
+}
+
+/* ============================================
+   SECTION DIVIDER
+   ============================================ */
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 40px 0 32px;
+}
+
+.section-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+.section-divider-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dim);
+    white-space: nowrap;
+}
+
+/* ============================================
+   SEQUENCE PREVIEW CARDS
+   ============================================ */
+.sequences-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.sequences-title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sequences-subtitle {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.sequences-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.sequence-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.sequence-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.sequence-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.sequence-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.sequence-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.sequence-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.sequence-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.sequence-steps-mini {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.step-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+.step-mini-arrow {
+    color: var(--text-faint);
+    font-size: 12px;
+}
+
+.sequence-channels {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.sequence-channel-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sequence-channel-dot.wa { background: rgba(37, 211, 102, 0.12); color: #25D366; }
+.sequence-channel-dot.email { background: var(--info-subtle); color: var(--info); }
+.sequence-channel-dot.sms { background: rgba(168, 85, 247, 0.1); color: #A855F7; }
+
+.sequence-channel-label {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-right: 4px;
+}
+
+/* ============================================
+   AI PREVIEW
+   ============================================ */
+.ai-preview-section {
+    margin-bottom: 40px;
+}
+
+.ai-preview-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(251, 191, 36, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.03);
+}
+
+.ai-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.ai-preview-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.ai-preview-title svg { color: var(--primary); }
+
+.ai-message-preview {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.ai-message-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: rgba(37, 211, 102, 0.06);
+    border-bottom: 1px solid var(--border);
+}
+
+.ai-message-bar-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(37, 211, 102, 0.12);
+    color: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-message-bar-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.ai-message-body {
+    padding: 20px;
+}
+
+.ai-message-bubble {
+    background: rgba(37, 211, 102, 0.08);
+    border: 1px solid rgba(37, 211, 102, 0.15);
+    border-radius: 0 var(--radius-md) var(--radius-md) var(--radius-md);
+    padding: 14px 18px;
+    max-width: 85%;
+    position: relative;
+}
+
+.ai-message-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    white-space: pre-line;
+}
+
+.ai-message-text .highlight {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.ai-message-text .offer {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 6px 14px;
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid rgba(251, 191, 36, 0.2);
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.ai-message-time {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 6px;
+    text-align: left;
+}
+
+.ai-message-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.ai-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    background: var(--primary-subtle);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* ============================================
+   THE BIG BUTTON
+   ============================================ */
+.activation-cta {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.cta-context {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+}
+
+.cta-context strong {
+    color: var(--text-muted);
+}
+
+.activate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 48px;
+    font-size: 18px;
+    font-weight: 800;
+    font-family: inherit;
+    border: none;
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.activate-btn.ready {
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    color: #0a0a0a;
+    box-shadow: 0 4px 24px var(--primary-glow), 0 0 60px rgba(251, 191, 36, 0.15);
+}
+.activate-btn.ready:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px var(--primary-glow), 0 0 80px rgba(251, 191, 36, 0.2);
+}
+
+.activate-btn.disabled {
+    background: var(--bg-elevated);
+    color: var(--text-faint);
+    border: 1px solid var(--border);
+    cursor: not-allowed;
+}
+
+.activate-btn.activating {
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    color: #0a0a0a;
+    pointer-events: none;
+}
+
+.activate-btn.done {
+    background: var(--success);
+    color: #fff;
+    pointer-events: none;
+}
+
+.btn-shimmer {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    animation: shimmer 2.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.cta-safety {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* ============================================
+   POST-ACTIVATION SUCCESS
+   ============================================ */
+.activation-success {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.activation-success.visible { display: block; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    background: var(--success-subtle);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--success);
+    border: 2px solid rgba(34, 197, 94, 0.3);
+}
+
+.success-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--success);
+}
+
+.success-desc {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 480px;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+}
+
+.success-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.success-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+}
+
+.success-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--success);
+}
+
+.success-stat-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+}
+
+.success-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.success-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.success-btn-primary {
+    background: linear-gradient(135deg, #FBBF24, #F59E0B);
+    color: #0a0a0a;
+}
+.success-btn-primary:hover {
+    box-shadow: 0 4px 16px var(--primary-glow);
+    transform: translateY(-1px);
+}
+
+.success-btn-secondary {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+.success-btn-secondary:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+}
+
+/* ============================================
+   WHAT GETS DEPLOYED (summary)
+   ============================================ */
+.deployed-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 32px 0;
+}
+
+.deployed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+}
+
+.deployed-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.deployed-item-text {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.deployed-item-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+}
+
+/* ============================================
+   LOADING SPINNER
+   ============================================ */
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-top-color: #0a0a0a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .page-wrapper { padding: 20px 16px 60px; }
+    .activation-hero { padding: 32px 0 28px; }
+    .hero-title { font-size: 24px; }
+    .hero-subtitle { font-size: 14px; }
+    .channels-grid { grid-template-columns: 1fr; }
+    .sequences-grid { grid-template-columns: 1fr; }
+    .success-stats { grid-template-columns: repeat(2, 1fr); }
+    .deployed-summary { grid-template-columns: 1fr; }
+    .progress-steps { gap: 0; }
+    .step { min-width: 80px; }
+    .step-connector { min-width: 30px; }
+    .step-circle { width: 40px; height: 40px; font-size: 16px; }
+    .activate-btn { padding: 16px 32px; font-size: 16px; }
+    .success-actions { flex-direction: column; }
+}
+
+@media (max-width: 480px) {
+    .hero-title { font-size: 22px; }
+    .step-label { font-size: 11px; }
+    .step { min-width: 70px; }
+    .activate-btn { width: 100%; }
+}
+    </style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="lab-topbar">
+    <div class="lab-topbar-brand">
+        <div class="lab-logo">رِبح</div>
+        <span class="lab-badge">معاينة</span>
+    </div>
+    <a href="/platform/dashboard" class="lab-topbar-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        لوحة التحكم
+    </a>
+</div>
+
+<div class="page-wrapper">
+
+    <!-- Hero -->
+    <div class="activation-hero">
+        <div class="hero-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h1 class="hero-title">فعّل متجرك بنقرة واحدة</h1>
+        <p class="hero-subtitle">وصّل متجرك وواتسابك — وكل شيء يشتغل تلقائي. استرداد السلات، رسائل ترحيب، متابعة بعد الشراء، واسترجاع العملاء.</p>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="progress-section">
+        <div class="progress-steps">
+            <div class="step active" id="step1">
+                <div class="step-circle" id="step1Circle">1</div>
+                <div class="step-label">وصّل سلة</div>
+            </div>
+            <div class="step-connector" id="connector1">
+                <div class="step-connector-fill"></div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-circle" id="step2Circle">2</div>
+                <div class="step-label">وصّل واتساب</div>
+            </div>
+            <div class="step-connector" id="connector2">
+                <div class="step-connector-fill"></div>
+            </div>
+            <div class="step" id="step3">
+                <div class="step-circle" id="step3Circle">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
+                <div class="step-label">فعّل الكل</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Channel Cards -->
+    <div class="channels-grid" id="channelsGrid">
+        <!-- Salla Card -->
+        <div class="channel-card" id="sallaCard">
+            <div class="channel-card-header">
+                <div class="channel-icon-wrap">
+                    <div class="channel-icon salla">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="channel-name">منصة سلة</div>
+                </div>
+                <span class="channel-status pending" id="sallaStatus">
+                    <span class="channel-status-dot"></span>
+                    غير متصل
+                </span>
+            </div>
+            <p class="channel-desc">ربط متجرك في سلة لاستقبال بيانات السلات المتروكة والطلبات والعملاء تلقائيا.</p>
+            <button class="channel-btn salla-btn" id="sallaBtn" onclick="connectSalla()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                ربط متجر سلة
+            </button>
+        </div>
+
+        <!-- WhatsApp Card -->
+        <div class="channel-card" id="waCard">
+            <div class="channel-card-header">
+                <div class="channel-icon-wrap">
+                    <div class="channel-icon whatsapp">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </div>
+                    <div class="channel-name">واتساب</div>
+                </div>
+                <span class="channel-status pending" id="waStatus">
+                    <span class="channel-status-dot"></span>
+                    غير متصل
+                </span>
+            </div>
+            <p class="channel-desc">امسح كود QR لربط واتسابك. رسائل الاسترداد ترسل من رقمك مباشرة — مجانا.</p>
+            <button class="channel-btn wa-btn" id="waBtn" onclick="connectWhatsApp()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                مسح كود QR
+            </button>
+
+            <!-- QR Code area -->
+            <div class="qr-area" id="qrArea">
+                <div class="qr-placeholder" id="qrPlaceholder">
+                    <div class="qr-grid" id="qrGrid"></div>
+                </div>
+                <div class="qr-hint">امسح الكود من واتساب على جوالك</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Divider: What gets deployed -->
+    <div class="section-divider">
+        <div class="section-divider-line"></div>
+        <div class="section-divider-text">ايش اللي يشتغل بعد التفعيل؟</div>
+        <div class="section-divider-line"></div>
+    </div>
+
+    <!-- Sequence Preview Cards -->
+    <div class="sequences-grid" id="sequencesGrid">
+        <!-- 1. Cart Recovery -->
+        <div class="sequence-card">
+            <div class="sequence-card-top">
+                <div class="sequence-card-icon" style="background: var(--warning-subtle); color: var(--warning);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                </div>
+                <span class="sequence-badge" style="background: var(--warning-subtle); color: var(--warning);">الاهم</span>
+            </div>
+            <div class="sequence-name">استرداد السلات المتروكة</div>
+            <div class="sequence-desc">3 رسائل تلقائية بعد ما العميل يترك سلته — كل رسالة بعرض اقوى</div>
+            <div class="sequence-steps-mini">
+                <span class="step-mini">30 دقيقة</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">6 ساعات</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">24 ساعة</span>
+            </div>
+            <div class="sequence-channels">
+                <span class="sequence-channel-label">القنوات:</span>
+                <span class="sequence-channel-dot wa"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+                <span class="sequence-channel-dot email"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+                <span class="sequence-channel-dot sms"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+            </div>
+        </div>
+
+        <!-- 2. Welcome -->
+        <div class="sequence-card">
+            <div class="sequence-card-top">
+                <div class="sequence-card-icon" style="background: var(--info-subtle); color: var(--info);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <span class="sequence-badge" style="background: var(--info-subtle); color: var(--info);">ترحيب</span>
+            </div>
+            <div class="sequence-name">رحلة الترحيب</div>
+            <div class="sequence-desc">رسالة ترحيب فورية + عرض خاص لكل عميل جديد يسجل</div>
+            <div class="sequence-steps-mini">
+                <span class="step-mini">فوري</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">24 ساعة</span>
+            </div>
+            <div class="sequence-channels">
+                <span class="sequence-channel-label">القنوات:</span>
+                <span class="sequence-channel-dot wa"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+                <span class="sequence-channel-dot email"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+            </div>
+        </div>
+
+        <!-- 3. Post-Purchase -->
+        <div class="sequence-card">
+            <div class="sequence-card-top">
+                <div class="sequence-card-icon" style="background: var(--success-subtle); color: var(--success);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+                <span class="sequence-badge" style="background: var(--success-subtle); color: var(--success);">بعد الشراء</span>
+            </div>
+            <div class="sequence-name">متابعة بعد الشراء</div>
+            <div class="sequence-desc">شكرا + طلب تقييم + عرض شراء ثاني — يبني ولاء العميل</div>
+            <div class="sequence-steps-mini">
+                <span class="step-mini">10 دقائق</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">3 ايام</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">14 يوم</span>
+            </div>
+            <div class="sequence-channels">
+                <span class="sequence-channel-label">القنوات:</span>
+                <span class="sequence-channel-dot wa"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+            </div>
+        </div>
+
+        <!-- 4. Winback -->
+        <div class="sequence-card">
+            <div class="sequence-card-top">
+                <div class="sequence-card-icon" style="background: var(--danger-subtle); color: var(--danger);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                </div>
+                <span class="sequence-badge" style="background: var(--danger-subtle); color: var(--danger);">استرجاع</span>
+            </div>
+            <div class="sequence-name">استرجاع العملاء الغائبين</div>
+            <div class="sequence-desc">رسائل للعملاء اللي ما اشتروا من فترة — عروض تجذبهم يرجعون</div>
+            <div class="sequence-steps-mini">
+                <span class="step-mini">فوري</span>
+                <span class="step-mini-arrow">&larr;</span>
+                <span class="step-mini">3 ايام</span>
+            </div>
+            <div class="sequence-channels">
+                <span class="sequence-channel-label">القنوات:</span>
+                <span class="sequence-channel-dot wa"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+                <span class="sequence-channel-dot sms"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Preview -->
+    <div class="ai-preview-section">
+        <div class="ai-preview-card">
+            <div class="ai-preview-header">
+                <div class="ai-preview-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>معاينة رسالة الذكاء الاصطناعي</span>
+                </div>
+                <span class="lab-badge">AI</span>
+            </div>
+            <div class="ai-message-preview">
+                <div class="ai-message-bar">
+                    <div class="ai-message-bar-icon">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                    </div>
+                    <span class="ai-message-bar-text">واتساب — رسالة استرداد سلة</span>
+                </div>
+                <div class="ai-message-body">
+                    <div class="ai-message-bubble">
+                        <div class="ai-message-text" id="aiMessageText">هلا نورة! 👋
+
+لاحظنا انك تركتي <span class="highlight">حقيبة يد جلدية</span> في سلتك. اذا كنتي مهتمة — عندنا عرض خاص لك:
+
+<span class="offer">خصم 10% — كود: RIBH10</span>
+
+العرض متاح لمدة 24 ساعة فقط. اضغطي هنا لاكمال طلبك ✨</div>
+                        <div class="ai-message-time">10:42 ص</div>
+                    </div>
+                    <div class="ai-message-tags">
+                        <span class="ai-tag">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            محتوى مخصص بالذكاء الاصطناعي
+                        </span>
+                        <span class="ai-tag">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            توقيت ذكي
+                        </span>
+                        <span class="ai-tag">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/></svg>
+                            خصم تلقائي
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- THE BIG BUTTON -->
+    <div class="activation-cta" id="ctaSection">
+        <div class="cta-context" id="ctaContext">
+            وصّل <strong>سلة</strong> و<strong>واتساب</strong> اولا — وبعدها نقرة واحدة تفعّل كل شيء
+        </div>
+        <button class="activate-btn disabled" id="activateBtn" onclick="handleActivate()">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span id="activateBtnText">فعّل كل شيء بنقرة واحدة</span>
+        </button>
+        <div class="cta-safety" id="ctaSafety">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            تقدر توقف او تعدل اي رحلة في اي وقت
+        </div>
+    </div>
+
+    <!-- POST-ACTIVATION SUCCESS -->
+    <div class="activation-success" id="successSection">
+        <div class="success-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="success-title">تم التفعيل!</h2>
+        <p class="success-desc">متجرك شغال الحين على الطيار الالي. كل رسالة مخصصة بالذكاء الاصطناعي — وكل سلة متروكة بتنلحق تلقائيا.</p>
+
+        <div class="success-stats">
+            <div class="success-stat">
+                <div class="success-stat-value">4</div>
+                <div class="success-stat-label">رحلات نشطة</div>
+            </div>
+            <div class="success-stat">
+                <div class="success-stat-value">3</div>
+                <div class="success-stat-label">قنوات متصلة</div>
+            </div>
+            <div class="success-stat">
+                <div class="success-stat-value">9</div>
+                <div class="success-stat-label">رسائل جاهزة</div>
+            </div>
+            <div class="success-stat">
+                <div class="success-stat-value">AI</div>
+                <div class="success-stat-label">محتوى ذكي</div>
+            </div>
+        </div>
+
+        <div class="deployed-summary">
+            <div class="deployed-item">
+                <div class="deployed-item-icon" style="background: var(--success-subtle); color: var(--success);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <div class="deployed-item-text">استرداد السلات</div>
+                    <div class="deployed-item-sub">3 خطوات — واتساب + ايميل</div>
+                </div>
+            </div>
+            <div class="deployed-item">
+                <div class="deployed-item-icon" style="background: var(--success-subtle); color: var(--success);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <div class="deployed-item-text">رحلة الترحيب</div>
+                    <div class="deployed-item-sub">خطوتين — واتساب + ايميل</div>
+                </div>
+            </div>
+            <div class="deployed-item">
+                <div class="deployed-item-icon" style="background: var(--success-subtle); color: var(--success);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div>
+                    <div class="deployed-item-text">متابعة + استرجاع</div>
+                    <div class="deployed-item-sub">رحلتين — واتساب + SMS</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a href="/platform/dashboard" class="success-btn success-btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                لوحة التحكم
+            </a>
+            <a href="/platform/journeys" class="success-btn success-btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                شوف الرحلات
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+(function() {
+    // ==========================================
+    // STATE MANAGEMENT
+    // ==========================================
+    var state = {
+        salla: false,
+        whatsapp: false,
+        activated: false
+    };
+
+    // ==========================================
+    // QR CODE GENERATOR (visual only)
+    // ==========================================
+    function generateQRPattern() {
+        var grid = document.getElementById('qrGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        // Create a realistic-looking QR pattern
+        var size = 16;
+        // Corner patterns (finder patterns)
+        var finderPositions = [
+            {r: 0, c: 0}, {r: 0, c: 9}, {r: 9, c: 0}
+        ];
+        for (var r = 0; r < size; r++) {
+            for (var c = 0; c < size; c++) {
+                var cell = document.createElement('div');
+                cell.className = 'qr-cell';
+
+                // Finder pattern areas
+                var inFinder = false;
+                for (var f = 0; f < finderPositions.length; f++) {
+                    var fp = finderPositions[f];
+                    var dr = r - fp.r;
+                    var dc = c - fp.c;
+                    if (dr >= 0 && dr < 7 && dc >= 0 && dc < 7) {
+                        inFinder = true;
+                        // Outer border
+                        if (dr === 0 || dr === 6 || dc === 0 || dc === 6) {
+                            cell.classList.add('dark');
+                        }
+                        // Inner square
+                        else if (dr >= 2 && dr <= 4 && dc >= 2 && dc <= 4) {
+                            cell.classList.add('dark');
+                        } else {
+                            cell.classList.add('light');
+                        }
+                    }
+                }
+
+                if (!inFinder) {
+                    // Random data pattern
+                    cell.classList.add(Math.random() > 0.5 ? 'dark' : 'light');
+                }
+                grid.appendChild(cell);
+            }
+        }
+    }
+
+    // ==========================================
+    // SALLA CONNECTION (simulated)
+    // ==========================================
+    window.connectSalla = function() {
+        if (state.salla) return;
+        var btn = document.getElementById('sallaBtn');
+        btn.innerHTML = '<div class="spinner"></div> جاري الربط...';
+        btn.style.pointerEvents = 'none';
+
+        setTimeout(function() {
+            state.salla = true;
+            updateUI();
+        }, 1800);
+    };
+
+    // ==========================================
+    // WHATSAPP CONNECTION (simulated)
+    // ==========================================
+    window.connectWhatsApp = function() {
+        if (state.whatsapp) return;
+        var btn = document.getElementById('waBtn');
+        var qrArea = document.getElementById('qrArea');
+        btn.style.display = 'none';
+        qrArea.classList.add('visible');
+        generateQRPattern();
+
+        // Simulate scan after delay
+        setTimeout(function() {
+            state.whatsapp = true;
+            qrArea.classList.remove('visible');
+            updateUI();
+        }, 3500);
+    };
+
+    // ==========================================
+    // ACTIVATION (simulated)
+    // ==========================================
+    window.handleActivate = function() {
+        if (!state.salla || !state.whatsapp || state.activated) return;
+
+        var btn = document.getElementById('activateBtn');
+        var btnText = document.getElementById('activateBtnText');
+        btn.className = 'activate-btn activating';
+        btnText.textContent = 'جاري التفعيل...';
+        btn.querySelector('svg').style.display = 'none';
+
+        var spinnerEl = document.createElement('div');
+        spinnerEl.className = 'spinner';
+        btn.insertBefore(spinnerEl, btn.firstChild);
+
+        // Simulate activation steps
+        setTimeout(function() {
+            btnText.textContent = 'تفعيل رحلة استرداد السلات...';
+        }, 800);
+
+        setTimeout(function() {
+            btnText.textContent = 'تفعيل رحلة الترحيب...';
+        }, 1600);
+
+        setTimeout(function() {
+            btnText.textContent = 'تفعيل المحتوى الذكي...';
+        }, 2400);
+
+        setTimeout(function() {
+            state.activated = true;
+            updateUI();
+        }, 3200);
+    };
+
+    // ==========================================
+    // UI UPDATE
+    // ==========================================
+    function updateUI() {
+        // --- Salla Card ---
+        var sallaCard = document.getElementById('sallaCard');
+        var sallaBtn = document.getElementById('sallaBtn');
+        var sallaStatusEl = document.getElementById('sallaStatus');
+
+        if (state.salla) {
+            sallaCard.classList.add('connected');
+            sallaStatusEl.className = 'channel-status connected';
+            sallaStatusEl.innerHTML = '<span class="channel-status-dot"></span> متصل';
+            sallaBtn.className = 'channel-btn connected-btn';
+            sallaBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> تم الربط';
+            sallaBtn.onclick = null;
+
+            // Add connected info
+            if (!document.getElementById('sallaConnectedInfo')) {
+                var info = document.createElement('div');
+                info.className = 'channel-connected-info';
+                info.id = 'sallaConnectedInfo';
+                info.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> بيانات السلات والطلبات تصل تلقائيا';
+                sallaBtn.parentNode.appendChild(info);
+            }
+        }
+
+        // --- WhatsApp Card ---
+        var waCard = document.getElementById('waCard');
+        var waBtn = document.getElementById('waBtn');
+        var waStatusEl = document.getElementById('waStatus');
+
+        if (state.whatsapp) {
+            waCard.classList.add('connected');
+            waStatusEl.className = 'channel-status connected';
+            waStatusEl.innerHTML = '<span class="channel-status-dot"></span> متصل';
+            waBtn.style.display = '';
+            waBtn.className = 'channel-btn connected-btn';
+            waBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> واتساب متصل';
+            waBtn.onclick = null;
+
+            if (!document.getElementById('waConnectedInfo')) {
+                var info2 = document.createElement('div');
+                info2.className = 'channel-connected-info';
+                info2.id = 'waConnectedInfo';
+                info2.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> الرسائل ترسل من رقمك — مجانا بالكامل';
+                waBtn.parentNode.appendChild(info2);
+            }
+        }
+
+        // --- Progress Steps ---
+        var step1 = document.getElementById('step1');
+        var step2 = document.getElementById('step2');
+        var step3 = document.getElementById('step3');
+        var conn1 = document.getElementById('connector1');
+        var conn2 = document.getElementById('connector2');
+        var step1Circle = document.getElementById('step1Circle');
+        var step2Circle = document.getElementById('step2Circle');
+
+        if (state.salla) {
+            step1.className = 'step completed';
+            step1Circle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+            conn1.classList.add('filled');
+            step2.className = 'step active';
+        }
+
+        if (state.whatsapp) {
+            step2.className = 'step completed';
+            step2Circle.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+            conn2.classList.add('filled');
+            step3.className = 'step active';
+        }
+
+        // --- Activate Button ---
+        var activateBtn = document.getElementById('activateBtn');
+        var ctaContext = document.getElementById('ctaContext');
+
+        if (state.salla && state.whatsapp && !state.activated) {
+            activateBtn.className = 'activate-btn ready';
+            // Add shimmer
+            if (!activateBtn.querySelector('.btn-shimmer')) {
+                var shimmer = document.createElement('span');
+                shimmer.className = 'btn-shimmer';
+                activateBtn.appendChild(shimmer);
+            }
+            ctaContext.innerHTML = 'كل شيء جاهز! نقرة واحدة تفعّل <strong>4 رحلات</strong> + <strong>محتوى ذكي</strong> + <strong>3 قنوات</strong>';
+        }
+
+        // --- Post Activation ---
+        if (state.activated) {
+            step3.className = 'step completed';
+            document.getElementById('ctaSection').style.display = 'none';
+            document.getElementById('sequencesGrid').style.display = 'none';
+            document.getElementById('successSection').classList.add('visible');
+
+            // Hide the sequence section divider
+            var dividers = document.querySelectorAll('.section-divider');
+            dividers.forEach(function(d) { d.style.display = 'none'; });
+
+            // Hide AI preview
+            document.querySelector('.ai-preview-section').style.display = 'none';
+        }
+    }
+
+})();
+</script>
+
+</body>
+</html>
